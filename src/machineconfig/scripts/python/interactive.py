@@ -12,7 +12,6 @@ for better user experience with checkbox selections.
 # $res = ls
 # $name = $res[0].Name
 # mv $backup_folder $name
-#
 
 
 """
@@ -71,6 +70,14 @@ def display_dotfiles_instructions() -> None:
     header_text = Text("DOTFILES MIGRATION", style="bold yellow")
     subtitle_text = Text("Configuration transfer options", style="italic yellow")
     instructions = """
+    On remote, run:
+    rm ~/dotfiles.zip || true
+    ouch c ~/dotfiles dotfiles.zip
+    uvx wormhole-magic send ~/dotfiles.zip
+    On new machine, run:
+    cd $HOME; uvx wormhole-magic receive dotfiles.zip --accept-file  
+    ouch d ~/dotfiles.zip
+
 🖱️  [bold blue]Method 1: USING MOUSE WITHOUT KB OR BROWSER SHARE[/bold blue]
     On original machine, run:
     [dim]cd ~/dotfiles/creds/msc
@@ -85,8 +92,9 @@ def display_dotfiles_instructions() -> None:
 
 ☁️  [bold blue]Method 3: USING INTERNET SECURE SHARE[/bold blue]
     [dim]cd ~
-    cloud_copy SHARE_URL . --config ss[/dim]
-    (requires symlinks to be created first)"""
+    cloud copy SHARE_URL . --config ss[/dim]
+    (requires symlinks to be created first)
+    """
     console.print(Panel(f"📂 {header_text}\n{subtitle_text}\n\n{instructions}", border_style="yellow", padding=(1, 2)))
 
 
@@ -122,7 +130,7 @@ def execute_installations(selected_options: list[str]) -> None:
     if "install_machineconfig" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
         from machineconfig.scripts.python.helpers_devops.cli_self import install
-        install()
+        install(copy_assets=True, dev=False)
 
     if "install_ssh_server" in selected_options:
         console.print(Panel("🔒 [bold red]SSH SERVER[/bold red]\n[italic]Remote access setup[/italic]", border_style="red"))
@@ -155,7 +163,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
         from machineconfig.scripts.python.helpers_devops import cli_repos
-        cli_repos.clone(directory=str(Path.home() / "code"), cloud="odg1")
+        cli_repos.clone(directory=str(Path.home() / "code"), cloud=None)
 
     if "retrieve_data" in selected_options:
         console.print(Panel("💾 [bold bright_cyan]DATA RETRIEVAL[/bold bright_cyan]\n[italic]Backup restoration[/italic]", border_style="bright_cyan"))

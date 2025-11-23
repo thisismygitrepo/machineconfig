@@ -4,15 +4,15 @@ from machineconfig.utils.accessories import randstr
 from pathlib import Path
 
 
-def get_uv_run_command(platform: str) -> str:
+def get_uv_command(platform: str) -> str:
     res = cast(Literal["Windows", "windows", "nt", "Linux", "linux", "Darwin", "darwin", "macos"], platform)
     match res:
         case "Windows" | "windows" | "nt":
-            return """& "$env:USERPROFILE/.local/bin/uv" run"""
+            return """& "$env:USERPROFILE/.local/bin/uv" """
         case "Linux" | "linux" | "Darwin" | "darwin" | "macos":
-            return """$HOME/.local/bin/uv run"""
+            return """$HOME/.local/bin/uv """
         case _:
-            return """$HOME/.local/bin/uv run"""
+            return """$HOME/.local/bin/uv """
 
 def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     import platform
@@ -62,8 +62,8 @@ def get_uv_command_executing_python_script(python_script: str, uv_with: Optional
     else:
         uv_project_dir_arg = ""
     import platform
-    uv_run = get_uv_run_command(platform=platform.system())
-    shell_script = f"""{uv_run} {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
+    uv_command = get_uv_command(platform=platform.system())
+    shell_script = f"""{uv_command} run {uv_with_arg} {uv_project_dir_arg}  {str(python_file)} """
 
     return shell_script, python_file
 

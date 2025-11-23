@@ -147,10 +147,10 @@ class MachineSpecs(TypedDict):
 def get_machine_specs() -> MachineSpecs:
     """Write print and return the local machine specs."""
     import platform
-    from machineconfig.utils.code import get_uv_run_command
+    from machineconfig.utils.code import get_uv_command
 
-    uv_run_cmd = get_uv_run_command(platform=platform.system())  # type: ignore
-    command = f"""{uv_run_cmd} --with distro python -c "import distro; print(distro.name(pretty=True))" """
+    uv_cmd = get_uv_command(platform=platform.system())  # type: ignore
+    command = f"""{uv_cmd} run --with distro python -c "import distro; print(distro.name(pretty=True))" """
     import subprocess
     from pathlib import Path
     import socket

@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import platform
 from machineconfig.scripts.python.helpers_utils.python import MachineSpecs
-from machineconfig.utils.code import get_uv_run_command
+from machineconfig.utils.code import get_uv_command
 import rich.console
 from machineconfig.utils.terminal import Response
 from machineconfig.utils.accessories import pprint, randstr
@@ -273,12 +273,12 @@ class SSH:
             with_clause += ""
         match on:
             case "local":
-                uv_run_cmd = get_uv_run_command(platform=self.local_specs["system"])
+                uv_cmd = get_uv_command(platform=self.local_specs["system"])
             case "remote":
-                uv_run_cmd = get_uv_run_command(platform=self.remote_specs["system"])
+                uv_cmd = get_uv_command(platform=self.remote_specs["system"])
             case _:
                 raise ValueError(f"Invalid value for 'on': {on}. Must be 'local' or 'remote'")
-        uv_cmd = f"""{uv_run_cmd} {with_clause} python {py_path.relative_to(Path.home())}"""
+        uv_cmd = f"""{uv_cmd} run {with_clause} python {py_path.relative_to(Path.home())}"""
         return uv_cmd
 
     def run_py_remotely(

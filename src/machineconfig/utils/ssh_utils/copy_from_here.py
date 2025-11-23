@@ -5,7 +5,7 @@ from pathlib import Path
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
 from machineconfig.utils.ssh_utils.abc import DEFAULT_PICKLE_SUBDIR
-from machineconfig.utils.code import get_uv_run_command
+from machineconfig.utils.code import get_uv_command
 
 
 def copy_from_here(
@@ -96,7 +96,7 @@ def copy_from_here(
         remote_tmp_py = tmp_py_file.relative_to(Path.home()).as_posix()
         self.copy_from_here(source_path=str(tmp_py_file), target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=True)
         self.run_shell_cmd_on_remote(
-            command=f"""{get_uv_run_command(platform=self.remote_specs['system'])} python {remote_tmp_py}""",
+            command=f"""{get_uv_command(platform=self.remote_specs['system'])} run python {remote_tmp_py}""",
             verbose_output=False,
             description=f"UNZIPPING {target_rel2home}",
             strict_stderr=True,

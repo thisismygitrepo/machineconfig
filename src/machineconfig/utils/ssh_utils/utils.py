@@ -3,7 +3,7 @@ from pathlib import Path
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
 from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, DEFAULT_PICKLE_SUBDIR
-from machineconfig.utils.code import get_uv_run_command
+from machineconfig.utils.code import get_uv_command
 from typing import Union
 
 
@@ -36,7 +36,7 @@ def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_ex
     tmp_remote_path = ".tmp_pyfile.py"
     self.sftp.put(localpath=str(tmp_py_file), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(tmp_remote_path)))
     resp = self.run_shell_cmd_on_remote(
-        command=f"""{get_uv_run_command(platform=self.remote_specs['system'])} python {tmp_remote_path}""",
+        command=f"""{get_uv_command(platform=self.remote_specs['system'])} run python {tmp_remote_path}""",
         verbose_output=False,
         description=f"Creating target dir {path_rel2home}",
         strict_stderr=True,

@@ -94,18 +94,26 @@ uv tool install --upgrade machineconfig
             create_links_export.main_public_from_parser(method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
 
 
-def install(no_copy_assets: Annotated[bool, typer.Option("--no-assets-copy", "-na", help="Copy (overwrite) assets to the machine after the update")] = False):
+def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True,
+            dev: Annotated[bool, typer.Option("--dev", "-d", help="Install from local development code instead of PyPI")] = False,
+            ):
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
-    from machineconfig.utils.code import run_shell_script, get_uv_run_command
+    from machineconfig.utils.code import run_shell_script, get_uv_command
     from pathlib import Path
     import platform
-    uv_run_command = get_uv_run_command(platform=platform.system())  # type: ignore
+    if dev and not Path.home().joinpath("code/machineconfig").exists():
+        # clone: https://github.com/thisismygitrepo/machineconfig.git
+        import git
+        repo_parent = Path.home().joinpath("code")
+        repo_parent.mkdir(parents=True, exist_ok=True)
+        git.Repo.clone_from("https://github.com/thisismygitrepo/machineconfig.git", str(repo_parent.joinpath("machineconfig")))
+    uv_command = get_uv_command(platform=platform.system())
     if Path.home().joinpath("code/machineconfig").exists():
-        run_shell_script(f""" {uv_run_command} tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
+        run_shell_script(f""" {uv_command} tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
     else:
-        run_shell_script(rf""" {uv_run_command} tool install --upgrade "machineconfig>=8.13" """)
-    from machineconfig.profile.create_shell_profile import create_default_shell_profile
-    if not no_copy_assets:
+        run_shell_script(rf""" {uv_command} tool install --upgrade "machineconfig>=8.13" """)
+    if copy_assets:
+        from machineconfig.profile.create_shell_profile import create_default_shell_profile
         create_default_shell_profile()   # involves copying assets too
 
 
