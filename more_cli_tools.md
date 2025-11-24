@@ -60,7 +60,7 @@
 # search
 * File Finder: find[fd] (Rust) & FuzzyFinder[fzf] (Go) * skim[sk] (Rust)
 * Content Finder: ripgrep[rg] & ripgrep-all[rga] & ugrep
-
+* Text extraction: https://github.com/yobix-ai/extractous
 
 # Cli helper
 * https://github.com/BuilderIO/ai-shell

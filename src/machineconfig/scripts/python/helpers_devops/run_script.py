@@ -32,12 +32,33 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
     if not interactive and not name:
         typer.echo("❌ ERROR: You must provide a script name or use --interactive option to select a script.")
         raise typer.Exit(code=1)
-
     from pathlib import Path
+    target_file: Optional[Path] = None
+
+    if where in ["dynamic", "d"]:
+        # src/machineconfig/jobs/scripts/python_scripts/a.py
+        if "." in name: resolved_names: list[str] = [name]
+        else: resolved_names = [f"{name}{a_suffix}" for a_suffix in [".py", ".sh", "", ".ps1", ".bat", ".cmd"]]
+        urls = [f"""https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/jobs/scripts_dynamic/{a_resolved_name}""" for a_resolved_name in resolved_names]
+        for a_url in urls:
+            try:
+                print(f"Fetching temporary script from {a_url} ...")
+                import requests
+                response = requests.get(a_url)
+                if response.status_code != 200:
+                    print(f"❌ ERROR: Could not fetch script '{name}.py' from repository. Status Code: {response.status_code}")
+                    raise RuntimeError(f"Could not fetch script '{name}.py' from repository.")
+                script_content = response.text
+                target_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", f"{name}.py")
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                target_file.write_text(script_content, encoding="utf-8")
+            except Exception as _e:
+                pass
+
     if command:
         exec(name)
         return
-    if Path(name).is_file():
+    if target_file is None and Path(name).is_file():
         if name.endswith(".py"):
             import machineconfig
             import subprocess
@@ -94,51 +115,28 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
             suffixes = [".py"]
 
     # Finding target file
-    target_file: Optional[Path] = None
     potential_matches: list[Path] = []
-    for a_root in roots:
-        for a_suffix in suffixes:
-            if a_root.joinpath(f"{name}{a_suffix}").is_file():
-                target_file = a_root.joinpath(f"{name}{a_suffix}")
-                break  # perfect match
-            potential_matches += [a_file for a_file in a_root.rglob(f"*{name}*{a_suffix}") if a_file.is_file()]
-
-    if target_file is None and where in ["dynamic", "d"] and not interactive:
-        # src/machineconfig/jobs/scripts/python_scripts/a.py
-        if "." in name:
-            resolved_names: list[str] = [name]
-        else:
-            resolved_names = [f"{name}{a_suffix}" for a_suffix in [".py", ".sh", "", ".ps1", ".bat", ".cmd"]]
-        for a_resolved_name in resolved_names:
-            try:
-                url = f"""https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/jobs/scripts_dynamic/{a_resolved_name}"""
-                print(f"Fetching temporary script from {url} ...")
-                import requests
-                response = requests.get(url)
-                if response.status_code != 200:
-                    print(f"❌ ERROR: Could not fetch script '{name}.py' from repository. Status Code: {response.status_code}")
-                    raise RuntimeError(f"Could not fetch script '{name}.py' from repository.")
-                script_content = response.text
-                target_file = Path.home().joinpath("tmp_results", "tmp_scripts", "python", f"{name}.py")
-                target_file.parent.mkdir(parents=True, exist_ok=True)
-                target_file.write_text(script_content, encoding="utf-8")
-            except Exception as _e:
-                pass
+    if target_file is None:
+        for a_root in roots:
+            for a_suffix in suffixes:
+                if a_root.joinpath(f"{name}{a_suffix}").is_file():
+                    target_file = a_root.joinpath(f"{name}{a_suffix}")
+                    break  # perfect match
+                potential_matches += [a_file for a_file in a_root.rglob(f"*{name}*{a_suffix}") if a_file.is_file()]
 
     if target_file is None:
         if len(potential_matches) == 1:
             target_file = potential_matches[0]
+        elif len(potential_matches) == 0:
+            print(f"❌ ERROR: Could not find script '{name}'. Searched in {', '.join([str(r) for r in roots])}.")
+            raise typer.Exit(code=1)
         else:
             print(f"Warning: Could not find script '{name}'. Checked {len(potential_matches)} candidate files, trying interactively:")
             from machineconfig.utils.options import choose_from_options
-            # options = ["/".join(p.parts[-3:]) for p in potential_matches]
             options = [str(p) for p in potential_matches]
             chosen_file_part = choose_from_options(options, multi=False, msg="Select the script to run:", tv=True, preview="bat")
-            # for an_option, a_path in zip(options, potential_matches):
-            #     if chosen_file_part == an_option:
-            #         target_file = a_path
-            #         break
             target_file = Path(chosen_file_part)
+
     print(f"✅ Found script at: {target_file}")
     if target_file.suffix == ".py":
         from machineconfig.utils.code import get_uv_command_executing_python_file, exit_then_run_shell_script

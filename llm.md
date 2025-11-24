@@ -8,6 +8,7 @@
 * https://github.com/langchain-ai/langchain `framework for LLM apps`.
 * https://github.com/agenta-ai/agenta
 * https://github.com/agno-agi/agno `Agno is a lightweight library for building Multimodal Agents. It exposes LLMs as a unified API and gives them superpowers like memory, knowledge, tools and reasoning.`
+* https://github.com/GibsonAI/Memori `Memory`
 
 * Enhances:
     * https://github.com/stanfordnlp/dspy `framework for algorithmically optimizing LM prompts and weights`.
@@ -54,6 +55,7 @@
 * https://github.com/jackmpcollins/magentic `unstructured -> structured`
 * https://github.com/bespokelabsai/curator `Make data`.
 * https://github.com/567-labs/instructor 
+* https://github.com/yobix-ai/extractous
 
 
 # Web
