@@ -72,10 +72,15 @@ def display_dotfiles_instructions() -> None:
     instructions = """
     On remote, run:
     rm ~/dotfiles.zip || true
-    ouch c ~/dotfiles dotfiles.zip
-    uvx wormhole-magic send ~/dotfiles.zip
+    ouch c ~/dotfiles dotfiles.zip --password rew
+    # INSECURE OVER INTERNET: uvx wormhole-magic send ~/dotfiles.zip
+    # LOCAL NETWORK:
+    devops network share-server --no-auth ./dotfiles.zip
     On new machine, run:
-    cd $HOME; uvx wormhole-magic receive dotfiles.zip --accept-file  
+    # INSECURE cd $HOME; uvx wormhole-magic receive dotfiles.zip --accept-file
+    cd $HOME;
+    rm ~/dotfiles.zip || true
+    utils download $URL
     ouch d ~/dotfiles.zip
 
 🖱️  [bold blue]Method 1: USING MOUSE WITHOUT KB OR BROWSER SHARE[/bold blue]

@@ -97,7 +97,7 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
                     code: Annotated[str | None, typer.Option("--code", "-c", help="Codephrase used to connect to relay")] = None,
                     text: Annotated[str | None, typer.Option("--text", "-t", help="Send some text")] = None,
                     qrcode: Annotated[bool, typer.Option("--qrcode", "--qr", help="Show receive code as a qrcode")] = False,
-                    backend: Annotated[Literal["wormhole", "w", "croc", "c"], typer.Option("--backend", "-b", help="Backend to use")] = "wormhole",
+                    backend: Annotated[Literal["wormhole", "w", "croc", "c"], typer.Option("--backend", "-b", help="Backend to use")] = "croc",
                     ) -> None:
     """Send a file using croc with relay server."""
     import platform
