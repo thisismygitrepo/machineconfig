@@ -36,6 +36,7 @@ def web_file_explorer(
     path: Annotated[str, typer.Argument(help="Path to the file or directory to share")],
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the share server on (default: 8080)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for share access (default: current user)")] = None,
+    no_auth: Annotated[bool, typer.Option("--no-auth", "-na", help="Disable authentication for share access")] = False,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for share access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
     bind_address: Annotated[str, typer.Option("--bind", "-a", help="Address to bind the server to")] = "0.0.0.0",
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False,
@@ -49,17 +50,17 @@ def web_file_explorer(
     install_if_missing(which=backend)
     if over_internet:
         install_if_missing(which="ngrok")
-    if username is None:
-        import getpass
-        username = getpass.getuser()
-    
-    if password is None:
+    if password is None and not no_auth:
         pwd_path = Path.home().joinpath("dotfiles/creds/passwords/quick_password")
         if pwd_path.exists():
             password = pwd_path.read_text(encoding="utf-8").strip()
-        else:
-            typer.echo(f"⚠️  WARNING: Password not provided and default password file does not exist.\nPath: {pwd_path}\nUsing default password: 'quick_password' (insecure!)", err=True)
-            raise typer.Exit(code=1)
+            if username is None:
+                import getpass
+                username = getpass.getuser()
+        # else:
+        #     typer.echo(f"⚠️  WARNING: Password not provided and default password file does not exist.\nPath: {pwd_path}\nUsing default password: 'quick_password' (insecure!)", err=True)
+        #     raise typer.Exit(code=1)
+
 
     if port is None:
         port = 8080
@@ -87,9 +88,17 @@ filebrowser users add {username} "{password}" --database {db_path}
 filebrowser --address {bind_address} --port {port} --root "{path_obj}" --database {db_path}
 """
     elif backend == "miniserve":
-        command = f"""miniserve --port {port} --interfaces {bind_address} --auth "{username}:{password}" --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
+        if username and password:
+            auth_line = f"--auth {username}:{password}"
+        else:
+            auth_line = ""
+        command = f"""miniserve --port {port} --interfaces {bind_address} {auth_line} --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
     elif backend == "easy-sharing":
-        command = f"""easy-sharing --port {port} --username "{username}" --password "{password}" "{path_obj}" """
+        if username is None and password is None:
+            auth_line = ""
+        else:
+            auth_line = f'--username "{username}" --password "{password}"'
+        command = f"""easy-sharing --port {port} {auth_line} "{path_obj}" """
     elif backend == "qrcp":
         command = f"""qrcp --port {port} --bind {bind_address} "{path_obj}" """
     else:
