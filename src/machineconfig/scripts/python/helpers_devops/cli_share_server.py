@@ -86,7 +86,7 @@ filebrowser users add {username} "{password}" --database {db_path}
 filebrowser --address 0.0.0.0 --port {port} --root "{path_obj}" --database {db_path}
 """
     elif backend == "miniserve":
-        command = f"""miniserve --port {port} --interfaces 0.0.0.0 --auth "{username}":"{password}" --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
+        command = f"""miniserve --port {port} --interfaces 0.0.0.0 --auth "{username}:{password}" --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
     elif backend == "easy-sharing":
         command = f"""easy-sharing --port {port} --username "{username}" --password "{password}" "{path_obj}" """
     elif backend == "qrcp":
