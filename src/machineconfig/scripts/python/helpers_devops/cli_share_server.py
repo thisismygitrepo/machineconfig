@@ -37,6 +37,7 @@ def web_file_explorer(
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the share server on (default: 8080)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for share access (default: current user)")] = None,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for share access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
+    bind_address: Annotated[str, typer.Option("--bind", "-a", help="Address to bind the server to")] = "0.0.0.0",
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False,
     backend: Annotated[str, typer.Option("--backend", "-b", help="Backend to use: filebrowser (default), miniserve, qrcp, or easy-sharing")] = "miniserve",
 ) -> None:
@@ -83,14 +84,14 @@ def web_file_explorer(
         db_path.parent.mkdir(parents=True, exist_ok=True)
         command = f"""
 filebrowser users add {username} "{password}" --database {db_path}
-filebrowser --address 0.0.0.0 --port {port} --root "{path_obj}" --database {db_path}
+filebrowser --address {bind_address} --port {port} --root "{path_obj}" --database {db_path}
 """
     elif backend == "miniserve":
-        command = f"""miniserve --port {port} --interfaces 0.0.0.0 --auth "{username}:{password}" --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
+        command = f"""miniserve --port {port} --interfaces {bind_address} --auth "{username}:{password}" --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """
     elif backend == "easy-sharing":
         command = f"""easy-sharing --port {port} --username "{username}" --password "{password}" "{path_obj}" """
     elif backend == "qrcp":
-        command = f"""qrcp "{path_obj}" """
+        command = f"""qrcp --port {port} --bind {bind_address} "{path_obj}" """
     else:
         typer.echo(f"❌ ERROR: Unknown backend '{backend}'", err=True)
         raise typer.Exit(code=1)

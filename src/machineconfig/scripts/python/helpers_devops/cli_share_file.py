@@ -1,6 +1,6 @@
 
 import typer
-from typing import Annotated
+from typing import Annotated, Literal
 
 
 def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'")],
@@ -97,39 +97,53 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
                     code: Annotated[str | None, typer.Option("--code", "-c", help="Codephrase used to connect to relay")] = None,
                     text: Annotated[str | None, typer.Option("--text", "-t", help="Send some text")] = None,
                     qrcode: Annotated[bool, typer.Option("--qrcode", "--qr", help="Show receive code as a qrcode")] = False,
+                    backend: Annotated[Literal["wormhole", "w", "croc", "c"], typer.Option("--backend", "-b", help="Backend to use")] = "wormhole",
                     ) -> None:
     """Send a file using croc with relay server."""
-    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-    install_if_missing(which="croc")
-    # Get relay server IP from environment or use default
-    import machineconfig.scripts.python.helpers_network.address as helper
-    res = helper.select_lan_ipv4(prefer_vpn=False)
-    if res is None:
-        typer.echo("❌ Error: Could not determine local LAN IPv4 address for relay.", err=True)
-        raise typer.Exit(code=1)
-    local_ip_v4 = res
     import platform
-    relay_port = "443"
-    is_windows = platform.system() == "Windows"
 
-    # Build command parts
-    relay_arg = f"--relay {local_ip_v4}:{relay_port} --ip {local_ip_v4}:{relay_port}"
-    zip_arg = "--zip" if zip_folder else ""
-    text_arg = f"--text '{text}'" if text else ""
-    qrcode_arg = "--qrcode" if qrcode else ""
-    path_arg = f"{path}" if not text else ""
+    match backend:
+        case "wormhole" | "w":
+            if code is None: code_line = ""
+            else: code_line = f"--code {code}"
+            if text is not None: text_line = f"--text '{text}'"
+            else: text_line = f"'{path}'"
+            script = f"""
+uvx magic-wormhole send {code_line} {text_line}
+"""
+            print(f"🚀 Sending file: {path}. Use: uvx magic-wormhole receive ")
+        case "croc" | "c":
+            from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+            install_if_missing(which="croc")
 
-    if is_windows:
-        # Windows PowerShell format
-        code_arg = f"--code {code}" if code else ""
-        script = f"""croc {relay_arg} send {zip_arg} {code_arg} {qrcode_arg} {text_arg} {path_arg}"""
-    else:
-        # Linux/macOS Bash format
-        if code:
-            script = f"""export CROC_SECRET="{code}"
+            # Get relay server IP from environment or use default
+            import machineconfig.scripts.python.helpers_network.address as helper
+            res = helper.select_lan_ipv4(prefer_vpn=False)
+            if res is None:
+                typer.echo("❌ Error: Could not determine local LAN IPv4 address for relay.", err=True)
+                raise typer.Exit(code=1)
+            local_ip_v4 = res
+            relay_port = "443"
+            is_windows = platform.system() == "Windows"
+            # Build command parts
+            relay_arg = f"--relay {local_ip_v4}:{relay_port} --ip {local_ip_v4}:{relay_port}"
+            zip_arg = "--zip" if zip_folder else ""
+            text_arg = f"--text '{text}'" if text else ""
+            qrcode_arg = "--qrcode" if qrcode else ""
+            path_arg = f"{path}" if not text else ""
+
+            if is_windows:
+                # Windows PowerShell format
+                code_arg = f"--code {code}" if code else ""
+                script = f"""croc {relay_arg} send {zip_arg} {code_arg} {qrcode_arg} {text_arg} {path_arg}"""
+            else:
+                # Linux/macOS Bash format
+                if code:
+                    script = f"""
+export CROC_SECRET="{code}"
 croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
-        else:
-            script = f"""croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
+                else:
+                    script = f"""croc {relay_arg} send {zip_arg} {qrcode_arg} {text_arg} {path_arg}"""
 
     typer.echo(f"🚀 Sending file: {path}. Use: devops network receive")
     from machineconfig.utils.code import exit_then_run_shell_script, print_code
