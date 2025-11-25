@@ -14,7 +14,6 @@ from machineconfig.utils.ssh_utils.abc import DEFAULT_PICKLE_SUBDIR
 class SSH:
     @staticmethod
     def from_config_file(host: str) -> "SSH":
-        """Create SSH instance from SSH config file entry."""
         return SSH(host=host, username=None, hostname=None, ssh_key_path=None, password=None, port=22, enable_compression=False)
 
     def __init__(
@@ -148,8 +147,10 @@ class SSH:
             def view_bar(self, transferred: int, total: int) -> None:
                 if self.progress and self.task is not None:
                     self.progress.update(self.task, completed=transferred, total=total)
+
         self.tqdm_wrap = RichProgressWrapper
         from machineconfig.scripts.python.helpers_utils.python import get_machine_specs
+
         self.local_specs: MachineSpecs = get_machine_specs()
         resp = self.run_shell_cmd_on_remote(
             command="""~/.local/bin/utils get-machine-specs """,
@@ -160,6 +161,7 @@ class SSH:
         )
         json_str = resp.op
         import ast
+
         self.remote_specs: MachineSpecs = cast(MachineSpecs, ast.literal_eval(json_str))
         self.terminal_responses: list[Response] = []
 
@@ -177,10 +179,22 @@ class SSH:
         local_console = rich.console.Console(file=local_buffer, width=40)
         remote_console = rich.console.Console(file=remote_buffer, width=40)
         inspect(
-            type("LocalInfo", (object,), dict(self.local_specs))(), value=False, title="SSHing From", docs=False, dunder=False, sort=False, console=local_console
+            type("LocalInfo", (object,), dict(self.local_specs))(),
+            value=False,
+            title="SSHing From",
+            docs=False,
+            dunder=False,
+            sort=False,
+            console=local_console,
         )
         inspect(
-            type("RemoteInfo", (object,), dict(self.remote_specs))(), value=False, title="SSHing To", docs=False, dunder=False, sort=False, console=remote_console
+            type("RemoteInfo", (object,), dict(self.remote_specs))(),
+            value=False,
+            title="SSHing To",
+            docs=False,
+            dunder=False,
+            sort=False,
+            console=remote_console,
         )
         local_lines = local_buffer.getvalue().split("\n")
         remote_lines = remote_buffer.getvalue().split("\n")
@@ -217,6 +231,7 @@ class SSH:
             raise RuntimeError("send_ssh_key is only supported for Windows remote machines")
         code_url = "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/setup_windows/ssh/openssh-server_add-sshkey.ps1"
         import urllib.request
+
         with urllib.request.urlopen(code_url) as response:
             code = response.read().decode("utf-8")
         return self.run_shell_cmd_on_remote(command=code, verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
@@ -225,8 +240,10 @@ class SSH:
         return f"{self.username}@{self.hostname}:{self.port}" + (
             f" [{self.remote_specs['system']}][{self.remote_specs['distro']}]" if add_machine else ""
         )
+
     def get_local_repr(self, add_machine: bool = False) -> str:
         import getpass
+
         return f"{getpass.getuser()}@{platform.node()}" + (f" [{platform.system()}][{self.local_specs['distro']}]" if add_machine else "")
 
     def get_ssh_conn_str(self, command: str) -> str:
@@ -246,7 +263,9 @@ class SSH:
         res.output.returncode = os.system(command)
         return res
 
-    def run_shell_cmd_on_remote(self, command: str, verbose_output: bool, description: str, strict_stderr: bool, strict_return_code: bool) -> Response:
+    def run_shell_cmd_on_remote(
+        self, command: str, verbose_output: bool, description: str, strict_stderr: bool, strict_return_code: bool
+    ) -> Response:
         raw = self.ssh.exec_command(command)
         res = Response(stdin=raw[0], stdout=raw[1], stderr=raw[2], cmd=command, desc=description)  # type: ignore
         if verbose_output:
@@ -301,8 +320,7 @@ class SSH:
         )
 
     def run_lambda_function(self, func: Callable[..., Any], import_module: bool, uv_with: Optional[list[str]], uv_project_dir: Optional[str]):
-        command = lambda_to_python_script(func,
-            in_global=True, import_module=import_module)
+        command = lambda_to_python_script(func, in_global=True, import_module=import_module)
         # turns ou that the code below for some reason runs but zellij doesn't start, looks like things are assigned to different user.
         # return self.run_py(python_code=command, uv_with=uv_with, uv_project_dir=uv_project_dir,
         #                    description=f"run_py_func {func.__name__} on {self.get_remote_repr(add_machine=False)}",
@@ -334,25 +352,39 @@ class SSH:
 
     def create_parent_dir_and_check_if_exists(self, path_rel2home: str, overwrite_existing: bool) -> None:
         from machineconfig.utils.ssh_utils.utils import create_dir_and_check_if_exists
+
         return create_dir_and_check_if_exists(self, path_rel2home=path_rel2home, overwrite_existing=overwrite_existing)
 
     def check_remote_is_dir(self, source_path: Union[str, Path]) -> bool:
         from machineconfig.utils.ssh_utils.utils import check_remote_is_dir
+
         return check_remote_is_dir(self, source_path=source_path)
 
     def expand_remote_path(self, source_path: Union[str, Path]) -> str:
         from machineconfig.utils.ssh_utils.utils import expand_remote_path
+
         return expand_remote_path(self, source_path=source_path)
 
-    def copy_from_here(self, source_path: str, target_rel2home: Optional[str], compress_with_zip: bool, recursive: bool, overwrite_existing: bool) -> None:
+    def copy_from_here(
+        self, source_path: str, target_rel2home: Optional[str], compress_with_zip: bool, recursive: bool, overwrite_existing: bool
+    ) -> None:
         from machineconfig.utils.ssh_utils.copy_from_here import copy_from_here
-        return copy_from_here(self, source_path=source_path, target_rel2home=target_rel2home, compress_with_zip=compress_with_zip, recursive=recursive, overwrite_existing=overwrite_existing)
 
-    def copy_to_here(self, source: Union[str, Path], target: Optional[Union[str, Path]], compress_with_zip: bool, recursive: bool, internal_call: bool = False) -> None:
+        return copy_from_here(
+            self,
+            source_path=source_path,
+            target_rel2home=target_rel2home,
+            compress_with_zip=compress_with_zip,
+            recursive=recursive,
+            overwrite_existing=overwrite_existing,
+        )
+
+    def copy_to_here(
+        self, source: Union[str, Path], target: Optional[Union[str, Path]], compress_with_zip: bool, recursive: bool, internal_call: bool = False
+    ) -> None:
         from machineconfig.utils.ssh_utils.copy_to_here import copy_to_here
-        return copy_to_here(self, source=source, target=target, compress_with_zip=compress_with_zip, recursive=recursive, internal_call=internal_call)
 
-    
+        return copy_to_here(self, source=source, target=target, compress_with_zip=compress_with_zip, recursive=recursive, internal_call=internal_call)
 
 
 if __name__ == "__main__":
