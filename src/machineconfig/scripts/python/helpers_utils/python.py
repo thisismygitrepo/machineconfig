@@ -51,7 +51,9 @@ def init_project(
             typer.echo(f"❌ Error: pyproject.toml not found in {repo_root}", err=True)
             raise typer.Exit(code=1)
         starting_code = ""
+        agents_line = ""
     else:
+        agents_line = """agents make-config"""
         if name is not None:
             from machineconfig.utils.accessories import randstr
 
@@ -83,21 +85,22 @@ uv venv
         if "d" in group:
             total_packages.append("numpy pandas polars duckdb-engine sqlalchemy  psycopg2-binary pyarrow tqdm openpyxl")
     from machineconfig.utils.ve import get_ve_activate_line
-
+    
     script = f"""
 {starting_code}
 {packages_add_line}
 uv add --group {group} {" ".join(total_packages)}
 {get_ve_activate_line(ve_root=str(repo_root.joinpath(".venv")))}
+{agents_line}
 ls
 """
     from machineconfig.utils.code import exit_then_run_shell_script, run_shell_script
-    # exit_then_run_shell_script(script)
-    _ = exit_then_run_shell_script
-    run_shell_script(script)
-    if tempdir:
-        from machineconfig.scripts.python.ai.initai import add_ai_configs
-        add_ai_configs(repo_root=repo_root)
+    exit_then_run_shell_script(script)
+    _ = exit_then_run_shell_script, run_shell_script
+    # run_shell_script(script)
+    # if tempdir:
+    #     from machineconfig.scripts.python.ai.initai import add_ai_configs
+    #     add_ai_configs(repo_root=repo_root)
 
 
 def edit_file_with_hx(
