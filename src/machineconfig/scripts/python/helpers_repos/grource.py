@@ -169,7 +169,7 @@ def visualize(
         if platform.system() == "Windows":
             print(f"⚠️  Portable gource not found at {gource_exe}, installing...")
             install_gource_windows()
-            # Check again after installation
+            gource_exe = get_gource_executable()  # Re-fetch path after installation
             if gource_exe.exists():
                 print(f"✅ Gource installed successfully at: {gource_exe}")
                 gource_cmd: str = str(gource_exe)
