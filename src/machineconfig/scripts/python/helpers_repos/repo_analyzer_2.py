@@ -3,11 +3,21 @@ from machineconfig.scripts.python.helpers_repos.repo_analyzer_1 import count_pyt
 from datetime import datetime
 import polars as pl
 from pathlib import Path
-from typing import Any, Dict, List, Union, Optional
+from typing import cast, TypedDict
 
 
-def print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exception]":
-    import polars as pl
+class FileDataRow(TypedDict):
+    filename: str
+    lines: int
+
+
+class CommitDataRow(TypedDict):
+    hash: str
+    dtmExit: datetime
+    lines: int
+
+
+def print_python_files_by_size_impl(repo_path: str) -> pl.DataFrame | Exception:
     import plotly.graph_objects as go
     import plotly.express as px
 
@@ -16,7 +26,7 @@ def print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exce
         if not os.path.exists(repo_path):
             return ValueError(f"Repository path does not exist: {repo_path}")
         # Initialize data storage
-        file_data: "List[Dict[str, Union[str, int]]]" = []
+        file_data: list[FileDataRow] = []
 
         # Walk through the repository
         for root, _, files in os.walk(repo_path):
@@ -66,7 +76,8 @@ def print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exce
         table.add_column("Lines", justify="right")
 
         for idx, row in enumerate(df.iter_rows(named=True), 1):
-            table.add_row(str(idx), row["filename"], f"{row['lines']:,}")
+            typed_row = cast(FileDataRow, row)
+            table.add_row(str(idx), typed_row["filename"], f"{typed_row['lines']:,}")
 
         console.print(table)
         print(f"\n📁 Total Python files: {file_count}")
@@ -118,7 +129,7 @@ def print_python_files_by_size_impl(repo_path: str) -> "Union[pl.DataFrame, Exce
         )
 
         # Define pie chart figure before conditionally using it
-        fig2: "Optional[go.Figure]" = None
+        fig2: go.Figure | None = None
 
         # Add pie chart showing distribution
         if len(df) > top_n:
@@ -175,14 +186,15 @@ def analyze_over_time(repo_path: str):
     repo: Repo = Repo(repo_path)
     branch_name: str = get_default_branch(repo)
     print(f"🔍 Using branch: {branch_name}")
-    commit_data: "List[Dict[str, Any]]" = []
+    commit_data: list[CommitDataRow] = []
     print("⏳ Analyzing commits...")
     try:
         commits = list(repo.iter_commits(branch_name))
         from datetime import timezone
         from rich.progress import track
         for commit in track(commits, description="Processing commits..."):
-            commit_data.append({"hash": commit.hexsha, "dtmExit": datetime.fromtimestamp(commit.committed_date, tz=timezone.utc), "lines": count_python_lines(commit)})
+            lines, _files = count_python_lines(commit)
+            commit_data.append({"hash": commit.hexsha, "dtmExit": datetime.fromtimestamp(commit.committed_date, tz=timezone.utc), "lines": lines})
     except Exception as e:
         print(f"❌ Error analyzing commits: {str(e)}")
         return
@@ -199,7 +211,7 @@ def analyze_over_time(repo_path: str):
     # Add markers for significant points (min, max, last)
     min_idx = df["lines"].arg_min()
     max_idx = df["lines"].arg_max()
-    last_point = df.slice(-1, 1).to_dicts()[0]
+    last_point = cast(CommitDataRow, df.slice(-1, 1).to_dicts()[0])
     
     marker_x: list[datetime] = []
     marker_y: list[int] = []
@@ -209,7 +221,7 @@ def analyze_over_time(repo_path: str):
     marker_texts: list[str] = []
     
     if min_idx is not None:
-        min_point = df.slice(min_idx, 1).to_dicts()[0]
+        min_point = cast(CommitDataRow, df.slice(min_idx, 1).to_dicts()[0])
         marker_x.append(min_point["dtmExit"])
         marker_y.append(min_point["lines"])
         marker_sizes.append(10)
@@ -218,7 +230,7 @@ def analyze_over_time(repo_path: str):
         marker_texts.append(f"🔽 Min: {min_point['lines']:,} lines")
     
     if max_idx is not None:
-        max_point = df.slice(max_idx, 1).to_dicts()[0]
+        max_point = cast(CommitDataRow, df.slice(max_idx, 1).to_dicts()[0])
         marker_x.append(max_point["dtmExit"])
         marker_y.append(max_point["lines"])
         marker_sizes.append(14)
@@ -294,6 +306,8 @@ def analyze_over_time(repo_path: str):
     # Print statistics
     print("\n📊 Repository Statistics:")
     print(f"📚 Total commits analyzed: {len(df)}")
-    print(f"🔙 Initial line count: {df['lines'][-1]:,}")
-    print(f"🔜 Final line count: {df['lines'][0]:,}")
-    print(f"📈 Net change: {df['lines'][0] - df['lines'][-1]:,} lines")
+    initial_lines = int(df['lines'][-1])
+    final_lines = int(df['lines'][0])
+    print(f"🔙 Initial line count: {initial_lines:,}")
+    print(f"🔜 Final line count: {final_lines:,}")
+    print(f"📈 Net change: {final_lines - initial_lines:,} lines")
