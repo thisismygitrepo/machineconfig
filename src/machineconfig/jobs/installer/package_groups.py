@@ -161,6 +161,7 @@ TERMINAL_EYE_CANDY = [
     "lolcatjs",
     "figlet-cli",
     "boxes",
+    "cowsay",
     # "transmission",
     # "bytehound",
     # "xcrawl3r",

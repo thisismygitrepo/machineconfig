@@ -263,13 +263,13 @@
       "fileNamePattern": {
         "amd64": {
           "windows": "boxes.py",
-          "linux": null,
-          "macos": null
+          "linux": "sudo nala install boxes",
+          "macos": "brew install boxes"
         },
         "arm64": {
-          "linux": null,
-          "macos": null,
-          "windows": null
+          "linux": "sudo nala install boxes",
+          "macos": "brew install boxes",
+          "windows": "boxes.py"
         }
       }
     },
@@ -423,6 +423,23 @@
           "linux": "npm install -g figlet-cli",
           "windows": "npm install -g figlet-cli",
           "macos": "npm install -g figlet-cli"
+        }
+      }
+    },
+    {
+      "appName": "cowsay",
+      "repoURL": "CMD",
+      "doc": "📝 ASCII art text generator for terminal",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "uv tool install cowsay",
+          "windows": "uv tool install cowsay",
+          "macos": "uv tool install cowsay"
+        },
+        "arm64": {
+          "linux": "uv tool install cowsay",
+          "windows": "uv tool install cowsay",
+          "macos": "uv tool install cowsay"
         }
       }
     },

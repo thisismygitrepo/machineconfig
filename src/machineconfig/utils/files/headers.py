@@ -56,10 +56,8 @@ def print_logo(logo: str):
             #     print(Path(random.choice(glob.glob(str(Path(__file__).parent.joinpath("art", "*"))))).read_text())
             character_or_box_color(logo=logo)
         else:
-            print("\n" + "🚫 " + "-" * 70 + " 🚫")
-            install_cmd = "devops install --group TerminalEyeCandy" if platform.system() == "Linux" else "brew install cowsay lolcat boxes figlet"
-            print(f"🔍 Missing ASCII art dependencies. Install with: {install_cmd}")
-            print("🚫 " + "-" * 70 + " 🚫\n")
+            install_cmd = "devops install --group term-eye-candy "
+            print(f"🔍 Missing ASCII art dependencies. Install with: {install_cmd}  | {avail_boxes=} {avail_cowsay} {avail_figlet} {avail_lolcat=}")
             _default_art = Path(random.choice(glob.glob(str(Path(__file__).parent.joinpath("art", "*")))))
             print(_default_art.read_text())
     else:
