@@ -8,14 +8,15 @@
 </p>
 
 
-# 🧠 Welcome to **Machineconfig**
+# 🗜 Welcome to **Machineconfig**
 
-**Machineconfig** is a cli-based cross-platform **Stack Manager** — It is a swiss-army knife; a *Package Manager*, *Configuration Manager*, *Automation Tool*, *Dotfiles Manager*, *Data Solution*, and *Code Manager*, among other functionalities covered, all rolled into one seamless experience, that is consistent across different platforms.
+Your stack is awesome, but you need a stack manager, to have a tight grip over it, put it together and maintain it.
+Entering,  **Machineconfig**, a cli-based cross-platform **Stack Manager** — It is a swiss-army knife; a *Package Manager*, *Configuration Manager*, *Automation Tool*, *Dotfiles Manager*, *Data Solution*, and *Code Manager*, among other functionalities covered, all rolled into one seamless experience, that is consistent across different platforms.
 
 
-## 💡 Motivation
-Your stack is awesome, but you need stack a manager for it, to put it together and maintain it.
-What is your stack? Say you have a new computer/ VM, how to set it?
+## Workflow:
+What is your stack? Say you have a new computer/ VM, how do you go about setting it up with your stack?
+Surely, you have:
 * A bunch of CLI tools.
 * [Optional] A bunch of softwares (GUIs for desktop environment)
 * [Public] A bunch of configuration files for your tools.
@@ -58,22 +59,28 @@ Machineconfig builds on shoulder of giants. A suite of best-in-class stack of pr
 # Install On Windows:
 
 ```powershell
-# install tool the tool only:
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"  # Skip if UV is already installed
 uv tool install --upgrade --python 3.14 machineconfig
-# interactive install of machineconfig and following on to run it and make basic machine configuration (RECOMMENDED):
-iex (iwr bit.ly/cfgwindows).Content  # Or, if UV is installed: iex (uvx machineconfig define)
-# Quick install and configure (optionals are accepted by default):
-iex (iwr bit.ly/cfgwq).Content
 ```
 
 
 # Install On Linux and MacOS
 
 ```bash
-# install the tool only:
 curl -LsSf https://astral.sh/uv/install.sh | sh  # Skip if UV is already installed
 uv tool install --upgrade --python 3.14 machineconfig
+```
+
+
+# Quickies ...
+```powershell
+# interactive install of machineconfig and following on to run it and make basic machine configuration (RECOMMENDED):
+iex (iwr bit.ly/cfgwindows).Content  # Or, if UV is installed: iex (uvx machineconfig define)
+# Quick install and configure (optionals are accepted by default):
+iex (iwr bit.ly/cfgwq).Content
+```
+
+```bash
 # interactive install of machineconfig and following on to run it and make basic machine configuration (RECOMMENDED):
 . <(curl -L bit.ly/cfglinux) # Or, if UV is installed: . <(uvx machineconfig define)
 ```

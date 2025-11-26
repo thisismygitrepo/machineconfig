@@ -35,7 +35,8 @@ def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
         print(f"--- End of {desc} ---")
 
 
-def get_uv_command_executing_python_file(python_file: str, uv_with: Optional[list[str]], uv_project_dir: Optional[str], 
+def get_uv_command_executing_python_file(python_file: str, uv_with: Optional[list[str]],
+                                         uv_project_dir: Optional[str],
                                         prepend_print: bool = True, ) -> str:
     # shell script
     if uv_with is not None and len(uv_with) > 0:
@@ -49,7 +50,7 @@ def get_uv_command_executing_python_file(python_file: str, uv_with: Optional[lis
     if uv_project_dir is not None:
         uv_project_dir_arg = "--project" + f' "{uv_project_dir}"'
     else:
-        uv_project_dir_arg = ""
+        uv_project_dir_arg = "--no-project"
     import platform
 
     uv_command = get_uv_command(platform=platform.system())

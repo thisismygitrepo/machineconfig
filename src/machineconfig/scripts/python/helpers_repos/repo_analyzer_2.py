@@ -199,20 +199,50 @@ def analyze_over_time(repo_path: str):
     # Add markers for significant points (min, max, last)
     min_idx = df["lines"].arg_min()
     max_idx = df["lines"].arg_max()
-    min_point = df.slice(min_idx, 1).to_dicts()[0] if min_idx is not None else {}
-    max_point = df.slice(max_idx, 1).to_dicts()[0] if max_idx is not None else {}
     last_point = df.slice(-1, 1).to_dicts()[0]
+    
+    marker_x: list[datetime] = []
+    marker_y: list[int] = []
+    marker_sizes: list[int] = []
+    marker_colors: list[str] = []
+    marker_symbols: list[str] = []
+    marker_texts: list[str] = []
+    
+    if min_idx is not None:
+        min_point = df.slice(min_idx, 1).to_dicts()[0]
+        marker_x.append(min_point["dtmExit"])
+        marker_y.append(min_point["lines"])
+        marker_sizes.append(10)
+        marker_colors.append("#ff4f4f")
+        marker_symbols.append("circle")
+        marker_texts.append(f"🔽 Min: {min_point['lines']:,} lines")
+    
+    if max_idx is not None:
+        max_point = df.slice(max_idx, 1).to_dicts()[0]
+        marker_x.append(max_point["dtmExit"])
+        marker_y.append(max_point["lines"])
+        marker_sizes.append(14)
+        marker_colors.append("#4fff4f")
+        marker_symbols.append("star")
+        marker_texts.append(f"🔼 Max: {max_point['lines']:,} lines")
+    
+    marker_x.append(last_point["dtmExit"])
+    marker_y.append(last_point["lines"])
+    marker_sizes.append(12)
+    marker_colors.append("#4f4fff")
+    marker_symbols.append("diamond")
+    marker_texts.append(f"📊 Current: {last_point['lines']:,} lines")
 
     # Add markers for significant points
     fig.add_trace(
         go.Scatter(
-            x=[min_point["dtmExit"], max_point["dtmExit"], last_point["dtmExit"]],
-            y=[min_point["lines"], max_point["lines"], last_point["lines"]],
+            x=marker_x,
+            y=marker_y,
             mode="markers",
-            marker={"size": [10, 14, 12], "color": ["#ff4f4f", "#4fff4f", "#4f4fff"], "line": {"width": 2, "color": "white"}, "symbol": ["circle", "star", "diamond"]},
+            marker={"size": marker_sizes, "color": marker_colors, "line": {"width": 2, "color": "white"}, "symbol": marker_symbols},
             name="Key Points",
             hovertemplate="<b>%{text}</b><br>Date: %{x}<br>Lines: %{y:,}<extra></extra>",
-            text=[f"🔽 Min: {min_point['lines']:,} lines", f"🔼 Max: {max_point['lines']:,} lines", f"📊 Current: {last_point['lines']:,} lines"],
+            text=marker_texts,
         )
     )
 

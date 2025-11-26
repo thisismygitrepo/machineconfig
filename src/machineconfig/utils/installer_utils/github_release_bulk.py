@@ -86,6 +86,7 @@ def fetch_github_release_data(
         response = requests.get(url, timeout=30)
         if response.status_code != 200:
             print(f"❌ Failed to fetch data for {username}/{repo_name}: HTTP {response.status_code}")
+            print(f"   URL: {url}")
             return None
 
         response_data = response.json()
