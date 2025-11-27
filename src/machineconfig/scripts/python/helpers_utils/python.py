@@ -158,7 +158,7 @@ class MachineSpecs(TypedDict):
     user: str
 
 
-def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", "-h", help="Show compute capability")] = True) -> MachineSpecs:
+def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", "-h", help="Show compute capability")] = False) -> MachineSpecs:
     """Write print and return the local machine specs."""
     if hardware:
         from machineconfig.scripts.python.helpers_utils.specs import main
