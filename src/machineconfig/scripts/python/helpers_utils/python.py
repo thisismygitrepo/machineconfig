@@ -17,7 +17,7 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=8.21")
+        uv_with.append("machineconfig>=8.22")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(
@@ -36,7 +36,7 @@ def init_project(
     ] = None,
     group: Annotated[
         Optional[str], typer.Option("--group", "-g", help="group of packages names (no separation) p:plot, t:types, l:linting, i:interactive, d:data")
-    ] = "ptlid",
+    ] = "p,t,l,i,d",
 ) -> None:
     if libraries is not None:
         packages_add_line = f"uv add {libraries}"
@@ -69,26 +69,38 @@ uv init --python {python}
 uv venv
 """
     print(f"Adding group `{group}` with common data science and plotting packages...")
-    total_packages: list[str] = []
+    total_packages: dict[str, list[str]] = {}
     if group is not None:
-        if "t" in group:
-            total_packages.append(
-                "types-python-dateutil types-pyyaml types-requests types-tqdm types-mysqlclient types-paramiko types-pytz types-sqlalchemy types-toml types-urllib3"
-            )
-        if "l" in group:
-            total_packages.append("mypy pyright ruff pylint pyrefly cleanpy ipdb pudb")
-        if "i" in group:
-            total_packages.append("ipython ipykernel jupyterlab nbformat marimo")
-        if "p" in group:
-            total_packages.append("python-magic matplotlib plotly kaleido")
-        if "d" in group:
-            total_packages.append("numpy pandas polars duckdb-engine sqlalchemy  psycopg2-binary pyarrow tqdm openpyxl")
+        packages = group.split(",")
+        if "t" in packages or "types" in packages:
+            total_packages["types"] = [
+                "types-python-dateutil",
+                "types-pyyaml",
+                "types-requests",
+                "types-tqdm",
+                "types-mysqlclient",
+                "types-paramiko",
+                "types-pytz",
+                "types-sqlalchemy",
+                "types-toml",
+                "types-urllib3",
+            ]
+        if "l" in packages:
+            total_packages["linting"] = ["mypy", "pyright", "ruff", "pylint", "pyrefly", "cleanpy", "ipdb", "pudb"]
+        if "i" in packages:
+            total_packages["interactive"] = ["ipython", "ipykernel", "jupyterlab", "nbformat", "marimo"]
+        if "p" in packages:
+            total_packages["plot"] = ["python-magic", "matplotlib", "plotly", "kaleido"]
+        if "d" in packages:
+            total_packages["data"] = ["numpy", "pandas", "polars", "duckdb-engine", "sqlalchemy", "psycopg2-binary", "pyarrow", "tqdm", "openpyxl"]
     from machineconfig.utils.ve import get_ve_activate_line
-    
+    groups_packages_lines = "\n".join(
+        [f"uv add --group {group_name} {' '.join(packages)}" for group_name, packages in total_packages.items()]
+    )   
     script = f"""
 {starting_code}
 {packages_add_line}
-uv add --group {group} {" ".join(total_packages)}
+{groups_packages_lines}
 {get_ve_activate_line(ve_root=str(repo_root.joinpath(".venv")))}
 {agents_line}
 ls

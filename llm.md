@@ -46,8 +46,14 @@
 * https://github.com/bmad-code-org/BMAD-METHOD
 * https://github.com/github/spec-kit
 
-# Parsing Text
+# Parsing Text-like docs
+* https://github.com/yobix-ai/extractous `parse formats to simple txt files | Rust based software`
+* https://github.com/docling-project/docling `parse formats to simple txt files | OSS NN based tool`
+* https://github.com/mendableai/firecrawl `Website html -> markdown.`
+* https://github.com/apify/crawlee-python `Website html -> markdown.`
+* https://github.com/microsoft/markitdown `CLI + MCP`
 
+# Unstructued to structured data
 * https://github.com/outlines-dev/outlines `unstructured -> structured`
 * https://github.com/PrefectHQ/marvin `unstructured -> structured`
 * https://github.com/guidance-ai/guidance `unstructured -> structured`
@@ -55,7 +61,6 @@
 * https://github.com/jackmpcollins/magentic `unstructured -> structured`
 * https://github.com/bespokelabsai/curator `Make data`.
 * https://github.com/567-labs/instructor 
-* https://github.com/yobix-ai/extractous
 
 
 # Web
@@ -64,9 +69,6 @@
 * Playright MCP.
 
 * https://github.com/FoundationAgents/OpenManus
-* https://github.com/mendableai/firecrawl `Website html -> markdown.`
-* https://github.com/apify/crawlee-python `Website html -> markdown.`
-* https://github.com/microsoft/markitdown
 * https://github.com/McGill-NLP/webllama `Browse internet with agents`
 * https://github.com/nilsherzig/LLocalSearch `locally running search aggregator using LLM Agents.`
 * https://github.com/LearningCircuit/local-deep-research

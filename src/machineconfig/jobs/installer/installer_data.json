@@ -2502,18 +2502,18 @@
     },
     {
       "appName": "ollama",
-      "repoURL": "https://github.com/ollama/ollama",
+      "repoURL": "CMD",
       "doc": "🤖 Get up and running with large language models locally.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "ollama-linux-amd64.tgz",
-          "macos": "Ollama.dmg",
-          "windows": "OllamaSetup.exe"
+          "linux": "curl -fsSL https://ollama.com/install.sh | sh",
+          "macos": "devops install https://ollama.com/download/Ollama.dmg",
+          "windows": "devops install https://ollama.com/download/OllamaSetup.exe"
         },
         "arm64": {
-          "linux": "ollama-linux-arm64.tgz",
-          "macos": "Ollama.dmg",
-          "windows": "ollama-windows-arm64.zip"
+          "linux": "curl -fsSL https://ollama.com/install.sh | sh",
+          "macos": "devops install https://ollama.com/download/Ollama.dmg",
+          "windows": "devops install https://ollama.com/download/OllamaSetup.exe"
         }
       }
     },

@@ -27,7 +27,7 @@ def upgrade_packages():
 
 
 def get_app() -> typer.Typer:
-    app = typer.Typer(help="🛠️ utilities operations", no_args_is_help=True, add_help_option=False, add_completion=False)
+    app = typer.Typer(help="🛠️ utilities operations", no_args_is_help=True, add_help_option=True, add_completion=False)
     app.command(name="kill-process", no_args_is_help=False, help="⚔️ [k] Choose a process to kill")(kill_process)
     app.command(name="k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
 
