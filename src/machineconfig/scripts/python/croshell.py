@@ -77,12 +77,17 @@ def croshell(
 #%%
 """
     def preprogram_func():
-        from machineconfig.utils.files.headers import print_header, print_logo
-        print_header()
-        print_logo("Machineconfig")
+        try:
+            from machineconfig.utils.files.headers import print_header, print_logo
+            print_header()
+            print_logo("Machineconfig")
+            from machineconfig.utils.path_extended import PathExtended
+            _ = PathExtended
+        except ImportError:
+            print("machineconfig is not installed in the current environment.")
+            pass
         from pathlib import Path
-        from machineconfig.utils.path_extended import PathExtended
-        _ = Path, PathExtended  # avoid unused import warnings
+        _ = Path
     import inspect
     import textwrap
     from types import FunctionType
