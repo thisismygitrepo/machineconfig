@@ -29,15 +29,6 @@ DEFAULT_FREQ_MHZ: float = 2500.0
 OPS_PER_CYCLE_AVX2: int = 16  # AVX2: ~16 double-precision FLOPs/cycle
 BYTES_PER_GB: int = 1024**3
 
-# Tier thresholds and styling
-TIER_CONFIG: list[tuple[int, str, str]] = [
-    (500, "OBSOLETE", "grey50"),
-    (1000, "CONSUMER", "green"),
-    (2000, "WORKSTATION", "blue"),
-    (4000, "HIGH-PERFORMANCE", "magenta"),
-    (999999, "SERVER GRADE", "bold red"),
-]
-
 # Visual theme
 THEME = {
     "primary": "cyan",
@@ -74,13 +65,10 @@ class HardwareSpecs:
 class ComputeMetrics:
     """Calculated compute performance metrics."""
 
-    compute_index: int = 0
     theoretical_gflops: float = 0.0
-    tier_name: str = ""
-    tier_style: str = ""
-    core_score: float = 0.0
-    freq_multiplier: float = 0.0
-    ram_score: float = 0.0
+    physical_cores: int = 0
+    peak_ghz: float = 0.0
+    ops_per_cycle: int = 0
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -152,43 +140,19 @@ class SystemScanner:
             return "Unknown Processor"
 
     def calculate_metrics(self) -> None:
-        """Calculate compute power index and theoretical GFLOPS."""
+        """Calculate theoretical GFLOPS."""
         s = self.specs
 
-        # Core score: physical cores weighted heavily, threads add bonus
-        thread_bonus = max(0, s.logical_cores - s.physical_cores)
-        core_score = (s.physical_cores * 100.0) + (thread_bonus * 30.0)
-
-        # Frequency multiplier (normalized to 2.5 GHz baseline)
-        ghz = s.max_freq_mhz / 1000.0
-        freq_multiplier = ghz / 2.5
-
-        cpu_total = core_score * freq_multiplier
-
-        # Memory bonus (5 points per GB)
-        ram_gb = s.total_ram_bytes / BYTES_PER_GB
-        ram_score = ram_gb * 5.0
-
-        compute_index = int(cpu_total + ram_score)
-
-        # Theoretical GFLOPS (Rpeak) = cores × GHz × FLOPs/cycle
-        theoretical_gflops = s.physical_cores * ghz * OPS_PER_CYCLE_AVX2
-
-        # Determine tier
-        tier_name, tier_style = "UNKNOWN", "white"
-        for threshold, name, style in TIER_CONFIG:
-            if compute_index < threshold:
-                tier_name, tier_style = name, style
-                break
+        # Theoretical GFLOPS (Rpeak) = cores × Peak GHz × FLOPs/cycle
+        # We use peak frequency here as per standard Rpeak definition
+        ghz_peak = s.max_freq_mhz / 1000.0
+        theoretical_gflops = s.physical_cores * ghz_peak * OPS_PER_CYCLE_AVX2
 
         self.metrics = ComputeMetrics(
-            compute_index=compute_index,
             theoretical_gflops=theoretical_gflops,
-            tier_name=tier_name,
-            tier_style=tier_style,
-            core_score=core_score,
-            freq_multiplier=freq_multiplier,
-            ram_score=ram_score,
+            physical_cores=s.physical_cores,
+            peak_ghz=ghz_peak,
+            ops_per_cycle=OPS_PER_CYCLE_AVX2,
         )
 
     def _build_header(self) -> Panel:
@@ -275,42 +239,48 @@ class SystemScanner:
         m = self.metrics
 
         # Build score display with visual flair
-        content = Table.grid(padding=(0, 2), expand=True)
+        content = Table.grid(padding=(0, 1), expand=True)
         content.add_column(justify="center")
-
-        # Main score with large emphasis
-        score_text = Text()
-        score_text.append("\n┌─────────────────────────────────────────┐\n", style="dim yellow")
-        score_text.append("│  COMPUTE POWER INDEX  │  ", style="dim yellow")
-        score_text.append(f"{m.compute_index:,}", style="bold yellow on black")
-        score_text.append("  │\n", style="dim yellow")
-        score_text.append("└─────────────────────────────────────────┘\n", style="dim yellow")
-
-        content.add_row(Align.center(score_text))
-
-        # Breakdown table
-        breakdown = Table(show_header=False, box=None, padding=(0, 4))
-        breakdown.add_column(style="dim")
-        breakdown.add_column(style="bold", justify="right")
-        breakdown.add_row("Core Score:", f"{m.core_score:.0f}")
-        breakdown.add_row("Freq Multiplier:", f"×{m.freq_multiplier:.2f}")
-        breakdown.add_row("RAM Bonus:", f"+{m.ram_score:.0f}")
-
-        content.add_row(Align.center(breakdown))
 
         # Theoretical GFLOPS
         gflops_text = Text()
-        gflops_text.append("\n⚡ Theoretical Rpeak: ", style="dim white")
-        gflops_text.append(f"{m.theoretical_gflops:.2f} GFLOPS", style="bold red underline")
-        gflops_text.append(" (AVX2)", style="dim")
+        gflops_text.append("THEORETICAL PEAK PERFORMANCE (Rpeak)", style="bold yellow")
         content.add_row(Align.center(gflops_text))
 
-        # Tier with styled badge
-        tier_text = Text()
-        tier_text.append("\n\n◉ CLASSIFICATION: ", style="bold white")
-        tier_text.append(f" {m.tier_name} ", style=f"bold white on {m.tier_style}")
-        tier_text.append("\n", style="")
-        content.add_row(Align.center(tier_text))
+        val_text = Text()
+        val_text.append(f"{m.theoretical_gflops:.2f} GFLOPS", style="bold red underline")
+        content.add_row(Align.center(val_text))
+
+        content.add_row("")  # Spacer
+
+        # Explanation
+        expl_table = Table(
+            show_header=True, box=box.SIMPLE, padding=(0, 2), collapse_padding=True
+        )
+        expl_table.add_column("Component", style="cyan", justify="right")
+        expl_table.add_column("Value", style="bold white", justify="left")
+        expl_table.add_column("Description", style="dim", justify="left")
+
+        expl_table.add_row(
+            "Physical Cores", str(m.physical_cores), "Number of physical processing units"
+        )
+        expl_table.add_row(
+            "Peak Frequency", f"{m.peak_ghz:.2f} GHz", "Maximum clock speed"
+        )
+        expl_table.add_row(
+            "FLOPs/Cycle",
+            str(m.ops_per_cycle),
+            "Double-precision operations per cycle (AVX2)",
+        )
+
+        content.add_row(Align.center(expl_table))
+
+        content.add_row("")  # Spacer
+
+        formula_text = Text(
+            "Calculation: Cores × Frequency × Ops/Cycle", style="dim italic"
+        )
+        content.add_row(Align.center(formula_text))
 
         return Panel(
             content,
@@ -328,7 +298,7 @@ class SystemScanner:
             Layout(self._build_header(), name="header", size=5),
             Layout(name="body", ratio=2),
             Layout(Rule("─", style="dim"), name="divider", size=1),
-            Layout(self._build_metrics_panel(), name="metrics", size=14),
+            Layout(self._build_metrics_panel(), name="metrics", size=16),
         )
 
         layout["body"].split_row(
