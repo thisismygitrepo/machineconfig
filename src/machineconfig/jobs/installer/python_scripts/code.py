@@ -2,7 +2,6 @@
 
 from typing import Optional
 import platform
-import subprocess
 from rich import box
 from rich.console import Console
 from rich.panel import Panel
@@ -50,13 +49,16 @@ winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsof
         raise NotImplementedError(error_msg)
     _ = version
 
-    console.print("🔄 EXECUTING | Running VS Code installation...", style="bold yellow")
-    try:
-        subprocess.run(install_script, shell=True, text=True, check=True)
-        console.print("✅ VS Code installation completed successfully", style="bold green")
-    except subprocess.CalledProcessError as e:
-        console.print(f"❌ Installation failed with exit code {e.returncode}", style="bold red")
-        raise
+    # import subprocess
+    # console.print("🔄 EXECUTING | Running VS Code installation...", style="bold yellow")
+    # try:
+    #     subprocess.run(install_script, shell=True, text=True, check=True)
+    #     console.print("✅ VS Code installation completed successfully", style="bold green")
+    # except subprocess.CalledProcessError as e:
+    #     console.print(f"❌ Installation failed with exit code {e.returncode}", style="bold red")
+    #     raise
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(install_script,)
 
 
 if __name__ == "__main__":
