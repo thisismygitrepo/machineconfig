@@ -8,7 +8,7 @@
 # Note: if ssh key is created on Windows, it may not work on Linux due to DOS line endings.
 
 $ErrorActionPreference = "Stop"
-Set-ExecutionPolicy -Scope CurrentUser Bypass
+try { Set-ExecutionPolicy -Scope CurrentUser Bypass -ErrorAction SilentlyContinue } catch { }
 
 # ===== INSTALLATION METHOD SELECTOR =====
 $UseWinget = $true  # $true = winget (default, recommended), $false = Windows Capability
