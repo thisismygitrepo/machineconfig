@@ -50,9 +50,14 @@ def add_ssh_identity():
 def show_address() -> None:
     """📌 Show this computer addresses on network"""
     import machineconfig.scripts.python.helpers_network.address as helper
-    loaded_json = helper.get_public_ip_address()
-    from rich import print_json
-    print_json(data=loaded_json)
+
+    try:
+        loaded_json = helper.get_public_ip_address()
+        from rich import print_json
+        print_json(data=loaded_json)
+    except Exception as e:
+        print(f"⚠️  Could not fetch public IP address: {e}")
+        loaded_json = {}
 
     from rich.table import Table
     from rich.console import Console

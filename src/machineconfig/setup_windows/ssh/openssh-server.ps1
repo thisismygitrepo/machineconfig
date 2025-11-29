@@ -1,7 +1,7 @@
 
 $ErrorActionPreference = "Stop"
 # ALL of the following require admin priviliages:
-Set-ExecutionPolicy Bypass
+Set-ExecutionPolicy -Scope CurrentUser Bypass
 # PowerShell.exe -ExecutionPolicy Bypass -File "C:\bypass\prompt\standard.ps1" 2>&1>$null
 
 # Install SSH-Server on a windows machine. see this one below if this one didn't work:

@@ -155,7 +155,7 @@ def check_tool_exists(tool_name: str) -> bool:
             version = result.stdout.strip().lstrip('v')
             nvm_bin_path = Path.home() / ".nvm" / "versions" / "node" / f"v{version}" / "bin" / tool_name
             npm_check = nvm_bin_path.is_file()
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, FileNotFoundError):
             pass
         return npm_check
     else:

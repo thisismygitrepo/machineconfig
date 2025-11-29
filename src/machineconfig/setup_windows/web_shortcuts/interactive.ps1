@@ -3,16 +3,16 @@
 iex (iwr "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_windows/uv.ps1").Content
 iex (iwr "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/scripts/windows/wrap_mcfg.ps1").Content
 
-function devops   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" devops $args }
-function cloud    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" cloud $args }
-function agents   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" agents $args }
-function sessions { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" sessions $args }
-function ftpx     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" ftpx $args }
-function fire     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" fire $args }
-function croshell { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" croshell $args }
-function utils    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" utils $args }
-function terminal { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" terminal $args }
-function msearch  { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.23" msearch $args }
+function devops   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" devops $args }
+function cloud    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" cloud $args }
+function agents   { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" agents $args }
+function sessions { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" sessions $args }
+function ftpx     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" ftpx $args }
+function fire     { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" fire $args }
+function croshell { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" croshell $args }
+function utils    { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" utils $args }
+function terminal { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" terminal $args }
+function msearch  { & "$HOME\.local\bin\uvx.exe" --python 3.14 --from "machineconfig>=8.24" msearch $args }
 
 function d { wrap_in_shell_script devops @args }
 function c { wrap_in_shell_script cloud @args }
