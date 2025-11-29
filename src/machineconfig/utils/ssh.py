@@ -229,7 +229,10 @@ class SSH:
         self.copy_from_here(source_path="~/.ssh/id_rsa.pub", target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
         if self.remote_specs["system"] != "Windows":
             raise RuntimeError("send_ssh_key is only supported for Windows remote machines")
-        code_url = "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/setup_windows/ssh/openssh-server_add-sshkey.ps1"
+        from machineconfig.setup_windows import SSH_ADD_KEY
+        from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+        add_ssh_key_relative = SSH_ADD_KEY.relative_to(LIBRARY_ROOT)
+        code_url = f"https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/{add_ssh_key_relative.as_posix()}"
         import urllib.request
 
         with urllib.request.urlopen(code_url) as response:

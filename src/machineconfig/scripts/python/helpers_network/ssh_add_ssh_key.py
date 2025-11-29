@@ -2,7 +2,7 @@
 
 from platform import system
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 from rich import box
@@ -13,13 +13,13 @@ import typer
 console = Console()
 
 
-def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
+def get_add_ssh_key_script(path_to_key: Path) -> str:
     console.print(Panel("🔑 SSH KEY CONFIGURATION", title="[bold blue]SSH Setup[/bold blue]"))
     if system() == "Linux" or system() == "Darwin":
-        authorized_keys = PathExtended.home().joinpath(".ssh/authorized_keys")
+        authorized_keys = Path.home().joinpath(".ssh/authorized_keys")
         console.print(Panel(f"🐧 Linux SSH configuration\n📄 Authorized keys file: {authorized_keys}", title="[bold blue]System Info[/bold blue]"))
     elif system() == "Windows":
-        authorized_keys = PathExtended("C:/ProgramData/ssh/administrators_authorized_keys")
+        authorized_keys = Path("C:/ProgramData/ssh/administrators_authorized_keys")
         console.print(Panel(f"🪟 Windows SSH configuration\n📄 Authorized keys file: {authorized_keys}", title="[bold blue]System Info[/bold blue]"))
     else:
         console.print(Panel("❌ ERROR: Unsupported operating system\nOnly Linux and Windows are supported", title="[bold red]Error[/bold red]"))
@@ -38,10 +38,10 @@ def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
             if system() == "Linux" or system() == "Darwin":
                 program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
             elif system() == "Windows":
-                program_path = LIBRARY_ROOT.joinpath("setup_windows/ssh/add-sshkey.ps1")
-                program = program_path.expanduser().read_text(encoding="utf-8")
+                from machineconfig.setup_windows import SSH_ADD_KEY
+                program = Path(SSH_ADD_KEY).expanduser().read_text(encoding="utf-8")
                 place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
-                assert place_holder in program, f"This section performs string manipulation on the script {program_path} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
+                assert place_holder in program, f"This section performs string manipulation on the script {SSH_ADD_KEY} to add the key to the authorized_keys file. The script has changed and the string {place_holder} is not found."
                 program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
                 console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Replaced placeholder with actual key path", title="[bold blue]Configuration[/bold blue]"))
             else:
@@ -51,8 +51,8 @@ def get_add_ssh_key_script(path_to_key: PathExtended) -> str:
         if system() == "Linux" or system() == "Darwin":
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
-            program_path = LIBRARY_ROOT.joinpath("setup_windows/ssh/openssh-server_add-sshkey.ps1")
-            program = PathExtended(program_path).expanduser().read_text(encoding="utf-8").replace('$sshfile=""', f'$sshfile="{path_to_key}"')
+            from machineconfig.setup_windows import SSH_ADD_KEY
+            program = Path(SSH_ADD_KEY).expanduser().read_text(encoding="utf-8").replace('$sshfile=""', f'$sshfile="{path_to_key}"')
             console.print(Panel("🔧 Configured PowerShell script for Windows\n📝 Set key path in script", title="[bold blue]Configuration[/bold blue]"))
 
     if system() == "Linux" or system() == "Darwin":
@@ -83,7 +83,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to th
          ) -> None:
     
     if pub_path:
-        key_path = PathExtended(pub_path).expanduser().absolute()
+        key_path = Path(pub_path).expanduser().absolute()
         key_path.parent.mkdir(parents=True, exist_ok=True)
         if not key_path.exists():
             console.print(Panel(f"❌ ERROR: Provided key path does not exist\nPath: {key_path}", title="[bold red]Error[/bold red]"))
@@ -97,7 +97,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to th
     elif pub_choose:
         console.print(Panel("🔐 SSH PUBLIC KEY AUTHORIZATION TOOL", box=box.DOUBLE_EDGE, title_align="left"))
         console.print(Panel("🔍 Searching for public keys...", title="[bold blue]SSH Setup[/bold blue]", border_style="blue"))
-        pub_keys = PathExtended.home().joinpath(".ssh").search("*.pub")
+        pub_keys = list(Path.home().joinpath(".ssh").glob("*.pub"))
         if pub_keys:
             console.print(Panel(f"✅ Found {len(pub_keys)} public key(s)", title="[bold green]Status[/bold green]", border_style="green"))
         else:
@@ -109,7 +109,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to th
     elif pub_val:
         console.print(Panel("📋 Please provide a filename and paste the public key content", title="[bold blue]Input Required[/bold blue]", border_style="blue"))
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
-        key_path = PathExtended.home().joinpath(f".ssh/{key_filename}")
+        key_path = Path.home().joinpath(f".ssh/{key_filename}")
         key_path.parent.mkdir(parents=True, exist_ok=True)
         key_path.write_text(input("🔑 Paste the public key here: "), encoding="utf-8")
         console.print(Panel(f"💾 Key saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
@@ -126,7 +126,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(..., help="Path to th
             console.print(Panel(f"⚠️  No public keys found for GitHub user: {from_github}", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
             return
         console.print(Panel(f"✅ Found {len(keys)} public key(s) for user: {from_github}", title="[bold green]Success[/bold green]", border_style="green"))
-        key_path = PathExtended.home().joinpath(f".ssh/{from_github}_github_keys.pub")
+        key_path = Path.home().joinpath(f".ssh/{from_github}_github_keys.pub")
         key_path.parent.mkdir(parents=True, exist_ok=True)
         key_path.write_text("\n".join([key["key"] for key in keys]), encoding="utf-8")
         console.print(Panel(f"💾 Keys saved to: {key_path}", title="[bold green]Success[/bold green]", border_style="green"))
