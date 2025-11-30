@@ -26,11 +26,11 @@
 
 #     print(f"\n✅ Running tasks in {root}\n")
 
-#     if args.report:
-#         print("📊 Generating report...")
-#         reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in PathExtended(root).search("*").filter(lambda path: path.joinpath("task.py").exists())]
+    # if args.report:
+    #     print("📊 Generating report...")
+    #     reports: list[Report] = [Report.from_path(read_task_from_dir(x).report_path) for x in PathExtended(root).glob("*")]
 
-#         # Format as markdown table
+        # Format as markdown table
 #         report_data = [r.__dict__ for r in reports]
 #         if report_data:
 #             # Get keys from first report

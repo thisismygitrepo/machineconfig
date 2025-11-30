@@ -117,7 +117,7 @@ def perform_git_operations(repos_root: PathExtended, pull: bool, commit: bool, p
         operations_performed.append("push")
 
     # Collect all candidate paths first
-    paths = list(repos_root.search("*"))
+    paths = list(repos_root.glob("*"))
 
     def _process_path(a_path: PathExtended) -> Dict[str, Any]:
         """Worker that processes a single path and returns metadata and results."""

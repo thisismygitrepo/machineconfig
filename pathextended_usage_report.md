@@ -68,20 +68,10 @@ Files are ordered from least to most use of custom methods (not inherited method
 ### 52. `src/machineconfig/utils/scheduling.py`
 - `PathExtended` type - Used in type hints
 - `PathExtended(path)` - Constructor
-- `.expanduser()` - Standard (Path)
-- `.absolute()` - Standard (Path)
-- `.joinpath()` - Standard (Path)
-- `.exists()` - Standard (Path)
-- `.parent` - Standard (Path property)
-- `.name` - Standard (Path property)
 - `PathExtended.tmp()` - Custom
-- `.mkdir()` - Standard (Path)
-- `.write_text()` - Standard (Path)
 
 ### 55. `src/machineconfig/scripts/python/helpers_croshell/pomodoro.py`
 - `PathExtended.tmpfile()` - Custom
-- `.parent` - Standard (Path property)
-- `.name` - Standard (Path property)
 
 ---
 
@@ -114,42 +104,19 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ### 43. `src/machineconfig/cluster/remote/job_params.py`
 - `PathExtended(path)` - Constructor
-- `.expanduser()` - Standard (Path)
-- `.absolute()` - Standard (Path)
 - `.listdir()` - Custom (Unknown Origin)
 - `.collapseuser()` - Custom
-- `.as_posix()` - Standard (Path)
-- `.name` - Standard (Path property)
-- `.stem` - Standard (Path property)
-- `.parent` - Standard (Path property)
-- `.relative_to()` - Standard (Path)
-- `.joinpath()` - Standard (Path)
-- `.read_text()` - Standard (Path)
 
 ### 47. `src/machineconfig/cluster/remote/file_manager.py`
 - `PathExtended(path)` - Constructor
-- `.expanduser()` - Standard (Path)
 - `.readit()` - Custom (Unknown Origin)
 - `.collapseuser()` - Custom
-- `.joinpath()` - Standard (Path)
-- `.with_suffix()` - Standard (Path)
-- `.write_text()` - Standard (Path)
-- `.read_text()` - Standard (Path)
-- `.name` - Standard (Path property)
-- `.exists()` - Standard (Path)
 
 ### 56. `src/machineconfig/scripts/python/helpers_croshell/scheduler.py`
 - `PathExtended` type - Used in type hints
 - `PathExtended(path)` - Constructor
-- `.expanduser()` - Standard (Path)
-- `.absolute()` - Standard (Path)
-- `.joinpath()` - Standard (Path)
-- `.exists()` - Standard (Path)
-- `.name` - Standard (Path property)
-- `.mkdir()` - Standard (Path)
 - `.search()` - Custom
 - `.filter()` - Custom (on result of search)
-- `.write_text()` - Standard (Path)
 
 ---
 
@@ -193,64 +160,35 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `PathExtended.tmpfile()` - Create temporary file
 
 ### 42. `src/machineconfig/cluster/remote/distribute.py`
-- `PathExtended.home()` - Standard (Path)
 - `PathExtended(path)` - Constructor
-- `.joinpath()` - Standard (Path)
 - `.readit()` - Custom (Unknown Origin)
-- `.expanduser()` - Standard (Path)
-- `.as_posix()` - Standard (Path)
-- `.read_text()` - Standard (Path)
-- `.parent` - Standard (Path property)
-- `.name` - Standard (Path property)
-- `.stem` - Standard (Path property)
-- `.relative_to()` - Standard (Path)
 - `.collapseuser()` - Custom
 - `.listdir()` - Custom (Unknown Origin)
 
 ### 45. `src/machineconfig/cluster/remote/script_execution.py`
 - `PathExtended(path)` - Constructor
-- `.expanduser()` - Standard (Path)
-- `.exists()` - Standard (Path)
 - `PathExtended.tmp()` - Custom
-- `.mkdir()` - Standard (Path)
 - `.collapseuser()` - Custom
-- `.as_posix()` - Standard (Path)
-- `.joinpath()` - Standard (Path)
-- `.write_text()` - Standard (Path)
-- `.read_bytes()` - Standard (Path)
 - `.copy()` - Custom
 
 ### 48. `src/machineconfig/cluster/remote/remote_machine.py`
 - `PathExtended` type - Used in type hints
 - `PathExtended(path)` - Constructor
-- `.parent` - Standard (Path property)
-- `.joinpath()` - Standard (Path)
-- `.read_text()` - Standard (Path)
-- `.expanduser()` - Standard (Path)
-- `.name` - Standard (Path property)
-- `.write_text()` - Standard (Path)
 - `.collapseuser()` - Custom
-- `.as_posix()` - Standard (Path)
-- `.exists()` - Standard (Path)
 - `.rel2home()` - Custom
 - `.delete()` - Custom
 
 ### 51. `src/machineconfig/cluster/remote/script_notify_upon_completion.py`
 - `PathExtended()` - Constructor
 - `.collapseuser()` - Custom
-- `.as_posix()` - Standard (Path)
 - `.search()` - Custom
 - `.print()` - Custom (on result of search)
 
 ### 54. `src/machineconfig/utils/installer_utils/install_from_url.py`
 - `PathExtended` type - Used in type hints
 - `PathExtended(path)` - Constructor
-- `.is_file()` - Standard (Path)
-- `.suffixes` - Standard (Path property)
 - `.decompress()` - Custom
 - `.delete()` - Custom
-- `.is_dir()` - Standard (Path)
-- `.glob()` - Standard (Path)
 - `.search()` - Custom
 
 ---
@@ -279,10 +217,6 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `.download()` - Custom
 - `.decompress()` - Custom
 - `.delete()` - Custom
-- `.is_file()` - Standard (Path)
-- `.is_dir()` - Standard (Path)
-- `.suffixes` - Standard (Path property)
-- `.glob()` - Standard (Path)
 - `.search()` - Custom
 
 ---
@@ -303,21 +237,10 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ### 46. `src/machineconfig/cluster/remote/cloud_manager.py`
 - `PathExtended(path)` - Constructor
-- `.expanduser()` - Standard (Path)
 - `.delete()` - Custom
-- `.joinpath()` - Standard (Path)
-- `.mkdir()` - Standard (Path)
-- `.read_bytes()` - Standard (Path)
-- `.read_text()` - Standard (Path)
-- `.write_text()` - Standard (Path)
-- `.exists()` - Standard (Path)
-- `.parent` - Standard (Path property)
 - `PathExtended.tmp()` - Custom
 - `.from_cloud()` - Custom
 - `.get_remote_path()` - Custom
-- `.iterdir()` - Standard (Path)
-- `.stat()` - Standard (Path)
-- `.name` - Standard (Path property)
 - `.to_cloud()` - Custom
 - `.sync_to_cloud()` - Custom
 
@@ -341,22 +264,16 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ### 50. `src/machineconfig/cluster/remote/data_transfer.py`
 - `PathExtended(path)` - Constructor
-- `.expanduser()` - Standard (Path)
 - `.zip_n_encrypt()` - Custom
 - `.collapseuser()` - Custom
 - `.share_on_cloud()` - Custom (Unknown Origin)
 - `.download()` - Custom
 - `.decrypt_n_unzip()` - Custom
 - `.delete()` - Custom
-- `.parent` - Standard (Path property)
-- `.write_text()` - Standard (Path)
-- `.read_text()` - Standard (Path)
 - `.rel2home()` - Custom
-- `.as_posix()` - Standard (Path)
 - `.zip()` - Custom
 - `.as_url_str()` - Custom
 - `.to_cloud()` - Custom
-- `.is_dir()` - Standard (Path)
 
 
 

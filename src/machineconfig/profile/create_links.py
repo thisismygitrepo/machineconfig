@@ -117,7 +117,7 @@ def apply_mapper(mapper_data: dict[str, list[ConfigMapper]],
             # Determine whether to use copy or symlink
             use_copy = method == "copy" or a_mapper.get("copy", False)
             if "contents" in a_mapper and a_mapper["contents"]:
-                targets = list(self_managed_config_file_path.expanduser().search("*"))
+                targets = list(self_managed_config_file_path.expanduser().glob("*"))
                 for a_target in targets:
                     operation_type = "contents_copy" if use_copy else "contents_symlink"
                     try:

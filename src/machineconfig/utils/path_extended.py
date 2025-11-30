@@ -103,7 +103,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         slf = self.expanduser().resolve()
         if content:
             assert self.is_dir(), NotADirectoryError(f"💥 When `content` flag is set to True, path must be a directory. It is not: `{repr(self)}`")
-            [x.move(folder=path.parent, content=False, overwrite=overwrite) for x in self.search("*")]
+            [x.move(folder=path.parent, content=False, overwrite=overwrite) for x in self.glob("*")]
             return path  # contents live within this directory.
         if overwrite:
             tmp_path = slf.rename(path.parent.absolute() / randstr())

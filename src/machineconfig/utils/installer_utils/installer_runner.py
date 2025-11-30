@@ -79,9 +79,9 @@ def get_installed_cli_apps():
     elif platform.system() in ["Linux", "Darwin"]:
         print(f"🐧 Searching for {platform.system()} executables...")
         if platform.system() == "Linux":
-            apps = PathExtended(LINUX_INSTALL_PATH).search("*") + PathExtended("/usr/local/bin").search("*")
+            apps = list(PathExtended(LINUX_INSTALL_PATH).glob("*")) + list(PathExtended("/usr/local/bin").glob("*"))
         else:  # Darwin/macOS
-            apps = PathExtended("/usr/local/bin").search("*") + PathExtended("/opt/homebrew/bin").search("*")
+            apps = list(PathExtended("/usr/local/bin").glob("*")) + list(PathExtended("/opt/homebrew/bin").glob("*"))
     else:
         error_msg = f"❌ ERROR: System {platform.system()} not supported"
         print(error_msg)

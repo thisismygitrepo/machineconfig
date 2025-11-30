@@ -52,7 +52,7 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
         tmp_folder = PathExtended.tmpdir(prefix="tmp_unzip")
         try:
             res = url_obj.decrypt(pwd=pwd, inplace=True).unzip(inplace=True, folder=tmp_folder)
-            for x in res.search("*"):
+            for x in res.glob("*"):
                 x.move(folder=folder_obj, overwrite=True)
         finally:
             # Clean up temporary folder
