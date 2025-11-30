@@ -146,7 +146,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         elif all("127.0.0.1" in l or "[::1]" in l for l in listening):
             results["ssh_listening"] = {"status": "error", "message": "Localhost only"}
             issues.append(("SSH bound to localhost", "Only local connections", f"Edit {sshd_config}: remove/comment ListenAddress 127.0.0.1"))
-            net_info.append(f"❌ Listening: [red]localhost only[/red]")
+            net_info.append("❌ Listening: [red]localhost only[/red]")
         else:
             results["ssh_listening"] = {"status": "ok", "message": f"Listening on {ssh_port}"}
             net_info.append(f"✅ Listening: 0.0.0.0:{ssh_port}")
@@ -162,7 +162,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
             results["firewall"] = {"status": "error", "message": "UFW blocking SSH"}
             issues.append(("UFW blocking SSH", "Incoming connections dropped", f"sudo ufw allow {ssh_port}/tcp"))
             net_info.append("❌ Firewall (UFW): [red]blocking SSH[/red]")
-            net_info.append(f"   [dim]Active firewall without SSH rule = blocked[/dim]")
+            net_info.append("   [dim]Active firewall without SSH rule = blocked[/dim]")
 
     if not fw_checked:
         ok, fwd_out = _run(["firewall-cmd", "--state"])

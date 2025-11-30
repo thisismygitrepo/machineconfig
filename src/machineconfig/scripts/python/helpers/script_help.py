@@ -1,5 +1,3 @@
-import requests
-
 
 from typing import Literal
 
@@ -67,7 +65,7 @@ def list_available_scripts(where: Literal["all", "a", "private", "p", "public", 
                 else:
                     print("  (empty)")
             else:
-                print(f"  ⚠️  Directory does not exist")
+                print("  ⚠️  Directory does not exist")
         else:
             api_url = "https://api.github.com/repos/thisismygitrepo/machineconfig/contents/src/machineconfig/jobs/scripts_dynamic"
             try:
