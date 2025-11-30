@@ -81,35 +81,35 @@ draw_box "🔍 TYPE CHECKERS & LINTERS 🔍" "${BOLD}${PURPLE}"
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyright Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyright...${NC}"
-rm ./.ai/linters/issues_pyright.md || true
+rm -f ./.ai/linters/issues_pyright.md || true
 uv run pyright . > ./.ai/linters/issues_pyright.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyright.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "MyPy Type Checker"
 echo -e "${BLUE}📋 Analyzing types with MyPy...${NC}"
-rm ./.ai/linters/issues_mypy.md || true
+rm -f ./.ai/linters/issues_mypy.md || true
 uv run mypy . > ./.ai/linters/issues_mypy.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_mypy.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pylint Code Analysis"
 echo -e "${BLUE}📋 Analyzing code quality with Pylint...${NC}"
-rm ./.ai/linters/issues_pylint.md || true
+rm -f ./.ai/linters/issues_pylint.md || true
 uv run pylint --recursive=y . > ./.ai/linters/issues_pylint.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pylint.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyrefly Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyrefly...${NC}"
-rm ./.ai/linters/issues_pyrefly.md || true
+rm -f ./.ai/linters/issues_pyrefly.md || true
 uv run pyrefly check . > ./.ai/linters/issues_pyrefly.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyrefly.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Ruff Linter"
 echo -e "${BLUE}📋 Checking code style with Ruff...${NC}"
-rm ./.ai/linters/issues_ruff.md || true
+rm -f ./.ai/linters/issues_ruff.md || true
 uv run ruff check . > ./.ai/linters/issues_ruff.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ruff.md${NC}"
 
