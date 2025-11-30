@@ -4,276 +4,335 @@ This report documents which Python files import `PathExtended` from `machineconf
 Files are ordered from least to most use of custom methods (not inherited methods of pathlib).
 
 
-
 ---
 
 ## 1 Custom Method
 
-### 6. `src/machineconfig/profile/create_shell_profile.py`
+### 1. `src/machineconfig/scripts/python/helpers_cloud/cloud_mount.py`
+- `.print()` - Print path
 - `PathExtended(path)` - Constructor
-- `.collapseuser()` - Collapse home directory to placeholder
 
-### 8. `src/machineconfig/utils/terminal.py`
+### 2. `src/machineconfig/scripts/python/helpers_croshell/pomodoro.py`
+- `.tmpfile()` - Create temporary file
+
+### 3. `src/machineconfig/scripts/python/helpers_croshell/scheduler.py`
+- `.append()` - Append suffix/name
+
+### 4. `src/machineconfig/scripts/python/helpers_devops/cli_repos.py`
+- `.to_cloud()` - Upload to cloud storage
 - `PathExtended(path)` - Constructor
-- `PathExtended.tmpfile()` - Create temporary file
 
-### 10. `src/machineconfig/profile/create_links.py`
+### 5. `src/machineconfig/scripts/python/helpers_repos/entrypoint.py`
+- `.from_cloud()` - Download from cloud storage
 - `PathExtended(path)` - Constructor
-- `.search()` - Search for files matching pattern
 
-### 12. `src/machineconfig/scripts/python/croshell.py`
+### 6. `src/machineconfig/utils/terminal.py`
+- `.print()` - Print path
 - `PathExtended(path)` - Constructor
-- `PathExtended.tmp()` - Get temp directory
-- `.with_suffix()` - Change file extension
-
-### 13. `src/machineconfig/scripts/python/helpers_repos/action.py`
-- `PathExtended(path)` - Constructor
-- `.search()` - Search for files matching pattern
-
-### 14. `src/machineconfig/scripts/python/helpers_repos/grource.py`
-- `PathExtended(url).download()` - Download from URL
-
-### 20. `src/machineconfig/scripts/python/helpers_fire_command/fire_jobs_route_helper.py`
-- `PathExtended(path)` - Constructor
-- `.with_name()` - Rename file
-- `PathExtended.tmpfile()` - Create temporary file
-
-### 23. `src/machineconfig/scripts/python/helpers_repos/entrypoint.py`
-- `PathExtended(path)` - Constructor
-- `.rel2home()` - Get path relative to home
-
-### 25. `src/machineconfig/setup_windows/wt_and_pwsh/set_wt_settings.py`
-- `PathExtended(path)` - Constructor
-- `.copy()` - Copy files
-
-### 28. `src/machineconfig/scripts/python/helpers_devops/devops_status.py`
-- `PathExtended(path)` - Constructor
-- `.collapseuser()` - Collapse home directory to placeholder
-
-### 30. `src/machineconfig/scripts/python/helpers_cloud/helpers2.py`
-- `PathExtended(path)` - Constructor
-- `.get_remote_path()` - Get cloud storage path
-
-### 32. `src/machineconfig/scripts/python/helpers_cloud/cloud_mount.py`
-- `PathExtended.tmpfile()` - Create temporary file
-
-### 35. `src/machineconfig/scripts/python/nw/ftpx.py`
-- `PathExtended(path)` - Constructor
-- `.collapseuser()` - Collapse home directory to placeholder
-
-### 37. `src/machineconfig/scripts/python/nw/devops_add_ssh_key.py`
-- `PathExtended(path)` - Constructor
-- `.search()` - Search for files matching pattern
-
-### 52. `src/machineconfig/utils/scheduling.py`
-- `PathExtended` type - Used in type hints
-- `PathExtended(path)` - Constructor
-- `PathExtended.tmp()` - Custom
-
-### 55. `src/machineconfig/scripts/python/helpers_croshell/pomodoro.py`
-- `PathExtended.tmpfile()` - Custom
-
----
 
 ## 2 Custom Methods
 
-### 4. `src/machineconfig/jobs/installer/custom_dev/bypass_paywall.py`
-- `PathExtended(url).download()` - Download from URL
-- `.unzip()` - Unzip archive
-
-### 16. `src/machineconfig/scripts/python/helpers_croshell/start_slidev.py`
-- `PathExtended(path)` - Constructor
-- `.search()` - Search for files matching pattern
-- `.copy()` - Copy files
-- `.with_name()` - Rename file
-
-### 34. `src/machineconfig/scripts/python/cli_repos.py`
-- `PathExtended(path)` - Constructor
-- `.rel2home()` - Get path relative to home
-- `.to_cloud()` - Upload to cloud storage
-
-### 36. `src/machineconfig/scripts/python/nw/devops_add_identity.py`
-- `.search()` - Search for files matching pattern
-- `.with_name()` - Rename file
+### 7. `src/machineconfig/profile/create_shell_profile.py`
 - `.collapseuser()` - Collapse home directory to placeholder
-
-### 39. `src/machineconfig/scripts/python/nw/wsl_windows_transfer.py`
+- `.print()` - Print path
 - `PathExtended(path)` - Constructor
-- `.copy()` - Copy files
-- `.rel2home()` - Get path relative to home
 
-### 43. `src/machineconfig/cluster/remote/job_params.py`
-- `PathExtended(path)` - Constructor
-- `.listdir()` - Custom (Unknown Origin)
-- `.collapseuser()` - Custom
+### 8. `src/machineconfig/scripts/python/croshell.py`
+- `.print()` - Print path
+- `.with_suffix()` - Change file extension
 
-### 47. `src/machineconfig/cluster/remote/file_manager.py`
-- `PathExtended(path)` - Constructor
-- `.readit()` - Custom (Unknown Origin)
-- `.collapseuser()` - Custom
+### 9. `src/machineconfig/scripts/python/helpers_croshell/viewer.py`
+- `.split()` - Split path
+- `.tmpdir()` - Get temporary directory
 
-### 56. `src/machineconfig/scripts/python/helpers_croshell/scheduler.py`
-- `PathExtended` type - Used in type hints
-- `PathExtended(path)` - Constructor
-- `.search()` - Custom
-- `.filter()` - Custom (on result of search)
-
----
+### 10. `src/machineconfig/scripts/python/helpers_repos/action.py`
+- `.append()` - Append suffix/name
+- `.search()` - Search for files matching pattern
 
 ## 3 Custom Methods
 
-### 1. `src/machineconfig/utils/installer_utils/installer_runner.py`
-- `PathExtended.search()` - Search for files matching pattern
-- `PathExtended(path)` - Constructor to create PathExtended instance
-- `.delete()` - Delete files/directories
-- `.size()` - Get file size
-
-### 2. `src/machineconfig/utils/installer_utils/installer_class.py`
-- `PathExtended(url).download()` - Download from URL
-- `PathExtended(path)` - Constructor
-- `.decompress()` - Decompress archives
-- `.with_name()` - Rename file
+### 11. `src/machineconfig/cluster/remote/script_notify_upon_completion.py`
 - `.collapseuser()` - Collapse home directory to placeholder
-
-### 9. `src/machineconfig/jobs/installer/custom_dev/nerfont_windows_helper.py`
-- `PathExtended.tmpfile()` - Create temporary file
-- `.delete()` - Delete files/directories
+- `.print()` - Print path
 - `.search()` - Search for files matching pattern
 
-### 11. `src/machineconfig/utils/links.py`
+### 12. `src/machineconfig/jobs/installer/python_scripts/bypass_paywall.py`
+- `.download()` - Download from URL
+- `.print()` - Print path
+- `.unzip()` - Unzip archive
 - `PathExtended(path)` - Constructor
+
+### 13. `src/machineconfig/jobs/installer/python_scripts/nerfont_windows_helper.py`
+- `.append()` - Append suffix/name
 - `.delete()` - Delete files/directories
-- `.symlink_to()` - Create symlink
-- `.move()` - Move files
-- `.copy()` - Copy files
+- `.print()` - Print path
+- `PathExtended(path)` - Constructor
+
+### 14. `src/machineconfig/profile/create_links.py`
+- `.append()` - Append suffix/name
+- `.print()` - Print path
+- `.split()` - Split path
+- `PathExtended(path)` - Constructor
+
+### 15. `src/machineconfig/scripts/python/ftpx.py`
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.print()` - Print path
+- `.split()` - Split path
+- `PathExtended(path)` - Constructor
+
+### 16. `src/machineconfig/scripts/python/helpers_cloud/helpers2.py`
+- `.get_remote_path()` - Get cloud storage path
+- `.print()` - Print path
+- `.split()` - Split path
+- `PathExtended(path)` - Constructor
 
 ### 17. `src/machineconfig/scripts/python/helpers_repos/record.py`
-- `PathExtended(path)` - Constructor
+- `.append()` - Append suffix/name
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.search()` - Search for files matching pattern
-- `.rel2home()` - Get path relative to home
-
-### 19. `src/machineconfig/scripts/python/helpers_repos/sync.py`
 - `PathExtended(path)` - Constructor
+
+### 18. `src/machineconfig/scripts/python/helpers_repos/sync.py`
 - `.delete()` - Delete files/directories
+- `.print()` - Print path
 - `.to_cloud()` - Upload to cloud storage
-- `PathExtended.tmpfile()` - Create temporary file
-
-### 42. `src/machineconfig/cluster/remote/distribute.py`
 - `PathExtended(path)` - Constructor
-- `.readit()` - Custom (Unknown Origin)
-- `.collapseuser()` - Custom
-- `.listdir()` - Custom (Unknown Origin)
 
-### 45. `src/machineconfig/cluster/remote/script_execution.py`
-- `PathExtended(path)` - Constructor
-- `PathExtended.tmp()` - Custom
-- `.collapseuser()` - Custom
-- `.copy()` - Custom
+### 19. `src/machineconfig/settings/shells/ipy/profiles/default/startup/playext.py`
+- `.append()` - Append suffix/name
+- `.print()` - Print path
+- `.tmp()` - Get temp directory/file
 
-### 48. `src/machineconfig/cluster/remote/remote_machine.py`
-- `PathExtended` type - Used in type hints
-- `PathExtended(path)` - Constructor
-- `.collapseuser()` - Custom
-- `.rel2home()` - Custom
-- `.delete()` - Custom
+### 20. `src/machineconfig/utils/installer_utils/install_from_url.py`
+- `.append()` - Append suffix/name
+- `.print()` - Print path
+- `.split()` - Split path
 
-### 51. `src/machineconfig/cluster/remote/script_notify_upon_completion.py`
-- `PathExtended()` - Constructor
-- `.collapseuser()` - Custom
-- `.search()` - Custom
-- `.print()` - Custom (on result of search)
-
-### 54. `src/machineconfig/utils/installer_utils/install_from_url.py`
-- `PathExtended` type - Used in type hints
-- `PathExtended(path)` - Constructor
-- `.decompress()` - Custom
-- `.delete()` - Custom
-- `.search()` - Custom
-
----
+### 21. `src/machineconfig/utils/installer_utils/installer_class.py`
+- `.append()` - Append suffix/name
+- `.split()` - Split path
+- `.with_name()` - Rename file
 
 ## 4 Custom Methods
 
-### 3. `src/machineconfig/jobs/installer/custom/hx.py`
-- `PathExtended(path)` - Constructor
-- `.search()` - Search for files
-- `.delete()` - Delete files/directories
-- `.move()` - Move files
-- `.copy()` - Copy files
-
-### 5. `src/machineconfig/utils/installer_utils/installer_locator_utils.py`
-- `PathExtended(path)` - Constructor
+### 22. `.ai/tmp_scripts/generate_pathextended_report.py`
+- `.append()` - Append suffix/name
 - `.search()` - Search for files matching pattern
-- `.with_name()` - Rename file
-- `.size()` - Get file size
-- `.chmod()` - Change file permissions
-- `.move()` - Move files
+- `.split()` - Split path
+- `.tmpfile()` - Create temporary file
+
+### 23. `src/machineconfig/cluster/remote/distribute.py`
+- `.append()` - Append suffix/name
+- `.print()` - Print path
+- `.readit()` - Read file content (Custom)
+- `.split()` - Split path
+
+### 24. `src/machineconfig/cluster/remote/script_execution.py`
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.copy()` - Copy files
+- `.print()` - Print path
+- `.tmp()` - Get temp directory/file
+
+### 25. `src/machineconfig/jobs/installer/python_scripts/hx.py`
+- `.copy()` - Copy files
 - `.delete()` - Delete files/directories
-
-### 53. `src/machineconfig/utils/installer_utils/installer_helper.py`
-- `PathExtended` type - Used in type hints
+- `.move()` - Move files
+- `.print()` - Print path
 - `PathExtended(path)` - Constructor
-- `.download()` - Custom
-- `.decompress()` - Custom
-- `.delete()` - Custom
-- `.search()` - Custom
 
----
+### 26. `src/machineconfig/scripts/python/helpers_croshell/start_slidev.py`
+- `.copy()` - Copy files
+- `.print()` - Print path
+- `.split()` - Split path
+- `.with_name()` - Rename file
+- `PathExtended(path)` - Constructor
+
+### 27. `src/machineconfig/scripts/python/helpers_network/ssh_add_identity.py`
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.print()` - Print path
+- `.split()` - Split path
+- `.with_name()` - Rename file
+- `PathExtended(path)` - Constructor
+
+### 28. `src/machineconfig/scripts/python/helpers_repos/grource.py`
+- `.append()` - Append suffix/name
+- `.download()` - Download from URL
+- `.resolve()` - Resolve path
+- `.split()` - Split path
+- `PathExtended(path)` - Constructor
+
+### 29. `src/machineconfig/settings/wt/set_wt_settings.py`
+- `.append()` - Append suffix/name
+- `.copy()` - Copy files
+- `.print()` - Print path
+- `.split()` - Split path
+- `PathExtended(path)` - Constructor
+
+### 30. `src/machineconfig/utils/installer_utils/installer_runner.py`
+- `.append()` - Append suffix/name
+- `.delete()` - Delete files/directories
+- `.print()` - Print path
+- `.resolve()` - Resolve path
+- `PathExtended(path)` - Constructor
+
+### 31. `src/machineconfig/utils/scheduling.py`
+- `.append()` - Append suffix/name
+- `.print()` - Print path
+- `.split()` - Split path
+- `.tmp()` - Get temp directory/file
 
 ## 5 Custom Methods
 
-### 18. `src/machineconfig/scripts/python/helpers_repos/cloud_repo_sync.py`
+### 32. `src/machineconfig/cluster/remote/file_manager.py`
+- `.append()` - Append suffix/name
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.print()` - Print path
+- `.readit()` - Read file content (Custom)
+- `.with_suffix()` - Change file extension
+
+### 33. `src/machineconfig/cluster/remote/job_params.py`
+- `.append()` - Append suffix/name
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.listdir()` - List directory (Custom)
+- `.readit()` - Read file content (Custom)
+- `.split()` - Split path
+
+### 34. `src/machineconfig/scripts/python/helpers_devops/devops_status.py`
+- `.append()` - Append suffix/name
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.print()` - Print path
+- `.split()` - Split path
+- `.with_suffix()` - Change file extension
 - `PathExtended(path)` - Constructor
+
+### 35. `src/machineconfig/scripts/python/helpers_repos/cloud_repo_sync.py`
 - `.delete()` - Delete files/directories
-- `.get_remote_path()` - Get cloud storage path
 - `.from_cloud()` - Download from cloud storage
+- `.get_remote_path()` - Get cloud storage path
+- `.print()` - Print path
 - `.to_cloud()` - Upload to cloud storage
-- `.rel2home()` - Get path relative to home
-
----
-
-## 6 Custom Methods
-
-### 46. `src/machineconfig/cluster/remote/cloud_manager.py`
 - `PathExtended(path)` - Constructor
-- `.delete()` - Custom
-- `PathExtended.tmp()` - Custom
-- `.from_cloud()` - Custom
-- `.get_remote_path()` - Custom
-- `.to_cloud()` - Custom
-- `.sync_to_cloud()` - Custom
 
----
+### 36. `src/machineconfig/utils/installer_utils/installer_helper.py`
+- `.append()` - Append suffix/name
+- `.decompress()` - Decompress archives
+- `.delete()` - Delete files/directories
+- `.download()` - Download from URL
+- `.print()` - Print path
+- `PathExtended(path)` - Constructor
+
+### 37. `src/machineconfig/utils/installer_utils/installer_locator_utils.py`
+- `.chmod()` - Change file permissions
+- `.delete()` - Delete files/directories
+- `.move()` - Move files
+- `.split()` - Split path
+- `.with_name()` - Rename file
+- `PathExtended(path)` - Constructor
+
+## 7 Custom Methods
+
+### 38. `src/machineconfig/utils/links.py`
+- `.append()` - Append suffix/name
+- `.copy()` - Copy files
+- `.delete()` - Delete files/directories
+- `.move()` - Move files
+- `.print()` - Print path
+- `.resolve()` - Resolve path
+- `.symlink_to()` - Create symlink
+- `PathExtended(path)` - Constructor
+
+## 8 Custom Methods
+
+### 39. `src/machineconfig/cluster/remote/remote_machine.py`
+- `.append()` - Append suffix/name
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.delete()` - Delete files/directories
+- `.print()` - Print path
+- `.readit()` - Read file content (Custom)
+- `.rel2home()` - Get path relative to home
+- `.split()` - Split path
+- `.to_cloud()` - Upload to cloud storage
+
+### 40. `src/machineconfig/jobs/installer/check_installations.py`
+- `.append()` - Append suffix/name
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.download()` - Download from URL
+- `.move()` - Move files
+- `.search()` - Search for files matching pattern
+- `.split()` - Split path
+- `.to_cloud()` - Upload to cloud storage
+- `.with_suffix()` - Change file extension
+
+## 9 Custom Methods
+
+### 41. `src/machineconfig/cluster/remote/cloud_manager.py`
+- `.append()` - Append suffix/name
+- `.copy()` - Copy files
+- `.delete()` - Delete files/directories
+- `.from_cloud()` - Download from cloud storage
+- `.get_remote_path()` - Get cloud storage path
+- `.print()` - Print path
+- `.sync_to_cloud()` - Sync to cloud storage
+- `.tmp()` - Get temp directory/file
+- `.to_cloud()` - Upload to cloud storage
 
 ## 10 Custom Methods
 
-### 31. `src/machineconfig/scripts/python/helpers_cloud/cloud_copy.py`
-- `PathExtended(path)` - Constructor
-- `.download()` - Download from URL/cloud
-- `.decrypt()` - Decrypt file
-- `.unzip()` - Unzip archive
-- `.search()` - Search for files matching pattern
-- `.move()` - Move files
-- `.delete()` - Delete files/directories
-- `.tmpdir()` - Get temporary directory
-- `.from_cloud()` - Download from cloud storage
-- `.to_cloud()` - Upload to cloud storage
-- `.with_suffix()` - Change file extension
+### 42. `src/machineconfig/cluster/remote/data_transfer.py`
 - `.as_url_str()` - Convert path to URL string
+- `.collapseuser()` - Collapse home directory to placeholder
+- `.decrypt_n_unzip()` - Decrypt and unzip
+- `.delete()` - Delete files/directories
+- `.download()` - Download from URL
+- `.rel2home()` - Get path relative to home
+- `.share_on_cloud()` - Share on cloud
+- `.to_cloud()` - Upload to cloud storage
+- `.zip()` - Zip files
+- `.zip_n_encrypt()` - Zip and encrypt
 
-### 50. `src/machineconfig/cluster/remote/data_transfer.py`
+## 12 Custom Methods
+
+### 43. `src/machineconfig/scripts/python/helpers_cloud/cloud_copy.py`
+- `.as_url_str()` - Convert path to URL string
+- `.decrypt()` - Decrypt file
+- `.delete()` - Delete files/directories
+- `.download()` - Download from URL
+- `.from_cloud()` - Download from cloud storage
+- `.move()` - Move files
+- `.print()` - Print path
+- `.split()` - Split path
+- `.to_cloud()` - Upload to cloud storage
+- `.unzip()` - Unzip archive
+- `.with_suffix()` - Change file extension
 - `PathExtended(path)` - Constructor
-- `.zip_n_encrypt()` - Custom
-- `.collapseuser()` - Custom
-- `.share_on_cloud()` - Custom (Unknown Origin)
-- `.download()` - Custom
-- `.decrypt_n_unzip()` - Custom
-- `.delete()` - Custom
-- `.rel2home()` - Custom
-- `.zip()` - Custom
-- `.as_url_str()` - Custom
-- `.to_cloud()` - Custom
+- `PathExtended.tmpdir()` - Get temporary directory
 
+## 25 Custom Methods
 
-
+### 44. `src/machineconfig/utils/path_extended.py`
+- `.append()` - Append suffix/name
+- `.as_url_str()` - Convert path to URL string
+- `.as_zip_path()` - Get zip path
+- `.clickable()` - Get clickable URI
+- `.copy()` - Copy files
+- `.decompress()` - Decompress archives
+- `.decrypt()` - Decrypt file
+- `.delete()` - Delete files/directories
+- `.encrypt()` - Encrypt file
+- `.filter()` - Filter results
+- `.get_remote_path()` - Get cloud storage path
+- `.move()` - Move files
+- `.print()` - Print path
+- `.resolve()` - Resolve path
+- `.search()` - Search for files matching pattern
+- `.split()` - Split path
+- `.symlink_to()` - Create symlink
+- `.unbz()` - Unbz archive
+- `.ungz()` - Ungz archive
+- `.untar()` - Untar archive
+- `.unxz()` - Unxz archive
+- `.unzip()` - Unzip archive
+- `.with_name()` - Rename file
+- `.zip()` - Zip files
+- `PathExtended(path)` - Constructor
+- `PathExtended.tmp()` - Get temp directory/file
