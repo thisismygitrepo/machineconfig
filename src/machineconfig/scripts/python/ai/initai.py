@@ -20,6 +20,8 @@ def add_ai_configs(repo_root: Path) -> None:
     dot_scripts_dir = repo_root.joinpath(".scripts")
     dot_scripts_dir.mkdir(parents=True, exist_ok=True)
     generic.create_dot_scripts(repo_root=repo_root)
+    if not repo_root.joinpath(".gitignore").exists():
+        repo_root.joinpath(".gitignore").touch()
     generic.adjust_gitignore(repo_root=repo_root)
 
     add_lint_and_type_check_task(repo_root=repo_root)
