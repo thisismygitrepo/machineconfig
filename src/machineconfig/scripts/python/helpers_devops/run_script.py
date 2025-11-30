@@ -22,17 +22,22 @@ import typer
 from typing import Annotated, Optional, Literal
 
 
-
 def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to run, e.g., 'a' for a.py, or command to execute")] = "",
                   where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "dynamic", "d", "custom", "c"], typer.Option("--where", "-w", help="Where to look for the script")] = "all",
                   interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactive selection of scripts to run")] = False,
                   command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
-                #   use_machineconfig_env: Annotated[bool, typer.Option(..., "--use-machineconfig-env/--no-use-machineconfig-env", "-m/-nm", help="Whether to use the machineconfig python environment")] = False
+                  list_scripts: Annotated[bool, typer.Option(..., "--list", "-l", help="List available scripts in all locations")] = False,
                 ) -> None:
+    from pathlib import Path
+
+    if list_scripts:
+        from machineconfig.scripts.python.helpers.script_help import list_available_scripts
+        list_available_scripts(where=where)
+        return
+
     if not interactive and not name:
         typer.echo("❌ ERROR: You must provide a script name or use --interactive option to select a script.")
         raise typer.Exit(code=1)
-    from pathlib import Path
     target_file: Optional[Path] = None
 
     if where in ["dynamic", "d"]:
