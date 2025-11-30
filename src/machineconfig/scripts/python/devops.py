@@ -19,23 +19,9 @@ def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-sepa
         installer_entry_point.main_installer_cli(which=which, group=group, interactive=interactive)
 
 
-
-# def get_app():
-#     app = typer.Typer(add_completion=False, no_args_is_help=True)
-#     app.command(name="scripts", help="define all scripts", no_args_is_help=False)(define_scripts)
-#     return app
-
-# def main():
-#     # return app
-#     app = get_app()
-#     app()
-
-#     define_app = get_define_app()
-
-
 def get_app():
 
-    cli_app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=False, add_completion=False)
+    cli_app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=True, add_completion=False)
     cli_app.command("install", no_args_is_help=True, help=install.__doc__, short_help="🛠️ [i] Install essential packages")(install)
     cli_app.command("i", no_args_is_help=True, help=install.__doc__, hidden=True)(install)
 

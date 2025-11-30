@@ -10,9 +10,15 @@ from machineconfig.scripts.python.croshell import croshell as croshell_func
 from machineconfig.scripts.python.fire_jobs import fire as get_fire_jobs_app
 from machineconfig.scripts.python.terminal import get_app as get_terminal_app
 
+"""
+# Show performance of module imports
+cd /home/alex/code/machineconfig && time uv run python -c "import sys; initial = set(sys.modules.keys()); from machineconfig.scripts.python.mcfg_entry import get_app; app = get_app(); imported = sorted(set(sys.modules.keys()) - initial); print(f'Imported {len(imported)} modules'); [print(m) for m in imported if 'machineconfig' in m]" 2>&1
+
+"""
+
 def get_app():
     import typer
-    app = typer.Typer(help="MachineConfig CLI - Manage your machine configurations and workflows", no_args_is_help=True, add_help_option=False, add_completion=False)
+    app = typer.Typer(help="MachineConfig CLI - Manage your machine configurations and workflows", no_args_is_help=True, add_help_option=True, add_completion=False)
     devops_app = get_devops_app()
     app.add_typer(devops_app, name="devops", help="[d] DevOps related commands", no_args_is_help=True)
     app.add_typer(devops_app, name="d", hidden=True)  # short alias
@@ -24,7 +30,6 @@ def get_app():
     sessions_app = get_sessions_app()
     app.add_typer(sessions_app, name="sessions", help="[s] Session and layout management", no_args_is_help=True)
     app.add_typer(sessions_app, name="s", hidden=True)  # short alias
-
 
     agents_app = get_agents_app()
     app.add_typer(agents_app, name="agents", help="[a] 🤖 AI Agents management commands", no_args_is_help=True)
