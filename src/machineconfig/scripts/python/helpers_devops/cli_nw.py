@@ -2,8 +2,9 @@
 import machineconfig.scripts.python.helpers_devops.cli_share_file
 import machineconfig.scripts.python.helpers_devops.cli_share_terminal as cli_share_terminal
 import machineconfig.scripts.python.helpers_devops.cli_share_server as cli_share_server
+import machineconfig.scripts.python.helpers_devops.cli_ssh as cli_ssh
 import typer
-from typing import Optional, Annotated
+from typing import Annotated
 
 
 def switch_public_ip_address(
@@ -13,38 +14,6 @@ def switch_public_ip_address(
     """🔁 Switch public IP address (Cloudflare WARP)"""
     import machineconfig.scripts.python.helpers_network.address_switch as helper
     helper.switch_public_ip_address(max_trials=max_trials, wait_seconds=wait_seconds)
-
-
-def install_ssh_server():
-    """📡 SSH install server"""  # VRPR66JD$X3FQ3
-    import platform
-    if platform.system() == "Windows":
-        from machineconfig.setup_windows import SSH_SERVER
-        script = SSH_SERVER.read_text(encoding="utf-8")
-    elif platform.system() == "Linux" or platform.system() == "Darwin":
-        script = """
-sudo nala install openssh-server -y || true  # try to install first
-# sudo nala purge openssh-server -y
-# sudo nala install openssh-server -y
-echo "✅ FINISHED installing openssh-server."""
-    else:
-        raise NotImplementedError(f"Platform {platform.system()} is not supported.")
-    from machineconfig.utils.code import run_shell_script
-    run_shell_script(script=script)
-
-
-def add_ssh_key(path: Annotated[Optional[str], typer.Option(..., help="Path to the public key file")] = None,
-         choose: Annotated[bool, typer.Option(..., "--choose", "-c", help="Choose from available public keys in ~/.ssh/*.pub")] = False,
-         value: Annotated[bool, typer.Option(..., "--value", "-v", help="Paste the public key content manually")] = False,
-         github: Annotated[Optional[str], typer.Option(..., "--github", "-g", help="Fetch public keys from a GitHub username")] = None
-):
-    """🔑 SSH add pub key to this machine so its accessible by owner of corresponding private key."""
-    import machineconfig.scripts.python.helpers_network.ssh_add_ssh_key as helper
-    helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github)
-def add_ssh_identity():
-    """🗝️ SSH add identity (private key) to this machine"""
-    import machineconfig.scripts.python.helpers_network.ssh_add_identity as helper
-    helper.main()
 
 
 def show_address() -> None:
@@ -99,18 +68,6 @@ netsh interface portproxy add v4tov4 listenport={port} listenaddress=0.0.0.0 con
     from machineconfig.utils.code import exit_then_run_shell_script
     exit_then_run_shell_script(code)
 
-
-def debug_ssh():
-    """🐛 SSH debug"""
-    from platform import system
-    if system() == "Linux" or system() == "Darwin":
-        import machineconfig.scripts.python.helpers_network.ssh_debug_linux as helper
-        helper.ssh_debug_linux()
-    elif system() == "Windows":
-        import machineconfig.scripts.python.helpers_network.ssh_debug_windows as helper
-        helper.ssh_debug_windows()
-    else:
-        raise NotImplementedError(f"Platform {system()} is not supported.")
 
 def wifi_select(
     ssid: Annotated[str, typer.Option("-n", "--ssid", help="🔗 SSID of WiFi (from config)")] = "MyPhoneHotSpot",
@@ -196,21 +153,14 @@ def get_app():
     nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers_devops.cli_share_file.share_file_receive)
     nw_apps.command(name="rx", no_args_is_help=True, hidden=True, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers_devops.cli_share_file.share_file_receive)
 
-    nw_apps.command(name="install-ssh-server", help="📡 [i] Install SSH server")(install_ssh_server)
-    nw_apps.command(name="i", help="Install SSH server", hidden=True)(install_ssh_server)
-    nw_apps.command(name="add-ssh-key", help="🔑 [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
-    nw_apps.command(name="k", help="Add SSH public key to this machine", hidden=True, no_args_is_help=True)(add_ssh_key)
-    nw_apps.command(name="add-ssh-identity", help="🗝️ [A] Add SSH identity (private key) to this machine")(add_ssh_identity)
-    nw_apps.command(name="A", help="Add SSH identity (private key) to this machine", hidden=True)(add_ssh_identity)
+    nw_apps.add_typer(cli_ssh.get_app(), name="ssh", help="🔐 [S] SSH subcommands")
+    nw_apps.add_typer(cli_ssh.get_app(), name="S", help="SSH subcommands", hidden=True)
 
     nw_apps.command(name="show-address", help="📌 [a] Show this computer addresses on network")(show_address)
     nw_apps.command(name="a", help="Show this computer addresses on network", hidden=True)(show_address)
 
     nw_apps.command(name="switch-public-ip", help="🔁 [c] Switch public IP address (Cloudflare WARP)")(switch_public_ip_address)
     nw_apps.command(name="c", help="Switch public IP address (Cloudflare WARP)", hidden=True)(switch_public_ip_address)
-
-    nw_apps.command(name="debug-ssh", help="🐛 [d] Debug SSH connection")(debug_ssh)
-    nw_apps.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
 
     nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 [w] WiFi connection utility.")(wifi_select)
     nw_apps.command(name="w", no_args_is_help=True, hidden=True)(wifi_select)
