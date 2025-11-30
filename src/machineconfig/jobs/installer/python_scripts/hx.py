@@ -50,9 +50,9 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
 
     print("\n🔍 [Step 2/5] Locating executable and components...")
     if platform.system() == "Windows":
-        hx_file_search = downloaded.search("hx.exe", folders=False, files=True, r=True)
+        hx_file_search = [p for p in downloaded.rglob("hx.exe") if p.is_file()]
     else:
-        hx_file_search = downloaded.search("hx", folders=False, files=True, r=True)
+        hx_file_search = [p for p in downloaded.rglob("hx") if p.is_file()]
 
     if not hx_file_search:
         console.print(Panel("❌ ERROR: Could not find 'hx' executable in downloaded files.", title="Error", expand=False))

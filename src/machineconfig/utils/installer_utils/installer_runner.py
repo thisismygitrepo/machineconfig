@@ -75,7 +75,7 @@ def get_installed_cli_apps():
     print("🔍 LISTING INSTALLED CLI APPS 🔍")
     if platform.system() == "Windows":
         print("🪟 Searching for Windows executables...")
-        apps = PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").search("*.exe", not_in=["notepad"])
+        apps = [p for p in PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").glob("*.exe") if "notepad" not in str(p)]
     elif platform.system() in ["Linux", "Darwin"]:
         print(f"🐧 Searching for {platform.system()} executables...")
         if platform.system() == "Linux":

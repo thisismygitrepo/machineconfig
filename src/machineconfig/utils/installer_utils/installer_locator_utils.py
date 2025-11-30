@@ -22,15 +22,15 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, tool_name: Opti
     else:
         print(f"🔎 Searching for executable in: {downloaded_file_path}")
         if tool_name is None:
-            exe = downloaded_file_path.search("*.exe", r=True)[0]
+            exe = list(downloaded_file_path.rglob("*.exe"))[0]
             print(f"✅ Found executable: {exe}")
         else:
-            tmp = downloaded_file_path.search(f"{tool_name}.exe", r=True)
+            tmp = list(downloaded_file_path.rglob(f"{tool_name}.exe"))
             if len(tmp) == 1:
                 exe = tmp[0]
                 print(f"✅ Found exact match for {tool_name}.exe: {exe}")
             else:
-                search_res = downloaded_file_path.search("*.exe", r=True)
+                search_res = list(downloaded_file_path.rglob("*.exe"))
                 if len(search_res) == 0:
                     print(f"❌ ERROR: No executable found in {downloaded_file_path}")
                     raise IndexError(f"No executable found in {downloaded_file_path}")
@@ -70,20 +70,20 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: Optional[str], d
         print(f"📄 Found direct executable file: {exe}")
     else:
         print(f"🔎 Searching for executable in: {downloaded}")
-        res = downloaded.search(f"*{tool_name}*", folders=False, r=True)
+        res = [p for p in downloaded.rglob(f"*{tool_name}*") if p.is_file()]
         if len(res) == 1:
             exe = res[0]
             print(f"✅ Found match for pattern '*{tool_name}*': {exe}")
         else:
             if tool_name is None:  # no tool name provided, get the largest executable
-                search_res = downloaded.search("*", folders=False, files=True, r=True)
+                search_res = [p for p in downloaded.rglob("*") if p.is_file()]
                 if len(search_res) == 0:
                     print(f"❌ ERROR: No search results in `{downloaded}`")
                     raise IndexError(f"No executable found in {downloaded}")
                 exe = max(search_res, key=lambda x: x.size("kb"))
                 print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
             else:
-                exe_search_res = downloaded.search(tool_name, folders=False, r=True)
+                exe_search_res = [p for p in downloaded.rglob(tool_name) if p.is_file()]
                 if len(exe_search_res) == 0:
                     print(f"❌ ERROR: No search results for `{tool_name}` in `{downloaded}`")
                     raise IndexError(f"No executable found in {downloaded}")

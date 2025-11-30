@@ -83,15 +83,15 @@ def main(
 
     md_file = report_dir.joinpath("slides.md")
     if not md_file.exists():
-        res = report_dir.search("*.md")
+        res = list(report_dir.glob("*.md"))
         if len(res) == 1:
             md_file = res[0]
         else:
             raise FileNotFoundError(f"❌ slides.md not found in {report_dir}")
 
     print("📂 Copying files to Slidev repository...")
-    for item in report_dir.search():
-        item.copy(folder=SLIDEV_REPO, overwrite=True)
+    for item in report_dir.glob("*"):
+        PathExtended(item).copy(folder=SLIDEV_REPO, overwrite=True)
     if md_file.name != "slides.md":
         SLIDEV_REPO.joinpath(md_file.name).with_name(name="slides.md", inplace=True, overwrite=True)
 

@@ -121,7 +121,7 @@ def download_and_prepare(download_url: str) -> PathExtended:
                 if nested_path.is_file() and any(ex in nested_path.suffixes for ex in DECOMPRESS_SUPPORTED_FORMATS):
                     extracted_path = nested_path.decompress()
                     nested_path.delete(sure=True)
-    elif extracted_path.is_dir() and len(extracted_path.search("*", r=True)) == 1:
+    elif extracted_path.is_dir() and len([p for p in extracted_path.rglob("*") if not p.name.startswith(".")]) == 1:
         only_file_in = next(extracted_path.glob("*"))
         if only_file_in.is_file() and any(ext in str(only_file_in) for ext in DECOMPRESS_SUPPORTED_FORMATS):  # further decompress
             extracted_path = only_file_in.decompress()

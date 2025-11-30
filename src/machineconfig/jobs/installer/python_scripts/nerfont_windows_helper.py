@@ -125,12 +125,12 @@ def install_nerd_fonts() -> None:
     folder, _version_to_be_installed = Installer(installer_data=nerd_fonts).binary_download(version=None)
 
     console.print("🧹 Cleaning up unnecessary files...")
-    [p.delete(sure=True) for p in folder.search("*Windows*")]
-    [p.delete(sure=True) for p in folder.search("*readme*")]
-    [p.delete(sure=True) for p in folder.search("*LICENSE*")]
+    [PathExtended(p).delete(sure=True) for p in folder.glob("*Windows*")]
+    [PathExtended(p).delete(sure=True) for p in folder.glob("*readme*")]
+    [PathExtended(p).delete(sure=True) for p in folder.glob("*LICENSE*")]
 
     print("Fonts to be installed:")
-    for font in (folder.search("*.ttf") + folder.search("*.otf")):
+    for font in (list(folder.glob("*.ttf")) + list(folder.glob("*.otf"))):
         print(f" - {font}")
 
     console.print("⚙️  Installing fonts via PowerShell...")
