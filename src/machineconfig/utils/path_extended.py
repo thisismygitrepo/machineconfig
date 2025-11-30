@@ -294,7 +294,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
                 target = "BROKEN LINK " + str(self)  # avoid infinite recursions for broken links.
             return "🔗 Symlink '" + str(self) + "' ==> " + (str(target) if target == self else str(target))
         elif self.is_absolute():
-            return self._type() + " '" + str(self.clickable()) + "'" + (" | " + datetime.fromtimestamp(self.stat().st_ctime).isoformat()[:-7].replace("T", "  ") if self.exists() else "") + (f" | {self.size()} Mb" if self.is_file() else "")
+            return self._type() + " '" + str(self.clickable()) + "'" + (" | " + datetime.fromtimestamp(self.stat().st_ctime).isoformat()[:-7].replace("T", "  ") if self.exists() else "") + (f" | {round(self.stat().st_size / (1024**2), 1)} Mb" if self.is_file() else "")
         elif "http" in str(self):
             return "🕸️ URL " + str(self.as_url_str())
         else:
@@ -538,7 +538,9 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         assert merge is False, "I have not implemented this yet"
         assert path is None, "I have not implemented this yet"
         if tmp:
-            return self.unzip(folder=PathExtended.tmp().joinpath("tmp_unzips").joinpath(randstr()), content=True).joinpath(self.stem)
+            tmp_root = PathExtended("~/tmp_results").expanduser()
+            tmp_root.mkdir(parents=True, exist_ok=True)
+            return self.unzip(folder=tmp_root.joinpath("tmp_unzips").joinpath(randstr()), content=True).joinpath(self.stem)
         slf = zipfile__ = self.expanduser().resolve()
         if any(ztype in str(slf.parent) for ztype in (".zip", ".7z")):  # path include a zip archive in the middle.
             tmp__ = [item for item in (".zip", ".7z", "") if item in str(slf)]

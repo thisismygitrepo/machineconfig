@@ -95,7 +95,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
         perm_info.append("   [dim]No keys = no login. Add your public key to this file.[/dim]")
     else:
         try:
-            keys = [l for l in target_auth_keys.read_text(encoding="utf-8").split("\n") if l.strip()]
+            keys = [line for line in target_auth_keys.read_text(encoding="utf-8").split("\n") if line.strip()]
             results["authorized_keys"] = {"status": "ok", "message": f"{len(keys)} key(s)"}
             perm_info.append(f"\n✅ {target_auth_keys.name}: [green]{len(keys)} key(s)[/green]")
         except Exception as e:
@@ -124,12 +124,12 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
     if sshd_config and sshd_config.exists():
         try:
             config_text = sshd_config.read_text(encoding="utf-8")
-            port_lines = [l for l in config_text.split("\n") if l.strip().startswith("Port") and not l.strip().startswith("#")]
+            port_lines = [line for line in config_text.split("\n") if line.strip().startswith("Port") and not line.strip().startswith("#")]
             if port_lines:
                 ssh_port = port_lines[0].split()[1]
             net_info.append(f"🔌 SSH port: [cyan]{ssh_port}[/cyan]")
 
-            pubkey_lines = [l for l in config_text.split("\n") if "PubkeyAuthentication" in l and not l.strip().startswith("#")]
+            pubkey_lines = [line for line in config_text.split("\n") if "PubkeyAuthentication" in line and not line.strip().startswith("#")]
             if pubkey_lines and "no" in pubkey_lines[-1].lower():
                 results["pubkey_auth"] = {"status": "error", "message": "PubkeyAuthentication disabled"}
                 issues.append(("PubkeyAuthentication disabled", "Key-based login won't work", f'Edit {sshd_config} and set PubkeyAuthentication yes, then Restart-Service sshd'))
@@ -141,12 +141,12 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
 
     netstat = subprocess.run(["netstat", "-an"], capture_output=True, text=True, check=False)
     if netstat.returncode == 0:
-        listening_lines = [l for l in netstat.stdout.split("\n") if f":{ssh_port}" in l and "LISTENING" in l]
+        listening_lines = [line for line in netstat.stdout.split("\n") if f":{ssh_port}" in line and "LISTENING" in line]
         if not listening_lines:
             results["ssh_listening"] = {"status": "error", "message": f"Not listening on port {ssh_port}"}
             issues.append((f"SSH not listening on port {ssh_port}", "No connections possible", "Restart-Service sshd"))
             net_info.append(f"❌ Listening: [red]NOT listening on port {ssh_port}[/red]")
-        elif all("127.0.0.1" in l or "[::1]" in l for l in listening_lines):
+        elif all("127.0.0.1" in line or "[::1]" in line for line in listening_lines):
             results["ssh_listening"] = {"status": "error", "message": "Listening on localhost only"}
             issues.append(("SSH bound to localhost only", "Only local connections work", f"Check ListenAddress in {sshd_config}"))
             net_info.append("❌ Listening: [red]localhost only[/red] (remote connections blocked)")

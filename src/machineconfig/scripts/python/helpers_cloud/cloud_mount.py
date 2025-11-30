@@ -19,12 +19,13 @@ def get_rclone_config():
 
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
     from machineconfig.utils.path_extended import PathExtended
+    from machineconfig.utils.accessories import randstr
     import platform
     DEFAULT_MOUNT = "~/data/rclone"
 
     header = f"{' ' + cloud + ' | ' + cloud_brand + ' '}".center(50, "=")
     if platform.system() == "Windows":
-        sub_text_path = PathExtended.tmpfile(suffix=".ps1")
+        sub_text_path = PathExtended("~/tmp_results/tmp_files").expanduser().joinpath(f"{randstr()}.ps1")
         sub_text_path.parent.mkdir(parents=True, exist_ok=True)
         sub_text_path.write_text(
             f"""

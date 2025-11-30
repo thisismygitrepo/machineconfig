@@ -86,7 +86,7 @@ def get_installed_cli_apps():
         error_msg = f"❌ ERROR: System {platform.system()} not supported"
         print(error_msg)
         raise NotImplementedError(error_msg)
-    apps = [app for app in apps if app.size("kb") > 0.1 and not app.is_symlink()]  # no symlinks like paint and wsl and bash
+    apps = [app for app in apps if (app.stat().st_size / 1024) > 0.1 and not app.is_symlink()]  # no symlinks like paint and wsl and bash
     print(f"✅ Found {len(apps)} installed applications")
     return apps
 

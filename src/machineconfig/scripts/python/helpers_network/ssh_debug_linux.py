@@ -71,7 +71,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     else:
         ak_perms = oct(os.stat(authorized_keys).st_mode)[-3:]
         try:
-            keys = [l for l in authorized_keys.read_text(encoding="utf-8").split("\n") if l.strip()]
+            keys = [line for line in authorized_keys.read_text(encoding="utf-8").split("\n") if line.strip()]
             key_count = len(keys)
         except Exception:
             key_count = 0
@@ -116,12 +116,12 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     if sshd_config:
         try:
             config_text = sshd_config.read_text(encoding="utf-8")
-            port_lines = [l for l in config_text.split("\n") if l.strip().startswith("Port") and not l.strip().startswith("#")]
+            port_lines = [line for line in config_text.split("\n") if line.strip().startswith("Port") and not line.strip().startswith("#")]
             if port_lines:
                 ssh_port = port_lines[0].split()[1]
             net_info.append(f"🔌 Port: [cyan]{ssh_port}[/cyan]")
 
-            pubkey_lines = [l for l in config_text.split("\n") if "PubkeyAuthentication" in l and not l.strip().startswith("#")]
+            pubkey_lines = [line for line in config_text.split("\n") if "PubkeyAuthentication" in line and not line.strip().startswith("#")]
             if pubkey_lines and "no" in pubkey_lines[-1].lower():
                 results["pubkey_auth"] = {"status": "error", "message": "PubkeyAuthentication disabled"}
                 issues.append(("PubkeyAuthentication disabled", "Key-based login won't work", f"Edit {sshd_config}: set PubkeyAuthentication yes, then sudo systemctl restart ssh"))
@@ -129,7 +129,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
             else:
                 net_info.append("✅ PubkeyAuthentication: enabled")
 
-            permit_root = [l for l in config_text.split("\n") if "PermitRootLogin" in l and not l.strip().startswith("#")]
+            permit_root = [line for line in config_text.split("\n") if "PermitRootLogin" in line and not line.strip().startswith("#")]
             if permit_root:
                 val = permit_root[-1].split()[-1].lower()
                 net_info.append(f"ℹ️  PermitRootLogin: {val}")
@@ -138,12 +138,12 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
 
     ok, ss_out = _run(["ss", "-tlnp"])
     if ok:
-        listening = [l for l in ss_out.split("\n") if f":{ssh_port}" in l]
+        listening = [line for line in ss_out.split("\n") if f":{ssh_port}" in line]
         if not listening:
             results["ssh_listening"] = {"status": "error", "message": f"Not listening on {ssh_port}"}
             issues.append((f"Not listening on port {ssh_port}", "No connections possible", "sudo systemctl restart ssh"))
             net_info.append(f"❌ Listening: [red]NOT on port {ssh_port}[/red]")
-        elif all("127.0.0.1" in l or "[::1]" in l for l in listening):
+        elif all("127.0.0.1" in line or "[::1]" in line for line in listening):
             results["ssh_listening"] = {"status": "error", "message": "Localhost only"}
             issues.append(("SSH bound to localhost", "Only local connections", f"Edit {sshd_config}: remove/comment ListenAddress 127.0.0.1"))
             net_info.append("❌ Listening: [red]localhost only[/red]")
@@ -202,7 +202,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     if hosts_deny.exists():
         try:
             content = hosts_deny.read_text(encoding="utf-8")
-            active = [l for l in content.splitlines() if l.strip() and not l.strip().startswith("#")]
+            active = [line for line in content.splitlines() if line.strip() and not line.strip().startswith("#")]
             joined = " ".join(active).lower()
             if "sshd" in joined or "all" in joined:
                 results["hosts_deny"] = {"status": "error", "message": "hosts.deny blocking"}
@@ -225,7 +225,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         if lf.exists():
             ok, tail = _run(["tail", "-n", "20", str(lf)])
             if ok:
-                errors = [l for l in tail.split("\n") if any(k in l.lower() for k in ["error", "failed", "refused", "denied"]) and "ssh" in l.lower()]
+                errors = [line for line in tail.split("\n") if any(k in line.lower() for k in ["error", "failed", "refused", "denied"]) and "ssh" in line.lower()]
                 if errors:
                     other_info.append(f"⚠️  Recent SSH errors in {lf.name}: {len(errors)}")
                 else:

@@ -38,8 +38,8 @@ def find_move_delete_windows(downloaded_file_path: PathExtended, tool_name: Opti
                     exe = search_res[0]
                     print(f"✅ Found single executable: {exe}")
                 else:
-                    exe = max(search_res, key=lambda x: x.size("kb"))
-                    print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
+                    exe = max(search_res, key=lambda x: x.stat().st_size)
+                    print(f"✅ Selected largest executable ({round(exe.stat().st_size / 1024, 1)} KB): {exe}")
         if rename_to and exe.name != rename_to:
             print(f"🏷️  Renaming '{exe.name}' to '{rename_to}'")
             exe = exe.with_name(name=rename_to, inplace=True)
@@ -80,8 +80,8 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: Optional[str], d
                 if len(search_res) == 0:
                     print(f"❌ ERROR: No search results in `{downloaded}`")
                     raise IndexError(f"No executable found in {downloaded}")
-                exe = max(search_res, key=lambda x: x.size("kb"))
-                print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
+                exe = max(search_res, key=lambda x: x.stat().st_size)
+                print(f"✅ Selected largest executable ({round(exe.stat().st_size / 1024, 1)} KB): {exe}")
             else:
                 exe_search_res = [p for p in downloaded.rglob(tool_name) if p.is_file()]
                 if len(exe_search_res) == 0:
@@ -91,8 +91,8 @@ def find_move_delete_linux(downloaded: PathExtended, tool_name: Optional[str], d
                     exe = exe_search_res[0]
                     print(f"✅ Found exact match for '{tool_name}': {exe}")
                 else:
-                    exe = max(exe_search_res, key=lambda x: x.size("kb"))
-                    print(f"✅ Selected largest executable ({exe.size('kb')} KB): {exe}")
+                    exe = max(exe_search_res, key=lambda x: x.stat().st_size)
+                    print(f"✅ Selected largest executable ({round(exe.stat().st_size / 1024, 1)} KB): {exe}")
 
     if rename_to and exe.name != rename_to:
         print(f"🏷️  Renaming '{exe.name}' to '{rename_to}'")
