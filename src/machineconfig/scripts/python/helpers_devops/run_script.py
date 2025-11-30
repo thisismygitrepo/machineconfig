@@ -133,7 +133,10 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
         if len(potential_matches) == 1:
             target_file = potential_matches[0]
         elif len(potential_matches) == 0:
-            print(f"❌ ERROR: Could not find script '{name}'. Searched in {', '.join([str(r) for r in roots])}.")
+            print(f"❌ ERROR: Could not find script '{name}'.")
+            print("Searched in:")
+            for r in roots:
+                print(f"  - {r}")
             raise typer.Exit(code=1)
         else:
             print(f"Warning: Could not find script '{name}'. Checked {len(potential_matches)} candidate files, trying interactively:")

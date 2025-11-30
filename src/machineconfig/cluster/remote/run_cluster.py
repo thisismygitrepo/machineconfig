@@ -58,7 +58,7 @@
 
 #         # Execute each job sequentially (replace former List.apply behavior)
 #         # If parallel execution is needed, consider a ThreadPool/ProcessPool
-#         results: List[PathExtended] = [
+#         results: List[Path] = [
 #             ExpensiveComputation.func_single_job(workload_params=job_params, **kwargs)
 #             for job_params in per_job_workload_params
 #         ]

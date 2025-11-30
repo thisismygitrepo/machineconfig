@@ -1,5 +1,5 @@
 from enum import Enum
-from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 
 
 from dataclasses import dataclass
@@ -12,7 +12,7 @@ from rich.table import Table
 @dataclass
 class GitOperationResult:
     """Result of a git operation on a single repository."""
-    repo_path: PathExtended
+    repo_path: Path
     action: str
     success: bool
     message: str
@@ -52,7 +52,7 @@ class GitOperationSummary:
 
     def __post_init__(self):
         self.failed_operations: list[GitOperationResult] = []
-        self.repos_without_remotes: list[PathExtended] = []
+        self.repos_without_remotes: list[Path] = []
 
 
 def print_git_operations_summary(summary: GitOperationSummary, operations_performed: list[str]) -> None:

@@ -3,7 +3,7 @@
 from platform import system
 import subprocess
 from machineconfig.utils.ssh import SSH
-from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 
 from machineconfig.utils.options import choose_ssh_host
 
@@ -35,7 +35,7 @@ def main():
 
     mount_point = input(f"📂 Enter the mount point directory (e.g., /mnt/network) [Default: ~/data/mount_ssh/{ssh.hostname}]: ")
     if mount_point == "":
-        mount_point = PathExtended.home().joinpath(rf"data/mount_ssh/{ssh.hostname}")
+        mount_point = Path.home().joinpath(rf"data/mount_ssh/{ssh.hostname}")
 
     print(f"\n📁 Mount Point: {mount_point}")
 

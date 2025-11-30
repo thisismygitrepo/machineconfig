@@ -3,7 +3,7 @@ Choose a theme for Wezterm
 """
 
 from machineconfig.utils.options import choose_from_options
-from machineconfig.utils.path_extended import PathExtended
+from pathlib import Path
 from typing import Any
 import time
 from rich.panel import Panel
@@ -52,14 +52,14 @@ def main2():
 
 def set_theme(theme: str):
     print(f"🔄 Setting WezTerm theme to: {theme}")
-    txt_lines = PathExtended.home().joinpath(".config/wezterm/wezterm.lua").expanduser().read_text(encoding="utf-8").splitlines()
+    txt_lines = Path.home().joinpath(".config/wezterm/wezterm.lua").expanduser().read_text(encoding="utf-8").splitlines()
     res_lines = []
     for line in txt_lines:
         if "config.color_scheme = " in line:
             res_lines.append(f"config.color_scheme = '{theme}'")
         else:
             res_lines.append(line)
-    PathExtended.home().joinpath(".config/wezterm/wezterm.lua").expanduser().write_text("\n".join(res_lines), encoding="utf-8")
+    Path.home().joinpath(".config/wezterm/wezterm.lua").expanduser().write_text("\n".join(res_lines), encoding="utf-8")
     time.sleep(0.1)
     print("💾 Configuration saved")
 
