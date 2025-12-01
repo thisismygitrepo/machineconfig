@@ -7,13 +7,38 @@ from rich.panel import Panel
 from rich import box
 from typing import Optional, Annotated
 import typer
+import subprocess
 
 
 console = Console()
 
 
+def _add_ssh_key_windows(path_to_key: Path) -> None:
+    """Add SSH key on Windows using Python with proper UTF-8 encoding.
+    This replaces the PowerShell script that was writing UTF-16LE encoded files which openssh server cannot read.
+    """
+    sshd_dir = Path("C:/ProgramData/ssh")
+    admin_auth_keys = sshd_dir / "administrators_authorized_keys"
+    sshd_config = sshd_dir / "sshd_config"
+    key_content = path_to_key.read_text(encoding="utf-8").strip()
+    if admin_auth_keys.exists():
+        existing = admin_auth_keys.read_text(encoding="utf-8")
+        if not existing.endswith("\n"):
+            existing += "\n"
+        admin_auth_keys.write_text(existing + key_content + "\n", encoding="utf-8")
+    else:
+        admin_auth_keys.write_text(key_content + "\n", encoding="utf-8")
+    icacls_cmd = f'icacls "{admin_auth_keys}" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"'
+    subprocess.run(icacls_cmd, shell=True, check=True)
+    if sshd_config.exists():
+        config_text = sshd_config.read_text(encoding="utf-8")
+        config_text = config_text.replace("#PubkeyAuthentication", "PubkeyAuthentication")
+        sshd_config.write_text(config_text, encoding="utf-8")
+    subprocess.run("Restart-Service sshd -Force", shell=True, check=True)
+
+
 def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str, str]:
-    """Returns (program_script, status_message) tuple."""
+    """Returns (program_script, status_message) tuple. For Windows, program_script is empty because we handle it in Python."""
     os_name = system()
     if os_name == "Linux" or os_name == "Darwin":
         authorized_keys = Path.home().joinpath(".ssh/authorized_keys")
@@ -25,6 +50,7 @@ def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str
         raise NotImplementedError("Only Linux, macOS and Windows are supported")
 
     status_lines: list[str] = [f"{os_icon} {os_label} │ Auth file: {authorized_keys}"]
+    program = ""
 
     if authorized_keys.exists():
         keys_text = authorized_keys.read_text(encoding="utf-8").split("\n")
@@ -32,17 +58,12 @@ def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str
         status_lines.append(f"🔑 Existing keys: {key_count}")
         if path_to_key.read_text(encoding="utf-8") in authorized_keys.read_text(encoding="utf-8"):
             status_lines.append(f"⚠️  Key [yellow]{path_to_key.name}[/yellow] already authorized, skipping")
-            program = ""
         else:
             status_lines.append(f"➕ Adding: [green]{path_to_key.name}[/green]")
             if os_name == "Linux" or os_name == "Darwin":
                 program = f"cat {path_to_key} >> ~/.ssh/authorized_keys"
             elif os_name == "Windows":
-                from machineconfig.setup_windows import SSH_ADD_KEY
-                program = Path(SSH_ADD_KEY).expanduser().read_text(encoding="utf-8")
-                place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
-                assert place_holder in program, f"Script {SSH_ADD_KEY} changed, placeholder not found: {place_holder}"
-                program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
+                _add_ssh_key_windows(path_to_key)
             else:
                 raise NotImplementedError
     else:
@@ -50,11 +71,7 @@ def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str
         if os_name == "Linux" or os_name == "Darwin":
             program = f"cat {path_to_key} > ~/.ssh/authorized_keys"
         else:
-            from machineconfig.setup_windows import SSH_ADD_KEY
-            program = Path(SSH_ADD_KEY).expanduser().read_text(encoding="utf-8")
-            place_holder = r'$sshfile = "$env:USERPROFILE\.ssh\pubkey.pub"'
-            assert place_holder in program, f"Script {SSH_ADD_KEY} changed, placeholder not found: {place_holder}"
-            program = program.replace(place_holder, f'$sshfile = "{path_to_key}"')
+            _add_ssh_key_windows(path_to_key)
 
     if os_name == "Linux" or os_name == "Darwin":
         program += """

@@ -229,16 +229,31 @@ class SSH:
         self.copy_from_here(source_path="~/.ssh/id_rsa.pub", target_rel2home=None, compress_with_zip=False, recursive=False, overwrite_existing=False)
         if self.remote_specs["system"] != "Windows":
             raise RuntimeError("send_ssh_key is only supported for Windows remote machines")
-        from machineconfig.setup_windows import SSH_ADD_KEY
-        from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-        add_ssh_key_relative = SSH_ADD_KEY.relative_to(LIBRARY_ROOT)
-        code_url = f"https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/src/machineconfig/{add_ssh_key_relative.as_posix()}"
-        #                  https://raw.githubusercontent.com/thisismygitrepo/machineconfig/ddddddddddddddd/src/machineconfig/setup_windows/ssh/add-sshkey.ps1
-        import urllib.request
-
-        with urllib.request.urlopen(code_url) as response:
-            code = response.read().decode("utf-8")
-        return self.run_shell_cmd_on_remote(command=code, verbose_output=True, description="", strict_stderr=False, strict_return_code=False)
+        python_code = '''
+from pathlib import Path
+import subprocess
+sshd_dir = Path("C:/ProgramData/ssh")
+admin_auth_keys = sshd_dir / "administrators_authorized_keys"
+sshd_config = sshd_dir / "sshd_config"
+pubkey_path = Path.home() / ".ssh" / "id_rsa.pub"
+key_content = pubkey_path.read_text(encoding="utf-8").strip()
+if admin_auth_keys.exists():
+    existing = admin_auth_keys.read_text(encoding="utf-8")
+    if not existing.endswith("\\n"):
+        existing += "\\n"
+    admin_auth_keys.write_text(existing + key_content + "\\n", encoding="utf-8")
+else:
+    admin_auth_keys.write_text(key_content + "\\n", encoding="utf-8")
+icacls_cmd = f'icacls "{admin_auth_keys}" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"'
+subprocess.run(icacls_cmd, shell=True, check=True)
+if sshd_config.exists():
+    config_text = sshd_config.read_text(encoding="utf-8")
+    config_text = config_text.replace("#PubkeyAuthentication", "PubkeyAuthentication")
+    sshd_config.write_text(config_text, encoding="utf-8")
+subprocess.run("Restart-Service sshd -Force", shell=True, check=True)
+print("SSH key added successfully")
+'''
+        return self.run_py_remotely(python_code=python_code, uv_with=None, uv_project_dir=None, description="Adding SSH key to Windows remote", verbose_output=True, strict_stderr=False, strict_return_code=False)
 
     def get_remote_repr(self, add_machine: bool = False) -> str:
         return f"{self.username}@{self.hostname}:{self.port}" + (

@@ -11,6 +11,4 @@ from pathlib import Path
 # Optional helper scripts (may or may not exist)
 UV = Path(__file__).parent.joinpath("uv.sh")
 # Path to macOS SSH helper
-SSH_SETUP = Path(__file__).parent.joinpath("ssh/openssh_setup.sh")
 
-__all__ = ["UV", "SSH_SETUP"]
