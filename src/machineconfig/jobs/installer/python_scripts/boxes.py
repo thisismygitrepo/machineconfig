@@ -40,8 +40,7 @@ def main(installer_data: InstallerData, version: Optional[str] = None) -> None:
     )
 
     installer = Installer(installer_data=installer_data_modified)
-    downloaded, _version_to_be_installed = installer.binary_download(version=version)
-    decomp_path = downloaded.decompress()
+    decomp_path, _version_to_be_installed = installer.binary_download(version=version)
     from pathlib import Path
     for item in decomp_path.rglob("*"):
         if "boxes.exe" in item.name:

@@ -7,10 +7,10 @@ from typing import Optional
 def ftpx(source: str, target: str, recursive: bool, zipFirst: bool, cloud: bool, overwrite_existing: bool) -> None:
     """File transfer utility through SSH."""
     if target == "wsl" or source == "wsl":
-        _handle_wsl_transfer(source=source, target=target, overwrite_existing=overwrite_existing)
+        _handle_wsl_transfer(source=source, target=target, overwrite_existing=overwrite_existing, )
         return
     elif source == "win" or target == "win":
-        _handle_win_transfer(source=source, target=target, overwrite_existing=overwrite_existing)
+        _handle_win_transfer(source=source, target=target, overwrite_existing=overwrite_existing, windows_username=None)
         return
 
     from rich.console import Console
@@ -83,7 +83,7 @@ def _handle_wsl_transfer(source: str, target: str, overwrite_existing: bool) -> 
     copy_when_inside_windows(source_obj, target_obj, overwrite_existing)
 
 
-def _handle_win_transfer(source: str, target: str, overwrite_existing: bool) -> None:
+def _handle_win_transfer(source: str, target: str, overwrite_existing: bool, windows_username: str | None) -> None:
     """Handle Windows transfer when inside WSL."""
     from machineconfig.utils.ssh_utils.wsl import copy_when_inside_wsl
     if source == "win":
@@ -92,7 +92,7 @@ def _handle_win_transfer(source: str, target: str, overwrite_existing: bool) -> 
     else:
         target_obj = Path(source).expanduser().absolute().relative_to(Path.home())
         source_obj = target_obj
-    copy_when_inside_wsl(source_obj, target_obj, overwrite_existing)
+    copy_when_inside_wsl(source_obj, target_obj, overwrite_existing, windows_username=windows_username)
 
 
 def _resolve_paths(source: str, target: str) -> tuple[Optional[str], Optional[str], str, bool]:
