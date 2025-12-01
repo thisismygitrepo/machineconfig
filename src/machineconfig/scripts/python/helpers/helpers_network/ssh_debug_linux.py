@@ -129,6 +129,19 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
             else:
                 net_info.append("✅ PubkeyAuthentication: enabled")
 
+            password_lines = [line for line in config_text.split("\n") if "PasswordAuthentication" in line and not line.strip().startswith("#")]
+            if password_lines:
+                password_enabled = "yes" in password_lines[-1].lower()
+                if password_enabled:
+                    results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled"}
+                    net_info.append("✅ PasswordAuthentication: [green]enabled[/green]")
+                else:
+                    results["password_auth"] = {"status": "info", "message": "PasswordAuthentication disabled"}
+                    net_info.append("ℹ️  PasswordAuthentication: [yellow]disabled[/yellow] (key-only)")
+            else:
+                results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled (default)"}
+                net_info.append("✅ PasswordAuthentication: [green]enabled[/green] (default)")
+
             permit_root = [line for line in config_text.split("\n") if "PermitRootLogin" in line and not line.strip().startswith("#")]
             if permit_root:
                 val = permit_root[-1].split()[-1].lower()

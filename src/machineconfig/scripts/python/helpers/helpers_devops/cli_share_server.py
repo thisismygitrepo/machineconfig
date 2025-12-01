@@ -89,7 +89,7 @@ filebrowser --address {bind_address} --port {port} --root "{path_obj}" --databas
 """
     elif backend == "miniserve":
         if username and password:
-            auth_line = f"--auth {username}:{password}"
+            auth_line = f"""--auth "{username}:{password}" """
         else:
             auth_line = ""
         command = f"""miniserve --port {port} --interfaces {bind_address} {auth_line} --upload-files --mkdir --enable-tar --enable-tar-gz --enable-zip --qrcode "{path_obj}" """

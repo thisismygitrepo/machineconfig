@@ -37,12 +37,17 @@ def _ensure_windows_environment() -> None:
         raise RuntimeError("copy_when_inside_windows must run inside Windows")
 
 
-def _infer_windows_home_from_permissions() -> Path:
+def _infer_windows_home_from_permissions(windows_username: str | None) -> Path:
     base_dir = Path("/mnt/c/Users")
     try:
         entries = list(base_dir.iterdir())
     except FileNotFoundError as exc:
         raise RuntimeError("unable to find /mnt/c/Users") from exc
+    if windows_username:
+        candidate = base_dir / windows_username
+        if candidate.is_dir():
+            return candidate
+        raise RuntimeError(f"specified Windows user directory not found: {candidate}")
     candidates: list[Path] = []
     for entry in entries:
         if not entry.is_dir():
@@ -56,24 +61,22 @@ def _infer_windows_home_from_permissions() -> Path:
         if mode == 0o777:
             candidates.append(entry)
     if len(candidates) != 1:
-        # If WSL provides a username, prefer a candidate that matches it exactly.
         wsl_user = os.environ.get("USER") or os.environ.get("LOGNAME")
         if wsl_user:
             for candidate in candidates:
                 if candidate.name == wsl_user:
                     return candidate
-
-        # Filter out default Windows accounts like 'Default' and 'Default User'
         non_default = [c for c in candidates if c.name.lower() not in ("default", "default user")]
         if len(non_default) == 1:
             return non_default[0]
-
         options = ", ".join(sorted(candidate.name for candidate in candidates)) or "none"
         raise RuntimeError(f"unable to infer Windows home directory (candidates: {options})")
     return candidates[0]
 
 
-def _resolve_windows_home_from_wsl() -> Path:
+def _resolve_windows_home_from_wsl(windows_username: str | None) -> Path:
+    if windows_username:
+        return _infer_windows_home_from_permissions(windows_username)
     user_profile = os.environ.get("USERPROFILE")
     if user_profile:
         windows_path = PureWindowsPath(user_profile)
@@ -84,7 +87,7 @@ def _resolve_windows_home_from_wsl() -> Path:
             candidate = Path("/mnt") / drive_letter / tail
             if candidate.exists():
                 return candidate
-    return _infer_windows_home_from_permissions()
+    return _infer_windows_home_from_permissions(windows_username)
 
 
 def _decode_wsl_output(raw_bytes: bytes) -> str:
@@ -148,26 +151,27 @@ def _run_windows_copy_command(source_path: Path, target_path: Path) -> None:
     )
 
 
-def _ensure_symlink(link_path: Path, target_path: Path) -> None:
+def _ensure_symlink(link_path: Path, target_path: Path) -> bool:
     if not target_path.exists():
         raise FileNotFoundError(target_path)
     if link_path.is_symlink():
         existing_target = Path(os.path.realpath(link_path))
         desired_target = Path(os.path.realpath(target_path))
         if os.path.normcase(str(existing_target)) == os.path.normcase(str(desired_target)):
-            return
+            return False
         link_path.unlink()
     elif link_path.exists():
         raise FileExistsError(link_path)
     link_path.symlink_to(target_path, target_is_directory=True)
+    return True
 
 
-def copy_when_inside_wsl(source: Path | str, target: Path | str, overwrite: bool) -> None:
+def copy_when_inside_wsl(source: Path | str, target: Path | str, overwrite: bool, windows_username: str | None) -> None:
     _ensure_wsl_environment()
     source_relative = _ensure_relative_path(source)
     target_relative = _ensure_relative_path(target)
     source_path = Path.home() / source_relative
-    target_path = _resolve_windows_home_from_wsl() / target_relative
+    target_path = _resolve_windows_home_from_wsl(windows_username) / target_relative
     if not source_path.exists():
         raise FileNotFoundError(source_path)
     if target_path.exists():
@@ -197,7 +201,7 @@ def copy_when_inside_windows(source: Path | str, target: Path | str, overwrite: 
     _run_windows_copy_command(source_path, target_path)
 
 
-def link_wsl_and_windows() -> None:
+def link_wsl_and_windows(windows_username: str | None) -> None:
     system = platform.system()
     if system == "Darwin":
         raise RuntimeError("link_wsl_and_windows is not designed for macOS")
@@ -208,15 +212,25 @@ def link_wsl_and_windows() -> None:
             _ensure_windows_environment()
         except RuntimeError as exc:
             raise RuntimeError("link_wsl_and_windows must run inside Windows or WSL") from exc
+        print("🔗 Running inside Windows, linking to WSL home...")
         target_path = _resolve_wsl_home_on_windows()
         link_path = Path.home() / "wsl"
-        _ensure_symlink(link_path, target_path)
+        created = _ensure_symlink(link_path, target_path)
+        if created:
+            print(f"✅ Created symlink: {link_path} -> {target_path}")
+        else:
+            print(f"✅ Symlink already exists: {link_path} -> {target_path}")
         return
-    target_path = _resolve_windows_home_from_wsl()
+    print("🔗 Running inside WSL, linking to Windows home...")
+    target_path = _resolve_windows_home_from_wsl(windows_username)
     link_path = Path.home() / "win"
-    _ensure_symlink(link_path, target_path)
+    created = _ensure_symlink(link_path, target_path)
+    if created:
+        print(f"✅ Created symlink: {link_path} -> {target_path}")
+    else:
+        print(f"✅ Symlink already exists: {link_path} -> {target_path}")
 
 
 if __name__ == "__main__":
-    copy_when_inside_wsl(Path("projects/source.txt"), Path("windows_projects/source.txt"), True)
-    copy_when_inside_windows(Path("documents/example.txt"), Path("linux_documents/example.txt"), True)
+    copy_when_inside_wsl(Path("projects/source.txt"), Path("windows_projects/source.txt"), overwrite=True, windows_username=None)
+    copy_when_inside_windows(Path("documents/example.txt"), Path("linux_documents/example.txt"), overwrite=True)

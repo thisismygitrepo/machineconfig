@@ -75,10 +75,10 @@ def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both"
     typer.echo(f"[red]Error:[/] Unknown asset type: {which}")
 
 
-def link_wsl_and_windows_home():
+def link_wsl_and_windows_home(windows_username: Annotated[str | None, typer.Option("--windows-username", "-u", help="Windows username to use (optional, auto-detected if not provided)")] = None):
     """🔗 Link WSL home and Windows home directories."""
     import machineconfig.utils.ssh_utils.wsl as wsl_utils
-    wsl_utils.link_wsl_and_windows()
+    wsl_utils.link_wsl_and_windows(windows_username)
 
 
 def get_app():
