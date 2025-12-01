@@ -2,7 +2,7 @@
 
 """
 
-from typing import cast, Optional, get_args, Annotated
+from typing import cast, Optional, get_args, Annotated, Literal
 import typer
 from machineconfig.scripts.python.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
@@ -182,7 +182,31 @@ def init_config(root: Annotated[Optional[str], typer.Option(..., "--root", "-r",
     add_ai_configs(repo_root=repo_root)
 
 
-def get_app():
+def make_todo_files(
+    pattern: Annotated[str, typer.Argument(help="Pattern or keyword to match files by")] = ".py",
+    repo: Annotated[str, typer.Argument(help="Repository path. Can be any directory within a git repository.")] = ".",
+    strategy: Annotated[Literal["name", "keywords"], typer.Option("-s", "--strategy", help="Strategy to filter files: 'name' for filename matching, 'keywords' for content matching")] = "name",
+    exclude_init: Annotated[bool, typer.Option("-x", "--exclude-init", help="Exclude __init__.py files from the checklist")] = True,
+    include_line_count: Annotated[bool, typer.Option("-l", "--line-count", help="Include line count column in the output")] = False,
+    output_path: Annotated[str, typer.Option("-o", "--output-path", help="Base path for output files relative to repo root")] = ".ai/todo/files",
+    format_type: Annotated[Literal["csv", "md", "txt"], typer.Option("-f", "--format", help="Output format: csv, md (markdown), or txt")] = "md",
+    split_every: Annotated[Optional[int], typer.Option("--split-every", "-e", help="Split output into multiple files, each containing at most this many results")] = None,
+    split_to: Annotated[Optional[int], typer.Option("--split-to", "-t", help="Split output into exactly this many files")] = None,
+) -> None:
+    """Generate checklist with Python and shell script files in the repository filtered by pattern."""
+    from machineconfig.scripts.python.ai.utils.generate_files import make_todo_files as impl
+    impl(pattern=pattern, repo=repo, strategy=strategy, exclude_init=exclude_init, include_line_count=include_line_count, output_path=output_path, format_type=format_type, split_every=split_every, split_to=split_to)
+
+
+def create_symlink_command(
+    num: Annotated[int, typer.Argument(help="Number of symlinks to create (1-5).")] = 5,
+) -> None:
+    """Create symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}."""
+    from machineconfig.scripts.python.ai.utils.generate_files import create_symlink_command as impl
+    impl(num=num)
+
+
+def get_app() -> typer.Typer:
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
     sep = "\n"
     agents_full_help = f"""
@@ -201,12 +225,10 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_app.command("t", no_args_is_help=False, help=make_agents_command_template.__doc__, hidden=True)(make_agents_command_template)
     agents_app.command("make-config", no_args_is_help=False, help=init_config.__doc__, short_help="[g] Initialize AI configurations in the current repository")(init_config)
     agents_app.command("g", no_args_is_help=False, help=init_config.__doc__, hidden=True)(init_config)
-    from machineconfig.scripts.python.ai.utils.generate_files import make_todo_files
-    agents_app.command("make-todo", no_args_is_help=True, help=make_todo_files.__doc__, short_help="[d] Generate a markdown file listing all Python files in the repo")(make_todo_files)
-    agents_app.command("d", no_args_is_help=True, help=make_todo_files.__doc__, hidden=True)(make_todo_files)
-    from machineconfig.scripts.python.ai.utils.generate_files import create_symlink_command
-    agents_app.command(name="make-symlinks", no_args_is_help=True, help=create_symlink_command.__doc__, short_help="[s] Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
-    agents_app.command(name="s", no_args_is_help=True, help=create_symlink_command.__doc__, hidden=True)(create_symlink_command)
+    agents_app.command("make-todo", no_args_is_help=True, short_help="[d] Generate a markdown file listing all Python files in the repo")(make_todo_files)
+    agents_app.command("d", no_args_is_help=True, hidden=True)(make_todo_files)
+    agents_app.command(name="make-symlinks", no_args_is_help=True, short_help="[s] Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
+    agents_app.command(name="s", no_args_is_help=True, hidden=True)(create_symlink_command)
     return agents_app
 
 

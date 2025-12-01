@@ -194,12 +194,21 @@ def create_template(name: Annotated[Optional[str], typer.Argument(..., help="Nam
     print(f"✅ Created layout template at {layout_path}")
 
 
-def get_app():
-    layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
-    from machineconfig.scripts.python.helpers_sessions.sessions_multiprocess import create_from_function
+def create_from_function(
+        num_process: Annotated[int, typer.Option(..., "--num-process", "-n", help="Number of parallel processes to run")],
+        path: Annotated[str, typer.Option(..., "--path", "-p", help="Path to a Python or Shell script file or a directory containing such files")] = ".",
+        function: Annotated[Optional[str], typer.Option(..., "--function", "-f", help="Function to run from the Python file. If not provided, you will be prompted to choose.")] = None,
+) -> None:
+    """Create a layout from a function to run in multiple processes."""
+    from machineconfig.scripts.python.helpers_sessions.sessions_multiprocess import create_from_function as impl
+    impl(num_process=num_process, path=path, function=function)
 
-    layouts_app.command("create-from-function", no_args_is_help=True, help=create_from_function.__doc__, short_help="[c] Create a layout from a function")(create_from_function)
-    layouts_app.command("c", no_args_is_help=True, help=create_from_function.__doc__, hidden=True)(create_from_function)
+
+def get_app() -> typer.Typer:
+    layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
+
+    layouts_app.command("create-from-function", no_args_is_help=True, short_help="[c] Create a layout from a function")(create_from_function)
+    layouts_app.command("c", no_args_is_help=True, hidden=True)(create_from_function)
 
     layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="[r] Run the selected layout(s)")(run)
     layouts_app.command("r", no_args_is_help=True, help=run.__doc__, hidden=True)(run)

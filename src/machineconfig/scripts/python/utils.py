@@ -1,38 +1,96 @@
-from machineconfig.scripts.python.helpers_utils.pdf import merge_pdfs, compress_pdf
-from machineconfig.scripts.python.helpers_utils.python import edit_file_with_hx, get_machine_specs, init_project, tui_env
-from machineconfig.scripts.python.helpers_utils.download import download
+"""Utility commands - lazy loading subcommands."""
+
 import typer
-from typing import Annotated
+from typing import Annotated, Optional, Literal
 
 
-def kill_process(
-        # name: Annotated[Optional[str], typer.Option(..., "--name", "-n", help="Name of the process to kill")],
-                #  command: Annotated[str, typer.Option(..., "--command", "-c", help="Match by command line instead of process name")] = "",
-                 interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactively choose the process to kill")] = True):
+def kill_process(interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactively choose the process to kill")] = True) -> None:
+    """⚔️ Choose a process to kill."""
     from machineconfig.utils.procs import main, ProcessManager
     if interactive:
         main()
         return
     _ = ProcessManager
-    # pm = ProcessManager()
-    # if command:
-    #     pm.filter_and_kill(name=command
-                        #    )
 
 
-def upgrade_packages():
+def upgrade_packages() -> None:
+    """⬆️ Upgrade project dependencies."""
     from machineconfig.utils.upgrade_packages import generate_uv_add_commands
     from pathlib import Path
     generate_uv_add_commands(pyproject_path=Path.cwd() / "pyproject.toml", output_path=Path.cwd() / "pyproject_init.sh")
 
 
+def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(help="Which environment variable to display.")] = "ENV") -> None:
+    """📚 NAVIGATE ENV/PATH variable with TUI."""
+    from machineconfig.scripts.python.helpers_utils.python import tui_env as impl
+    impl(which=which)
+
+
+def download(
+    url: Annotated[Optional[str], typer.Argument(..., help="The URL to download the file from.")] = None,
+    decompress: Annotated[bool, typer.Option(..., "--decompress", "-d", help="Decompress the file if it's an archive.")] = False,
+    output: Annotated[Optional[str], typer.Option("--output", "-o", help="The output file path.")] = None,
+    output_dir: Annotated[Optional[str], typer.Option("--output-dir", help="Directory to place the downloaded file in.")] = None,
+) -> None:
+    """⬇️ Download a file from a URL and optionally decompress it."""
+    from machineconfig.scripts.python.helpers_utils.download import download as impl
+    impl(url=url, decompress=decompress, output=output, output_dir=output_dir)
+
+
+def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", "-h", help="Show compute capability")] = False) -> None:
+    """💻 Get machine specifications."""
+    from machineconfig.scripts.python.helpers_utils.python import get_machine_specs as impl
+    impl(hardware=hardware)
+
+
+def init_project(
+    name: Annotated[Optional[str], typer.Option("--name", "-n", help="Name of the project.")] = None,
+    tmp_dir: Annotated[bool, typer.Option("--tmp-dir", "-t", help="Use a temporary directory for the project initialization.")] = False,
+    python: Annotated[Literal["3.11", "3.12", "3.13", "3.14"], typer.Option("--python", "-p", help="Python sub version for the uv virtual environment.")] = "3.13",
+    libraries: Annotated[Optional[str], typer.Option("--libraries", "-l", help="Additional packages to include in the uv virtual environment (space separated).")] = None,
+    group: Annotated[Optional[str], typer.Option("--group", "-g", help="group of packages names (no separation) p:plot, t:types, l:linting, i:interactive, d:data")] = "p,t,l,i,d",
+) -> None:
+    """🚀 Initialize a project with a uv virtual environment and install dev packages."""
+    from machineconfig.scripts.python.helpers_utils.python import init_project as impl
+    impl(name=name, tmp_dir=tmp_dir, python=python, libraries=libraries, group=group)
+
+
+def edit_file_with_hx(path: Annotated[Optional[str], typer.Argument(..., help="The root directory of the project to edit, or a file path.")] = None) -> None:
+    """✏️ Open a file in the default editor."""
+    from machineconfig.scripts.python.helpers_utils.python import edit_file_with_hx as impl
+    impl(path=path)
+
+
+def merge_pdfs(
+    pdfs: Annotated[list[str], typer.Argument(..., help="Paths to the PDF files to merge.")],
+    output: Annotated[Optional[str], typer.Option("--output", "-o", help="Output merged PDF file path.")] = None,
+    compress: Annotated[bool, typer.Option("--compress", "-c", help="Compress the output PDF.")] = False,
+) -> None:
+    """📄 Merge two PDF files into one."""
+    from machineconfig.scripts.python.helpers_utils.pdf import merge_pdfs as impl
+    impl(pdfs=pdfs, output=output, compress=compress)
+
+
+def compress_pdf(
+    pdf_input: Annotated[str, typer.Argument(..., help="Path to the input PDF file to compress.")],
+    output: Annotated[Optional[str], typer.Option("--output", "-o", help="Output compressed PDF file path.")] = None,
+    quality: Annotated[int, typer.Option("--quality", "-q", help="JPEG quality for image compression (0-100, 0=no change, 100=best).")] = 85,
+    image_dpi: Annotated[int, typer.Option("--image-dpi", "-d", help="Target DPI for image resampling.")] = 0,
+    compress_streams: Annotated[bool, typer.Option("--compress-streams", "-c", help="Compress uncompressed streams.")] = True,
+    use_objstms: Annotated[bool, typer.Option("--object-streams", "-s", help="Use object streams for additional compression.")] = True,
+) -> None:
+    """📦 Compress a PDF file."""
+    from machineconfig.scripts.python.helpers_utils.pdf import compress_pdf as impl
+    impl(pdf_input=pdf_input, output=output, quality=quality, image_dpi=image_dpi, compress_streams=compress_streams, use_objstms=use_objstms)
+
+
 def get_app() -> typer.Typer:
     app = typer.Typer(help="🛠️ utilities operations", no_args_is_help=True, add_help_option=True, add_completion=False)
     app.command(name="kill-process", no_args_is_help=False, help="⚔️ [k] Choose a process to kill")(kill_process)
-    app.command(name="k", no_args_is_help=False, help="Choose a process to kill", hidden=True)(kill_process)
+    app.command(name="k", no_args_is_help=False, hidden=True)(kill_process)
 
     app.command("environment", no_args_is_help=False, help="📚 [v] NAVIGATE ENV/PATH variable with TUI")(tui_env)
-    app.command("v", no_args_is_help=False, help="NAVIGATE ENV/PATH variable with TUI", hidden=True)(tui_env)
+    app.command("v", no_args_is_help=False, hidden=True)(tui_env)
 
     app.command(name="upgrade-packages", no_args_is_help=False, help="⬆️ [up] Upgrade project dependencies.")(upgrade_packages)
     app.command(name="up", no_args_is_help=False, hidden=True)(upgrade_packages)
@@ -50,9 +108,6 @@ def get_app() -> typer.Typer:
     app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)
     app.command(name="pdf-compress", no_args_is_help=True, help="📦 [pc] Compress a PDF file.")(compress_pdf)
     app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
-
-    # app.command(name="copy", no_args_is_help=True, help="[c] Copy files or directories.")(copy)
-    # app.command(name="c", no_args_is_help=True, hidden=True)(copy)
 
     return app
 
