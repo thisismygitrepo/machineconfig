@@ -19,13 +19,15 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
     cmd = "zellij list-sessions"
     sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
     sessions = [s for s in sessions if s.strip()]
+    # print(f"Found Zellij sessions: {sessions}")
     sessions.sort(key=lambda s: "EXITED" in s)
     if "current" in sessions:
         return ("error", "Already in a Zellij session, avoiding nesting and exiting.")
     if len(sessions) == 0:
         return ("run_script", "zellij --layout st2")
     if len(sessions) == 1:
-        session_name = sessions[0].split(" [Created")[0]
+        sn = strip_ansi_codes(sessions[0])
+        session_name = sn.split(" [Created")[0]
         return ("run_script", f"zellij attach {session_name}")
     from machineconfig.utils.options import choose_from_options
     NEW_SESSION_LABEL = "NEW SESSION"
