@@ -73,43 +73,43 @@ def croshell(
 def devops(ctx: typer.Context) -> None:
     """[d] DevOps related commands."""
     from machineconfig.scripts.python.devops import get_app
-    get_app()(ctx.args, standalone_mode=False)
+    get_app()(ctx.args, standalone_mode=not ctx.args)
 
 
 def cloud(ctx: typer.Context) -> None:
     """[c] Cloud management commands."""
     from machineconfig.scripts.python.cloud import get_app
-    get_app()(ctx.args, standalone_mode=False)
+    get_app()(ctx.args, standalone_mode=not ctx.args)
 
 
 def sessions(ctx: typer.Context) -> None:
     """[s] Session and layout management."""
     from machineconfig.scripts.python.sessions import get_app
-    get_app()(ctx.args, standalone_mode=False)
+    get_app()(ctx.args, standalone_mode=not ctx.args)
 
 
 def agents(ctx: typer.Context) -> None:
     """[a] 🤖 AI Agents management commands."""
     from machineconfig.scripts.python.agents import get_app
-    get_app()(ctx.args, standalone_mode=False)
+    get_app()(ctx.args, standalone_mode=not ctx.args)
 
 
 def utils(ctx: typer.Context) -> None:
     """[u] Utility commands."""
     from machineconfig.scripts.python.utils import get_app
-    get_app()(ctx.args, standalone_mode=False)
+    get_app()(ctx.args, standalone_mode=not ctx.args)
 
 
 def terminal(ctx: typer.Context) -> None:
     """[t] Terminal management commands."""
     from machineconfig.scripts.python.terminal import get_app
-    get_app()(ctx.args, standalone_mode=False)
+    get_app()(ctx.args, standalone_mode=not ctx.args)
 
 
 def get_app() -> typer.Typer:
     app = typer.Typer(help="MachineConfig CLI - Manage your machine configurations and workflows", no_args_is_help=True, add_help_option=True, add_completion=False)
 
-    ctx_settings = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True}
+    ctx_settings: dict[str, object] = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True, "help_option_names": []}
 
     app.command(name="devops", help="[d] DevOps related commands", context_settings=ctx_settings)(devops)
     app.command(name="d", hidden=True, context_settings=ctx_settings)(devops)
