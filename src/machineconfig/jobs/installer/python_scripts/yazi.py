@@ -82,6 +82,7 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
     elif platform.system() == "Windows":
         from machineconfig.utils.installer_utils.installer_cli import install_if_missing
         install_if_missing("git")
+        install_if_missing("7zip")
         popler_installer: InstallerData = {
             "appName": "poppler",
             "repoURL": "https://github.com/oschwartz10612/poppler-windows",
@@ -98,7 +99,7 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
                     "macos": None,
                 }
             }
-        }
+        }  # OR: winget install oschwartz10612.Poppler
         inst_poppler = Installer(installer_data=popler_installer)
         inst_poppler.install(version=None)
     # assuming ouch is already installed

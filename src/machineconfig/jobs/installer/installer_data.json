@@ -87,6 +87,23 @@
       }
     },
     {
+      "appName": "magick",
+      "repoURL": "https://github.com/ImageMagick/ImageMagick",
+      "doc": "🧙‍♂️ Command-line image manipulation tool",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "ImageMagick-{version}-gcc-x86_64.AppImage",
+          "windows": "ImageMagick-{version}-portable-Q16-x64.7z",
+          "macos": "brew install imagemagick"
+        },
+        "arm64": {
+          "linux": "jq-linux-arm64",
+          "windows": "ImageMagick-{version}-Q16-arm64-dll.exe",
+          "macos": "brew install imagemagick"
+        }
+      }
+    },
+    {
       "appName": "speedtest",
       "repoURL": "CMD",
       "doc": "🚀 Test your internet connection speed and ping using speedtest.net from the CLI",
