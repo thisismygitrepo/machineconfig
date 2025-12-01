@@ -205,7 +205,7 @@ def create_from_function(
 
 
 def get_app() -> typer.Typer:
-    layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
+    layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
 
     layouts_app.command("create-from-function", no_args_is_help=True, short_help="[c] Create a layout from a function")(create_from_function)
     layouts_app.command("c", no_args_is_help=True, hidden=True)(create_from_function)

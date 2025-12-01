@@ -116,7 +116,7 @@ def start_wt(layout_name: Annotated[str, typer.Argument(help="Layout name to sta
 
 
 def get_app():
-    app = typer.Typer(help="🖥️ Terminal utilities", no_args_is_help=True, add_help_option=False)
+    app = typer.Typer(help="🖥️ Terminal utilities", no_args_is_help=True, add_help_option=True, add_completion=False)
     app.command(name="attach-to-zellij", no_args_is_help=False, help=choose_zellij_session.__doc__, short_help="[z] Choose a Zellij session to attach to")(choose_zellij_session)
     app.command(name="z", hidden=True, no_args_is_help=False, help=choose_zellij_session.__doc__)(choose_zellij_session)
 

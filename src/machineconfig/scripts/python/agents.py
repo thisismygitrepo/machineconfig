@@ -207,7 +207,7 @@ def create_symlink_command(
 
 
 def get_app() -> typer.Typer:
-    agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
+    agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     sep = "\n"
     agents_full_help = f"""
 [c] Create agents layout file, ready to run.
