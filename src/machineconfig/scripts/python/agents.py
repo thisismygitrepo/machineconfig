@@ -1,8 +1,6 @@
-"""Utilitfrom pathlib import Path
+"""Agents management commands - lazy loading subcommands."""
 
-"""
-
-from typing import cast, Optional, get_args, Annotated, Literal
+from typing import Optional, get_args, Annotated, Literal
 import typer
 from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
@@ -21,165 +19,46 @@ def agents_create(
     separate: Annotated[bool, typer.Option(..., "--separate", "-S", help="Keep prompt material in separate file to the context.")] = True,
     output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Path to write the layout.json file")] = None,
     agents_dir: Annotated[Optional[str], typer.Option(..., "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
-):
-
-    from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_help_launch import prep_agent_launch, get_agents_launch_layout
-    from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_load_balancer import chunk_prompts
-    from machineconfig.utils.accessories import get_repo_root, randstr
-    import json
-    from pathlib import Path
-    # validate mutual exclusive
-    prompt_options = [prompt, prompt_path]
-    provided_prompt = [opt for opt in prompt_options if opt is not None]
-    if len(provided_prompt) != 1:
-        raise typer.BadParameter("Exactly one of --prompt or --prompt-path must be provided")
+) -> None:
+    """Create agents layout file, ready to run."""
+    from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import agents_create as impl
+    try:
+        impl(agent=agent, host=host, model=model, provider=provider, context_path=context_path, separator=separator, agent_load=agent_load, prompt=prompt, prompt_path=prompt_path, job_name=job_name, separate=separate, output_path=output_path, agents_dir=agents_dir)
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
+    except RuntimeError as e:
+        typer.echo(str(e))
+        raise typer.Exit(1) from e
     
-    repo_root = get_repo_root(Path.cwd())
-    if repo_root is None:
-        typer.echo("💥 Could not determine the repository root. Please run this script from within a git repository.")
-        raise typer.Exit(1)
-        return
-    typer.echo(f"Operating @ {repo_root}")
-    
-    if context_path is None:
-        context_path_resolved = Path(repo_root) / ".ai" / "todo"
-    else: context_path_resolved = Path(context_path).expanduser().resolve()
-
-    if not context_path_resolved.exists():
-        raise typer.BadParameter(f"Path does not exist: {context_path_resolved}")
-    
-    if context_path_resolved.is_file():
-        prompt_material_re_splitted = chunk_prompts(context_path_resolved, tasks_per_prompt=agent_load, joiner=separator)
-    elif context_path_resolved.is_dir():
-        files = [f for f in context_path_resolved.rglob("*") if f.is_file()]
-        if not files:
-            raise typer.BadParameter(f"No files found in directory: {context_path_resolved}")
-        concatenated = separator.join(f.read_text(encoding="utf-8") for f in files)
-        prompt_material_re_splitted = [concatenated]
-    else:
-        raise typer.BadParameter(f"Path is neither file nor directory: {context_path_resolved}")
-    
-    if prompt_path is not None:
-        prompt_prefix = Path(prompt_path).read_text(encoding="utf-8")
-    else:
-        prompt_prefix = cast(str, prompt)
-    agent_selected = agent
-    if agents_dir is None: agents_dir_obj = Path(repo_root) / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
-    else:
-        import shutil
-        if Path(agents_dir).exists():
-            shutil.rmtree(agents_dir)
-        agents_dir_obj = Path(agents_dir)
-    prep_agent_launch(repo_root=repo_root, agents_dir=agents_dir_obj, prompts_material=prompt_material_re_splitted,
-                      keep_material_in_separate_file=separate,
-                      prompt_prefix=prompt_prefix, machine=host, agent=agent_selected, model=model, provider=provider,
-                      job_name=job_name)
-    layoutfile = get_agents_launch_layout(session_root=agents_dir_obj)
-#     regenerate_py_code = f"""
-# #!/usr/bin/env uv run --python 3.14 --with machineconfig
-# agents create "{context_path_resolved}" \\
-#     --prompt-path "{prompt_path or ''}" \\
-#     --agent "{agent_selected}" \\
-#     --host "{host}" \\
-#     --job-name "{job_name}" \\
-#     --agent_load {agent_load} \\
-#     --separator "{separator}" \\
-#     {"--separate" if separate else ""}
-# """
-#     (agents_dir_obj / "aa_agents_relaunch.sh").write_text(data=regenerate_py_code, encoding="utf-8")
-    layout_output_path = Path(output_path) if output_path is not None else agents_dir_obj / "layout.json"
-    layout_output_path.parent.mkdir(parents=True, exist_ok=True)
-    layout_output_path.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
-    typer.echo(f"Created agents in {agents_dir_obj}")
-    typer.echo(f"Ceated layout in {layout_output_path}")
-
-
 def collect(
     agent_dir: Annotated[str, typer.Argument(..., help="Path to the agent directory containing the prompts folder")],
     output_path: Annotated[str, typer.Argument(..., help="Path to write the concatenated material files")],
     separator: Annotated[str, typer.Option(..., help="Separator to use when concatenating material files")] = "\n",
 ) -> None:
     """Collect all material files from an agent directory and concatenate them."""
-    from pathlib import Path
-    if not Path(agent_dir).exists() or not Path(agent_dir).is_dir():
-        raise typer.BadParameter(f"Agent directory does not exist or is not a directory: {agent_dir}")
-    
-    prompts_dir = Path(agent_dir) / "prompts"
-    if not prompts_dir.exists():
-        raise typer.BadParameter(f"Prompts directory not found: {prompts_dir}")
-    
-    material_files = []
-    for agent_subdir in prompts_dir.iterdir():
-        if agent_subdir.is_dir() and agent_subdir.name.startswith("agent_"):
-            material_file = agent_subdir / f"{agent_subdir.name}_material.txt"
-            if material_file.exists():
-                material_files.append(material_file)
-    
-    if not material_files:
-        typer.echo("No material files found in the agent directory.")
-        return
-    
-    # Sort by agent index for consistent ordering
-    material_files.sort(key=lambda x: int(x.parent.name.split("_")[-1]))
-    
-    # Read and concatenate all material files
-    concatenated_content = []
-    for material_file in material_files:
-        content = material_file.read_text(encoding="utf-8")
-        concatenated_content.append(content)
-    
-    result = separator.join(concatenated_content)
-    
-    # Write to output file
-    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    Path(output_path).write_text(result, encoding="utf-8")
-    typer.echo(f"Concatenated material written to {output_path}")
+    from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import collect as impl
+    try:
+        impl(agent_dir=agent_dir, output_path=output_path, separator=separator)
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
 
 
-def make_agents_command_template():
-    """Create a template for fire agents"""
-    from platform import system
-    import machineconfig.scripts.python.helpers.helpers_agents as module
-    from pathlib import Path
-
-    if system() == "Linux" or system() == "Darwin":
-        template_path = Path(module.__file__).parent / "templates/template.sh"
-    elif system() == "Windows":
-        template_path = Path(module.__file__).parent / "templates/template.ps1"
-    else:
-        raise typer.BadParameter(f"Unsupported OS: {system()}")
-
-    from machineconfig.utils.accessories import get_repo_root
-    repo_root = get_repo_root(Path.cwd())
-    if repo_root is None:
-        typer.echo("💥 Could not determine the repository root. Please run this script from within a git repository.")
-        raise typer.Exit(1)
-
-    save_path_root = repo_root / ".ai" / "agents"
-
-    save_path_root.mkdir(parents=True, exist_ok=True)
-    save_path_root.joinpath("template_fire_agents.sh").write_text(template_path.read_text(encoding="utf-8"), encoding="utf-8")
-    typer.echo(f"Template bash script written to {save_path_root}")
-
-    from machineconfig.scripts.python.ai.utils.generate_files import make_todo_files
-    make_todo_files(
-        pattern=".py", repo=str(repo_root), strategy="name", output_path=str(save_path_root / "files.md"), split_every=None, split_to=None
-    )
-
-    prompt_path = Path(module.__file__).parent / "templates/prompt.txt"
-    save_path_root.joinpath("prompt.txt").write_text(prompt_path.read_text(encoding="utf-8"), encoding="utf-8")
-    typer.echo(f"Prompt template written to {save_path_root}")
+def make_agents_command_template() -> None:
+    """Create a template for fire agents."""
+    from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import make_agents_command_template as impl
+    try:
+        impl()
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
+    except RuntimeError as e:
+        typer.echo(str(e))
+        raise typer.Exit(1) from e
 
 
-def init_config(root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None):
-    """Initialize AI configurations in the current repository"""
-    from machineconfig.scripts.python.ai.initai import add_ai_configs
-    from pathlib import Path
-    if root is None:
-        repo_root = Path.cwd()
-    else:
-        repo_root = Path(root).expanduser().resolve()
-    add_ai_configs(repo_root=repo_root)
+def init_config(root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None) -> None:
+    """Initialize AI configurations in the current repository."""
+    from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import init_config as impl
+    impl(root=root)
 
 
 def make_todo_files(
@@ -232,13 +111,10 @@ AGENT options: {', '.join(get_args(AGENTS))}
     return agents_app
 
 
-def main():
+def main() -> None:
     agents_app = get_app()
-    # from trogon.typer import init_tui
-    # agents_app_tui = init_tui(agents_app)
     agents_app()
-    # agents_app_tui()
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     pass
