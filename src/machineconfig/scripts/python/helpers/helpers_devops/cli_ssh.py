@@ -51,7 +51,7 @@ def debug_ssh() -> None:
 
 
 def get_app() -> typer.Typer:
-    ssh_app = typer.Typer(help="🔐 SSH subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
+    ssh_app = typer.Typer(help="🔐 SSH subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     ssh_app.command(name="install-server", help="📡 [i] Install SSH server")(install_ssh_server)
     ssh_app.command(name="i", help="Install SSH server", hidden=True)(install_ssh_server)
     ssh_app.command(name="add-key", help="🔑 [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)

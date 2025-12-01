@@ -138,7 +138,7 @@ sudo warp-cli connect
 
 
 def get_app():
-    nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
+    nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     nw_apps.command(name="share-terminal", help="📡 [t] Share terminal via web browser")(cli_share_terminal.share_terminal)
     nw_apps.command(name="t", help="Share terminal via web browser", hidden=True)(cli_share_terminal.share_terminal)
 

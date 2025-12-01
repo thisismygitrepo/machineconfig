@@ -160,7 +160,7 @@ def readme():
 
 
 def get_app():
-    cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
+    cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     cli_app.command("update",      no_args_is_help=False, help="🔄 [u] UPDATE machineconfig")(update)
     cli_app.command("u",           no_args_is_help=False, hidden=True)(update)
     cli_app.command("interactive", no_args_is_help=False, help="🤖 [i] INTERACTIVE configuration of machine.")(interactive)

@@ -164,8 +164,8 @@ uv run --with cleanpy cleanpy .
 
 
 def get_app():
-    repos_apps = typer.Typer(help="📁 [r] Manage development repositories", no_args_is_help=True, add_help_option=False, add_completion=False)
-    mirror_app = typer.Typer(help="🔄 [m] Manage repository specifications and syncing", no_args_is_help=True, add_help_option=False, add_completion=False)
+    repos_apps = typer.Typer(help="📁 [r] Manage development repositories", no_args_is_help=True, add_help_option=True, add_completion=False)
+    mirror_app = typer.Typer(help="🔄 [m] Manage repository specifications and syncing", no_args_is_help=True, add_help_option=True, add_completion=False)
     repos_apps.add_typer(mirror_app, name="mirror", help="🔄  [m] mirror repositories using saved specs")
     repos_apps.add_typer(mirror_app, name="m", help="mirror repositories using saved specs", hidden=True)
 

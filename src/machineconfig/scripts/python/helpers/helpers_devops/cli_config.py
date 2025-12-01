@@ -82,7 +82,7 @@ def link_wsl_and_windows_home():
 
 
 def get_app():
-    config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=False, add_completion=False)
+    config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     config_apps.command("private", no_args_is_help=True, help="🔗 [v] Manage private configuration files.")(create_links_export.main_private_from_parser)
     config_apps.command("v", no_args_is_help=True, hidden=True)(create_links_export.main_private_from_parser)
     config_apps.command("public", no_args_is_help=True, help="🔗 [b] Manage public configuration files.")(create_links_export.main_public_from_parser)
