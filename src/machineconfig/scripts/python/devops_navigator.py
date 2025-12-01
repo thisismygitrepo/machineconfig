@@ -1,4 +1,4 @@
-from machineconfig.scripts.python.helpers_navigator import CommandNavigatorApp
+from machineconfig.scripts.python.helpers.helpers_navigator import CommandNavigatorApp
 
 
 if __name__ == "__main__":

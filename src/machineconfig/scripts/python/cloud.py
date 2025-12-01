@@ -18,7 +18,7 @@ def sync(
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.")] = False,
 ) -> None:
     """🔄 Synchronize files/folders between local and cloud storage."""
-    from machineconfig.scripts.python.helpers_cloud.cloud_sync import main as sync_main
+    from machineconfig.scripts.python.helpers.helpers_cloud.cloud_sync import main as sync_main
     sync_main(source=source, target=target, transfers=transfers, root=root, key=key, pwd=pwd, encrypt=encrypt, zip_=zip_, bisync=bisync, delete=delete, verbose=verbose)
 
 
@@ -37,7 +37,7 @@ def copy(
     config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to cloud.json file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services."""
-    from machineconfig.scripts.python.helpers_cloud.cloud_copy import main as copy_main
+    from machineconfig.scripts.python.helpers.helpers_cloud.cloud_copy import main as copy_main
     copy_main(source=source, target=target, overwrite=overwrite, share=share, rel2home=rel2home, root=root, key=key, pwd=pwd, encrypt=encrypt, zip_=zip_, os_specific=os_specific, config=config)
 
 
@@ -47,7 +47,7 @@ def mount(
     network: Annotated[Optional[str], typer.Option(help="mount network drive")] = None,
 ) -> None:
     """🔗 Mount cloud storage services as local drives."""
-    from machineconfig.scripts.python.helpers_cloud.cloud_mount import mount as mount_main
+    from machineconfig.scripts.python.helpers.helpers_cloud.cloud_mount import mount as mount_main
     mount_main(cloud=cloud, destination=destination, network=network)
 
 

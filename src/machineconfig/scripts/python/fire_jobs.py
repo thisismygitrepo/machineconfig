@@ -34,7 +34,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
 
     # =========================  preparing kwargs_dict
     if choice_file.suffix == ".py":
-        from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import extract_kwargs
+        from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_args_helper import extract_kwargs
         kwargs_dict = extract_kwargs(args)  # This now returns empty dict, but kept for compatibility
     else:
         kwargs_dict = {}
@@ -42,7 +42,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
     # =========================  choosing function to run
     choice_function: Optional[str] = None  # Initialize to avoid unbound variable
     if args.choose_function:
-        from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import choose_function_or_lines
+        from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_route_helper import choose_function_or_lines
 
         choice_function, choice_file, kwargs_dict = choose_function_or_lines(choice_file, kwargs_dict)
     else:
@@ -62,7 +62,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
             ipython_line = ""
 
         if args.streamlit:
-            from machineconfig.scripts.python.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
+            from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
             interpreter_line = get_command_streamlit(choice_file=choice_file, environment=args.environment, repo_root=repo_root)
         elif args.jupyter:
             interpreter_line = "jupyter-lab"
@@ -90,7 +90,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
     if args.script or (args.debug and args.choose_function):
         # because debugging tools do not support choosing functions and don't interplay with fire module. So the only way to have debugging and choose function options is to import the file as a module into a new script and run the function of interest there and debug the new script.
         assert choice_file.suffix == ".py", f"File must be a python file to be imported as a module. Got {choice_file}"
-        from machineconfig.scripts.python.helpers_fire_command.file_wrangler import get_import_module_code, wrap_import_in_try_except
+        from machineconfig.scripts.python.helpers.helpers_fire_command.file_wrangler import get_import_module_code, wrap_import_in_try_except
         from machineconfig.utils.meta import lambda_to_python_script
         from machineconfig.utils.code import print_code
 
@@ -180,7 +180,7 @@ uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.
     if args.git_pull:
         command = f"\ngit -C {choice_file.parent} pull\n" + command
     if args.PathExport:
-        from machineconfig.scripts.python.helpers_fire_command.file_wrangler import add_to_path
+        from machineconfig.scripts.python.helpers.helpers_fire_command.file_wrangler import add_to_path
 
         export_line = add_to_path(path_variable="PYTHONPATH", directory=str(repo_root))
         command = export_line + "\n" + command
@@ -226,7 +226,7 @@ def fire(
     """Main function to process fire jobs arguments."""
 
     # Get Fire arguments from context
-    from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import FireJobArgs, parse_fire_args_from_context
+    from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_args_helper import FireJobArgs, parse_fire_args_from_context
     fire_args = parse_fire_args_from_context(ctx)
 
     args = FireJobArgs(
@@ -280,4 +280,4 @@ def main():
 
 
 if __name__ == "__main__":
-    from machineconfig.scripts.python.helpers_fire_command.fire_jobs_args_helper import FireJobArgs
+    from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_args_helper import FireJobArgs

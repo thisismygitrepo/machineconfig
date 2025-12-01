@@ -22,7 +22,7 @@ def upgrade_packages() -> None:
 
 def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(help="Which environment variable to display.")] = "ENV") -> None:
     """📚 NAVIGATE ENV/PATH variable with TUI."""
-    from machineconfig.scripts.python.helpers_utils.python import tui_env as impl
+    from machineconfig.scripts.python.helpers.helpers_utils.python import tui_env as impl
     impl(which=which)
 
 
@@ -33,13 +33,13 @@ def download(
     output_dir: Annotated[Optional[str], typer.Option("--output-dir", help="Directory to place the downloaded file in.")] = None,
 ) -> None:
     """⬇️ Download a file from a URL and optionally decompress it."""
-    from machineconfig.scripts.python.helpers_utils.download import download as impl
+    from machineconfig.scripts.python.helpers.helpers_utils.download import download as impl
     impl(url=url, decompress=decompress, output=output, output_dir=output_dir)
 
 
 def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", "-h", help="Show compute capability")] = False) -> None:
     """💻 Get machine specifications."""
-    from machineconfig.scripts.python.helpers_utils.python import get_machine_specs as impl
+    from machineconfig.scripts.python.helpers.helpers_utils.python import get_machine_specs as impl
     impl(hardware=hardware)
 
 
@@ -51,13 +51,13 @@ def init_project(
     group: Annotated[Optional[str], typer.Option("--group", "-g", help="group of packages names (no separation) p:plot, t:types, l:linting, i:interactive, d:data")] = "p,t,l,i,d",
 ) -> None:
     """🚀 Initialize a project with a uv virtual environment and install dev packages."""
-    from machineconfig.scripts.python.helpers_utils.python import init_project as impl
+    from machineconfig.scripts.python.helpers.helpers_utils.python import init_project as impl
     impl(name=name, tmp_dir=tmp_dir, python=python, libraries=libraries, group=group)
 
 
 def edit_file_with_hx(path: Annotated[Optional[str], typer.Argument(..., help="The root directory of the project to edit, or a file path.")] = None) -> None:
     """✏️ Open a file in the default editor."""
-    from machineconfig.scripts.python.helpers_utils.python import edit_file_with_hx as impl
+    from machineconfig.scripts.python.helpers.helpers_utils.python import edit_file_with_hx as impl
     impl(path=path)
 
 
@@ -67,7 +67,7 @@ def merge_pdfs(
     compress: Annotated[bool, typer.Option("--compress", "-c", help="Compress the output PDF.")] = False,
 ) -> None:
     """📄 Merge two PDF files into one."""
-    from machineconfig.scripts.python.helpers_utils.pdf import merge_pdfs as impl
+    from machineconfig.scripts.python.helpers.helpers_utils.pdf import merge_pdfs as impl
     impl(pdfs=pdfs, output=output, compress=compress)
 
 
@@ -80,7 +80,7 @@ def compress_pdf(
     use_objstms: Annotated[bool, typer.Option("--object-streams", "-s", help="Use object streams for additional compression.")] = True,
 ) -> None:
     """📦 Compress a PDF file."""
-    from machineconfig.scripts.python.helpers_utils.pdf import compress_pdf as impl
+    from machineconfig.scripts.python.helpers.helpers_utils.pdf import compress_pdf as impl
     impl(pdf_input=pdf_input, output=output, quality=quality, image_dpi=image_dpi, compress_streams=compress_streams, use_objstms=use_objstms)
 
 

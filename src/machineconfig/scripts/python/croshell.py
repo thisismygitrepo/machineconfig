@@ -32,7 +32,7 @@ def croshell(
         uv_project_line = ""
         uv_python_line = "--python 3.14"
 
-    from machineconfig.scripts.python.helpers_croshell.crosh import get_read_python_file_pycode, get_read_data_pycode
+    from machineconfig.scripts.python.helpers.helpers_croshell.crosh import get_read_python_file_pycode, get_read_data_pycode
     from machineconfig.utils.meta import lambda_to_python_script
     from pathlib import Path
     from machineconfig.utils.accessories import randstr

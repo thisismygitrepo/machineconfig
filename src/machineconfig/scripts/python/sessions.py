@@ -200,7 +200,7 @@ def create_from_function(
         function: Annotated[Optional[str], typer.Option(..., "--function", "-f", help="Function to run from the Python file. If not provided, you will be prompted to choose.")] = None,
 ) -> None:
     """Create a layout from a function to run in multiple processes."""
-    from machineconfig.scripts.python.helpers_sessions.sessions_multiprocess import create_from_function as impl
+    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_multiprocess import create_from_function as impl
     impl(num_process=num_process, path=path, function=function)
 
 

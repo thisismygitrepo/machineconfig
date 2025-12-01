@@ -5,7 +5,7 @@ from typing import Any
 
 
 def get_import_module_string(py_file: str) -> str:
-    from machineconfig.scripts.python.helpers_fire_command.file_wrangler import get_import_module_code
+    from machineconfig.scripts.python.helpers.helpers_fire_command.file_wrangler import get_import_module_code
     from machineconfig.utils.accessories import get_repo_root
     from pathlib import Path
     repo_root = get_repo_root(Path(py_file))

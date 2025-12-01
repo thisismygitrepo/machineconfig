@@ -104,7 +104,7 @@ def install_deb_package(downloaded: Path) -> None:
 
 def download_and_prepare(download_url: str) -> PathExtended:
     # archive_path = PathExtended(download_url).download(folder=INSTALL_TMP_DIR)
-    from machineconfig.scripts.python.helpers_utils.download import download
+    from machineconfig.scripts.python.helpers.helpers_utils.download import download
     downloaded_object = download(download_url, output_dir=str(INSTALL_TMP_DIR))
     if downloaded_object is None:
         raise ValueError(f"Failed to download from URL: {download_url}")

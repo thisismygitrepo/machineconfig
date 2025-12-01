@@ -32,7 +32,7 @@ def machineconfig_search(
         run_shell_script(script=script)
         return
     if ast:
-        from machineconfig.scripts.python.helpers.ast_search import get_repo_symbols
+        from machineconfig.scripts.python.helpers.helpers_search.ast_search import get_repo_symbols
         symbols = get_repo_symbols(directory)
         from machineconfig.utils.options import choose_from_options
         try:
@@ -52,7 +52,7 @@ def machineconfig_search(
         from machineconfig.utils.code import run_shell_script
         run_shell_script(script=script)
         return
-    from machineconfig.scripts.python.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH
+    from machineconfig.scripts.python.helpers.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH
     import platform
     if platform.system() == "Linux" or platform.system() == "Darwin":
         script = FZFG_LINUX_PATH.read_text(encoding="utf-8")

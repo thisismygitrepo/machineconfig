@@ -15,31 +15,31 @@ def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-sepa
 
 def repos(ctx: typer.Context) -> None:
     """📁 [r] Manage development repositories"""
-    import machineconfig.scripts.python.helpers_devops.cli_repos as cli_repos
+    import machineconfig.scripts.python.helpers.helpers_devops.cli_repos as cli_repos
     cli_repos.get_app()(ctx.args, standalone_mode=False)
 
 
 def config(ctx: typer.Context) -> None:
     """⚙️ [c] Configuration management"""
-    import machineconfig.scripts.python.helpers_devops.cli_config as cli_config
+    import machineconfig.scripts.python.helpers.helpers_devops.cli_config as cli_config
     cli_config.get_app()(ctx.args, standalone_mode=False)
 
 
 def data(ctx: typer.Context) -> None:
     """💾 [d] Data management"""
-    import machineconfig.scripts.python.helpers_devops.cli_data as cli_data
+    import machineconfig.scripts.python.helpers.helpers_devops.cli_data as cli_data
     cli_data.get_app()(ctx.args, standalone_mode=False)
 
 
 def self_cmd(ctx: typer.Context) -> None:
     """🔧 [s] Self management"""
-    import machineconfig.scripts.python.helpers_devops.cli_self as cli_self
+    import machineconfig.scripts.python.helpers.helpers_devops.cli_self as cli_self
     cli_self.get_app()(ctx.args, standalone_mode=False)
 
 
 def network(ctx: typer.Context) -> None:
     """🌐 [n] Network management"""
-    import machineconfig.scripts.python.helpers_devops.cli_nw as cli_network
+    import machineconfig.scripts.python.helpers.helpers_devops.cli_nw as cli_network
     cli_network.get_app()(ctx.args, standalone_mode=False)
 
 
@@ -51,7 +51,7 @@ def execute(
     list_scripts: Annotated[bool, typer.Option(..., "--list", "-l", help="List available scripts in all locations")] = False,
 ) -> None:
     """▶️ Execute python/shell scripts from pre-defined directories or as command."""
-    import machineconfig.scripts.python.helpers_devops.run_script as run_py_script_module
+    import machineconfig.scripts.python.helpers.helpers_devops.run_script as run_py_script_module
     run_py_script_module.run_py_script(name=name, where=where, interactive=interactive, command=command, list_scripts=list_scripts)
 
 
