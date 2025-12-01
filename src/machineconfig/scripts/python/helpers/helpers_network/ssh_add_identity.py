@@ -45,7 +45,6 @@ console = Console()
 
 def main() -> None:
     private_keys = [PathExtended(x).with_name(x.stem) for x in PathExtended.home().joinpath(".ssh").glob("*.pub")]
-    private_keys = [x for x in private_keys if x.exists()]
     key_status = f"Found {len(private_keys)} key(s)" if private_keys else "No keys found"
     console.print(Panel(f"🔑 SSH Identity Management\n🔍 {key_status} in ~/.ssh", title="[bold blue]Setup[/bold blue]", expand=False))
 

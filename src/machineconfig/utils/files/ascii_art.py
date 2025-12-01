@@ -32,15 +32,11 @@ class BoxStyles:
 
 class CowStyles:
     eyes = ['-b', '-d', '-g', '-h', '-l', '-L', '-n', '-N', '-p', '-s', '-t', '-w', '-y']
-    # this one for the package installed with sudo apt install cowsay and is located at /usr/games/cowsay. See cowsay -l
-    figures = ['apt', 'bunny', 'cheese', 'cock', 'cower', 'daemon', 'default', 'dragon',
-               'dragon-and-cow', 'duck', 'elephant', 'elephant-in-snake', 'eyes', 'fox', 'ghostbusters',
-               'gnu', 'kangaroo', 'kiss', 'milk',
-               'moose', 'pony', 'pony-smaller', 'sheep', 'skeleton', 'snowman', 'stegosaurus',  # 'suse',
-               'three-eyes', 'turkey', 'turtle', 'tux', 'unipony', 'unipony-smaller', 'vader', 'vader']  # 'hellokitty' 'mech-and-cow'  # 'moofasa', 'stimpy', 'calvin', , 'ren', 'koala', 'flaming-sheep' , 'bud-frogs' , 'kosh' , 'luke-koala'
+    # Available characters from Python cowsay package (uv tool install cowsay)
+    figures = ['beavis', 'cheese', 'cow', 'daemon', 'dragon', 'fox', 'ghostbusters', 'kitty', 'meow', 'miki', 'milk', 'octopus', 'pig', 'stegosaurus', 'stimpy', 'trex', 'turkey', 'turtle', 'tux']
 
 
-FIGLET_FONTS = ['banner', 'big', 'standard']
+FIGLET_FONTS = ['Banner', 'Big', 'Standard']
 
 FIGJS_FONTS = ['3D Diagonal', '3D-ASCII', '4Max', '5 Line Oblique', 'Acrobatic', 'ANSI Regular', 'ANSI Shadow',
                'Avatar', 'Banner', 'Banner3-D', 'Banner4',
@@ -55,8 +51,8 @@ FIGJS_FONTS = ['3D Diagonal', '3D-ASCII', '4Max', '5 Line Oblique', 'Acrobatic',
 
 def get_art(comment: Optional[str] = None, artlib: Optional[BOX_OR_CHAR] = None, style: Optional[str] = None, super_style: str = 'scene', prefix: str = ' ', file: Optional[str] = None, verbose: bool = True):
     """ takes in a comment and does the following wrangling:
-    * text => figlet font => boxes => lolcat
-    * text => cowsay => lolcat
+    * text => figlet font => boxes => lolcatjs
+    * text => cowsay => lolcatjs
     """
     if comment is None:
         try:
@@ -68,10 +64,10 @@ def get_art(comment: Optional[str] = None, artlib: Optional[BOX_OR_CHAR] = None,
     if artlib == 'boxes':
         if style is None: style = random.choice(BoxStyles.__dict__[super_style or random.choice(['language', 'scene', 'character'])])
         fonting = f'figlet -f {random.choice(FIGLET_FONTS)}'
-        cmd = f"""echo "{comment}" | {fonting} | boxes -d {style} {to_file}"""
+        cmd = f"""{fonting} "{comment}" | boxes -d {style} {to_file}"""
     else:
         if style is None: style = random.choice(CowStyles.figures)
-        cmd = f"""echo "{comment}" | /usr/games/cowsay -f {style} {to_file}"""
+        cmd = f"""cowsay -c {style} -t "{comment}" {to_file}"""
     try:
         res = subprocess.run(cmd, text=True, capture_output=True, shell=True, check=True).stdout
     except subprocess.CalledProcessError as ex:
@@ -91,7 +87,7 @@ def font_box_color(logo: str):
     box_style = random.choice(['whirly', 'xes', 'columns', 'parchment', 'scroll', 'scroll-akn', 'diamonds', 'headline', 'nuke', 'spring', 'stark1'])
     _cmd = f'figlet -f "{font}" "{logo}" | boxes -d "{box_style}" | lolcatjs'
     # print(_cmd)
-    os.system(_cmd)  # | lolcat
+    os.system(_cmd)  # | lolcatjs
     # print("after")
 
 
@@ -100,7 +96,7 @@ def character_color(logo: str):
     with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
         f.write(ArtLib.cowsay(logo))
         _new_art = f.name
-    os.system(f'type {_new_art} | lolcatjs')  # | lolcat
+    os.system(f'type {_new_art} | lolcatjs')  # | lolcatjs
 
 
 def character_or_box_color(logo: str):
@@ -110,7 +106,7 @@ def character_or_box_color(logo: str):
     get_art(logo, artlib=None, file=_new_art, verbose=False)
     # Prefer bat on mac if available, fallback to cat
     pager = "bat" if (platform.system() == "Darwin" and any((Path(p).joinpath("bat").exists() for p in os.environ.get("PATH", "").split(os.pathsep)))) else "cat"
-    command = f"{pager} {_new_art} | lolcat"
+    command = f"{pager} {_new_art} | lolcatjs"
     os.system(command)
 
 
