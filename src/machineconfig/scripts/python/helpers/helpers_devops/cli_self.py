@@ -96,6 +96,7 @@ uv tool install --no-cache --upgrade machineconfig
 
 def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True,
             dev: Annotated[bool, typer.Option("--dev", "-d", help="Install from local development code instead of PyPI")] = False,
+    
             ):
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
     from machineconfig.utils.code import run_shell_script, get_uv_command

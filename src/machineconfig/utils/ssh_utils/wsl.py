@@ -56,6 +56,18 @@ def _infer_windows_home_from_permissions() -> Path:
         if mode == 0o777:
             candidates.append(entry)
     if len(candidates) != 1:
+        # If WSL provides a username, prefer a candidate that matches it exactly.
+        wsl_user = os.environ.get("USER") or os.environ.get("LOGNAME")
+        if wsl_user:
+            for candidate in candidates:
+                if candidate.name == wsl_user:
+                    return candidate
+
+        # Filter out default Windows accounts like 'Default' and 'Default User'
+        non_default = [c for c in candidates if c.name.lower() not in ("default", "default user")]
+        if len(non_default) == 1:
+            return non_default[0]
+
         options = ", ".join(sorted(candidate.name for candidate in candidates)) or "none"
         raise RuntimeError(f"unable to infer Windows home directory (candidates: {options})")
     return candidates[0]
