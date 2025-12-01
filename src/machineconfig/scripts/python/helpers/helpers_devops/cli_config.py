@@ -81,6 +81,12 @@ def link_wsl_and_windows_home(windows_username: Annotated[str | None, typer.Opti
     wsl_utils.link_wsl_and_windows(windows_username)
 
 
+def open_wsl_port(ports: Annotated[str, typer.Argument(..., help="Comma-separated ports or port ranges (e.g., '8080,3000-3005,443')")]):
+    """🔥 Open Windows firewall ports for WSL (Windows only)."""
+    import machineconfig.utils.ssh_utils.wsl as wsl_utils
+    wsl_utils.open_wsl_port(ports)
+
+
 def get_app():
     config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     config_apps.command("private", no_args_is_help=True, help="🔗 [v] Manage private configuration files.")(create_links_export.main_private_from_parser)
@@ -101,5 +107,8 @@ def get_app():
 
     config_apps.command("link-wsl-windows", no_args_is_help=False, help="🔗 [l] Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
     config_apps.command("l", no_args_is_help=False, help="Link WSL home and Windows home directories.", hidden=True)(link_wsl_and_windows_home)
+
+    config_apps.command("open-wsl-port", no_args_is_help=True, help="🔥 [o] Open Windows firewall ports for WSL.", hidden=False)(open_wsl_port)
+    config_apps.command("o", no_args_is_help=True, help="Open Windows firewall ports for WSL.", hidden=True)(open_wsl_port)
 
     return config_apps

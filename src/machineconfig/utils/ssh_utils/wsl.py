@@ -231,6 +231,100 @@ def link_wsl_and_windows(windows_username: str | None) -> None:
         print(f"✅ Symlink already exists: {link_path} -> {target_path}")
 
 
+def _parse_port_spec(port_spec: str) -> list[int]:
+    ports: list[int] = []
+    for part in port_spec.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        if "-" in part:
+            range_parts = part.split("-", maxsplit=1)
+            start = int(range_parts[0].strip())
+            end = int(range_parts[1].strip())
+            if start > end:
+                raise ValueError(f"Invalid port range: {part} (start > end)")
+            ports.extend(range(start, end + 1))
+        else:
+            ports.append(int(part))
+    return ports
+
+
+def open_wsl_port(ports_spec: str) -> None:
+    _ensure_windows_environment()
+    ports = _parse_port_spec(ports_spec)
+    if not ports:
+        raise ValueError("No valid ports provided")
+    for port in ports:
+        if port < 1 or port > 65535:
+            raise ValueError(f"Invalid port number: {port}")
+        rule_name = f"WSL Port {port}"
+        script = (
+            f"New-NetFirewallRule -DisplayName '{rule_name}' "
+            f"-Direction Inbound -LocalPort {port} -Protocol TCP -Action Allow"
+        )
+        print(f"🔥 Opening firewall for port {port}...")
+        result = subprocess.run(["powershell.exe", "-NoLogo", "-NoProfile", "-Command", script], capture_output=True, text=True)
+        if result.returncode == 0:
+            print(f"✅ Firewall opened for port {port}")
+        else:
+            print(f"❌ Failed to open port {port}: {result.stderr.strip()}")
+
+
+"""
+change ssh port in WSL to 2222
+Open your WSL terminal.
+
+Edit the sshd_config file:
+
+Bash
+
+sudo nano /etc/ssh/sshd_config
+Find the line #Port 22. Uncomment it (delete the #) and change it to 2222:
+
+Plaintext
+
+Port 2222
+(Also ensure PasswordAuthentication yes is set if you aren't using keys yet).
+
+Save and exit (Ctrl+O, Enter, Ctrl+X).
+
+Crucial Step for Newer Ubuntu (22.10+): If you are on a modern Ubuntu, systemd manages SSH and might ignore the config file above. To be safe, run this override:
+
+Run this command to create an override directory:
+
+Bash
+
+sudo systemctl edit ssh.socket
+In the editor that opens, paste these lines into the empty space at the top:
+
+Ini, TOML
+
+[Socket]
+ListenStream=
+ListenStream=2222
+(The empty ListenStream= line is required to clear the default port 22).
+
+Save and exit.
+
+Restart the SSH service:
+
+Bash
+
+sudo systemctl daemon-reload
+sudo systemctl restart ssh.socket
+sudo service ssh restart
+
+Step 2: Open the New Port in Windows Firewall
+Just like you did for your web server, you must allow traffic to this new port on the Windows side.
+
+Run this in PowerShell (Admin):
+
+PowerShell
+
+New-NetFirewallRule -DisplayName "WSL SSH" -Direction Inbound -LocalPort 2222 -Protocol TCP -Ac
+
+"""
+
 if __name__ == "__main__":
     copy_when_inside_wsl(Path("projects/source.txt"), Path("windows_projects/source.txt"), overwrite=True, windows_username=None)
     copy_when_inside_windows(Path("documents/example.txt"), Path("linux_documents/example.txt"), overwrite=True)
