@@ -73,12 +73,29 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
     print("   ✨ Executable and components located.")
 
     print("\n🗑️  [Step 3/5] Cleaning up previous installation (if any)...")
-    runtime_path = PathExtended.home().joinpath(".config/helix/runtime")
-    contrib_path = PathExtended.home().joinpath(".config/helix/contrib")
-
-    print("\n📦 [Step 4/5] Installing Helix components...")
-    target_config_dir = PathExtended.home().joinpath(".config/helix").expanduser()
-    target_config_dir.mkdir(parents=True, exist_ok=True)
+    if platform.system() in ["Linux", "Darwin"]:
+        runtime_path = PathExtended.home().joinpath(".config/helix/runtime")
+        contrib_path = PathExtended.home().joinpath(".config/helix/contrib")
+        target_config_dir = PathExtended.home().joinpath(".config/helix").expanduser()
+        target_config_dir.mkdir(parents=True, exist_ok=True)
+    elif platform.system() == "Windows":
+        runtime_path = PathExtended.home().joinpath("AppData/Roaming/helix/runtime")
+        contrib_path = PathExtended.home().joinpath("AppData/Roaming/helix/contrib")
+        target_config_dir = PathExtended.home().joinpath("AppData/Roaming/helix").expanduser()
+        target_config_dir.mkdir(parents=True, exist_ok=True)
+    else:
+        console.print(
+            Panel(
+                f"""⚠️ WARNING | Unsupported operating system: {platform.system()}
+          | Installation aborted.""",
+                title="Warning",
+                expand=False,
+            )
+        )
+        print("\n🧹 [Step 5/5] Cleaning up temporary download files...")
+        downloaded.delete(sure=True)
+        print("   ✨ Cleanup complete.")
+        return f"Error: Unsupported OS: {platform.system()}"
 
     if platform.system() in ["Linux", "Darwin"]:
         target_bin_path = PathExtended(LINUX_INSTALL_PATH) if platform.system() == "Linux" else PathExtended("/usr/local/bin")

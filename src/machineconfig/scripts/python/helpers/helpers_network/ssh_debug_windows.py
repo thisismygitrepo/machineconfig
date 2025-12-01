@@ -20,13 +20,13 @@ def _run_ps(cmd: str) -> tuple[bool, str]:
 
 def _detect_openssh() -> tuple[str, Path | None, Path | None]:
     capability_sshd = Path("C:/Windows/System32/OpenSSH/sshd.exe")
-    capability_config = Path("C:/ProgramData/ssh")
     winget_sshd = Path("C:/Program Files/OpenSSH/sshd.exe")
-    winget_config = Path("C:/Program Files/OpenSSH")
+    programdata_config = Path("C:/ProgramData/ssh")
+    capability_config = Path("C:/ProgramData/ssh")
     if capability_sshd.exists():
         return ("capability", capability_sshd, capability_config)
     if winget_sshd.exists():
-        return ("winget", winget_sshd, winget_config)
+        return ("winget", winget_sshd, programdata_config)
     return ("not_found", None, None)
 
 
@@ -121,37 +121,52 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
         net_info.append(f"🌐 IP addresses: [cyan]{', '.join(ip_addresses)}[/cyan]")
 
     sshd_config: Path | None = config_dir.joinpath("sshd_config") if config_dir else None
+    config_text: str | None = None
     if sshd_config and sshd_config.exists():
         try:
             config_text = sshd_config.read_text(encoding="utf-8")
+        except PermissionError:
+            ok, config_text_ps = _run_ps(f'Get-Content "{sshd_config}" -Raw')
+            config_text = config_text_ps if ok and config_text_ps else None
+        except Exception:
+            config_text = None
+        if config_text:
             port_lines = [line for line in config_text.split("\n") if line.strip().startswith("Port") and not line.strip().startswith("#")]
             if port_lines:
                 ssh_port = port_lines[0].split()[1]
-            net_info.append(f"🔌 SSH port: [cyan]{ssh_port}[/cyan]")
 
-            pubkey_lines = [line for line in config_text.split("\n") if "PubkeyAuthentication" in line and not line.strip().startswith("#")]
-            if pubkey_lines and "no" in pubkey_lines[-1].lower():
-                results["pubkey_auth"] = {"status": "error", "message": "PubkeyAuthentication disabled"}
-                issues.append(("PubkeyAuthentication disabled", "Key-based login won't work", f'Edit {sshd_config} and set PubkeyAuthentication yes, then Restart-Service sshd'))
-                net_info.append("❌ PubkeyAuthentication: [red]disabled[/red]")
+    auth_info: list[str] = []
+    auth_info.append(f"📄 Config file: [cyan]{sshd_config}[/cyan]" if sshd_config else "📄 Config file: [red]not found[/red]")
+    if config_text:
+        pubkey_lines = [line for line in config_text.split("\n") if "PubkeyAuthentication" in line and not line.strip().startswith("#")]
+        if pubkey_lines and "no" in pubkey_lines[-1].lower():
+            results["pubkey_auth"] = {"status": "error", "message": "PubkeyAuthentication disabled"}
+            issues.append(("PubkeyAuthentication disabled", "Key-based login won't work", f'Edit {sshd_config} and set PubkeyAuthentication yes, then Restart-Service sshd'))
+            auth_info.append("❌ PubkeyAuthentication: [red]disabled[/red]")
+        else:
+            results["pubkey_auth"] = {"status": "ok", "message": "PubkeyAuthentication enabled (default)"}
+            auth_info.append("✅ PubkeyAuthentication: [green]enabled[/green] (default: yes)")
+
+        password_lines = [line for line in config_text.split("\n") if "PasswordAuthentication" in line and not line.strip().startswith("#")]
+        if password_lines:
+            password_enabled = "yes" in password_lines[-1].lower()
+            if password_enabled:
+                results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled"}
+                auth_info.append("✅ PasswordAuthentication: [green]enabled[/green]")
             else:
-                net_info.append("✅ PubkeyAuthentication: enabled")
+                results["password_auth"] = {"status": "info", "message": "PasswordAuthentication disabled"}
+                auth_info.append("🔐 PasswordAuthentication: [yellow]disabled[/yellow] (key-only)")
+        else:
+            results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled (default)"}
+            auth_info.append("✅ PasswordAuthentication: [green]enabled[/green] (default: yes)")
+    else:
+        auth_info.append("⚠️  Could not read sshd_config - auth settings unknown")
+        results["pubkey_auth"] = {"status": "unknown", "message": "Could not read config"}
+        results["password_auth"] = {"status": "unknown", "message": "Could not read config"}
 
-            password_lines = [line for line in config_text.split("\n") if "PasswordAuthentication" in line and not line.strip().startswith("#")]
-            if password_lines:
-                password_enabled = "yes" in password_lines[-1].lower()
-                if password_enabled:
-                    results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled"}
-                    net_info.append("✅ PasswordAuthentication: [green]enabled[/green]")
-                else:
-                    results["password_auth"] = {"status": "info", "message": "PasswordAuthentication disabled"}
-                    net_info.append("ℹ️  PasswordAuthentication: [yellow]disabled[/yellow] (key-only)")
-            else:
-                results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled (default)"}
-                net_info.append("✅ PasswordAuthentication: [green]enabled[/green] (default)")
-        except Exception:
-            pass
+    console.print(Panel("\n".join(auth_info), title="[bold]Authentication Settings[/bold]", border_style="blue"))
 
+    net_info.append(f"🔌 SSH port: [cyan]{ssh_port}[/cyan]")
     netstat = subprocess.run(["netstat", "-an"], capture_output=True, text=True, check=False)
     if netstat.returncode == 0:
         listening_lines = [line for line in netstat.stdout.split("\n") if f":{ssh_port}" in line and "LISTENING" in line]
