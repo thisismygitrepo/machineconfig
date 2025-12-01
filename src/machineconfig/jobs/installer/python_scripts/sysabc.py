@@ -22,7 +22,9 @@ if (-not $winget) {
     }
     Write-Host "Downloading winget installer..."
     # Invoke-WebRequest -Uri $DownloadUrl -OutFile $DestFile
-    Start-BitsTransfer -Source $DownloadUrl -Destination $DestFile
+    # Start-BitsTransfer -Source $DownloadUrl -Destination $DestFile  # 
+    #Invoke-WebRequest -Uri $DownloadUrl -OutFile $DestFile -UseBasicParsing
+    curl.exe -L -o $DestFile $DownloadUrl
     Write-Host "Saved to: $DestFile"
     # We MUST run Add-AppxPackage in Windows PowerShell
     Write-Host "Installing package via Windows PowerShell..."

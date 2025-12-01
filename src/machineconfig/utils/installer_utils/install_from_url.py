@@ -150,7 +150,7 @@ def install_from_github_url(github_url: str) -> None:
         size_padded = item["size_str"].ljust(max_size_len)
         downloads_padded = item["downloads_str"].rjust(max_downloads_len)
         
-        label = f"{name_padded} {size_padded} | ⬇ {downloads_padded} | 📅 {item['date_str']}"
+        label = f"{name_padded} {size_padded} | #🔽 {downloads_padded} | 📅 {item['date_str']}"
         options_map[label] = item["asset"]
     
     if not options_map:

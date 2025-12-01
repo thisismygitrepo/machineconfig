@@ -75,9 +75,9 @@ uv tool install --upgrade --python 3.14 machineconfig
 # Quickies ...
 ```powershell
 # interactive install of machineconfig and following on to run it and make basic machine configuration (RECOMMENDED):
-iex (iwr bit.ly/cfgwindows).Content  # Or, if UV is installed: iex (uvx machineconfig define)
+irm bit.ly/cfgwindows | iex  # Or, if UV is installed: iex (uvx machineconfig define)
 # Quick install and configure (optionals are accepted by default):
-iex (iwr bit.ly/cfgwq).Content
+irm bit.ly/cfgwq | iex
 ```
 
 ```bash
