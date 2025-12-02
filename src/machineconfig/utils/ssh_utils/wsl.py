@@ -14,7 +14,7 @@ from machineconfig.utils.ssh_utils.wsl_helper import (
     resolve_wsl_home_on_windows,
     run_windows_copy_command,
     ensure_symlink,
-    parse_port_spec,
+    normalize_port_spec_for_firewall,
 )
 
 
@@ -85,20 +85,18 @@ def link_wsl_and_windows(windows_username: str | None) -> None:
 
 def open_wsl_port(ports_spec: str) -> None:
     ensure_windows_environment()
-    ports = parse_port_spec(ports_spec)
-    if not ports:
-        raise ValueError("No valid ports provided")
-    for port in ports:
-        if port < 1 or port > 65535:
-            raise ValueError(f"Invalid port number: {port}")
-        rule_name = f"WSL Port {port}"
-        script = f"New-NetFirewallRule -DisplayName '{rule_name}' -Direction Inbound -LocalPort {port} -Protocol TCP -Action Allow"
-        print(f"🔥 Opening firewall for port {port}...")
-        result = subprocess.run(["powershell.exe", "-NoLogo", "-NoProfile", "-Command", script], capture_output=True, text=True)
-        if result.returncode == 0:
-            print(f"✅ Firewall opened for port {port}")
-        else:
-            print(f"❌ Failed to open port {port}: {result.stderr.strip()}")
+    normalized_ports, description = normalize_port_spec_for_firewall(ports_spec)
+    rule_name = f"WSL Ports {description}"
+    # Build PowerShell array syntax for -LocalPort parameter (e.g., @('3000-4000','8080'))
+    port_parts = normalized_ports.split(",")
+    ps_array = "@(" + ",".join(f"'{p}'" for p in port_parts) + ")"
+    script = f"New-NetFirewallRule -DisplayName '{rule_name}' -Direction Inbound -LocalPort {ps_array} -Protocol TCP -Action Allow"
+    print(f"🔥 Opening firewall for ports: {description}...")
+    result = subprocess.run(["powershell.exe", "-NoLogo", "-NoProfile", "-Command", script], capture_output=True, text=True)
+    if result.returncode == 0:
+        print(f"✅ Firewall rule created for ports: {description}")
+    else:
+        print(f"❌ Failed to create firewall rule: {result.stderr.strip()}")
 
 
 def change_ssh_port(port: int) -> None:
