@@ -184,3 +184,34 @@ def parse_port_spec(port_spec: str) -> list[int]:
         else:
             ports.append(int(part))
     return ports
+
+
+def normalize_port_spec_for_firewall(port_spec: str) -> tuple[str, str]:
+    """Validates and normalizes port spec for New-NetFirewallRule -LocalPort parameter.
+    Returns (normalized_spec, human_readable_description).
+    New-NetFirewallRule natively supports ranges (e.g. '5000-5020') and comma-separated values.
+    """
+    parts: list[str] = []
+    for raw_part in port_spec.split(","):
+        part = raw_part.strip()
+        if not part:
+            continue
+        if "-" in part:
+            range_parts = part.split("-", maxsplit=1)
+            start = int(range_parts[0].strip())
+            end = int(range_parts[1].strip())
+            if start < 1 or start > 65535 or end < 1 or end > 65535:
+                raise ValueError(f"Port numbers must be between 1 and 65535: {part}")
+            if start > end:
+                raise ValueError(f"Invalid port range: {part} (start > end)")
+            parts.append(f"{start}-{end}")
+        else:
+            port = int(part)
+            if port < 1 or port > 65535:
+                raise ValueError(f"Invalid port number: {port}")
+            parts.append(str(port))
+    if not parts:
+        raise ValueError("No valid ports provided")
+    normalized = ",".join(parts)
+    description = normalized.replace(",", ", ")
+    return normalized, description
