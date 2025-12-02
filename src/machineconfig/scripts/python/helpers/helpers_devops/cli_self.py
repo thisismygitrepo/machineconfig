@@ -121,7 +121,7 @@ def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets
 
 def interactive():
     """🤖 INTERACTIVE configuration of machine."""
-    from machineconfig.scripts.python.interactive import main
+    from machineconfig.scripts.python.helpers.helpers_devops.interactive import main
     main()
 
 def status():
