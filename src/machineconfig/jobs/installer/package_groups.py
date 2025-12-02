@@ -256,4 +256,3 @@ PACKAGE_GROUP2NAMES: dict[str, list[str]] = {
     "sys-monitor": PACKAGES_SYSTEM_MONITORS,
     "search": PACKAGES_FILE,
 }
-
