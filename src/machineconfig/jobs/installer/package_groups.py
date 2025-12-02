@@ -117,6 +117,7 @@ PACKAGES_DEV_UTILS = [
 
 # Code Analysis, Git & Docs - Code analysis, statistics, documentation, and Git tools
 PACKAGES_CODE_ANALYSIS = [
+    "nano",
     "lazygit",
     "onefetch",
     "gitcs",
@@ -151,12 +152,6 @@ PACKAGES_PRODUCTIVITY = [
 ]
 
 
-# sudo nala install cowsay -y || true
-# sudo nala install lolcat -y || true
-# sudo nala install boxes -y || true
-# sudo nala install figlet -y || true
-# sudo nala install fortune -y || true
-# sudo nala install toilet -y || true
 TERMINAL_EYE_CANDY = [
     "lolcatjs",
     "figlet-cli",
@@ -168,6 +163,12 @@ TERMINAL_EYE_CANDY = [
     # "obsidian",
     # "istio",
     # "cointop",
+# sudo nala install cowsay -y || true
+# sudo nala install lolcat -y || true
+# sudo nala install boxes -y || true
+# sudo nala install figlet -y || true
+# sudo nala install fortune -y || true
+# sudo nala install toilet -y || true
 ]
 
 
@@ -191,8 +192,8 @@ PACKAGES_SYSTEM_MONITORS = [
 
 # Search & Archive Tools - File and content search utilities, archive management
 PACKAGES_FILE = [
+
     "nerdfont",
-    "winget",
     "fd",
     "fzf",
     "tv",

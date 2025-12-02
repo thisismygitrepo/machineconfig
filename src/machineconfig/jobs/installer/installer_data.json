@@ -3165,6 +3165,23 @@
       }
     },
     {
+      "appName": "nano",
+      "repoURL": "CMD",
+      "doc": "a simple terminal text editor",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"GNU Nano\" --Id \"GNU.Nano\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        },
+        "arm64": {
+          "linux": null,
+          "windows": "winget install --no-upgrade --name \"GNU Nano\" --Id \"GNU.Nano\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "macos": null
+        }
+      }
+    },
+    {
       "appName": "hx",
       "repoURL": "CMD",
       "doc": "Helix is a post-modern modal text editor.",
