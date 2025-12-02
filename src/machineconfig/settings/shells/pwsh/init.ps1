@@ -21,7 +21,8 @@ Add-ToPathIfNotAlready -Directories @(
     "C:\Program Files (x86)\GnuWin32\bin",
     "C:\Program Files\CodeBlocks\MinGW\bin",
     "C:\Program Files\nu\bin",
-    "C:\Program Files\Graphviz\bin"
+    "C:\Program Files\Graphviz\bin",
+    "C:\Program Files\7-Zip"
 )
 
 # sources  ================================================================
