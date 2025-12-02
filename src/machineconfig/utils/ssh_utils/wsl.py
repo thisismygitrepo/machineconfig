@@ -1,183 +1,35 @@
-import os
 import platform
-import stat
+import re
 import shutil
 import subprocess
-from pathlib import Path, PureWindowsPath
+from pathlib import Path
 
-
-def _ensure_relative_path(requested: Path | str) -> Path:
-    path = Path(requested)
-    if path.is_absolute():
-        raise ValueError("paths must be relative to the home directory")
-    if any(part == ".." for part in path.parts):
-        raise ValueError("paths must stay within the home directory")
-    return path
-
-
-def _remove_path(path: Path) -> None:
-    if path.is_symlink() or path.is_file():
-        path.unlink()
-        return
-    shutil.rmtree(path)
-
-
-def _ensure_wsl_environment() -> None:
-    if os.environ.get("WSL_DISTRO_NAME"):
-        return
-    if "microsoft" in platform.release().lower():
-        return
-    raise RuntimeError("copy_when_inside_wsl must run inside WSL")
-
-
-def _ensure_windows_environment() -> None:
-    if os.name != "nt":
-        raise RuntimeError("copy_when_inside_windows must run inside Windows")
-    if os.environ.get("WSL_DISTRO_NAME"):
-        raise RuntimeError("copy_when_inside_windows must run inside Windows")
-
-
-def _infer_windows_home_from_permissions(windows_username: str | None) -> Path:
-    base_dir = Path("/mnt/c/Users")
-    try:
-        entries = list(base_dir.iterdir())
-    except FileNotFoundError as exc:
-        raise RuntimeError("unable to find /mnt/c/Users") from exc
-    if windows_username:
-        candidate = base_dir / windows_username
-        if candidate.is_dir():
-            return candidate
-        raise RuntimeError(f"specified Windows user directory not found: {candidate}")
-    candidates: list[Path] = []
-    for entry in entries:
-        if not entry.is_dir():
-            continue
-        if entry.name.lower() == "public" or entry.name.lower() == "all users":
-            continue
-        try:
-            mode = stat.S_IMODE(entry.stat().st_mode)
-        except OSError:
-            continue
-        if mode == 0o777:
-            candidates.append(entry)
-    if len(candidates) != 1:
-        wsl_user = os.environ.get("USER") or os.environ.get("LOGNAME")
-        if wsl_user:
-            for candidate in candidates:
-                if candidate.name == wsl_user:
-                    return candidate
-        non_default = [c for c in candidates if c.name.lower() not in ("default", "default user")]
-        if len(non_default) == 1:
-            return non_default[0]
-        options = ", ".join(sorted(candidate.name for candidate in candidates)) or "none"
-        raise RuntimeError(f"unable to infer Windows home directory (candidates: {options})")
-    return candidates[0]
-
-
-def _resolve_windows_home_from_wsl(windows_username: str | None) -> Path:
-    if windows_username:
-        return _infer_windows_home_from_permissions(windows_username)
-    user_profile = os.environ.get("USERPROFILE")
-    if user_profile:
-        windows_path = PureWindowsPath(user_profile)
-        drive = windows_path.drive
-        if drive:
-            drive_letter = drive.rstrip(":").lower()
-            tail = Path(*windows_path.parts[1:])
-            candidate = Path("/mnt") / drive_letter / tail
-            if candidate.exists():
-                return candidate
-    return _infer_windows_home_from_permissions(windows_username)
-
-
-def _decode_wsl_output(raw_bytes: bytes) -> str:
-    try:
-        return raw_bytes.decode("utf-16-le")
-    except UnicodeDecodeError:
-        return raw_bytes.decode()
-
-
-def _get_single_wsl_distribution() -> str:
-    process = subprocess.run(["wsl.exe", "-l"], capture_output=True, text=False, check=True)
-    stdout = _decode_wsl_output(process.stdout).replace("\ufeff", "")
-    distributions: list[str] = []
-    for raw_line in stdout.splitlines():
-        line = raw_line.strip()
-        if not line or line.lower().startswith("windows subsystem for linux"):
-            continue
-        normalized = line.lstrip("* ").replace("(Default)", "").strip()
-        if normalized:
-            distributions.append(normalized)
-    if len(distributions) != 1:
-        raise RuntimeError("unable to pick a single WSL distribution")
-    return distributions[0]
-
-
-def _resolve_wsl_home_on_windows() -> Path:
-    distribution = _get_single_wsl_distribution()
-    home_root = Path(rf"\\wsl$\{distribution}\home")
-    try:
-        entries = list(home_root.iterdir())
-    except FileNotFoundError as exc:
-        raise RuntimeError(f"unable to locate WSL home directories for {distribution}") from exc
-    except OSError as exc:
-        raise RuntimeError(f"unable to inspect WSL home directories for {distribution}") from exc
-    user_dirs = [entry for entry in entries if entry.is_dir()]
-    if len(user_dirs) != 1:
-        options = ", ".join(sorted(entry.name for entry in user_dirs)) or "none"
-        raise RuntimeError(f"unable to infer WSL user directory (candidates: {options})")
-    return user_dirs[0]
-
-
-def _quote_for_powershell(path: Path) -> str:
-    return "'" + str(path).replace("'", "''") + "'"
-
-
-def _run_windows_copy_command(source_path: Path, target_path: Path) -> None:
-    source_is_dir = source_path.is_dir()
-    parent_literal = _quote_for_powershell(target_path.parent)
-    source_literal = _quote_for_powershell(source_path)
-    target_literal = _quote_for_powershell(target_path)
-    script = (
-        "$ErrorActionPreference = 'Stop'; "
-        f"New-Item -ItemType Directory -Path {parent_literal} -Force | Out-Null; "
-        f"Copy-Item -LiteralPath {source_literal} -Destination {target_literal}"
-        f"{' -Recurse' if source_is_dir else ''} -Force"
-    )
-    print(f"Copying {source_path} to {target_path}")
-    subprocess.run(
-        ["powershell.exe", "-NoLogo", "-NoProfile", "-Command", script],
-        check=True,
-    )
-
-
-def _ensure_symlink(link_path: Path, target_path: Path) -> bool:
-    if not target_path.exists():
-        raise FileNotFoundError(target_path)
-    if link_path.is_symlink():
-        existing_target = Path(os.path.realpath(link_path))
-        desired_target = Path(os.path.realpath(target_path))
-        if os.path.normcase(str(existing_target)) == os.path.normcase(str(desired_target)):
-            return False
-        link_path.unlink()
-    elif link_path.exists():
-        raise FileExistsError(link_path)
-    link_path.symlink_to(target_path, target_is_directory=True)
-    return True
+from machineconfig.utils.ssh_utils.wsl_helper import (
+    ensure_relative_path,
+    remove_path,
+    ensure_wsl_environment,
+    ensure_windows_environment,
+    ensure_linux_environment,
+    resolve_windows_home_from_wsl,
+    resolve_wsl_home_on_windows,
+    run_windows_copy_command,
+    ensure_symlink,
+    parse_port_spec,
+)
 
 
 def copy_when_inside_wsl(source: Path | str, target: Path | str, overwrite: bool, windows_username: str | None) -> None:
-    _ensure_wsl_environment()
-    source_relative = _ensure_relative_path(source)
-    target_relative = _ensure_relative_path(target)
+    ensure_wsl_environment()
+    source_relative = ensure_relative_path(source)
+    target_relative = ensure_relative_path(target)
     source_path = Path.home() / source_relative
-    target_path = _resolve_windows_home_from_wsl(windows_username) / target_relative
+    target_path = resolve_windows_home_from_wsl(windows_username) / target_relative
     if not source_path.exists():
         raise FileNotFoundError(source_path)
     if target_path.exists():
         if not overwrite:
             raise FileExistsError(target_path)
-        _remove_path(target_path)
+        remove_path(target_path)
     target_path.parent.mkdir(parents=True, exist_ok=True)
     if source_path.is_dir():
         shutil.copytree(source_path, target_path, dirs_exist_ok=False)
@@ -187,18 +39,18 @@ def copy_when_inside_wsl(source: Path | str, target: Path | str, overwrite: bool
 
 
 def copy_when_inside_windows(source: Path | str, target: Path | str, overwrite: bool) -> None:
-    _ensure_windows_environment()
-    source_relative = _ensure_relative_path(source)
-    target_relative = _ensure_relative_path(target)
+    ensure_windows_environment()
+    source_relative = ensure_relative_path(source)
+    target_relative = ensure_relative_path(target)
     source_path = Path.home() / source_relative
-    target_path = _resolve_wsl_home_on_windows() / target_relative
+    target_path = resolve_wsl_home_on_windows() / target_relative
     if not source_path.exists():
         raise FileNotFoundError(source_path)
     if target_path.exists():
         if not overwrite:
             raise FileExistsError(target_path)
-        _remove_path(target_path)
-    _run_windows_copy_command(source_path, target_path)
+        remove_path(target_path)
+    run_windows_copy_command(source_path, target_path)
 
 
 def link_wsl_and_windows(windows_username: str | None) -> None:
@@ -206,62 +58,41 @@ def link_wsl_and_windows(windows_username: str | None) -> None:
     if system == "Darwin":
         raise RuntimeError("link_wsl_and_windows is not designed for macOS")
     try:
-        _ensure_wsl_environment()
+        ensure_wsl_environment()
     except RuntimeError:
         try:
-            _ensure_windows_environment()
+            ensure_windows_environment()
         except RuntimeError as exc:
             raise RuntimeError("link_wsl_and_windows must run inside Windows or WSL") from exc
         print("🔗 Running inside Windows, linking to WSL home...")
-        target_path = _resolve_wsl_home_on_windows()
+        target_path = resolve_wsl_home_on_windows()
         link_path = Path.home() / "wsl"
-        created = _ensure_symlink(link_path, target_path)
+        created = ensure_symlink(link_path, target_path)
         if created:
             print(f"✅ Created symlink: {link_path} -> {target_path}")
         else:
             print(f"✅ Symlink already exists: {link_path} -> {target_path}")
         return
     print("🔗 Running inside WSL, linking to Windows home...")
-    target_path = _resolve_windows_home_from_wsl(windows_username)
+    target_path = resolve_windows_home_from_wsl(windows_username)
     link_path = Path.home() / "win"
-    created = _ensure_symlink(link_path, target_path)
+    created = ensure_symlink(link_path, target_path)
     if created:
         print(f"✅ Created symlink: {link_path} -> {target_path}")
     else:
         print(f"✅ Symlink already exists: {link_path} -> {target_path}")
 
 
-def _parse_port_spec(port_spec: str) -> list[int]:
-    ports: list[int] = []
-    for part in port_spec.split(","):
-        part = part.strip()
-        if not part:
-            continue
-        if "-" in part:
-            range_parts = part.split("-", maxsplit=1)
-            start = int(range_parts[0].strip())
-            end = int(range_parts[1].strip())
-            if start > end:
-                raise ValueError(f"Invalid port range: {part} (start > end)")
-            ports.extend(range(start, end + 1))
-        else:
-            ports.append(int(part))
-    return ports
-
-
 def open_wsl_port(ports_spec: str) -> None:
-    _ensure_windows_environment()
-    ports = _parse_port_spec(ports_spec)
+    ensure_windows_environment()
+    ports = parse_port_spec(ports_spec)
     if not ports:
         raise ValueError("No valid ports provided")
     for port in ports:
         if port < 1 or port > 65535:
             raise ValueError(f"Invalid port number: {port}")
         rule_name = f"WSL Port {port}"
-        script = (
-            f"New-NetFirewallRule -DisplayName '{rule_name}' "
-            f"-Direction Inbound -LocalPort {port} -Protocol TCP -Action Allow"
-        )
+        script = f"New-NetFirewallRule -DisplayName '{rule_name}' -Direction Inbound -LocalPort {port} -Protocol TCP -Action Allow"
         print(f"🔥 Opening firewall for port {port}...")
         result = subprocess.run(["powershell.exe", "-NoLogo", "-NoProfile", "-Command", script], capture_output=True, text=True)
         if result.returncode == 0:
@@ -270,60 +101,48 @@ def open_wsl_port(ports_spec: str) -> None:
             print(f"❌ Failed to open port {port}: {result.stderr.strip()}")
 
 
-"""
-change ssh port in WSL to 2222
-Open your WSL terminal.
+def change_ssh_port(port: int) -> None:
+    ensure_linux_environment()
+    if port < 1 or port > 65535:
+        raise ValueError(f"Invalid port number: {port}")
 
-Edit the sshd_config file:
+    sshd_config = Path("/etc/ssh/sshd_config")
+    if not sshd_config.exists():
+        raise FileNotFoundError(f"SSH config file not found: {sshd_config}")
 
-Bash
+    print(f"🔧 Changing SSH port to {port}...")
 
-sudo nano /etc/ssh/sshd_config
-Find the line #Port 22. Uncomment it (delete the #) and change it to 2222:
+    content = sshd_config.read_text()
+    new_content = re.sub(r"^#?\s*Port\s+\d+", f"Port {port}", content, flags=re.MULTILINE)
+    if f"Port {port}" not in new_content:
+        new_content = f"Port {port}\n" + new_content
 
-Plaintext
+    print(f"📝 Updating {sshd_config}...")
+    result = subprocess.run(["sudo", "tee", str(sshd_config)], input=new_content.encode(), capture_output=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Failed to update sshd_config: {result.stderr.decode()}")
+    print(f"✅ Updated {sshd_config}")
 
-Port 2222
-(Also ensure PasswordAuthentication yes is set if you aren't using keys yet).
-
-Save and exit (Ctrl+O, Enter, Ctrl+X).
-
-Crucial Step for Newer Ubuntu (22.10+): If you are on a modern Ubuntu, systemd manages SSH and might ignore the config file above. To be safe, run this override:
-
-Run this command to create an override directory:
-
-Bash
-
-sudo systemctl edit ssh.socket
-In the editor that opens, paste these lines into the empty space at the top:
-
-Ini, TOML
-
-[Socket]
+    override_dir = Path("/etc/systemd/system/ssh.socket.d")
+    override_file = override_dir / "override.conf"
+    override_content = f"""[Socket]
 ListenStream=
-ListenStream=2222
-(The empty ListenStream= line is required to clear the default port 22).
-
-Save and exit.
-
-Restart the SSH service:
-
-Bash
-
-sudo systemctl daemon-reload
-sudo systemctl restart ssh.socket
-sudo service ssh restart
-
-Step 2: Open the New Port in Windows Firewall
-Just like you did for your web server, you must allow traffic to this new port on the Windows side.
-
-Run this in PowerShell (Admin):
-
-PowerShell
-
-New-NetFirewallRule -DisplayName "WSL SSH" -Direction Inbound -LocalPort 2222 -Protocol TCP -Ac
-
+ListenStream={port}
 """
+    print(f"📝 Creating systemd socket override at {override_file}...")
+    subprocess.run(["sudo", "mkdir", "-p", str(override_dir)], check=True)
+    result = subprocess.run(["sudo", "tee", str(override_file)], input=override_content.encode(), capture_output=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Failed to create override file: {result.stderr.decode()}")
+    print("✅ Created systemd socket override")
+
+    print("🔄 Restarting SSH services...")
+    subprocess.run(["sudo", "systemctl", "daemon-reload"], check=True)
+    subprocess.run(["sudo", "systemctl", "restart", "ssh.socket"], check=False)
+    subprocess.run(["sudo", "service", "ssh", "restart"], check=False)
+    print(f"✅ SSH port changed to {port}")
+    print(f"⚠️  Remember to open port {port} in Windows Firewall if running in WSL")
+
 
 if __name__ == "__main__":
     copy_when_inside_wsl(Path("projects/source.txt"), Path("windows_projects/source.txt"), overwrite=True, windows_username=None)

@@ -12,11 +12,21 @@ def install_ssh_server() -> None:
 sudo nala install openssh-server -y || true  # try to install first
 # sudo nala purge openssh-server -y
 # sudo nala install openssh-server -y
-echo "✅ FINISHED installing openssh-server."""
+echo "✅ FINISHED installing openssh-server."
+"""
     else:
         raise NotImplementedError(f"Platform {platform.system()} is not supported.")
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script=script)
+
+
+def change_ssh_port(port: Annotated[int, typer.Option(..., "--port", "-p", help="SSH port to use")] = 2222) -> None:
+    """🔌 Change SSH port (Linux/WSL only, default: 2222)"""
+    import platform
+    if platform.system() != "Linux":
+        raise NotImplementedError("change_ssh_port requires Linux environment")
+    from machineconfig.utils.ssh_utils.wsl import change_ssh_port as _change_ssh_port
+    _change_ssh_port(port=port)
 
 
 def _get_windows_ssh_server_install_script(use_winget: bool = True) -> str:
@@ -143,6 +153,8 @@ def get_app() -> typer.Typer:
     ssh_app = typer.Typer(help="🔐 SSH subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     ssh_app.command(name="install-server", help="📡 [i] Install SSH server")(install_ssh_server)
     ssh_app.command(name="i", help="Install SSH server", hidden=True)(install_ssh_server)
+    ssh_app.command(name="change-port", help="🔌 [p] Change SSH port (Linux/WSL only)")(change_ssh_port)
+    ssh_app.command(name="p", help="Change SSH port", hidden=True)(change_ssh_port)
     ssh_app.command(name="add-key", help="🔑 [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
     ssh_app.command(name="k", help="Add SSH public key to this machine", hidden=True, no_args_is_help=True)(add_ssh_key)
     ssh_app.command(name="add-identity", help="🗝️ [A] Add SSH identity (private key) to this machine")(add_ssh_identity)

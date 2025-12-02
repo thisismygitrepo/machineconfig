@@ -56,7 +56,8 @@ def croshell(
             console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
         else:
             program = lambda_to_python_script(
-                lambda: get_read_data_pycode(path=str(choice_file)), in_global=True, import_module=False
+                lambda: get_read_data_pycode(path=str(choice_file)),
+                in_global=True, import_module=False
             )
             text = f"📄 Reading data from: {file_obj.name}"
             console.print(Panel(text, title="[bold blue]Info[/bold blue]"))
