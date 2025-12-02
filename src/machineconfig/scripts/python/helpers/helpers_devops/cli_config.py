@@ -75,17 +75,6 @@ def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both"
     typer.echo(f"[red]Error:[/] Unknown asset type: {which}")
 
 
-def link_wsl_and_windows_home(windows_username: Annotated[str | None, typer.Option("--windows-username", "-u", help="Windows username to use (optional, auto-detected if not provided)")] = None):
-    """🔗 Link WSL home and Windows home directories."""
-    import machineconfig.utils.ssh_utils.wsl as wsl_utils
-    wsl_utils.link_wsl_and_windows(windows_username)
-
-
-def open_wsl_port(ports: Annotated[str, typer.Argument(..., help="Comma-separated ports or port ranges (e.g., '8080,3000-3005,443')")]):
-    """🔥 Open Windows firewall ports for WSL (Windows only)."""
-    import machineconfig.utils.ssh_utils.wsl as wsl_utils
-    wsl_utils.open_wsl_port(ports)
-
 
 def get_app():
     config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
@@ -105,10 +94,5 @@ def get_app():
     config_apps.command("copy-assets", no_args_is_help=True, help="🔗 [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
 
-    config_apps.command("link-wsl-windows", no_args_is_help=False, help="🔗 [l] Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
-    config_apps.command("l", no_args_is_help=False, help="Link WSL home and Windows home directories.", hidden=True)(link_wsl_and_windows_home)
-
-    config_apps.command("open-wsl-port", no_args_is_help=True, help="🔥 [o] Open Windows firewall ports for WSL.", hidden=False)(open_wsl_port)
-    config_apps.command("o", no_args_is_help=True, help="Open Windows firewall ports for WSL.", hidden=True)(open_wsl_port)
 
     return config_apps

@@ -67,6 +67,14 @@ netsh interface portproxy add v4tov4 listenport={port} listenaddress=0.0.0.0 con
 """
     from machineconfig.utils.code import exit_then_run_shell_script
     exit_then_run_shell_script(code)
+def open_wsl_port(ports: Annotated[str, typer.Argument(..., help="Comma-separated ports or port ranges (e.g., '8080,3000-3005,443')")]):
+    """🔥 Open Windows firewall ports for WSL (Windows only)."""
+    import machineconfig.utils.ssh_utils.wsl as wsl_utils
+    wsl_utils.open_wsl_port(ports)
+def link_wsl_and_windows_home(windows_username: Annotated[str | None, typer.Option("--windows-username", "-u", help="Windows username to use (optional, auto-detected if not provided)")] = None):
+    """🔗 Link WSL home and Windows home directories."""
+    import machineconfig.utils.ssh_utils.wsl as wsl_utils
+    wsl_utils.link_wsl_and_windows(windows_username)
 
 
 def wifi_select(
@@ -136,7 +144,6 @@ sudo warp-cli connect
 """
     print(code)
 
-
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     nw_apps.command(name="share-terminal", help="📡 [t] Share terminal via web browser")(cli_share_terminal.share_terminal)
@@ -167,6 +174,11 @@ def get_app():
 
     nw_apps.command(name="bind-wsl-port", help="🔌 [b] Bind WSL port to Windows host", no_args_is_help=True)(bind_wsl_port)
     nw_apps.command(name="b", help="Bind WSL port to Windows host", hidden=True, no_args_is_help=True)(bind_wsl_port)
+    nw_apps.command(name="open-wsl-port", no_args_is_help=True, help="🔥 [o] Open Windows firewall ports for WSL.", hidden=False)(open_wsl_port)
+    nw_apps.command(name="o", no_args_is_help=True, help="Open Windows firewall ports for WSL.", hidden=True)(open_wsl_port)
+    nw_apps.command(name="link-wsl-windows", no_args_is_help=False, help="🔗 [l] Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
+    nw_apps.command(name="l", no_args_is_help=False, help="Link WSL home and Windows home directories.", hidden=True)(link_wsl_and_windows_home)
+
 
     nw_apps.command(name="reset-cloudflare-tunnel", help="☁️ [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
     nw_apps.command(name="r", help="Reset Cloudflare tunnel service", hidden=True)(reset_cloudflare_tunnel)
