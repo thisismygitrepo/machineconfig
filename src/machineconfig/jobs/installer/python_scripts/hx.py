@@ -14,7 +14,7 @@ from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-LANGUAGES_SUPPORTED_GRAMMER = ["python.so", "nu.so", "bash.so", "lua.so", "powershell.so"]
+LANGUAGES_SUPPORTED = ["python", "nu", "bash", "lua", "powershell"]
 config_dict: InstallerData = {
     "appName": "hx",
     "repoURL": "CMD",
@@ -121,8 +121,8 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
                     continue
                 if child.name == "grammars":
                     # copy only the specific language files from runtime/grammars if they exist
-                    for a_language in LANGUAGES_SUPPORTED_GRAMMER:
-                        lang_file = child.joinpath(a_language)
+                    for a_language in LANGUAGES_SUPPORTED:
+                        lang_file = child.joinpath(f"{a_language}.so")
                         if lang_file.exists() and lang_file.is_file():
                             dest = target_runtime.joinpath("grammars")
                             lang_file.copy(folder=dest, overwrite=True)
@@ -167,8 +167,8 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
                 if not child.exists():
                     continue
                 if child.name == "grammars":
-                    for a_language in LANGUAGES_SUPPORTED_GRAMMER:
-                        lang_file = child.joinpath(a_language)
+                    for a_language in LANGUAGES_SUPPORTED:
+                        lang_file = child.joinpath(f"{a_language}.dll")
                         if lang_file.exists() and lang_file.is_file():
                             dest = target_runtime.joinpath("grammars")
                             lang_file.copy(folder=dest, overwrite=True)
