@@ -17,7 +17,10 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
             cmd = f"zellij kill-sessions\n{cmd}"
         return ("run_script", cmd)
     cmd = "zellij list-sessions"
-    sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
+    try:
+        sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
+    except subprocess.CalledProcessError:
+        sessions = []
     sessions = [s for s in sessions if s.strip()]
     # print(f"Found Zellij sessions: {sessions}")
     sessions.sort(key=lambda s: "EXITED" in s)
@@ -44,7 +47,10 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
 
 def get_session_tabs() -> list[tuple[str, str]]:
     cmd = "zellij list-sessions"
-    sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
+    try:
+        sessions: list[str] = subprocess.check_output(cmd, shell=True).decode().strip().split("\n")
+    except subprocess.CalledProcessError:
+        sessions = []
     sessions = [strip_ansi_codes(s) for s in sessions]
     active_sessions = [s for s in sessions if "EXITED" not in s]
     result: list[tuple[str, str]] = []

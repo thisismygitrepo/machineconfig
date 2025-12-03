@@ -9,6 +9,9 @@ gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/creds/git/.git-cre
 [ssh]
 keys = {this = '~/.ssh', to_this = '~/dotfiles/creds/.ssh', contents = true}
 
+[gpg]
+keys = {this = '~/.gnupg', to_this = '~/dotfiles/creds/.gnupg', contents = true}
+
 [pypi]
 creds = {this = '~/.pypirc', to_this = '~/dotfiles/creds/msc/.pypirc'}
 

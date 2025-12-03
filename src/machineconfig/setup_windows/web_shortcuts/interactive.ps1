@@ -27,4 +27,4 @@ function ms { wrap_in_shell_script msearch @args }
 
 Write-Host "mcfg command aliases are now defined in this PowerShell session."
 
-devops self interactive
+d self interactive

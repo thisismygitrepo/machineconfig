@@ -194,6 +194,17 @@ def main() -> None:
         sys.exit(0)
     execute_installations(selected_options=selected_options)
     display_completion_message()
+    from machineconfig.utils.code import exit_then_run_shell_script
+    if platform.system() == "Windows":
+        reload_init_script = "pwsh $PROFILE"
+    elif platform.system() == "Darwin":
+        reload_init_script = "source $HOME/.zshrc"
+    elif platform.system() == "Linux":
+        reload_init_script = "source $HOME/.bashrc"
+    else:
+        reload_init_script = ""
+    exit_then_run_shell_script(reload_init_script)
+
 
 
 if __name__ == "__main__":
