@@ -1555,13 +1555,13 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz",
-          "macos": null,
-          "windows": null
+          "macos": "dbeaver-ce-{version}-macos-x86_64.dmg",
+          "windows": "dbeaver-ce-{version}-x86_64-setup.exe"
         },
         "arm64": {
           "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz",
-          "macos": null,
-          "windows": null
+          "macos": "dbeaver-ce-{version}-macos-aarch64.dmg",
+          "windows": "dbeaver-ce-{version}-win32.win32.aarch64.zip"
         }
       }
     },
