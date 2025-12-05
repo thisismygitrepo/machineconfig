@@ -333,7 +333,7 @@ if __name__ == "__main__":
         {
             "layoutName": "DevelopmentEnv",
             "layoutTabs": [
-                {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "npm run dev"},
+                {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "bun run dev"},
                 {"tabName": "⚙️Backend", "startDir": "~/code/myapp/backend", "command": "python manage.py runserver"},
                 {"tabName": "📊Monitor", "startDir": "~", "command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 10"},
             ],

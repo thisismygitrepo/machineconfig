@@ -35,6 +35,7 @@ if (Test-Path "$CONFIG_ROOT\scripts\wrap_mcfg.ps1") {
 
     function lsdla { lsd -la }
     Set-Alias -Name l -Value lsdla -Option AllScope
+
     function d { wrap_in_shell_script devops $args }
     function c { wrap_in_shell_script cloud $args }
     function a { wrap_in_shell_script agents $args }
@@ -63,6 +64,11 @@ else {
     function ms { msearch $args }
 }
 
+
+# Use bun as node if available
+if (Test-Path "$HOME\.bun\bin\bun.exe") {
+    Set-Alias -Name node -Value "$HOME\.bun\bin\bun.exe" -Option AllScope
+}
 
 
 # sources end

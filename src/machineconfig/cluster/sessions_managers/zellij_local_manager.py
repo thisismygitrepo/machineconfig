@@ -314,7 +314,7 @@ if __name__ == "__main__":
         {
             "layoutName": "Development",
             "layoutTabs": [
-                {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "npm run dev"},
+                {"tabName": "🚀Frontend", "startDir": "~/code/myapp/frontend", "command": "bun run dev"},
                 {"tabName": "⚙️Backend", "startDir": "~/code/myapp/backend", "command": "python manage.py runserver"},
                 {"tabName": "📊Monitor", "startDir": "~", "command": "htop"},
             ],

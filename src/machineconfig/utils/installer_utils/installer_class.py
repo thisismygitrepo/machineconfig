@@ -63,7 +63,7 @@ class Installer:
             raise ValueError(f"No installation pattern for {exe_name} on {os_name} {arch}")
         version_to_be_installed: str = "unknown"  # Initialize to ensure it's always bound
         if repo_url == "CMD":
-            if any(pm in installer_arch_os.split(" ") for pm in ["npm", "pip", "uv", "winget", "brew", "curl", "sudo"]):
+            if any(pm in installer_arch_os.split(" ") for pm in ["bun", "npm", "pip", "uv", "winget", "brew", "curl", "sudo"]):
                 from rich import print as rprint
                 from rich.panel import Panel
                 from rich.console import Group

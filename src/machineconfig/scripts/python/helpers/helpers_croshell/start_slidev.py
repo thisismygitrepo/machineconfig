@@ -107,7 +107,7 @@ def main(
     print(f"   - http://localhost:{port}")
     print(f"   - http://{local_ip_v4}:{port}\n")
 
-    program = "npm run dev slides.md -- --remote"
+    program = "bun run dev slides.md -- --remote"
     # PROGRAM_PATH.write_text(program, encoding="utf-8")
     import subprocess
 

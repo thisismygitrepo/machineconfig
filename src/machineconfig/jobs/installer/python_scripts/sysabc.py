@@ -37,6 +37,8 @@ else {
 
 winget install --no-upgrade --name "Powershell"                   --Id "Microsoft.PowerShell"       --source winget --scope user --accept-package-agreements --accept-source-agreements  # powershell require admin
 winget install --no-upgrade --name "Windows Terminal"             --Id "Microsoft.WindowsTerminal"  --source winget --scope user --accept-package-agreements --accept-source-agreements  # Terminal is is installed by default on W 11
+powershell -c "irm bun.sh/install.ps1|iex"
+
 # --GROUP:gui:Brave+VSCode+Git+WezTerm
 # --GROUP:dev2:VSRedistrib+VSBuildTools+Codeblocks+GnuWin32: Make+GnuPG+graphviz+WinFsp+SSHFS-win+xming+Node.js+Rustup+Cloudflare+Cloudflare WARP+Microsoft Garage Mouse without Borders
 # --GROUP:user:nu+Chrome+ChromeRemoteDesktop+Zoom+7zip+Firefox+Thunderbird+StreamlabsOBS+OBSStudio+MiKTeX+TexMaker+notepad+++Lapce+TesseractOCR+perl+DB Browser for SQLite+sql server management studio+Adobe Acrobat Reader DC+julia+Chafa+bottom+onefetch+Just+hyperfine+AWS CLI
@@ -51,23 +53,19 @@ zsh = r"""
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 echo "🔄 Updating Homebrew..."
 brew update || true
+
+curl -fsSL https://bun.com/install | bash
+
 # Note: git and nano are pre-installed on macOS, but we install via Homebrew to ensure latest versions
 # brew install git || true
 # brew install nano || true
 # brew install curl || true
-# Install NVM
-if [ ! -s "$HOME/.nvm/nvm.sh" ]; then
-    echo "📥 Installing NVM (Node Version Manager)..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-fi
-echo "🔧 Configuring NVM environment..."
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-echo "📥 Installing latest Node.js..."
-nvm install node || true
+# nvm install node || true
 # brew install make
 # brew install ffmpeg
 # brew install openssl
+
+
 echo "✅ Essential tools installation complete."
 """
 
@@ -80,9 +78,10 @@ sudo nala install build-essential python3-dev -y || true  # C build toolchain: W
 # sudo nala install libssl-dev -y
 # sudo nala install libaa-bin -y
 
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-source ~/.bashrc || true
-nvm install node || true
+# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+# source ~/.bashrc || true
+# nvm install node || true
+curl -fsSL https://bun.com/install | bash
 
 sudo nala install samba -y || true
 sudo nala install fuse3 -y || true

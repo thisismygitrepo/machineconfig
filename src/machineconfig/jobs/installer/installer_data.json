@@ -296,14 +296,14 @@
       "doc": "📶 Share WiFi credentials via QR code",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g sharewifi",
-          "windows": "npm install -g sharewifi",
-          "macos": "npm install -g sharewifi"
+          "linux": "bun install -g sharewifi",
+          "windows": "bun install -g sharewifi",
+          "macos": "bun install -g sharewifi"
         },
         "arm64": {
-          "linux": "npm install -g sharewifi",
-          "windows": "npm install -g sharewifi",
-          "macos": "npm install -g sharewifi"
+          "linux": "bun install -g sharewifi",
+          "windows": "bun install -g sharewifi",
+          "macos": "bun install -g sharewifi"
         }
       }
     },
@@ -347,14 +347,14 @@
       "doc": "🔗 Easy file sharing from command line",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g easy-sharing",
-          "windows": "npm install -g easy-sharing",
-          "macos": "npm install -g easy-sharing"
+          "linux": "bun install -g easy-sharing",
+          "windows": "bun install -g easy-sharing",
+          "macos": "bun install -g easy-sharing"
         },
         "arm64": {
-          "linux": "npm install -g easy-sharing",
-          "windows": "npm install -g easy-sharing",
-          "macos": "npm install -g easy-sharing"
+          "linux": "bun install -g easy-sharing",
+          "windows": "bun install -g easy-sharing",
+          "macos": "bun install -g easy-sharing"
         }
       }
     },
@@ -364,14 +364,14 @@
       "doc": "🔗 Easy file sharing tool",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm i -g @ezshare/cli",
-          "windows": "npm i -g @ezshare/cli",
-          "macos": "npm i -g @ezshare/cli"
+          "linux": "nvm install -g @ezshare/cli",
+          "windows": "nvm install -g @ezshare/cli",
+          "macos": "nvm install -g @ezshare/cli"
         },
         "arm64": {
-          "linux": "npm i -g @ezshare/cli",
-          "windows": "npm i -g @ezshare/cli",
-          "macos": "npm i -g @ezshare/cli"
+          "linux": "nvm install -g @ezshare/cli",
+          "windows": "nvm install -g @ezshare/cli",
+          "macos": "nvm install -g @ezshare/cli"
         }
       }
     },
@@ -398,14 +398,14 @@
       "doc": "🌈 Rainbow colored text output for terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g lolcatjs",
-          "windows": "npm install -g lolcatjs",
-          "macos": "npm install -g lolcatjs"
+          "linux": "bun install -g lolcatjs",
+          "windows": "bun install -g lolcatjs",
+          "macos": "bun install -g lolcatjs"
         },
         "arm64": {
-          "linux": "npm install -g lolcatjs",
-          "windows": "npm install -g lolcatjs",
-          "macos": "npm install -g lolcatjs"
+          "linux": "bun install -g lolcatjs",
+          "windows": "bun install -g lolcatjs",
+          "macos": "bun install -g lolcatjs"
         }
       }
     },
@@ -432,14 +432,14 @@
       "doc": "📝 ASCII art text generator for terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g figlet-cli",
-          "windows": "npm install -g figlet-cli",
-          "macos": "npm install -g figlet-cli"
+          "linux": "bun install -g figlet-cli",
+          "windows": "bun install -g figlet-cli",
+          "macos": "bun install -g figlet-cli"
         },
         "arm64": {
-          "linux": "npm install -g figlet-cli",
-          "windows": "npm install -g figlet-cli",
-          "macos": "npm install -g figlet-cli"
+          "linux": "bun install -g figlet-cli",
+          "windows": "bun install -g figlet-cli",
+          "macos": "bun install -g figlet-cli"
         }
       }
     },
@@ -874,14 +874,14 @@
       "doc": "☁️ CLI for Microsoft 365",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @pnp/cli-microsoft365",
-          "macos": "npm install -g @pnp/cli-microsoft365",
-          "windows": "npm install -g @pnp/cli-microsoft365"
+          "linux": "bun install -g @pnp/cli-microsoft365",
+          "macos": "bun install -g @pnp/cli-microsoft365",
+          "windows": "bun install -g @pnp/cli-microsoft365"
         },
         "arm64": {
-          "linux": "npm install -g @pnp/cli-microsoft365",
-          "macos": "npm install -g @pnp/cli-microsoft365",
-          "windows": "npm install -g @pnp/cli-microsoft365"
+          "linux": "bun install -g @pnp/cli-microsoft365",
+          "macos": "bun install -g @pnp/cli-microsoft365",
+          "windows": "bun install -g @pnp/cli-microsoft365"
         }
       }
     },
@@ -1027,14 +1027,14 @@
       "doc": "🔍 ripgrep + semantic search from https://github.com/run-llama/semtools",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm i -g @llamaindex/semtools",
-          "macos": "npm i -g @llamaindex/semtools",
-          "windows": "npm i -g @llamaindex/semtools"
+          "linux": "nvm install -g @llamaindex/semtools",
+          "macos": "nvm install -g @llamaindex/semtools",
+          "windows": "nvm install -g @llamaindex/semtools"
         },
         "arm64": {
-          "linux": "npm i -g @llamaindex/semtools",
-          "macos": "npm i -g @llamaindex/semtools",
-          "windows": "npm i -g @llamaindex/semtools"
+          "linux": "nvm install -g @llamaindex/semtools",
+          "macos": "nvm install -g @llamaindex/semtools",
+          "windows": "nvm install -g @llamaindex/semtools"
         }
       }
     },
@@ -1707,14 +1707,14 @@
       "doc": "📊 Generate diagrams and flowcharts from text in a similar manner as markdown",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @mermaid-js/mermaid-cli",
-          "windows": "npm install -g @mermaid-js/mermaid-cli",
-          "macos": "npm install -g @mermaid-js/mermaid-cli"
+          "linux": "bun install -g @mermaid-js/mermaid-cli",
+          "windows": "bun install -g @mermaid-js/mermaid-cli",
+          "macos": "bun install -g @mermaid-js/mermaid-cli"
         },
         "arm64": {
-          "linux": "npm install -g @mermaid-js/mermaid-cli",
-          "windows": "npm install -g @mermaid-js/mermaid-cli",
-          "macos": "npm install -g @mermaid-js/mermaid-cli"
+          "linux": "bun install -g @mermaid-js/mermaid-cli",
+          "windows": "bun install -g @mermaid-js/mermaid-cli",
+          "macos": "bun install -g @mermaid-js/mermaid-cli"
         }
       }
     },
@@ -1775,14 +1775,14 @@
       "doc": "🎯 Markdown presentation writer",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @marp-team/marp-cli",
-          "windows": "npm install -g @marp-team/marp-cli",
-          "macos": "npm install -g @marp-team/marp-cli"
+          "linux": "bun install -g @marp-team/marp-cli",
+          "windows": "bun install -g @marp-team/marp-cli",
+          "macos": "bun install -g @marp-team/marp-cli"
         },
         "arm64": {
-          "linux": "npm install -g @marp-team/marp-cli",
-          "windows": "npm install -g @marp-team/marp-cli",
-          "macos": "npm install -g @marp-team/marp-cli"
+          "linux": "bun install -g @marp-team/marp-cli",
+          "windows": "bun install -g @marp-team/marp-cli",
+          "macos": "bun install -g @marp-team/marp-cli"
         }
       }
     },
@@ -1826,14 +1826,14 @@
       "doc": "🐋 Devcontainer is a command-line tool to manage development containers",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @devcontainers/cli",
-          "windows": "npm install -g @devcontainers/cli",
-          "macos": "npm install -g @devcontainers/cli"
+          "linux": "bun install -g @devcontainers/cli",
+          "windows": "bun install -g @devcontainers/cli",
+          "macos": "bun install -g @devcontainers/cli"
         },
         "arm64": {
-          "linux": "npm install -g @devcontainers/cli",
-          "windows": "npm install -g @devcontainers/cli",
-          "macos": "npm install -g @devcontainers/cli"
+          "linux": "bun install -g @devcontainers/cli",
+          "windows": "bun install -g @devcontainers/cli",
+          "macos": "bun install -g @devcontainers/cli"
         }
       }
     },
@@ -1843,14 +1843,14 @@
       "doc": "🔐 bitwarden is a password manager.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @bitwarden/cli",
-          "windows": "npm install -g @bitwarden/cli",
-          "macos": "npm install -g @bitwarden/cli"
+          "linux": "bun install -g @bitwarden/cli",
+          "windows": "bun install -g @bitwarden/cli",
+          "macos": "bun install -g @bitwarden/cli"
         },
         "arm64": {
-          "linux": "npm install -g @bitwarden/cli",
-          "windows": "npm install -g @bitwarden/cli",
-          "macos": "npm install -g @bitwarden/cli"
+          "linux": "bun install -g @bitwarden/cli",
+          "windows": "bun install -g @bitwarden/cli",
+          "macos": "bun install -g @bitwarden/cli"
         }
       }
     },
@@ -2728,14 +2728,14 @@
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @qwen-code/qwen-code@latest",
-          "windows": "npm install -g @qwen-code/qwen-code@latest",
-          "macos": "npm install -g @qwen-code/qwen-code@latest"
+          "linux": "bun install -g @qwen-code/qwen-code@latest",
+          "windows": "bun install -g @qwen-code/qwen-code@latest",
+          "macos": "bun install -g @qwen-code/qwen-code@latest"
         },
         "arm64": {
-          "linux": "npm install -g @qwen-code/qwen-code@latest",
-          "windows": "npm install -g @qwen-code/qwen-code@latest",
-          "macos": "npm install -g @qwen-code/qwen-code@latest"
+          "linux": "bun install -g @qwen-code/qwen-code@latest",
+          "windows": "bun install -g @qwen-code/qwen-code@latest",
+          "macos": "bun install -g @qwen-code/qwen-code@latest"
         }
       }
     },
@@ -2745,14 +2745,14 @@
       "doc": "Cline agent extension in the terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g cline",
-          "windows": "npm install -g cline",
-          "macos": "npm install -g cline"
+          "linux": "bun install -g cline",
+          "windows": "bun install -g cline",
+          "macos": "bun install -g cline"
         },
         "arm64": {
-          "linux": "npm install -g cline",
-          "windows": "npm install -g cline",
-          "macos": "npm install -g cline"
+          "linux": "bun install -g cline",
+          "windows": "bun install -g cline",
+          "macos": "bun install -g cline"
         }
       }
     },
@@ -2762,14 +2762,14 @@
       "doc": "Kilocode agent extension in the terminal",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @kilocode/cli",
-          "windows": "npm install -g @kilocode/cli",
-          "macos": "npm install -g @kilocode/cli"
+          "linux": "bun install -g @kilocode/cli",
+          "windows": "bun install -g @kilocode/cli",
+          "macos": "bun install -g @kilocode/cli"
         },
         "arm64": {
-          "linux": "npm install -g @kilocode/cli",
-          "windows": "npm install -g @kilocode/cli",
-          "macos": "npm install -g @kilocode/cli"
+          "linux": "bun install -g @kilocode/cli",
+          "windows": "bun install -g @kilocode/cli",
+          "macos": "bun install -g @kilocode/cli"
         }
       }
     },
@@ -2779,14 +2779,14 @@
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @github/copilot",
-          "windows": "npm install -g @github/copilot",
-          "macos": "npm install -g @github/copilot"
+          "linux": "bun install -g @github/copilot",
+          "windows": "bun install -g @github/copilot",
+          "macos": "bun install -g @github/copilot"
         },
         "arm64": {
-          "linux": "npm install -g @github/copilot",
-          "windows": "npm install -g @github/copilot",
-          "macos": "npm install -g @github/copilot"
+          "linux": "bun install -g @github/copilot",
+          "windows": "bun install -g @github/copilot",
+          "macos": "bun install -g @github/copilot"
         }
       }
     },
@@ -2796,14 +2796,14 @@
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @google/gemini-cli",
-          "windows": "npm install -g @google/gemini-cli",
-          "macos": "npm install -g @google/gemini-cli"
+          "linux": "bun install -g @google/gemini-cli",
+          "windows": "bun install -g @google/gemini-cli",
+          "macos": "bun install -g @google/gemini-cli"
         },
         "arm64": {
-          "linux": "npm install -g @google/gemini-cli",
-          "windows": "npm install -g @google/gemini-cli",
-          "macos": "npm install -g @google/gemini-cli"
+          "linux": "bun install -g @google/gemini-cli",
+          "windows": "bun install -g @google/gemini-cli",
+          "macos": "bun install -g @google/gemini-cli"
         }
       }
     },
@@ -2813,14 +2813,14 @@
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @charmland/crush",
-          "windows": "npm install -g @charmland/crush",
-          "macos": "npm install -g @charmland/crush"
+          "linux": "bun install -g @charmland/crush",
+          "windows": "bun install -g @charmland/crush",
+          "macos": "bun install -g @charmland/crush"
         },
         "arm64": {
-          "linux": "npm install -g @charmland/crush",
-          "windows": "npm install -g @charmland/crush",
-          "macos": "npm install -g @charmland/crush"
+          "linux": "bun install -g @charmland/crush",
+          "windows": "bun install -g @charmland/crush",
+          "macos": "bun install -g @charmland/crush"
         }
       }
     },
@@ -2830,14 +2830,14 @@
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g opencode-ai@latest",
-          "windows": "npm install -g opencode-ai@latest",
-          "macos": "npm install -g opencode-ai@latest"
+          "linux": "bun install -g opencode-ai@latest",
+          "windows": "bun install -g opencode-ai@latest",
+          "macos": "bun install -g opencode-ai@latest"
         },
         "arm64": {
-          "linux": "npm install -g opencode-ai@latest",
-          "windows": "npm install -g opencode-ai@latest",
-          "macos": "npm install -g opencode-ai@latest"
+          "linux": "bun install -g opencode-ai@latest",
+          "windows": "bun install -g opencode-ai@latest",
+          "macos": "bun install -g opencode-ai@latest"
         }
       }
     },
@@ -2847,14 +2847,14 @@
       "doc": "Terminal-based CLI agents from openai designed specifically for openai models.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm i -g @openai/codex",
-          "windows": "npm install -g @openai/codex",
-          "macos": "npm install -g @openai/codex"
+          "linux": "nvm install -g @openai/codex",
+          "windows": "bun install -g @openai/codex",
+          "macos": "bun install -g @openai/codex"
         },
         "arm64": {
-          "linux": "npm install -g @openai/codex",
-          "windows": "npm install -g @openai/codex",
-          "macos": "npm install -g @openai/codex"
+          "linux": "bun install -g @openai/codex",
+          "windows": "bun install -g @openai/codex",
+          "macos": "bun install -g @openai/codex"
         }
       }
     },
@@ -2864,14 +2864,14 @@
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "npm install -g @augmentcode/auggie",
-          "windows": "npm install -g @augmentcode/auggie",
-          "macos": "npm install -g @augmentcode/auggie"
+          "linux": "bun install -g @augmentcode/auggie",
+          "windows": "bun install -g @augmentcode/auggie",
+          "macos": "bun install -g @augmentcode/auggie"
         },
         "arm64": {
-          "linux": "npm install -g @augmentcode/auggie",
-          "windows": "npm install -g @augmentcode/auggie",
-          "macos": "npm install -g @augmentcode/auggie"
+          "linux": "bun install -g @augmentcode/auggie",
+          "windows": "bun install -g @augmentcode/auggie",
+          "macos": "bun install -g @augmentcode/auggie"
         }
       }
     },
