@@ -46,9 +46,9 @@ if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then
     source "$HOME/dotfiles/machineconfig/init_linux.sh"
 fi
 
-if [ -x "$HOME/.bun/bin/bun" ]; then
-    alias node='$HOME/.bun/bin/bun'
-fi
+# if [ -x "$HOME/.bun/bin/bun" ]; then
+#     alias node='$HOME/.bun/bin/bun'
+# fi
 
 alias l='lsd -la'
 alias d='wrap_in_shell_script devops'

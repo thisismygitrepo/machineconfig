@@ -106,7 +106,7 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
     script = """
 ya pkg add 'ndtoan96/ouch'  # make ouch default previewer in yazi for compressed files
 ya pkg add 'AnirudhG07/rich-preview'  # rich-cli based previewer for yazi
-ya pack -a 'stelcodes/bunny'
+ya pkg -a 'stelcodes/bunny'
 ya pkg add 'Tyarel8/goto-drives'
 ya pkg add 'uhs-robert/sshfs'
 ya pkg add 'boydaihungst/file-extra-metadata'
