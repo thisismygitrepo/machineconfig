@@ -3,267 +3,267 @@
 # =================== PRIVATE ================================
 
 [git]
-gitconfig = {this = '~/.gitconfig', to_this = '~/dotfiles/creds/git/.gitconfig'}
-gitcred = {this = '~/.git-credentials', to_this = '~/dotfiles/creds/git/.git-credentials'}
+gitconfig = {original = '~/.gitconfig', self_managed = '~/dotfiles/creds/git/.gitconfig'}
+gitcred = {original = '~/.git-credentials', self_managed = '~/dotfiles/creds/git/.git-credentials'}
 
 [ssh]
-keys = {this = '~/.ssh', to_this = '~/dotfiles/creds/.ssh', contents = true}
+keys = {original = '~/.ssh', self_managed = '~/dotfiles/creds/.ssh', contents = true}
 
 [gpg]
-keys = {this = '~/.gnupg', to_this = '~/dotfiles/creds/.gnupg', contents = true}
+keys = {original = '~/.gnupg', self_managed = '~/dotfiles/creds/.gnupg', contents = true}
 
 [pypi]
-creds = {this = '~/.pypirc', to_this = '~/dotfiles/creds/msc/.pypirc'}
+creds = {original = '~/.pypirc', self_managed = '~/dotfiles/creds/msc/.pypirc'}
 
 [rclone_linux]
-config = {this = '~/.config/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
+config = {original = '~/.config/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf'}
 
 [rclone_windows]
-config = {this = '~/AppData/Roaming/rclone/rclone.conf', to_this = '~/dotfiles/creds/rclone/rclone.conf'}
+config = {original = '~/AppData/Roaming/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf'}
 
 [cloudflare]
-config = {this = '~/.cloudflared', to_this = '~/dotfiles/creds/cloudflare/.cloudflared'}
+config = {original = '~/.cloudflared', self_managed = '~/dotfiles/creds/cloudflare/.cloudflared'}
 
 [ngrok_linux]
-config = {this = '~/.config/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+config = {original = '~/.config/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml'}
 
 [ngrok_windows]
-config = {this = '~/AppData/Local/ngrok/ngrok.yml', to_this = '~/dotfiles/creds/tokens/ngrok.yml'}
+config = {original = '~/AppData/Local/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml'}
 
 [m365]
-config1 = {this = '~/.cli-m365-msal.json',            to_this = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
-config2 = {this = '~/.cli-m365-all-connections.json', to_this = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json'}
-config3 = {this = '~/.cli-m365-connection.json',      to_this = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
-# config2 = {this = '~/.cli-m365-tokens.json',        to_this = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
+config1 = {original = '~/.cli-m365-msal.json',            self_managed = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
+config2 = {original = '~/.cli-m365-all-connections.json', self_managed = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json'}
+config3 = {original = '~/.cli-m365-connection.json',      self_managed = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
+# config2 = {original = '~/.cli-m365-tokens.json',        self_managed = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
 
 [remmina]
-data = {this = '~/.var/app/org.remmina.Remmina/data/remmina', to_this = '~/dotfiles/creds/RDP/remmina/data/remmina'}
+data = {original = '~/.var/app/org.remmina.Remmina/data/remmina', self_managed = '~/dotfiles/creds/RDP/remmina/data/remmina'}
 
 [webapp_linux]
-brave = {this = '~/.local/share/applications', to_this = '~/dotfiles/config/webapps/linux/brave', contents = true}
+brave = {original = '~/.local/share/applications', self_managed = '~/dotfiles/config/webapps/linux/brave', contents = true}
 
 # [startup_windows]
-# startup = {this = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', to_this = '~/dotfiles/scripts/windows_startup', contents = true}
+# startup = {original = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', self_managed = '~/dotfiles/scripts/windows_startup', contents = true}
 
 # [aws]
-# config = {this = '~/.aws/config', to_this = '~/dotfiles/aws/.aws', contents = true}
+# config = {original = '~/.aws/config', self_managed = '~/dotfiles/aws/.aws', contents = true}
 
 [wt_windows]
-settings = { this = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', to_this = 'CONFIG_ROOT/settings/shells/wt/settings.json' }
+settings = { original = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', self_managed = 'CONFIG_ROOT/settings/shells/wt/settings.json' }
 
 
 # =================== LLMs ============================
 
 [chatgpt]
-config = { this = '~/.config/chatgpt/config.json', to_this = '~/dotfiles/creds/llm/chatgpt_cli/config.json' }
+config = { original = '~/.config/chatgpt/config.json', self_managed = '~/dotfiles/creds/llm/chatgpt_cli/config.json' }
 
 [mods]
-config = {this = '~/.config/mods/mods.yml', to_this = '~/dotfiles/creds/llm/mods_cli/mods.yml'}
+config = {original = '~/.config/mods/mods.yml', self_managed = '~/dotfiles/creds/llm/mods_cli/mods.yml'}
 
 [github_cli_token]
-token = {this = '~/.copilot-cli-access-token', to_this = '~/dotfiles/creds/llm/github_cli/.copilot-cli-access-token'}
+token = {original = '~/.copilot-cli-access-token', self_managed = '~/dotfiles/creds/llm/github_cli/.copilot-cli-access-token'}
 
 [aider]
-config = {this = '~/.aider.conf.yml', to_this = '~/dotfiles/creds/llm/aider/.aider.conf.yml'}
+config = {original = '~/.aider.conf.yml', self_managed = '~/dotfiles/creds/llm/aider/.aider.conf.yml'}
 
 [marvin]
-config = {this = '~/.marvin/.env', to_this = '~/dotfiles/creds/llm/marvin/.env'}
-threads = {this = '~/.marvin/cli/threads/default.json', to_this = '~/dotfiles/creds/llm/marvin/threads/default.json'}
+config = {original = '~/.marvin/.env', self_managed = '~/dotfiles/creds/llm/marvin/.env'}
+threads = {original = '~/.marvin/cli/threads/default.json', self_managed = '~/dotfiles/creds/llm/marvin/threads/default.json'}
 
 [docker]
-config = {this = '~/.docker/config.json', to_this = '~/dotfiles/creds/docker/config.json'}
+config = {original = '~/.docker/config.json', self_managed = '~/dotfiles/creds/docker/config.json'}
 
 
 # =========================== PUBLIC ======================================
 
 [marimo]
-config = {this = '~/.config/marimo/marimo.toml', to_this = 'CONFIG_ROOT/settings/marimo/marimo.toml'}
+config = {original = '~/.config/marimo/marimo.toml', self_managed = 'CONFIG_ROOT/settings/marimo/marimo.toml'}
 
 [presenterm]
-config = {this = '~/.config/presenterm/config.yaml', to_this = 'CONFIG_ROOT/settings/presenterm/config.yaml'}
+config = {original = '~/.config/presenterm/config.yaml', self_managed = 'CONFIG_ROOT/settings/presenterm/config.yaml'}
 
 [keras]
-config = {this = '~/.keras/keras.json', to_this = 'CONFIG_ROOT/settings/keras/keras.json'}
+config = {original = '~/.keras/keras.json', self_managed = 'CONFIG_ROOT/settings/keras/keras.json'}
 
 [streamlit]
-config = {this = '~/.streamlit/config.toml', to_this = 'CONFIG_ROOT/settings/streamlit/config.toml'}
+config = {original = '~/.streamlit/config.toml', self_managed = 'CONFIG_ROOT/settings/streamlit/config.toml'}
 
 
 [procs]
-config = {this = '~/.procs.toml', to_this = 'CONFIG_ROOT/settings/procs/.procs.toml'}
-config_again = {this = '~/.config/procs/config.toml', to_this = 'CONFIG_ROOT/settings/procs/.procs.toml'}
+config = {original = '~/.procs.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml'}
+config_again = {original = '~/.config/procs/config.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml'}
 
 [rofi_linux]
-config = {this = '~/.config/rofi/config.rasi', to_this = 'CONFIG_ROOT/settings/rofi/config.rasi'}
+config = {original = '~/.config/rofi/config.rasi', self_managed = 'CONFIG_ROOT/settings/rofi/config.rasi'}
 
 [yazi_windows]
-yazi = {this = '~/AppData/Roaming/yazi/config/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi_windows.toml'}
-keymap = {this = '~/AppData/Roaming/yazi/config/keymap.toml', to_this = 'CONFIG_ROOT/settings/yazi/keymap_windows.toml'}
-theme = {this = '~/AppData/Roaming/yazi/config/theme.toml', to_this = 'CONFIG_ROOT/settings/yazi/theme.toml'}
-init = {this = '~/AppData/Roaming/yazi/config/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}
+yazi = {original = '~/AppData/Roaming/yazi/config/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_windows.toml'}
+keymap = {original = '~/AppData/Roaming/yazi/config/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_windows.toml'}
+theme = {original = '~/AppData/Roaming/yazi/config/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml'}
+init = {original = '~/AppData/Roaming/yazi/config/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua'}
 
 [television_linux]
-cable = {this = '~/.config/television/cable', to_this = 'CONFIG_ROOT/settings/television/cable_unix', contents = true}
+cable = {original = '~/.config/television/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_unix', contents = true}
 
 [television_windows]
-cable = {this = '~/AppData/Local/television/config/cable', to_this = 'CONFIG_ROOT/settings/television/cable_windows', contents = true}
+cable = {original = '~/AppData/Local/television/config/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_windows', contents = true}
 
 
 [yazi_linux]
-yazi = {this = '~/.config/yazi/yazi.toml', to_this = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml'}
-keymap = {this = '~/.config/yazi/keymap.toml', to_this = 'CONFIG_ROOT/settings/yazi/keymap_linux.toml'}
-theme = {this = '~/.config/yazi/theme.toml', to_this = 'CONFIG_ROOT/settings/yazi/theme.toml'}
-init = {this = '~/.config/yazi/init.lua', to_this = 'CONFIG_ROOT/settings/yazi/init.lua'}
+yazi = {original = '~/.config/yazi/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml'}
+keymap = {original = '~/.config/yazi/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_linux.toml'}
+theme = {original = '~/.config/yazi/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml'}
+init = {original = '~/.config/yazi/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua'}
 
 [lf_windows]
-config = {this = '~/AppData/Local/lf/lfrc', to_this = 'CONFIG_ROOT/settings/lf/windows/lfrc'}
-colors = {this = '~/AppData/Local/lf/colors', to_this = 'CONFIG_ROOT/settings/lf/windows/colors'}
-icons = {this = '~/AppData/Local/lf/icons', to_this = 'CONFIG_ROOT/settings/lf/windows/icons'}
+config = {original = '~/AppData/Local/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/windows/lfrc'}
+colors = {original = '~/AppData/Local/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/windows/colors'}
+icons = {original = '~/AppData/Local/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/windows/icons'}
 
 [lf_linux]
-colors = {this = '~/.config/lf/colors', to_this = 'CONFIG_ROOT/settings/lf/linux/colors'}
-config = {this = '~/.config/lf/lfrc', to_this = 'CONFIG_ROOT/settings/lf/linux/lfrc'}
-icons = {this = '~/.config/lf/icons', to_this = 'CONFIG_ROOT/settings/lf/linux/icons'}
+colors = {original = '~/.config/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/linux/colors'}
+config = {original = '~/.config/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/linux/lfrc'}
+icons = {original = '~/.config/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/linux/icons'}
 
 [broot]
-config = {this = '~/.config/broot/conf.toml', to_this = 'CONFIG_ROOT/settings/broot/conf.toml'}
+config = {original = '~/.config/broot/conf.toml', self_managed = 'CONFIG_ROOT/settings/broot/conf.toml'}
 
 [pistol_linux]
-config = {this = '~/.config/pistol/pistol.conf', to_this = 'CONFIG_ROOT/settings/pistol/pistol.conf'}
+config = {original = '~/.config/pistol/pistol.conf', self_managed = 'CONFIG_ROOT/settings/pistol/pistol.conf'}
 
 [glow]
-config = {this = '~/.config/glow/glow.yml', to_this = 'CONFIG_ROOT/settings/glow/glow.yml'}
+config = {original = '~/.config/glow/glow.yml', self_managed = 'CONFIG_ROOT/settings/glow/glow.yml'}
 
 [gromit_linux]
-config = {this = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', to_this = 'CONFIG_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true}
+config = {original = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', self_managed = 'CONFIG_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true}
 
 # zoxide can't read symlink files see: https://github.com/ajeetdsouza/zoxide/issues?q=is%3Aissue+is%3Aopen+symlink
 # [zoxide_windows]
-# database = {this = '~/AppData/Local/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_windows/db.zo'}
+# database = {original = '~/AppData/Local/zoxide/db.zo', self_managed = '~/dotfiles/settings/zoxide_windows/db.zo'}
 
 # [zoxide_linux]
-# database = {this = '~/.local/share/zoxide/db.zo', to_this = '~/dotfiles/settings/zoxide_linux/db.zo'}
+# database = {original = '~/.local/share/zoxide/db.zo', self_managed = '~/dotfiles/settings/zoxide_linux/db.zo'}
 
 #[broot_windows]
-#config = { this = '~/AppData/Roaming/dystroy/config', to_this = 'CONFIG_ROOT/settings/broot/config' }
+#config = { original = '~/AppData/Roaming/dystroy/config', self_managed = 'CONFIG_ROOT/settings/broot/config' }
 
 [starship]
-config = {this = '~/.config/starship.toml', to_this = 'CONFIG_ROOT/settings/shells/starship/starship.toml'}
+config = {original = '~/.config/starship.toml', self_managed = 'CONFIG_ROOT/settings/shells/starship/starship.toml'}
 
 
 [kanata]
-config = {this = '~/.config/kanata/kanata.kbd', to_this = 'CONFIG_ROOT/settings/keyboard/kanata/kanata.kbd'}
+config = {original = '~/.config/kanata/kanata.kbd', self_managed = 'CONFIG_ROOT/settings/keyboard/kanata/kanata.kbd'}
 
 [espanso]
-config = {this = '~/.config/espanso/config/default.yml', to_this = 'CONFIG_ROOT/settings/keyboard/espanso/config/default.yml'}
-match = {this = '~/.config/espanso/match/base.yml', to_this = 'CONFIG_ROOT/settings/keyboard/espanso/match/base.yml', copy = true}
+config = {original = '~/.config/espanso/config/default.yml', self_managed = 'CONFIG_ROOT/settings/keyboard/espanso/config/default.yml'}
+match = {original = '~/.config/espanso/match/base.yml', self_managed = 'CONFIG_ROOT/settings/keyboard/espanso/match/base.yml', copy = true}
 
 
 [pudb]
-config = {this = '~/.config/pudb/pudb.cfg', to_this = 'CONFIG_ROOT/settings/pudb/pudb.cfg'}
+config = {original = '~/.config/pudb/pudb.cfg', self_managed = 'CONFIG_ROOT/settings/pudb/pudb.cfg'}
 
 
 # ============================= shells profiles ==================================
 
 # [powershell_windows]
-# CurrentUserCurrentHost = {this = '~/Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
-# CurrentUserAllHosts = {this = '~/Documents\WindowsPowerShell\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/CurrentUserAllHosts/profile.ps1'}
-# AllUsersCurrentHost = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\Microsoft.PowerShell_profile.ps1', to_this = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
-# AllUsersAllHosts = {this = 'C:\Windows\System32\WindowsPowerShell\v1.0\profile.ps1', to_this = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
+# CurrentUserCurrentHost = {original = '~/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1', self_managed = '~/dotfiles/shells/windows_powershell/CurrentUserCurrentHost/Microsoft.PowerShell_profile.ps1'}
+# CurrentUserAllHosts = {original = '~/Documents/WindowsPowerShell/profile.ps1', self_managed = '~/dotfiles/shells/windows_powershell/AllUsersCurrentHost/profile.ps1'}
+# AllUsersCurrentHost = {original = 'C:/Windows/System32/WindowsPowerShell/v1.0/Microsoft.PowerShell_profile.ps1', self_managed = '~/dotfiles/shells/powershell/AllUsersCurrentHost/Microsoft.PowerShell_profile.ps1'}
+# AllUsersAllHosts = {original = 'C:/Windows/System32/WindowsPowerShell/v1.0/profile.ps1', self_managed = '~/dotfiles/shells/windows_powershell/AllUsersAllHosts/profile.ps1'}
 
 # [pwsh_windows]
-# CurrentUserCurrentHost = {this = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
-# CurrentUserAllHosts = {this = '~/Documents/PowerShell/profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/profile.ps1'}
-# AllUsersCurrentHost = {this = 'C:\Program Files\PowerShell\7\Microsoft.PowerShell_profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
-# AllUsersAllHosts = {this = 'C:\Program Files\PowerShell\7\profile.ps1', to_this = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
+# CurrentUserCurrentHost = {original = '~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
+# CurrentUserAllHosts = {original = '~/Documents/PowerShell/profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/profile.ps1'}
+# AllUsersCurrentHost = {original = 'C:/Program Files/PowerShell/7/Microsoft.PowerShell_profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
+# AllUsersAllHosts = {original = 'C:/Program Files/PowerShell/7/profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
 
 [nushell_windows]
-config = {this = '~/AppData/Roaming/nushell/config.nu', to_this = 'CONFIG_ROOT/settings/shells/nushell/config.nu'}
-env = {this = '~/AppData/Roaming/nushell/env.nu', to_this = 'CONFIG_ROOT/settings/shells/nushell/env.nu'}
+config = {original = '~/AppData/Roaming/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu'}
+env = {original = '~/AppData/Roaming/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu'}
 
 [nushell_linux]
-config = {this = '~/.config/nushell/config.nu', to_this = 'CONFIG_ROOT/settings/shells/nushell/config.nu'}
-env = {this = '~/.config/nushell/env.nu', to_this = 'CONFIG_ROOT/settings/shells/nushell/env.nu'}
+config = {original = '~/.config/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu'}
+env = {original = '~/.config/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu'}
 
 [kitty_linux]
-config = {this = '~/.config/kitty/kitty.conf', to_this = 'CONFIG_ROOT/settings/shells/kitty/kitty.conf'}
+config = {original = '~/.config/kitty/kitty.conf', self_managed = 'CONFIG_ROOT/settings/shells/kitty/kitty.conf'}
 
 [alacritty_linux]
-config = {this = '~/.config/alacritty/alacritty.toml', to_this = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml'}
-config_yaml = {this = '~/.config/alacritty/alacritty.yml', to_this = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.yml'}
+config = {original = '~/.config/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml'}
+config_yaml = {original = '~/.config/alacritty/alacritty.yml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.yml'}
 
 [alacritty_windows]
-config = {this = '~/AppData/Roaming/alacritty/alacritty.toml', to_this = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml'}
+config = {original = '~/AppData/Roaming/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml'}
 
 [hyper_terminal]
-config = {this = '~/.hyper.js', to_this = 'CONFIG_ROOT/settings/shells/hyper/.hyper.js'}
+config = {original = '~/.hyper.js', self_managed = 'CONFIG_ROOT/settings/shells/hyper/.hyper.js'}
 
 [wezterminal]
-config = {this = '~/.config/wezterm/wezterm.lua', to_this = 'CONFIG_ROOT/settings/shells/wezterm/wezterm.lua'}
+config = {original = '~/.config/wezterm/wezterm.lua', self_managed = 'CONFIG_ROOT/settings/shells/wezterm/wezterm.lua'}
 
 [vtm_windows]
-settings = {this = '~/.config/vtm/settings.xml', to_this = 'CONFIG_ROOT/settings/shells/vtm/settings.xml'}
+settings = {original = '~/.config/vtm/settings.xml', self_managed = 'CONFIG_ROOT/settings/shells/vtm/settings.xml'}
 
 [wsl_windows]
-config = {this = '~/.wslconfig', to_this = 'CONFIG_ROOT/settings/wsl/.wslconfig'}
+config = {original = '~/.wslconfig', self_managed = 'CONFIG_ROOT/settings/wsl/.wslconfig'}
 
 # [ipython_default_config]
-# config = {this = '~/.ipython/profile_default/ipython_config.py', to_this = 'CONFIG_ROOT/settings/shells/ipy/profiles/default/ipython_config.py'}
-# play_extension = {this = '~/.ipython/profile_default/startup/playext.py', to_this = 'CONFIG_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
+# config = {original = '~/.ipython/profile_default/ipython_config.py', self_managed = 'CONFIG_ROOT/settings/shells/ipy/profiles/default/ipython_config.py'}
+# play_extension = {original = '~/.ipython/profile_default/startup/playext.py', self_managed = 'CONFIG_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
 
 [mprocs_windows]
-config = {this = '~/mprocs.yaml', to_this = 'CONFIG_ROOT/settings/mprocs/windows/mprocs.yaml'}
+config = {original = '~/mprocs.yaml', self_managed = 'CONFIG_ROOT/settings/mprocs/windows/mprocs.yaml'}
 
 # [tmux_linux]
-# config = {this = '~/.tmux.conf', to_this = 'CONFIG_ROOT/settings/tmux/.tmux.conf'}
-# tmate = {this = '~/.tmate.conf', to_this = 'CONFIG_ROOT/settings/tmux/.tmate.conf'}
+# config = {original = '~/.tmux.conf', self_managed = 'CONFIG_ROOT/settings/tmux/.tmux.conf'}
+# tmate = {original = '~/.tmate.conf', self_managed = 'CONFIG_ROOT/settings/tmux/.tmate.conf'}
 
 
 [zellij_linux]
-config = { this = '~/.config/zellij', to_this = 'CONFIG_ROOT/settings/zellij' }
-#themes = { this = '~/.config/zellij/themes', to_this = 'CONFIG_ROOT/settings/zellij/themes' }
-#layouts = { this = '~/.config/zellij/layouts', to_this = 'CONFIG_ROOT/settings/zellij/layouts' }
+config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/zellij' }
+#themes = { original = '~/.config/zellij/themes', self_managed = 'CONFIG_ROOT/settings/zellij/themes' }
+#layouts = { original = '~/.config/zellij/layouts', self_managed = 'CONFIG_ROOT/settings/zellij/layouts' }
 
 
 # ===================== IDEs ============================
 
 [zed_linux]
-settings = {this = '~/.config/zed/settings.json', to_this = 'CONFIG_ROOT/settings/zed/settings.json'}
+settings = {original = '~/.config/zed/settings.json', self_managed = 'CONFIG_ROOT/settings/zed/settings.json'}
 
 [helix_windows]
-languages = { this = '~/AppData/Roaming/helix/languages.toml', to_this = 'CONFIG_ROOT/settings/helix/languages.toml' }
-config = { this = '~/AppData/Roaming/helix/config.toml', to_this = 'CONFIG_ROOT/settings/helix/config.toml' }
+languages = { original = '~/AppData/Roaming/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' }
+config = { original = '~/AppData/Roaming/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' }
 
 [helix_linux]
-languages = { this = '~/.config/helix/languages.toml', to_this = 'CONFIG_ROOT/settings/helix/languages.toml' }
-config = { this = '~/.config/helix/config.toml', to_this = 'CONFIG_ROOT/settings/helix/config.toml' }
-yazi_picker = { this = '~/.config/helix/yazi-picker.sh', to_this = 'CONFIG_ROOT/settings/helix/yazi-picker.sh' }
+languages = { original = '~/.config/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' }
+config = { original = '~/.config/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' }
+yazi_picker = { original = '~/.config/helix/yazi-picker.sh', self_managed = 'CONFIG_ROOT/settings/helix/yazi-picker.sh' }
 
 [lvim_windows]
-config = { this = '~/AppData/Local/lvim/config.lua', to_this = 'CONFIG_ROOT/settings/lvim/windows/config.lua' }
+config = { original = '~/AppData/Local/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/windows/config.lua' }
 
 [lvim_linux]
-config = { this = '~/.config/lvim/config.lua', to_this = 'CONFIG_ROOT/settings/lvim/linux/config.lua' }
+config = { original = '~/.config/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/linux/config.lua' }
 
 
 [svim_windows]
-init = { this = '~/.SpaceVim.d/init.toml', to_this = 'CONFIG_ROOT/settings/svim/windows/init.toml' }
+init = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/windows/init.toml' }
 
 [svim_linux]
-init = { this = '~/.SpaceVim.d/init.toml', to_this = 'CONFIG_ROOT/settings/svim/linux/init.toml' }
+init = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/linux/init.toml' }
 
 [linters]
-flake8 = {this = '~/.flake8', to_this = 'CONFIG_ROOT/settings/linters/.flake8'}
+flake8 = {original = '~/.flake8', self_managed = 'CONFIG_ROOT/settings/linters/.flake8'}
 # as per https://mypy.readthedocs.io/en/stable/config_file.html
-mypy = {this = '~/mypy/config/mypy.ini', to_this = 'CONFIG_ROOT/settings/linters/.mypy.ini'}
-mypy2 = {this = '~/.config/mypy/config', to_this = 'CONFIG_ROOT/settings/linters/.mypy.ini'}
-ruff = {this = '~/.ruff.toml', to_this = 'CONFIG_ROOT/settings/linters/.ruff.toml'}
-pylint = {this = '~/.pylintrc', to_this = 'CONFIG_ROOT/settings/linters/.pylintrc'}
+mypy = {original = '~/mypy/config/mypy.ini', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini'}
+mypy2 = {original = '~/.config/mypy/config', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini'}
+ruff = {original = '~/.ruff.toml', self_managed = 'CONFIG_ROOT/settings/linters/.ruff.toml'}
+pylint = {original = '~/.pylintrc', self_managed = 'CONFIG_ROOT/settings/linters/.pylintrc'}
 
 # ======================= OS ===============================
 
 [apps_windows]
-notepadpp = {this = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', to_this = 'C:/Program Files/Notepad++/notepad++.exe'}
-# tesseract = {this = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', to_this = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
+notepadpp = {original = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', self_managed = 'C:/Program Files/Notepad++/notepad++.exe'}
+# tesseract = {original = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', self_managed = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
 

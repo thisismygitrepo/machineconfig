@@ -68,7 +68,7 @@ def main(
     #         f"[bold]📝 Edit configuration file:[/] [cyan]nano {Path(CONFIG_ROOT)}/symlinks/mapper.toml[/cyan]",
     #         "",
     #         f"[{new_path.parent.name}]",
-    #         f"{orig_path.name.split('.')[0]} = {{ this = '{orig_path.as_posix()}', to_this = '{new_path.as_posix()}' }}",
+    #         f"{orig_path.name.split('.')[0]} = {{ original = '{orig_path.as_posix()}', self_managed = '{new_path.as_posix()}' }}",
     #     ]
     # )
     # console.print(

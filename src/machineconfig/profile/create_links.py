@@ -30,8 +30,8 @@ console = Console()
 
 
 class Base(TypedDict):
-    this: str
-    to_this: str
+    original: str
+    self_managed: str
     contents: Optional[bool]
     copy: Optional[bool]
 class ConfigMapper(TypedDict):
@@ -63,8 +63,8 @@ def read_mapper() -> MapperFileData:
         for file_name, file_base in program_map.items():
             file_map: ConfigMapper = {
                 "file_name": file_name,
-                "config_file_default_path": file_base["this"],
-                "self_managed_config_file_path": file_base["to_this"],
+                "config_file_default_path": file_base["original"],
+                "self_managed_config_file_path": file_base["self_managed"],
                 "contents": file_base.get("contents"),
                 "copy": file_base.get("copy"),
             }
