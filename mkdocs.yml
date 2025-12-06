@@ -1,0 +1,194 @@
+site_name: Machineconfig
+site_description: A CLI-based cross-platform Stack Manager - Package Manager, Configuration Manager, Automation Tool, Dotfiles Manager, and more
+site_author: Alex Al-Saffar
+site_url: https://thisismygitrepo.github.io/machineconfig/
+repo_name: thisismygitrepo/machineconfig
+repo_url: https://github.com/thisismygitrepo/machineconfig
+edit_uri: edit/main/docs/
+
+copyright: Copyright &copy; 2024 Alex Al-Saffar
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  language: en
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/package-variant-closed
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.tooltips
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+plugins:
+  - search:
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
+            show_signature_annotations: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            separate_signature: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_source: true
+            members_order: source
+            heading_level: 2
+  - autorefs
+
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      title: On this page
+      toc_depth: 3
+
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: thisismygitrepo
+      repo: machineconfig
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - docs/includes/abbreviations.md
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/thisismygitrepo/machineconfig
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/machineconfig/
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home:
+      - Welcome: index.md
+      - Installation: installation.md
+      - Quickstart: quickstart.md
+      - Hosting: hosting.md
+  - User Guide:
+      - Overview: guide/overview.md
+      - Package Management: guide/packages.md
+      - Configuration Management: guide/configuration.md
+      - Dotfiles: guide/dotfiles.md
+      - Data Sync: guide/data-sync.md
+      - Automation: guide/automation.md
+  - CLI Reference:
+      - cli/index.md
+      - mcfg: cli/mcfg.md
+      - devops: cli/devops.md
+      - cloud: cli/cloud.md
+      - sessions: cli/sessions.md
+      - fire: cli/fire.md
+  - API Reference:
+      - api/index.md
+      - Cluster:
+          - api/cluster/index.md
+          - Remote: api/cluster/remote.md
+          - Sessions: api/cluster/sessions.md
+      - Jobs:
+          - api/jobs/index.md
+          - Installer: api/jobs/installer.md
+      - Utils:
+          - api/utils/index.md
+  - Contributing:
+      - contributing/index.md
+      - Development Setup: contributing/development.md
+      - Code Style: contributing/code-style.md
+  - Changelog: changelog.md
