@@ -1,6 +1,6 @@
 # sessions
 
-Terminal session management for persistent and remote sessions.
+Terminal session and layout management for Zellij/Windows Terminal.
 
 ---
 
@@ -12,150 +12,206 @@ sessions [OPTIONS] COMMAND [ARGS]...
 
 ---
 
-## Session Management
+## Commands Overview
 
-### list
+| Command | Shortcut | Description |
+|---------|----------|-------------|
+| `run` | `r` | Launch sessions from layout file |
+| `create-template` | `t` | Create a layout template file |
+| `create-from-function` | `c` | Create layout from function |
+| `balance-load` | `b` | Balance load across sessions |
 
-List all active sessions.
+---
+
+## run
+
+Launch terminal sessions based on a layout configuration file.
 
 ```bash
-sessions list [OPTIONS]
+sessions run LAYOUT_PATH [OPTIONS]
 ```
 
 **Options:**
 
-| Option | Description |
-|--------|-------------|
-| `--all` | Include inactive sessions |
-| `--json` | Output as JSON |
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--max-tabs` | `-mt` | Max tabs per layout (sanity check) |
+| `--max-layouts` | `-ml` | Max parallel layouts (sanity check) |
+| `--sleep-inbetween` | `-si` | Sleep time between layouts (seconds) |
+| `--monitor` | `-m` | Monitor sessions for completion |
+| `--parallel` | `-p` | Launch multiple layouts in parallel |
+| `--kill-upon-completion` | `-k` | Kill sessions when done (requires --monitor) |
+| `--choose` | `-c` | Comma-separated layout names to select |
+| `--choose-interactively` | `-i` | Select layouts interactively |
+| `--substitute-home` | `-sh` | Replace ~ and $HOME in paths |
+
+**Examples:**
+
+```bash
+# Run all layouts in a file
+sessions run layouts.json
+
+# Run specific layouts
+sessions run layouts.json --choose "dev,build"
+
+# Interactive layout selection
+sessions run layouts.json -i
+
+# Monitor and kill upon completion
+sessions run layouts.json --monitor --kill-upon-completion
+
+# Run in parallel
+sessions run layouts.json --parallel
+```
 
 ---
 
-### create
+## create-template
 
-Create a new session.
+Create a layout template file.
 
 ```bash
-sessions create NAME [OPTIONS]
+sessions create-template [NAME] [OPTIONS]
 ```
 
 **Options:**
 
-| Option | Description |
-|--------|-------------|
-| `--shell` | Shell to use |
-| `--directory` | Starting directory |
-
----
-
-### attach
-
-Attach to an existing session.
-
-```bash
-sessions attach NAME
-```
-
----
-
-### detach
-
-Detach from current session.
-
-```bash
-sessions detach
-```
-
----
-
-### kill
-
-Terminate a session.
-
-```bash
-sessions kill NAME
-```
-
----
-
-## Remote Execution
-
-### exec
-
-Execute a command on remote targets.
-
-```bash
-sessions exec "COMMAND" [OPTIONS]
-```
-
-**Options:**
-
-| Option | Description |
-|--------|-------------|
-| `--targets` | Comma-separated list of hosts |
-| `--parallel` | Execute in parallel |
-| `--timeout` | Command timeout |
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--num-tabs` | `-t` | Number of tabs in template (default: 3) |
 
 **Example:**
 
 ```bash
-sessions exec "hostname && uptime" --targets server1,server2,server3
+# Create a template with 5 tabs
+sessions create-template my_layout --num-tabs 5
 ```
 
 ---
 
-### connect
+## create-from-function
 
-Connect to a remote machine.
+Create a layout from a Python function to run in multiple processes.
 
 ```bash
-sessions connect HOST [OPTIONS]
+sessions create-from-function [OPTIONS]
 ```
 
 **Options:**
 
-| Option | Description |
-|--------|-------------|
-| `--user` | SSH username |
-| `--key` | SSH key file |
-| `--port` | SSH port |
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--num-process` | `-n` | Number of parallel processes |
+| `--path` | `-p` | Path to Python/Shell script file or directory |
+| `--function` | `-f` | Function to run (interactive if not provided) |
+
+**Example:**
+
+```bash
+# Create layout for running function in 4 parallel processes
+sessions create-from-function -n 4 -p ./my_script.py -f process_data
+```
 
 ---
 
-## Session Types
+## balance-load
 
-Machineconfig supports multiple session backends:
-
-| Backend | Description |
-|---------|-------------|
-| `tmux` | Terminal multiplexer |
-| `screen` | GNU Screen |
-| `zellij` | Modern terminal workspace |
-
-### Using a Specific Backend
+Adjust layout file to limit tabs per layout.
 
 ```bash
-sessions --backend tmux create dev
-sessions --backend zellij create dev
+sessions balance-load LAYOUT_PATH [OPTIONS]
 ```
+
+**Options:**
+
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--max-threshold` | `-m` | Maximum tabs per layout |
+| `--threshold-type` | `-t` | Type: `number`/`n` or `weight`/`w` |
+| `--breaking-method` | `-b` | Method: `moreLayouts`/`ml` or `combineTabs`/`ct` |
+| `--output-path` | `-o` | Output file path |
+
+**Example:**
+
+```bash
+# Balance layouts to max 5 tabs each
+sessions balance-load layouts.json -m 5 -t number -b moreLayouts
+```
+
+---
+
+## Layout File Format
+
+Layouts are defined in JSON format:
+
+```json
+[
+  {
+    "layoutName": "Development",
+    "tabs": [
+      {
+        "tabName": "editor",
+        "command": "hx .",
+        "cwd": "~/projects/myapp"
+      },
+      {
+        "tabName": "server",
+        "command": "python -m http.server 8000"
+      },
+      {
+        "tabName": "tests",
+        "command": "pytest --watch"
+      }
+    ]
+  },
+  {
+    "layoutName": "Monitoring",
+    "tabs": [
+      {
+        "tabName": "htop",
+        "command": "htop"
+      },
+      {
+        "tabName": "logs",
+        "command": "tail -f /var/log/syslog"
+      }
+    ]
+  }
+]
+```
+
+---
+
+## Session Backends
+
+Sessions uses platform-specific terminal multiplexers:
+
+| Platform | Backend |
+|----------|---------|
+| Linux/macOS | Zellij |
+| Windows | Windows Terminal |
+
+!!! note "Zellij Required"
+    On Linux/macOS, [Zellij](https://zellij.dev/) must be installed.
+    Install via: `cargo install zellij` or your package manager.
 
 ---
 
 ## Examples
 
 ```bash
-# List all sessions
-sessions list
+# Create a layout template
+sessions create-template dev_environment -t 4
 
-# Create a development session
-sessions create dev --directory ~/projects
+# Run the layout
+sessions run dev_environment.json
 
-# Attach to session
-sessions attach dev
+# Run with monitoring
+sessions run tasks.json --monitor --kill-upon-completion
 
-# Execute on multiple servers
-sessions exec "apt update" --targets web1,web2,db1
+# Interactive selection
+sessions run layouts.json -i
 
-# Connect to remote
-sessions connect myserver --user admin
+# Create multiprocess layout
+sessions create-from-function -n 8 -p ./process.py -f worker
 ```

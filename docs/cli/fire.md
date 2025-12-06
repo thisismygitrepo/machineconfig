@@ -1,109 +1,166 @@
 # fire
 
-Fire-based job execution system.
+Python Fire-based job execution system for running scripts and functions.
 
 ---
 
 ## Usage
 
 ```bash
-fire [OPTIONS] COMMAND [ARGS]...
+fire [PATH] [FUNCTION] [OPTIONS] [ARGS]...
 ```
 
 ---
 
 ## Overview
 
-The `fire` command provides a Python Fire-based interface for executing jobs and functions directly from the command line.
+The `fire` command provides a flexible interface for executing Python scripts and functions directly from the command line, with support for various execution modes including interactive, debug, remote, and notebook environments.
 
 ---
 
-## Running Jobs
+## Basic Usage
 
-### Basic Execution
-
-```bash
-fire run MODULE.FUNCTION [ARGS]
-```
-
-**Example:**
+### Run a Script
 
 ```bash
-fire run my_module.my_function --arg1 value1 --arg2 value2
+# Run main function from script
+fire script.py
+
+# Run specific function
+fire script.py my_function
+
+# Run with arguments (passed to the function via Fire)
+fire script.py process --input data.csv --output result.json
 ```
 
----
-
-### With Positional Arguments
+### Interactive Selection
 
 ```bash
-fire run process_data input.csv output.csv --format json
+# Choose function interactively
+fire script.py --choose-function
+
+# Or use shortcut
+fire script.py -c
 ```
-
----
-
-## Job Discovery
-
-### List Available Jobs
-
-```bash
-fire list [MODULE]
-```
-
-Lists all callable functions in a module.
-
----
-
-### Job Information
-
-```bash
-fire info MODULE.FUNCTION
-```
-
-Shows function signature, docstring, and parameters.
 
 ---
 
 ## Execution Options
 
-| Option | Description |
-|--------|-------------|
-| `--verbose` | Show detailed output |
-| `--dry-run` | Preview without execution |
-| `--timeout` | Set execution timeout |
-| `--background` | Run in background |
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--ve` | `-v` | Virtual environment name |
+| `--cmd` | `-B` | Create a cmd fire command for async launch |
+| `--interactive` | `-i` | Run interactively using IPython |
+| `--debug` | `-d` | Enable debug mode |
+| `--choose-function` | `-c` | Choose function interactively |
+| `--loop` | `-l` | Infinite loop (restart after completion) |
+| `--script` | `-s` | Launch as script without Fire |
+| `--module` | `-m` | Launch as Python module |
+| `--optimized` | `-O` | Run with Python optimizations |
+| `--watch` | `-w` | Watch file for changes |
+| `--git-pull` | `-g` | Pull git repo before running |
+| `--holdDirectory` | `-D` | Don't cd to script directory |
+| `--PathExport` | `-P` | Add repo root to PYTHONPATH |
 
 ---
 
-## Interactive Mode
+## Notebook Modes
 
-Start an interactive session:
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--jupyter` | `-j` | Open in Jupyter notebook |
+| `--marimo` | `-M` | Open in Marimo notebook |
+| `--streamlit` | `-S` | Run as Streamlit app |
+
+**Examples:**
 
 ```bash
-fire interactive MODULE
+# Open in Jupyter
+fire analysis.py --jupyter
+
+# Open in Marimo
+fire dashboard.py --marimo
+
+# Run as Streamlit app
+fire app.py --streamlit
 ```
 
-This opens a REPL with the module's functions available.
+---
+
+## Remote Execution
+
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--remote` | `-r` | Launch on remote machine |
+| `--submit-to-cloud` | `-C` | Submit to cloud compute |
+| `--zellij-tab` | `-z` | Open in new Zellij tab |
+| `--environment` | `-E` | Choose ip/localhost/hostname/url |
+
+**Examples:**
+
+```bash
+# Run in new Zellij tab
+fire long_task.py -z "Background Task"
+
+# Submit to remote
+fire heavy_compute.py --remote
+```
 
 ---
 
 ## Examples
 
+### Basic Execution
+
 ```bash
-# Run a function
-fire run my_jobs.cleanup --days 30
+# Run a function with arguments
+fire my_jobs.py cleanup --days 30
 
-# List functions in module
-fire list my_jobs
+# Run with virtual environment
+fire analysis.py process --ve myenv
 
-# Get function info
-fire info my_jobs.process_data
+# Debug mode
+fire buggy_script.py -d
+```
 
-# Run with timeout
-fire run long_task.compute --timeout 3600
+### Development Workflow
 
-# Run in background
-fire run backup.full --background
+```bash
+# Watch for changes and re-run
+fire server.py run --watch
+
+# Interactive mode for testing
+fire utils.py --interactive
+
+# Pull latest and run
+fire deploy.py release --git-pull
+```
+
+### Notebooks
+
+```bash
+# Data analysis in Jupyter
+fire analysis.py --jupyter
+
+# Interactive dashboard in Marimo
+fire dashboard.py --marimo
+
+# Web app with Streamlit
+fire app.py --streamlit --environment localhost
+```
+
+### Background Tasks
+
+```bash
+# Run in loop (restarts on completion/error)
+fire monitor.py check --loop
+
+# Run in separate Zellij tab
+fire backup.py full -z "Backup"
+
+# Create async launch command
+fire long_process.py compute --cmd
 ```
 
 ---
@@ -122,8 +179,16 @@ def cleanup(days: int = 7, dry_run: bool = False):
         days: Delete files older than this many days
         dry_run: Preview without deleting
     """
-    # Implementation
-    pass
+    from pathlib import Path
+    import time
+    
+    cutoff = time.time() - (days * 86400)
+    for f in Path("/tmp").iterdir():
+        if f.stat().st_mtime < cutoff:
+            if dry_run:
+                print(f"Would delete: {f}")
+            else:
+                f.unlink()
 
 def process_data(input_file: str, output_file: str, format: str = "csv"):
     """Process data file.
@@ -133,13 +198,20 @@ def process_data(input_file: str, output_file: str, format: str = "csv"):
         output_file: Path to output file
         format: Output format (csv, json, parquet)
     """
-    # Implementation
-    pass
+    import polars as pl
+    
+    df = pl.read_csv(input_file)
+    # ... processing ...
+    if format == "json":
+        df.write_json(output_file)
+    else:
+        df.write_csv(output_file)
 ```
 
 Then run them:
 
 ```bash
-fire run my_jobs.cleanup --days 14
-fire run my_jobs.process_data data.csv result.json --format json
+fire my_jobs.py cleanup --days 14
+fire my_jobs.py cleanup --days 7 --dry-run
+fire my_jobs.py process_data data.csv result.json --format json
 ```

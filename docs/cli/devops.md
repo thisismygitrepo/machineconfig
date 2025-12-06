@@ -12,152 +12,155 @@ devops [OPTIONS] COMMAND [ARGS]...
 
 ---
 
-## Package Management
+## Commands Overview
 
-### install
-
-Install one or more packages.
-
-```bash
-devops install PACKAGES...
-```
-
-**Example:**
-
-```bash
-devops install ripgrep fd bat
-```
+| Command | Shortcut | Description |
+|---------|----------|-------------|
+| `install` | `i` | Install packages |
+| `repos` | `r` | Manage development repositories |
+| `config` | `c` | Configuration management |
+| `data` | `d` | Data management |
+| `self` | `s` | Self management |
+| `network` | `n` | Network management |
+| `execute` | `e` | Execute scripts |
 
 ---
 
-### install-essentials
+## install
 
-Install a curated set of modern CLI tools.
+Install packages from various package managers.
 
 ```bash
-devops install-essentials [OPTIONS]
+devops install [OPTIONS] [PACKAGES]
 ```
 
 **Options:**
 
-| Option | Description |
-|--------|-------------|
-| `--minimal` | Install only core tools |
-| `--full` | Install all recommended tools |
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--group` | `-g` | Treat argument as a group name (bundle of apps) |
+| `--interactive` | `-i` | Interactive selection of programs to install |
 
----
-
-### install-group
-
-Install a predefined group of packages.
+**Examples:**
 
 ```bash
-devops install-group GROUP
+# Install specific packages (comma-separated)
+devops install btop,fd,bat
+
+# Install a package group
+devops install termabc --group
+
+# Interactive package selection
+devops install --interactive
 ```
 
-**Available Groups:**
+**Available Package Groups:**
 
-| Group | Contents |
-|-------|----------|
-| `dev` | Development tools |
-| `sysadmin` | System administration |
-| `datascience` | Data science tools |
+| Group | Description |
+|-------|-------------|
+| `sysabc` | System ABC utilities |
+| `termabc` | Terminal essentials (40+ tools) |
+| `gui` | GUI applications |
+| `dev` | Full development environment (80+ tools) |
+| `agents` | AI/LLM coding assistants |
+| `shell` | Shell enhancements |
+| `db` | Database tools |
+| `sys-monitor` | System monitors |
+| `search` | File search tools |
 
 ---
 
-### check-installations
+## repos
 
-Check which tools are installed and their versions.
+Manage development repositories.
 
 ```bash
-devops check-installations [OPTIONS]
+devops repos [SUBCOMMAND] [ARGS]...
+```
+
+Handles cloning, updating, and managing development repositories.
+
+---
+
+## config
+
+Configuration management.
+
+```bash
+devops config [SUBCOMMAND] [ARGS]...
+```
+
+Manage application configurations, dotfiles, and settings.
+
+---
+
+## data
+
+Data management operations.
+
+```bash
+devops data [SUBCOMMAND] [ARGS]...
+```
+
+Handle data backup, sync, and management tasks.
+
+---
+
+## self
+
+Self management commands.
+
+```bash
+devops self [SUBCOMMAND] [ARGS]...
+```
+
+Manage machineconfig itself - updates, configuration, etc.
+
+---
+
+## network
+
+Network management.
+
+```bash
+devops network [SUBCOMMAND] [ARGS]...
+```
+
+Network configuration and diagnostics.
+
+---
+
+## execute
+
+Execute Python or shell scripts from pre-defined directories.
+
+```bash
+devops execute [OPTIONS] [NAME]
 ```
 
 **Options:**
 
-| Option | Description |
-|--------|-------------|
-| `--json` | Output as JSON |
-| `--missing` | Show only missing tools |
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--where` | `-w` | Where to look for scripts: `all`, `private`, `public`, `library`, `dynamic`, `custom` |
+| `--interactive` | `-i` | Interactive selection of scripts |
+| `--command` | `-c` | Run as command |
+| `--list` | `-l` | List available scripts |
 
----
-
-## System Operations
-
-### update-system
-
-Update system packages and installed tools.
+**Examples:**
 
 ```bash
-devops update-system [OPTIONS]
-```
+# Run a script by name
+devops execute my_script
 
----
+# List all available scripts
+devops execute --list
 
-### service
+# Interactive script selection
+devops execute --interactive
 
-Manage system services.
-
-```bash
-devops service [ACTION] SERVICE
-```
-
-**Actions:**
-
-| Action | Description |
-|--------|-------------|
-| `start` | Start service |
-| `stop` | Stop service |
-| `restart` | Restart service |
-| `status` | Show service status |
-| `logs` | Show service logs |
-
----
-
-### health-check
-
-Run system health checks.
-
-```bash
-devops health-check [OPTIONS]
-```
-
----
-
-## Scheduling
-
-### schedule
-
-Schedule a command to run periodically.
-
-```bash
-devops schedule "COMMAND" --cron "CRON_EXPRESSION"
-```
-
-**Example:**
-
-```bash
-devops schedule "cloud backup ~/data" --cron "0 2 * * *"
-```
-
----
-
-### schedule-list
-
-List scheduled tasks.
-
-```bash
-devops schedule-list
-```
-
----
-
-### schedule-remove
-
-Remove a scheduled task.
-
-```bash
-devops schedule-remove TASK_ID
+# Run from specific location
+devops execute my_script --where private
 ```
 
 ---
@@ -165,18 +168,24 @@ devops schedule-remove TASK_ID
 ## Examples
 
 ```bash
-# Install essential tools
-devops install-essentials
+# Install terminal essentials
+devops install termabc -g
 
-# Check what's installed
-devops check-installations
+# Install AI coding assistants
+devops install agents -g
 
-# Update everything
-devops update-system
+# Interactive package installation
+devops install -i
 
-# Manage services
-devops service status nginx
+# List available scripts
+devops e -l
 
-# Schedule daily backup
-devops schedule "cloud sync ~/data remote:backup" --cron "0 3 * * *"
+# Run a custom script
+devops e my_automation
+
+# Manage repositories
+devops repos clone myrepo
+
+# Network diagnostics
+devops network check
 ```
