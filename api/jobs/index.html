@@ -1696,6 +1696,123 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Package Groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-package-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Package Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Groups
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#package-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Package Categories
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Package Categories">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aillm-tools-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AI/LLM Tools (agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#terminal-essentials-termabc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Terminal Essentials (termabc)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-tools-dev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development Tools (dev)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scripts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python Scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -1781,28 +1898,142 @@
 
 
 <h1 id="jobs-module">Jobs Module<a class="headerlink" href="#jobs-module" title="Permanent link">&para;</a></h1>
-<p>The <code>jobs</code> module provides functionality for package installation and job execution.</p>
+<p>The <code>jobs</code> module provides functionality for package installation, job execution, and system setup.</p>
 <hr />
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig</span><span class="w"> </span><span class="kn">import</span> <span class="n">jobs</span>
 </span></code></pre></div>
+<p>The jobs module contains:</p>
+<ul>
+<li><strong>Installer</strong> - Cross-platform package installation system</li>
+<li><strong>Scripts</strong> - Installation scripts for various platforms</li>
+</ul>
 <hr />
 <h2 id="submodules">Submodules<a class="headerlink" href="#submodules" title="Permanent link">&para;</a></h2>
 <h3 id="installer">Installer<a class="headerlink" href="#installer" title="Permanent link">&para;</a></h3>
 <p>Handles package installation across platforms:</p>
 <ul>
-<li>Package detection</li>
-<li>Installation verification</li>
-<li>Package groups</li>
+<li>Package detection and verification</li>
+<li>Cross-platform installation commands</li>
+<li>Package groups for batch installation</li>
+<li>VirusTotal integration for security scanning</li>
 </ul>
 <p><a href="installer/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Installer Documentation</a></p>
 <hr />
 <h2 id="package-groups">Package Groups<a class="headerlink" href="#package-groups" title="Permanent link">&para;</a></h2>
-<p>Machineconfig defines package groups for common use cases:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.jobs.installer</span><span class="w"> </span><span class="kn">import</span> <span class="n">package_groups</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Get all packages in a group</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">dev_packages</span> <span class="o">=</span> <span class="n">package_groups</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="s2">&quot;dev&quot;</span><span class="p">)</span>
+<p>Machineconfig defines curated package groups for common use cases:</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Description</th>
+<th>Package Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gui</code></td>
+<td>Essential <abbr title="Graphical User Interface">GUI</abbr> applications (Brave, VS Code, Git)</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>agents</code></td>
+<td>AI/LLM coding assistants (aider, copilot, etc.)</td>
+<td>14+</td>
+</tr>
+<tr>
+<td><code>termabc</code></td>
+<td>Terminal essentials (analysis, monitors, shell tools)</td>
+<td>40+</td>
+</tr>
+<tr>
+<td><code>dev</code></td>
+<td>Full development environment</td>
+<td>80+</td>
+</tr>
+<tr>
+<td><code>sysabc</code></td>
+<td>System ABC utilities</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="using-package-groups">Using Package Groups<a class="headerlink" href="#using-package-groups" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Install all packages in a group</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>devops<span class="w"> </span>install-group<span class="w"> </span>dev
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Install specific group</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>devops<span class="w"> </span>install-group<span class="w"> </span>agents
+</span></code></pre></div>
+<h3 id="available-groups">Available Groups<a class="headerlink" href="#available-groups" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.jobs.installer.package_groups</span><span class="w"> </span><span class="kn">import</span> <span class="n">PACKAGE_GROUP2NAMES</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># List all groups</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">PACKAGE_GROUP2NAMES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># dict_keys([&#39;sysabc&#39;, &#39;termabc&#39;, &#39;gui&#39;, &#39;dev&#39;, &#39;dev-utils&#39;, ...])</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Get packages in a group</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">PACKAGE_GROUP2NAMES</span><span class="p">[</span><span class="s1">&#39;agents&#39;</span><span class="p">])</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># [&#39;aider&#39;, &#39;aichat&#39;, &#39;copilot&#39;, &#39;gemini&#39;, ...]</span>
+</span></code></pre></div>
+<hr />
+<h2 id="package-categories">Package Categories<a class="headerlink" href="#package-categories" title="Permanent link">&para;</a></h2>
+<h3 id="aillm-tools-agents">AI/LLM Tools (<code>agents</code>)<a class="headerlink" href="#aillm-tools-agents" title="Permanent link">&para;</a></h3>
+<p>AI-powered coding and chat assistants:</p>
+<ul>
+<li><code>aider</code> - AI pair programming</li>
+<li><code>copilot</code> - GitHub Copilot <abbr title="Command Line Interface">CLI</abbr></li>
+<li><code>opencode-ai</code> - OpenCode AI assistant</li>
+<li><code>chatgpt</code> - ChatGPT <abbr title="Command Line Interface">CLI</abbr></li>
+<li><code>mods</code> - AI in the terminal</li>
+<li>And more...</li>
+</ul>
+<h3 id="terminal-essentials-termabc">Terminal Essentials (<code>termabc</code>)<a class="headerlink" href="#terminal-essentials-termabc" title="Permanent link">&para;</a></h3>
+<p>Must-have terminal tools:</p>
+<ul>
+<li><strong>File Search</strong>: <code>fd</code>, <code>fzf</code>, <code>rg</code>, <code>broot</code></li>
+<li><strong>File Management</strong>: <code>yazi</code>, <code>tere</code>, <code>lsd</code>, <code>zoxide</code></li>
+<li><strong>System Monitors</strong>: <code>btop</code>, <code>btm</code>, <code>procs</code>, <code>bandwhich</code></li>
+<li><strong>Shell Tools</strong>: <code>zellij</code>, <code>starship</code>, <code>atuin</code>, <code>mcfly</code></li>
+</ul>
+<h3 id="development-tools-dev">Development Tools (<code>dev</code>)<a class="headerlink" href="#development-tools-dev" title="Permanent link">&para;</a></h3>
+<p>Full development setup:</p>
+<ul>
+<li><strong>Editors</strong>: VS Code, Cursor, LunarVim</li>
+<li><strong>Browsers</strong>: Brave, terminal browsers</li>
+<li><strong>Databases</strong>: SQLite, DuckDB, Redis, DBeaver</li>
+<li><strong>Productivity</strong>: espanso, glow, pandoc</li>
+</ul>
+<hr />
+<h2 id="installation-data">Installation Data<a class="headerlink" href="#installation-data" title="Permanent link">&para;</a></h2>
+<p>Package installation data is stored in <code>installer_data.json</code>:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;packages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">      </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Resource monitor&quot;</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">&quot;platforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;apt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;cargo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">},</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="nt">&quot;darwin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;brew&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">},</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">        </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;scoop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;winget&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">}</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="p">}</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">}</span>
+</span></code></pre></div>
+<hr />
+<h2 id="scripts">Scripts<a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h2>
+<p>Platform-specific installation scripts:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>jobs/installer/
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── linux_scripts/     # Bash scripts for Linux
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>├── powershell_scripts/  # PowerShell for Windows
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>└── python_scripts/    # Cross-platform Python installers
+</span></code></pre></div>
+<h3 id="python-scripts">Python Scripts<a class="headerlink" href="#python-scripts" title="Permanent link">&para;</a></h3>
+<p>Custom installers for complex packages:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Example: Install Helix editor with language support</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.jobs.installer.python_scripts</span><span class="w"> </span><span class="kn">import</span> <span class="n">hx</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">hx</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
 </span></code></pre></div>
 
 
