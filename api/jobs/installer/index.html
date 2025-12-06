@@ -1408,10 +1408,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        Quick Start
       
     </span>
   </a>
@@ -1419,13 +1419,91 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#architecture-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Architecture
+        Architecture Overview
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-package-manager-commands-repourl-cmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Package Manager Commands (repoURL: "CMD")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-github-releases-repourl-httpsgithubcom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 2: GitHub Releases (repoURL: "https://github.com/...")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installerdata-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InstallerData Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installer-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer Class
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installer Class">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1438,25 +1516,36 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#machineconfig.jobs.installer.package_groups" class="md-nav__link">
+    <nav class="md-nav" aria-label="Package Groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-groups" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;package_groups
+        Available Groups
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label=" package_groups">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
-  <a href="#group-reference" class="md-nav__link">
+  <a href="#group-contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Group Reference
+        Group Contents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing Groups
       
     </span>
   </a>
@@ -1469,54 +1558,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation-data" class="md-nav__link">
+  <a href="#custom-python-installers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Installation Data
+        Custom Python Installers
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#installation-checks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Installation Checks
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation Checks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#virustotal-integration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VirusTotal Integration
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#custom-installers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Installers
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Custom Installers">
+    <nav class="md-nav" aria-label="Custom Python Installers">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1531,10 +1581,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-custom-installer" class="md-nav__link">
+  <a href="#custom-installer-interface" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example: Custom Installer
+        Custom Installer Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-helix-editor-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Helix Editor Installer
       
     </span>
   </a>
@@ -1547,10 +1608,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cli-usage" class="md-nav__link">
+  <a href="#platform-specific-behavior" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI Usage
+        Platform-Specific Behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Platform-Specific Behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executable-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executable Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Tracking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version Tracking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-installation-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Installation Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Installation
       
     </span>
   </a>
@@ -1558,13 +1686,241 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#platform-support" class="md-nav__link">
+  <a href="#virustotal-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform Support
+        VirusTotal Integration
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="VirusTotal Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scanning-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scanning Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#report-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#devops-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        devops install
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-mode-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Mode Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-new-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding New Packages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding New Packages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-edit-installer_datajson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Edit installer_data.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-add-to-package-groups-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Add to Package Groups (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-custom-installer-if-needed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create Custom Installer (If Needed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1859,10 +2215,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        Quick Start
       
     </span>
   </a>
@@ -1870,13 +2226,91 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+  <a href="#architecture-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Architecture
+        Architecture Overview
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#method-1-package-manager-commands-repourl-cmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 1: Package Manager Commands (repoURL: "CMD")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#method-2-github-releases-repourl-httpsgithubcom" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method 2: GitHub Releases (repoURL: "https://github.com/...")
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installerdata-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InstallerData Schema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installer-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installer Class
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installer Class">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1889,25 +2323,36 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#machineconfig.jobs.installer.package_groups" class="md-nav__link">
+    <nav class="md-nav" aria-label="Package Groups">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#available-groups" class="md-nav__link">
     <span class="md-ellipsis">
       
-        <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;package_groups
+        Available Groups
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label=" package_groups">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
-  <a href="#group-reference" class="md-nav__link">
+  <a href="#group-contents" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Group Reference
+        Group Contents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-groups" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing Groups
       
     </span>
   </a>
@@ -1920,54 +2365,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation-data" class="md-nav__link">
+  <a href="#custom-python-installers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Installation Data
+        Custom Python Installers
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#installation-checks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Installation Checks
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation Checks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#virustotal-integration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        VirusTotal Integration
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#custom-installers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Custom Installers
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Custom Installers">
+    <nav class="md-nav" aria-label="Custom Python Installers">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1982,10 +2388,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example-custom-installer" class="md-nav__link">
+  <a href="#custom-installer-interface" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example: Custom Installer
+        Custom Installer Interface
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-helix-editor-installer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Helix Editor Installer
       
     </span>
   </a>
@@ -1998,10 +2415,77 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cli-usage" class="md-nav__link">
+  <a href="#platform-specific-behavior" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CLI Usage
+        Platform-Specific Behavior
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Platform-Specific Behavior">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation-paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation Paths
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executable-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executable Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-tracking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version Tracking
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Version Tracking">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-installation-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Installation Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Installation
       
     </span>
   </a>
@@ -2009,13 +2493,241 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#platform-support" class="md-nav__link">
+  <a href="#virustotal-integration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Platform Support
+        VirusTotal Integration
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="VirusTotal Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scanning-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scanning Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#report-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#devops-install" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        devops install
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-mode-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Mode Features
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-new-packages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding New Packages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding New Packages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-edit-installer_datajson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Edit installer_data.json
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-add-to-package-groups-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Add to Package Groups (Optional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-custom-installer-if-needed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create Custom Installer (If Needed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debug-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#core-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utility-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Utility Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-definitions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Definitions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2102,280 +2814,89 @@
 
 
 <h1 id="installer-module">Installer Module<a class="headerlink" href="#installer-module" title="Permanent link">&para;</a></h1>
-<p>The <code>installer</code> subpackage handles cross-platform package installation and verification.</p>
+<p>The <code>installer</code> subpackage is a comprehensive cross-platform package installation system that provides unified installation capabilities across Linux, macOS, and Windows.</p>
 <hr />
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The installer provides:</p>
-<ul>
-<li><strong>Package Detection</strong> - Check if packages are installed</li>
-<li><strong>Cross-Platform Installation</strong> - Unified interface for apt, brew, scoop, winget, cargo, npm, pip</li>
-<li><strong>Installation Verification</strong> - Verify successful installations</li>
-<li><strong>Package Groups</strong> - Curated collections for common use cases</li>
-<li><strong>VirusTotal Integration</strong> - Security scanning for installed binaries</li>
-</ul>
-<hr />
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>graph LR
-    A[User Request] --&gt; B[Installer]
-    B --&gt; C{Platform?}
-    C --&gt;|Linux| D[apt/cargo/pip]
-    C --&gt;|macOS| E[brew/cargo/pip]
-    C --&gt;|Windows| F[winget/scoop/cargo]
-    D --&gt; G[Verify Installation]
-    E --&gt; G
-    F --&gt; G
-    G --&gt; H[VirusTotal Scan]</code></pre>
-<hr />
-<h2 id="package-groups">Package Groups<a class="headerlink" href="#package-groups" title="Permanent link">&para;</a></h2>
-
-
-<div class="doc doc-object doc-module">
-
-
-
-<a id="machineconfig.jobs.installer.package_groups"></a>
-    <div class="doc doc-contents first">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div><h3 id="group-reference">Group Reference<a class="headerlink" href="#group-reference" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Group Name</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>sysabc</code></td>
-<td>System ABC utilities</td>
-</tr>
-<tr>
-<td><code>termabc</code></td>
-<td>Terminal essentials (search, monitors, shell)</td>
-</tr>
-<tr>
-<td><code>gui</code></td>
-<td><abbr title="Graphical User Interface">GUI</abbr> applications</td>
-</tr>
-<tr>
-<td><code>dev</code></td>
-<td>Full development environment</td>
-</tr>
-<tr>
-<td><code>dev-utils</code></td>
-<td>Development utilities</td>
-</tr>
-<tr>
-<td><code>term-eye-candy</code></td>
-<td>Terminal visual enhancements</td>
-</tr>
-<tr>
-<td><code>agents</code></td>
-<td>AI/LLM coding assistants</td>
-</tr>
-<tr>
-<td><code>terminal-emulator</code></td>
-<td>Terminal emulators</td>
-</tr>
-<tr>
-<td><code>shell</code></td>
-<td>Shell enhancements</td>
-</tr>
-<tr>
-<td><code>browsers</code></td>
-<td>Web browsers</td>
-</tr>
-<tr>
-<td><code>code-editors</code></td>
-<td>Code editors and IDEs</td>
-</tr>
-<tr>
-<td><code>code-analysis</code></td>
-<td>Code analysis tools</td>
-</tr>
-<tr>
-<td><code>db</code></td>
-<td>Database tools</td>
-</tr>
-<tr>
-<td><code>media</code></td>
-<td>Media players</td>
-</tr>
-<tr>
-<td><code>file-sharing</code></td>
-<td>File sharing and cloud tools</td>
-</tr>
-<tr>
-<td><code>productivity</code></td>
-<td>Productivity tools</td>
-</tr>
-<tr>
-<td><code>sys-monitor</code></td>
-<td>System monitors</td>
-</tr>
-<tr>
-<td><code>search</code></td>
-<td>File search tools</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="installation-data">Installation Data<a class="headerlink" href="#installation-data" title="Permanent link">&para;</a></h2>
-<p>Packages are defined in <code>installer_data.json</code> with platform-specific installation commands:</p>
-<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Resource monitor that shows usage and stats&quot;</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;platforms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="nt">&quot;apt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="nt">&quot;cargo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">      </span><span class="nt">&quot;snap&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nt">&quot;darwin&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">      </span><span class="nt">&quot;brew&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="p">},</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">      </span><span class="nt">&quot;scoop&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">      </span><span class="nt">&quot;winget&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aristocratos.btop&quot;</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="nt">&quot;checkCommand&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop --version&quot;</span><span class="p">,</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">  </span><span class="nt">&quot;category&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;system-monitor&quot;</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="p">}</span>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Install a single package</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>devops<span class="w"> </span>install<span class="w"> </span>btop
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Install multiple packages</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>devops<span class="w"> </span>install<span class="w"> </span>btop,fd,bat,rg
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Install a package group</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>devops<span class="w"> </span>install<span class="w"> </span>termabc<span class="w"> </span>--group
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Interactive package selection (with TV/fzf interface)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>devops<span class="w"> </span>install<span class="w"> </span>--interactive
 </span></code></pre></div>
 <hr />
-<h2 id="installation-checks">Installation Checks<a class="headerlink" href="#installation-checks" title="Permanent link">&para;</a></h2>
-<p>The <code>checks</code> submodule provides installation verification:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.jobs.installer.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_installations</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Check if packages are installed</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">results</span> <span class="o">=</span> <span class="n">check_installations</span><span class="o">.</span><span class="n">check_packages</span><span class="p">([</span><span class="s2">&quot;btop&quot;</span><span class="p">,</span> <span class="s2">&quot;htop&quot;</span><span class="p">,</span> <span class="s2">&quot;fd&quot;</span><span class="p">])</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">for</span> <span class="n">pkg</span><span class="p">,</span> <span class="n">installed</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">&#39;Installed&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">installed</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;Missing&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="virustotal-integration">VirusTotal Integration<a class="headerlink" href="#virustotal-integration" title="Permanent link">&para;</a></h3>
-<p>Scan installed binaries for security:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.jobs.installer.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">vt_utils</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Scan a binary</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">result</span> <span class="o">=</span> <span class="n">vt_utils</span><span class="o">.</span><span class="n">scan_binary</span><span class="p">(</span><span class="s2">&quot;/usr/bin/btop&quot;</span><span class="p">)</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detection ratio: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">positives</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">total</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></div>
+<h2 id="architecture-overview">Architecture Overview<a class="headerlink" href="#architecture-overview" title="Permanent link">&para;</a></h2>
+<p>The installer system consists of several interconnected components:</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph CLI["CLI Layer"]
+        A[devops install] --&gt; B[main_installer_cli]
+    end
+
+    subgraph Core["Core Engine"]
+        B --&gt; C{Installation Mode}
+        C --&gt;|Single/Multiple| D[install_clis]
+        C --&gt;|Group| E[install_group]
+        C --&gt;|Interactive| F[install_interactively]
+    end
+
+    subgraph Installer["Installer Class"]
+        D --&gt; G[Installer]
+        E --&gt; H[install_bulk]
+        F --&gt; G
+        H --&gt; G
+        G --&gt; I{repoURL Type}
+    end
+
+    subgraph Methods["Installation Methods"]
+        I --&gt;|CMD| J[Package Manager / Script / URL]
+        I --&gt;|GitHub URL| K[GitHub Release Download]
+        J --&gt; L[Shell Command]
+        J --&gt; M[Python Script]
+        J --&gt; N[Direct URL]
+        K --&gt; O[binary_download]
+        O --&gt; P[get_github_release]
+    end
+
+    subgraph Platform["Platform Handler"]
+        L --&gt; Q{Platform}
+        M --&gt; Q
+        N --&gt; Q
+        P --&gt; Q
+        Q --&gt;|Windows| R[find_move_delete_windows]
+        Q --&gt;|Linux/macOS| S[find_move_delete_linux]
+    end
+
+    subgraph Post["Post-Install"]
+        R --&gt; T[Version Tracking]
+        S --&gt; T
+        T --&gt; U[INSTALL_VERSION_ROOT]
+    end</code></pre>
 <hr />
-<h2 id="custom-installers">Custom Installers<a class="headerlink" href="#custom-installers" title="Permanent link">&para;</a></h2>
-<p>For packages requiring custom installation logic, Python scripts are provided:</p>
-<h3 id="available-custom-installers">Available Custom Installers<a class="headerlink" href="#available-custom-installers" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Package</th>
-<th>Script</th>
-<th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>alacritty</code></td>
-<td><code>alacritty.py</code></td>
-<td>Terminal emulator</td>
-</tr>
-<tr>
-<td><code>brave</code></td>
-<td><code>brave.py</code></td>
-<td>Browser</td>
-</tr>
-<tr>
-<td><code>code</code></td>
-<td><code>code.py</code></td>
-<td>VS Code</td>
-</tr>
-<tr>
-<td><code>cursor</code></td>
-<td><code>cursor.py</code></td>
-<td>Cursor IDE</td>
-</tr>
-<tr>
-<td><code>hx</code></td>
-<td><code>hx.py</code></td>
-<td>Helix editor with LSPs</td>
-</tr>
-<tr>
-<td><code>lvim</code></td>
-<td><code>lvim.py</code></td>
-<td>LunarVim</td>
-</tr>
-<tr>
-<td><code>nerdfont</code></td>
-<td><code>nerdfont.py</code></td>
-<td>Nerd Fonts</td>
-</tr>
-<tr>
-<td><code>wezterm</code></td>
-<td><code>wezterm.py</code></td>
-<td>WezTerm terminal</td>
-</tr>
-<tr>
-<td><code>yazi</code></td>
-<td><code>yazi.py</code></td>
-<td>File manager</td>
-</tr>
-</tbody>
-</table>
-<h3 id="example-custom-installer">Example: Custom Installer<a class="headerlink" href="#example-custom-installer" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.jobs.installer.python_scripts</span><span class="w"> </span><span class="kn">import</span> <span class="n">hx</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Install Helix with language server support</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">hx</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># The installer handles:</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># - Platform detection</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># - Package manager selection</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># - LSP installation</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># - Configuration</span>
+<h2 id="installation-methods">Installation Methods<a class="headerlink" href="#installation-methods" title="Permanent link">&para;</a></h2>
+<p>The installer supports multiple installation strategies based on the <code>repoURL</code> field in the installer data:</p>
+<h3 id="method-1-package-manager-commands-repourl-cmd">Method 1: Package Manager Commands (<code>repoURL: "CMD"</code>)<a class="headerlink" href="#method-1-package-manager-commands-repourl-cmd" title="Permanent link">&para;</a></h3>
+<p>When <code>repoURL</code> is <code>"CMD"</code>, the <code>fileNamePattern</code> contains the actual installation command or script reference.</p>
+<h4 id="shell-commands">Shell Commands<a class="headerlink" href="#shell-commands" title="Permanent link">&para;</a></h4>
+<p>Direct package manager commands:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git&quot;</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;repoURL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CMD&quot;</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;doc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Distributed version control system&quot;</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sudo nala install git&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">      </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;winget install --no-upgrade --name \&quot;Git\&quot; --Id \&quot;Git.Git\&quot; --source winget --scope user --accept-package-agreements --accept-source-agreements&quot;</span><span class="p">,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="nt">&quot;macos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;brew install git&quot;</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">}</span>
 </span></code></pre></div>
-<hr />
-<h2 id="cli-usage"><abbr title="Command Line Interface">CLI</abbr> Usage<a class="headerlink" href="#cli-usage" title="Permanent link">&para;</a></h2>
-<p>Install packages using the <code>devops</code> <abbr title="Command Line Interface">CLI</abbr>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Install single package</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>devops<span class="w"> </span>install<span class="w"> </span>btop
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Install package group</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>devops<span class="w"> </span>install-group<span class="w"> </span>termabc
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Check installations</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>devops<span class="w"> </span>check-installations
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># List available packages</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>devops<span class="w"> </span>list-packages
-</span></code></pre></div>
-<hr />
-<h2 id="platform-support">Platform Support<a class="headerlink" href="#platform-support" title="Permanent link">&para;</a></h2>
+<p><strong>Supported Package Managers:</strong></p>
 <table>
 <thead>
 <tr>
@@ -2385,27 +2906,822 @@
 </thead>
 <tbody>
 <tr>
-<td>Linux (Debian/Ubuntu)</td>
-<td>apt, snap, cargo, pip, npm</td>
-</tr>
-<tr>
-<td>Linux (Arch)</td>
-<td>pacman, cargo, pip, npm</td>
-</tr>
-<tr>
-<td>Linux (Fedora)</td>
-<td>dnf, cargo, pip, npm</td>
+<td>Linux</td>
+<td><code>apt</code>, <code>nala</code>, <code>snap</code>, <code>cargo</code>, <code>pip</code>, <code>npm</code>, <code>bun</code></td>
 </tr>
 <tr>
 <td>macOS</td>
-<td>brew, cargo, pip, npm</td>
+<td><code>brew</code>, <code>cargo</code>, <code>pip</code>, <code>npm</code>, <code>bun</code></td>
 </tr>
 <tr>
 <td>Windows</td>
-<td>winget, scoop, cargo, pip, npm</td>
+<td><code>winget</code>, <code>scoop</code>, <code>cargo</code>, <code>pip</code>, <code>npm</code>, <code>bun</code></td>
 </tr>
 </tbody>
 </table>
+<h4 id="python-scripts-py">Python Scripts (<code>.py</code>)<a class="headerlink" href="#python-scripts-py" title="Permanent link">&para;</a></h4>
+<p>For complex installations requiring custom logic:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yazi&quot;</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;repoURL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CMD&quot;</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yazi.py&quot;</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yazi.py&quot;</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="nt">&quot;macos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;yazi.py&quot;</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>The Python script must implement a <code>main(installer_data: InstallerData, version: Optional[str])</code> function.</p>
+<h4 id="shell-scripts-sh">Shell Scripts (<code>.sh</code>)<a class="headerlink" href="#shell-scripts-sh" title="Permanent link">&para;</a></h4>
+<p>For Linux/macOS platform-specific installations:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;brave&quot;</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&quot;repoURL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CMD&quot;</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;brave.sh&quot;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="powershell-scripts-ps1">PowerShell Scripts (<code>.ps1</code>)<a class="headerlink" href="#powershell-scripts-ps1" title="Permanent link">&para;</a></h4>
+<p>For Windows-specific installations:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;install_fonts.ps1&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="direct-urls">Direct URLs<a class="headerlink" href="#direct-urls" title="Permanent link">&para;</a></h4>
+<p>Direct download URLs for pre-built binaries:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;speedtest&quot;</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;repoURL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;CMD&quot;</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz&quot;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="method-2-github-releases-repourl-httpsgithubcom">Method 2: GitHub Releases (<code>repoURL: "https://github.com/..."</code>)<a class="headerlink" href="#method-2-github-releases-repourl-httpsgithubcom" title="Permanent link">&para;</a></h3>
+<p>Automatic download from GitHub releases with version pattern matching:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop&quot;</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&quot;repoURL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/aristocratos/btop&quot;</span><span class="p">,</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&quot;doc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Resource monitor for Linux, FreeBSD and MacOS&quot;</span><span class="p">,</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop-x86_64-linux-musl.tbz&quot;</span><span class="p">,</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">      </span><span class="nt">&quot;macos&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">      </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="nt">&quot;arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;btop-aarch64-linux-musl.tbz&quot;</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="p">}</span>
+</span></code></pre></div>
+<p><strong>Version Templating:</strong></p>
+<p>Use <code>{version}</code> placeholder for version-specific filenames:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mprocs-{version}-linux-x86_64-musl.tar.gz&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>The system automatically:</p>
+<ol>
+<li>Fetches the latest release from GitHub <abbr title="Application Programming Interface">API</abbr></li>
+<li>Extracts the version tag (e.g., <code>v0.6.4</code>)</li>
+<li>Replaces <code>{version}</code> in the pattern</li>
+<li>Downloads the matching asset</li>
+</ol>
+<hr />
+<h2 id="installerdata-schema">InstallerData Schema<a class="headerlink" href="#installerdata-schema" title="Permanent link">&para;</a></h2>
+<p>The core data structure for package definitions:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">InstallerData</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">appName</span><span class="p">:</span> <span class="nb">str</span>                    <span class="c1"># Display name (also used for executable lookup)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">doc</span><span class="p">:</span> <span class="nb">str</span>                        <span class="c1"># Description shown in interactive mode</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">repoURL</span><span class="p">:</span> <span class="nb">str</span>                    <span class="c1"># &quot;CMD&quot; or GitHub repository URL</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">fileNamePattern</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>          <span class="c1"># Platform-specific installation patterns</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>        <span class="n">CPU_ARCHITECTURES</span><span class="p">,</span>          <span class="c1"># &quot;amd64&quot; | &quot;arm64&quot;</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="nb">dict</span><span class="p">[</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>            <span class="n">OPERATING_SYSTEMS</span><span class="p">,</span>      <span class="c1"># &quot;windows&quot; | &quot;linux&quot; | &quot;macos&quot;</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>            <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>           <span class="c1"># Installation pattern or None if unsupported</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>        <span class="p">]</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="p">]</span>
+</span></code></pre></div>
+<p><strong>Field Details:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>appName</code></td>
+<td><code>str</code></td>
+<td>Package identifier. Lowercase version becomes the executable name</td>
+</tr>
+<tr>
+<td><code>doc</code></td>
+<td><code>str</code></td>
+<td>Description displayed during interactive selection</td>
+</tr>
+<tr>
+<td><code>repoURL</code></td>
+<td><code>str</code></td>
+<td>Either <code>"CMD"</code> for command-based install or a GitHub URL</td>
+</tr>
+<tr>
+<td><code>fileNamePattern</code></td>
+<td><code>dict</code></td>
+<td>Nested dict mapping arch -&gt; os -&gt; installation pattern</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Architecture Values:</strong></p>
+<ul>
+<li><code>amd64</code>: Intel/AMD 64-bit (x86_64)</li>
+<li><code>arm64</code>: ARM 64-bit (aarch64)</li>
+</ul>
+<p><strong>Operating System Values:</strong></p>
+<ul>
+<li><code>windows</code>: Microsoft Windows</li>
+<li><code>linux</code>: Linux distributions</li>
+<li><code>macos</code>: macOS (Darwin)</li>
+</ul>
+<hr />
+<h2 id="installer-class">Installer Class<a class="headerlink" href="#installer-class" title="Permanent link">&para;</a></h2>
+<p>The main installation orchestrator:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_class</span><span class="w"> </span><span class="kn">import</span> <span class="n">Installer</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.schemas.installer.installer_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstallerData</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">installer_data</span><span class="p">:</span> <span class="n">InstallerData</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="s2">&quot;appName&quot;</span><span class="p">:</span> <span class="s2">&quot;fd&quot;</span><span class="p">,</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="s2">&quot;repoURL&quot;</span><span class="p">:</span> <span class="s2">&quot;https://github.com/sharkdp/fd&quot;</span><span class="p">,</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;A simple, fast and user-friendly alternative to find&quot;</span><span class="p">,</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="s2">&quot;fileNamePattern&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>        <span class="s2">&quot;amd64&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>            <span class="s2">&quot;linux&quot;</span><span class="p">:</span> <span class="s2">&quot;fd-v</span><span class="si">{version}</span><span class="s2">-x86_64-unknown-linux-musl.tar.gz&quot;</span><span class="p">,</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>            <span class="s2">&quot;windows&quot;</span><span class="p">:</span> <span class="s2">&quot;fd-v</span><span class="si">{version}</span><span class="s2">-x86_64-pc-windows-msvc.zip&quot;</span><span class="p">,</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>            <span class="s2">&quot;macos&quot;</span><span class="p">:</span> <span class="s2">&quot;fd-v</span><span class="si">{version}</span><span class="s2">-x86_64-apple-darwin.tar.gz&quot;</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>        <span class="p">},</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        <span class="s2">&quot;arm64&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>            <span class="s2">&quot;linux&quot;</span><span class="p">:</span> <span class="s2">&quot;fd-v</span><span class="si">{version}</span><span class="s2">-aarch64-unknown-linux-musl.tar.gz&quot;</span><span class="p">,</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>            <span class="s2">&quot;macos&quot;</span><span class="p">:</span> <span class="s2">&quot;fd-v</span><span class="si">{version}</span><span class="s2">-aarch64-apple-darwin.tar.gz&quot;</span><span class="p">,</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>            <span class="s2">&quot;windows&quot;</span><span class="p">:</span> <span class="kc">None</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>        <span class="p">}</span>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>    <span class="p">}</span>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="p">}</span>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="n">installer</span> <span class="o">=</span> <span class="n">Installer</span><span class="p">(</span><span class="n">installer_data</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h3>
+<h4 id="installversion-optionalstr-none"><code>install(version: Optional[str]) -&gt; None</code><a class="headerlink" href="#installversion-optionalstr-none" title="Permanent link">&para;</a></h4>
+<p>Main installation method. Handles all installation strategies.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">installer</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>      <span class="c1"># Install latest</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">installer</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="s2">&quot;v9.0.0&quot;</span><span class="p">)</span>  <span class="c1"># Install specific version</span>
+</span></code></pre></div>
+<h4 id="install_robustversion-optionalstr-str"><code>install_robust(version: Optional[str]) -&gt; str</code><a class="headerlink" href="#install_robustversion-optionalstr-str" title="Permanent link">&para;</a></h4>
+<p>Wrapped installation with error handling. Returns status message.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">status</span> <span class="o">=</span> <span class="n">installer</span><span class="o">.</span><span class="n">install_robust</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># Returns: &quot;fd updated from v8.7.0 -&gt; v9.0.0&quot;</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># Or: &quot;fd, same version: v9.0.0&quot;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Or: &quot;Failed to install `fd` with error: ...&quot;</span>
+</span></code></pre></div>
+<h4 id="binary_downloadversion-optionalstr-tuplepathextended-str"><code>binary_download(version: Optional[str]) -&gt; tuple[PathExtended, str]</code><a class="headerlink" href="#binary_downloadversion-optionalstr-tuplepathextended-str" title="Permanent link">&para;</a></h4>
+<p>Downloads and extracts the binary without installing.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">extracted_path</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">installer</span><span class="o">.</span><span class="n">binary_download</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="c1"># extracted_path: PathExtended to extracted files</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># version: Actual version string (e.g., &quot;v9.0.0&quot;)</span>
+</span></code></pre></div>
+<h4 id="get_github_releaserepo_url-str-version-optionalstr-tupleoptionalstr-optionalstr"><code>get_github_release(repo_url: str, version: Optional[str]) -&gt; tuple[Optional[str], Optional[str]]</code><a class="headerlink" href="#get_github_releaserepo_url-str-version-optionalstr-tupleoptionalstr-optionalstr" title="Permanent link">&para;</a></h4>
+<p>Retrieves download URL and version from GitHub <abbr title="Application Programming Interface">API</abbr>.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">download_url</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">installer</span><span class="o">.</span><span class="n">get_github_release</span><span class="p">(</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="n">repo_url</span><span class="o">=</span><span class="s2">&quot;https://github.com/sharkdp/fd&quot;</span><span class="p">,</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">version</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># or specific version</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="p">)</span>
+</span></code></pre></div>
+<h4 id="get_description-str"><code>get_description() -&gt; str</code><a class="headerlink" href="#get_description-str" title="Permanent link">&para;</a></h4>
+<p>Returns formatted description for interactive selection.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">desc</span> <span class="o">=</span> <span class="n">installer</span><span class="o">.</span><span class="n">get_description</span><span class="p">()</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="c1"># &quot;fd           ✅ A simple, fast and user-friendly alternative to find&quot;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="package-groups">Package Groups<a class="headerlink" href="#package-groups" title="Permanent link">&para;</a></h2>
+<p>Pre-defined collections of related packages for bulk installation.</p>
+<h3 id="available-groups">Available Groups<a class="headerlink" href="#available-groups" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>Description</th>
+<th>Package Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sysabc</code></td>
+<td>System essentials (package managers, build tools)</td>
+<td>1 (meta-package)</td>
+</tr>
+<tr>
+<td><code>termabc</code></td>
+<td>Terminal power tools (40+ tools)</td>
+<td>~60</td>
+</tr>
+<tr>
+<td><code>gui</code></td>
+<td><abbr title="Graphical User Interface">GUI</abbr> applications (browsers, editors)</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>dev</code></td>
+<td>Full development environment</td>
+<td>~80</td>
+</tr>
+<tr>
+<td><code>dev-utils</code></td>
+<td>Development utilities</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>term-eye-candy</code></td>
+<td>Terminal visual enhancements</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>agents</code></td>
+<td>AI/LLM coding assistants</td>
+<td>15+</td>
+</tr>
+<tr>
+<td><code>terminal-emulator</code></td>
+<td>Terminal emulators</td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>shell</code></td>
+<td>Shell enhancements</td>
+<td>9</td>
+</tr>
+<tr>
+<td><code>browsers</code></td>
+<td>Web browsers</td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>code-editors</code></td>
+<td>Code editors and IDEs</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>code-analysis</code></td>
+<td>Code analysis and Git tools</td>
+<td>14</td>
+</tr>
+<tr>
+<td><code>db</code></td>
+<td>Database tools</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>media</code></td>
+<td>Media players</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>file-sharing</code></td>
+<td>File sharing and cloud tools</td>
+<td>17</td>
+</tr>
+<tr>
+<td><code>productivity</code></td>
+<td>Productivity tools</td>
+<td>12</td>
+</tr>
+<tr>
+<td><code>sys-monitor</code></td>
+<td>System monitors</td>
+<td>11</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>File search and navigation</td>
+<td>22</td>
+</tr>
+</tbody>
+</table>
+<h3 id="group-contents">Group Contents<a class="headerlink" href="#group-contents" title="Permanent link">&para;</a></h3>
+<h4 id="agents-aillm-coding-assistants"><code>agents</code> - AI/LLM Coding Assistants<a class="headerlink" href="#agents-aillm-coding-assistants" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>aider, aichat, copilot, gemini, crush, opencode-ai, chatgpt, mods, q, 
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>qwen-code, cursor-cli, droid, kilocode, cline, auggie
+</span></code></pre></div>
+<h4 id="termabc-terminal-essentials"><code>termabc</code> - Terminal Essentials<a class="headerlink" href="#termabc-terminal-essentials" title="Permanent link">&para;</a></h4>
+<p>Combines: <code>code-analysis</code> + <code>sys-monitor</code> + <code>shell</code> + <code>search</code></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a># Code Analysis
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>nano, lazygit, onefetch, gitcs, lazydocker, hyperfine, kondo, tokei, 
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>navi, tealdeer, gitui, delta, gh, watchexec, jq
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a># System Monitors
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>btop, btm, ntop, procs, bandwhich, ipinfo, sniffnet, cpufetch, 
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>fastfetch, topgrade, speedtest
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a># Shell Enhancements
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>zellij, mprocs, mcfly, atuin, starship, gotty, ttyd, rclone, cb
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a># Search &amp; File Tools
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>nerdfont, fd, fzf, tv, broot, rg, rga, ugrep, ouch, pistol, bat, viu,
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>yazi, tere, lsd, zoxide, diskonaut, dua, dust, cpz, rmz
+</span></code></pre></div>
+<h4 id="terminal-emulator-terminal-emulators"><code>terminal-emulator</code> - Terminal Emulators<a class="headerlink" href="#terminal-emulator-terminal-emulators" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>Alacritty, Wezterm, warp, vtm, edex-ui, extraterm, nushell
+</span></code></pre></div>
+<h4 id="code-editors-code-editors"><code>code-editors</code> - Code Editors<a class="headerlink" href="#code-editors-code-editors" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>code (VS Code), Cursor, lvim (LunarVim)
+</span></code></pre></div>
+<h4 id="db-database-tools"><code>db</code> - Database Tools<a class="headerlink" href="#db-database-tools" title="Permanent link">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>SqliteBrowser, sqlite3, redis, redis-cli, postgresql-client, duckdb, 
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>DBeaver, rainfrog
+</span></code></pre></div>
+<h3 id="installing-groups">Installing Groups<a class="headerlink" href="#installing-groups" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Install terminal essentials</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>devops<span class="w"> </span>install<span class="w"> </span>termabc<span class="w"> </span>--group
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>devops<span class="w"> </span>install<span class="w"> </span>termabc<span class="w"> </span>-g
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="c1"># Install AI assistants</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>devops<span class="w"> </span>install<span class="w"> </span>agents<span class="w"> </span>-g
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="c1"># Install full dev environment</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>devops<span class="w"> </span>install<span class="w"> </span>dev<span class="w"> </span>-g
+</span></code></pre></div>
+<hr />
+<h2 id="custom-python-installers">Custom Python Installers<a class="headerlink" href="#custom-python-installers" title="Permanent link">&para;</a></h2>
+<p>For packages requiring complex installation logic, custom Python scripts are provided in <code>jobs/installer/python_scripts/</code>.</p>
+<h3 id="available-custom-installers">Available Custom Installers<a class="headerlink" href="#available-custom-installers" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Script</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alacritty</code></td>
+<td><code>alacritty.py</code></td>
+<td>Terminal emulator with theme setup</td>
+</tr>
+<tr>
+<td><code>brave</code></td>
+<td><code>brave.py</code></td>
+<td>Brave browser with platform-specific methods</td>
+</tr>
+<tr>
+<td><code>boxes</code></td>
+<td><code>boxes.py</code></td>
+<td>ASCII box drawing tool (Windows binary)</td>
+</tr>
+<tr>
+<td><code>bypass_paywall</code></td>
+<td><code>bypass_paywall.py</code></td>
+<td>Chrome extension for bypassing paywalls</td>
+</tr>
+<tr>
+<td><code>cloudflare_warp_cli</code></td>
+<td><code>cloudflare_warp_cli.py</code></td>
+<td>Cloudflare WARP VPN client</td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td><code>code.py</code></td>
+<td>VS Code with official installation scripts</td>
+</tr>
+<tr>
+<td><code>cursor</code></td>
+<td><code>cursor.py</code></td>
+<td>Cursor IDE (AppImage on Linux, exe on Windows)</td>
+</tr>
+<tr>
+<td><code>dubdb_adbc</code></td>
+<td><code>dubdb_adbc.py</code></td>
+<td>DuckDB ADBC library</td>
+</tr>
+<tr>
+<td><code>espanso</code></td>
+<td><code>espanso.py</code></td>
+<td>Text expander with Wayland/X11 detection</td>
+</tr>
+<tr>
+<td><code>gh</code></td>
+<td><code>gh.py</code></td>
+<td>GitHub <abbr title="Command Line Interface">CLI</abbr> with Copilot extension</td>
+</tr>
+<tr>
+<td><code>goes</code></td>
+<td><code>goes.py</code></td>
+<td>Gorilla (natural language to <abbr title="Application Programming Interface">API</abbr>)</td>
+</tr>
+<tr>
+<td><code>hx</code></td>
+<td><code>hx.py</code></td>
+<td>Helix editor with runtime and LSP setup</td>
+</tr>
+<tr>
+<td><code>lvim</code></td>
+<td><code>lvim.py</code></td>
+<td>LunarVim with official installer</td>
+</tr>
+<tr>
+<td><code>nerdfont</code></td>
+<td><code>nerdfont.py</code></td>
+<td>Nerd Fonts (cross-platform)</td>
+</tr>
+<tr>
+<td><code>redis</code></td>
+<td><code>redis.py</code></td>
+<td>Redis server</td>
+</tr>
+<tr>
+<td><code>sysabc</code></td>
+<td><code>sysabc.py</code></td>
+<td>System essentials meta-installer</td>
+</tr>
+<tr>
+<td><code>wezterm</code></td>
+<td><code>wezterm.py</code></td>
+<td>WezTerm terminal emulator</td>
+</tr>
+<tr>
+<td><code>winget</code></td>
+<td><code>winget.py</code></td>
+<td>Windows Package Manager bootstrap</td>
+</tr>
+<tr>
+<td><code>yazi</code></td>
+<td><code>yazi.py</code></td>
+<td>File manager with plugins and flavors</td>
+</tr>
+</tbody>
+</table>
+<h3 id="custom-installer-interface">Custom Installer Interface<a class="headerlink" href="#custom-installer-interface" title="Permanent link">&para;</a></h3>
+<p>All custom installers follow this pattern:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.schemas.installer.installer_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstallerData</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">installer_data</span><span class="p">:</span> <span class="n">InstallerData</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="sd">    Main entry point for custom installation.</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="sd">    Args:</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="sd">        installer_data: The installer configuration from installer_data.json</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="sd">        version: Specific version to install, or None for latest</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a>    <span class="c1"># Platform detection</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a>    <span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>    <span class="n">system</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span>  <span class="c1"># &quot;Windows&quot;, &quot;Linux&quot;, &quot;Darwin&quot;</span>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a>    <span class="c1"># Installation logic...</span>
+</span></code></pre></div>
+<h3 id="example-helix-editor-installer">Example: Helix Editor Installer<a class="headerlink" href="#example-helix-editor-installer" title="Permanent link">&para;</a></h3>
+<p>The <code>hx.py</code> installer demonstrates a complex installation:</p>
+<ol>
+<li>Downloads from GitHub releases</li>
+<li>Extracts executable, runtime, and contrib directories</li>
+<li>Installs grammar files for supported languages</li>
+<li>Handles Windows and Unix paths differently</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Supported languages for grammar installation</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">LANGUAGES_SUPPORTED</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;nu&quot;</span><span class="p">,</span> <span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="s2">&quot;lua&quot;</span><span class="p">,</span> <span class="s2">&quot;powershell&quot;</span><span class="p">]</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">installer_data</span><span class="p">:</span> <span class="n">InstallerData</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">install_lib</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>    <span class="c1"># Download binary</span>
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>    <span class="n">downloaded</span><span class="p">,</span> <span class="n">_version</span> <span class="o">=</span> <span class="n">inst</span><span class="o">.</span><span class="n">binary_download</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+</span><span id="__span-22-7"><a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>
+</span><span id="__span-22-8"><a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>    <span class="c1"># Install executable</span>
+</span><span id="__span-22-9"><a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a>    <span class="n">hx_file</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">target_bin_path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-22-10"><a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a>
+</span><span id="__span-22-11"><a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>    <span class="c1"># Install runtime (selectively for supported languages)</span>
+</span><span id="__span-22-12"><a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>    <span class="k">if</span> <span class="n">install_lib</span><span class="p">:</span>
+</span><span id="__span-22-13"><a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a>        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">runtime</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+</span><span id="__span-22-14"><a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a>            <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;grammars&quot;</span><span class="p">:</span>
+</span><span id="__span-22-15"><a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a>                <span class="k">for</span> <span class="n">lang</span> <span class="ow">in</span> <span class="n">LANGUAGES_SUPPORTED</span><span class="p">:</span>
+</span><span id="__span-22-16"><a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a>                    <span class="n">lang_file</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lang</span><span class="si">}</span><span class="s2">.so&quot;</span><span class="p">)</span>
+</span><span id="__span-22-17"><a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a>                    <span class="k">if</span> <span class="n">lang_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="__span-22-18"><a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>                        <span class="n">lang_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">target_runtime</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;grammars&quot;</span><span class="p">))</span>
+</span></code></pre></div>
+<hr />
+<h2 id="platform-specific-behavior">Platform-Specific Behavior<a class="headerlink" href="#platform-specific-behavior" title="Permanent link">&para;</a></h2>
+<h3 id="installation-paths">Installation Paths<a class="headerlink" href="#installation-paths" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Binary Path</th>
+<th>Config Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Windows</td>
+<td><code>%LOCALAPPDATA%\Microsoft\WindowsApps</code></td>
+<td><code>%APPDATA%</code></td>
+</tr>
+<tr>
+<td>Linux</td>
+<td><code>~/.local/bin</code></td>
+<td><code>~/.config</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>/usr/local/bin</code></td>
+<td><code>~/.config</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="executable-handling">Executable Handling<a class="headerlink" href="#executable-handling" title="Permanent link">&para;</a></h3>
+<p><strong>Windows:</strong>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">find_move_delete_windows</span><span class="p">(</span><span class="n">downloaded_file_path</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">rename_to</span><span class="p">):</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>    <span class="c1"># Finds .exe in downloaded archive</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>    <span class="c1"># Moves to WindowsApps directory</span>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>    <span class="c1"># Handles renaming if needed</span>
+</span></code></pre></div></p>
+<p><strong>Linux/macOS:</strong>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">find_move_delete_linux</span><span class="p">(</span><span class="n">downloaded</span><span class="p">,</span> <span class="n">tool_name</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">rename_to</span><span class="p">):</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>    <span class="c1"># Finds binary in extracted archive</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>    <span class="c1"># Sets executable permissions (chmod 777)</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>    <span class="c1"># Uses sudo for /usr/local/bin</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>    <span class="c1"># Moves to installation path</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="version-tracking">Version Tracking<a class="headerlink" href="#version-tracking" title="Permanent link">&para;</a></h2>
+<p>Installed versions are tracked in <code>~/.config/machineconfig/install_versions/</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>~/.config/machineconfig/install_versions/
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>├── btop
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>├── fd
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>├── rg
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>└── yazi
+</span></code></pre></div>
+<p>Each file contains the installed version string.</p>
+<h3 id="checking-installation-status">Checking Installation Status<a class="headerlink" href="#checking-installation-status" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_locator_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_if_installed_already</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="n">verdict</span><span class="p">,</span> <span class="n">current_ver</span><span class="p">,</span> <span class="n">new_ver</span> <span class="o">=</span> <span class="n">check_if_installed_already</span><span class="p">(</span>
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>    <span class="n">exe_name</span><span class="o">=</span><span class="s2">&quot;fd&quot;</span><span class="p">,</span>
+</span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;v9.0.0&quot;</span><span class="p">,</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>    <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="p">)</span>
+</span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="c1"># verdict: &quot;✅ Up to date&quot; | &quot;❌ Outdated&quot; | &quot;⚠️ NotInstalled&quot;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="bulk-installation">Bulk Installation<a class="headerlink" href="#bulk-installation" title="Permanent link">&para;</a></h2>
+<p>Install multiple packages in parallel:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_bulk</span><span class="p">,</span> <span class="n">get_installers</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.schemas.installer.installer_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_os_name</span><span class="p">,</span> <span class="n">get_normalized_arch</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="c1"># Get all installers for current platform</span>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="n">installers</span> <span class="o">=</span> <span class="n">get_installers</span><span class="p">(</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>    <span class="n">os</span><span class="o">=</span><span class="n">get_os_name</span><span class="p">(),</span>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>    <span class="n">arch</span><span class="o">=</span><span class="n">get_normalized_arch</span><span class="p">(),</span>
+</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>    <span class="n">which_cats</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;termabc&quot;</span><span class="p">]</span>  <span class="c1"># or None for all</span>
+</span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="p">)</span>
+</span><span id="__span-27-10"><a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>
+</span><span id="__span-27-11"><a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a><span class="c1"># Install with parallel processing</span>
+</span><span id="__span-27-12"><a id="__codelineno-27-12" name="__codelineno-27-12" href="#__codelineno-27-12"></a><span class="n">install_bulk</span><span class="p">(</span>
+</span><span id="__span-27-13"><a id="__codelineno-27-13" name="__codelineno-27-13" href="#__codelineno-27-13"></a>    <span class="n">installers_data</span><span class="o">=</span><span class="n">installers</span><span class="p">,</span>
+</span><span id="__span-27-14"><a id="__codelineno-27-14" name="__codelineno-27-14" href="#__codelineno-27-14"></a>    <span class="n">safe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-27-15"><a id="__codelineno-27-15" name="__codelineno-27-15" href="#__codelineno-27-15"></a>    <span class="n">jobs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>      <span class="c1"># Parallel workers</span>
+</span><span id="__span-27-16"><a id="__codelineno-27-16" name="__codelineno-27-16" href="#__codelineno-27-16"></a>    <span class="n">fresh</span><span class="o">=</span><span class="kc">False</span>   <span class="c1"># Don&#39;t clear version cache</span>
+</span><span id="__span-27-17"><a id="__codelineno-27-17" name="__codelineno-27-17" href="#__codelineno-27-17"></a><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="virustotal-integration">VirusTotal Integration<a class="headerlink" href="#virustotal-integration" title="Permanent link">&para;</a></h2>
+<p>The <code>checks</code> submodule provides security scanning for installed binaries.</p>
+<h3 id="scanning-workflow">Scanning Workflow<a class="headerlink" href="#scanning-workflow" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart LR
+    A[Get Installed Apps] --&gt; B[Scan with VirusTotal]
+    B --&gt; C[Generate Report]
+    C --&gt; D[CSV + Markdown Output]</code></pre>
+<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.jobs.installer.checks.check_installations</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="c1"># Run full scan</span>
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="n">main</span><span class="p">()</span>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="c1"># Outputs:</span>
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="c1">#   - ~/.config/machineconfig/profile/records/{platform}/apps_summary_report.csv</span>
+</span><span id="__span-28-7"><a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="c1">#   - ~/.config/machineconfig/profile/records/{platform}/apps_summary_report.md</span>
+</span></code></pre></div>
+<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
+<p>VirusTotal <abbr title="Application Programming Interface">API</abbr> token must be stored at:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>~/dotfiles/creds/tokens/virustotal
+</span></code></pre></div></p>
+<h3 id="report-format">Report Format<a class="headerlink" href="#report-format" title="Permanent link">&para;</a></h3>
+<div class="language-markdown highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>| App Name | Version | Positive Pct | Scan Time | App Path | App URL |
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>|----------|---------|--------------|-----------|----------|---------|
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>| fd       | 9.0.0   | 0.0          | 2024-01-15 | ~/.local/bin/fd | ... |
+</span></code></pre></div>
+<hr />
+<h2 id="cli-reference"><abbr title="Command Line Interface">CLI</abbr> Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h2>
+<h3 id="devops-install"><code>devops install</code><a class="headerlink" href="#devops-install" title="Permanent link">&para;</a></h3>
+<p>Main installation command.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>devops<span class="w"> </span>install<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>WHICH<span class="o">]</span>
+</span></code></pre></div>
+<p><strong>Arguments:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WHICH</code></td>
+<td>Comma-separated package names or group name</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Options:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Short</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--group</code></td>
+<td><code>-g</code></td>
+<td>Treat <code>WHICH</code> as a group name</td>
+</tr>
+<tr>
+<td><code>--interactive</code></td>
+<td><code>-i</code></td>
+<td>Interactive selection mode</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="c1"># Single package</span>
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>devops<span class="w"> </span>install<span class="w"> </span>btop
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="c1"># Multiple packages</span>
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>devops<span class="w"> </span>install<span class="w"> </span>btop,fd,bat,rg,fzf
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="c1"># Package group</span>
+</span><span id="__span-32-8"><a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a>devops<span class="w"> </span>install<span class="w"> </span>termabc<span class="w"> </span>-g
+</span><span id="__span-32-9"><a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a>
+</span><span id="__span-32-10"><a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a><span class="c1"># Interactive mode (with fzf/TV interface)</span>
+</span><span id="__span-32-11"><a id="__codelineno-32-11" name="__codelineno-32-11" href="#__codelineno-32-11"></a>devops<span class="w"> </span>install<span class="w"> </span>-i
+</span><span id="__span-32-12"><a id="__codelineno-32-12" name="__codelineno-32-12" href="#__codelineno-32-12"></a>
+</span><span id="__span-32-13"><a id="__codelineno-32-13" name="__codelineno-32-13" href="#__codelineno-32-13"></a><span class="c1"># Install from GitHub URL directly</span>
+</span><span id="__span-32-14"><a id="__codelineno-32-14" name="__codelineno-32-14" href="#__codelineno-32-14"></a>devops<span class="w"> </span>install<span class="w"> </span>https://github.com/sharkdp/fd
+</span><span id="__span-32-15"><a id="__codelineno-32-15" name="__codelineno-32-15" href="#__codelineno-32-15"></a>
+</span><span id="__span-32-16"><a id="__codelineno-32-16" name="__codelineno-32-16" href="#__codelineno-32-16"></a><span class="c1"># Install from direct binary URL</span>
+</span><span id="__span-32-17"><a id="__codelineno-32-17" name="__codelineno-32-17" href="#__codelineno-32-17"></a>devops<span class="w"> </span>install<span class="w"> </span>https://example.com/tool-v1.0-linux-amd64.tar.gz
+</span></code></pre></div>
+<h3 id="interactive-mode-features">Interactive Mode Features<a class="headerlink" href="#interactive-mode-features" title="Permanent link">&para;</a></h3>
+<p>When using <code>--interactive</code>:</p>
+<ol>
+<li>Shows all available packages with installation status (✅/❌)</li>
+<li>Displays package descriptions</li>
+<li>Allows multi-select with TV/fzf interface</li>
+<li>Groups are prefixed with 📦 for easy identification</li>
+</ol>
+<hr />
+<h2 id="adding-new-packages">Adding New Packages<a class="headerlink" href="#adding-new-packages" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-edit-installer_datajson">Step 1: Edit <code>installer_data.json</code><a class="headerlink" href="#step-1-edit-installer_datajson" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="p">{</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="w">  </span><span class="nt">&quot;appName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mytool&quot;</span><span class="p">,</span>
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="w">  </span><span class="nt">&quot;repoURL&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;https://github.com/user/mytool&quot;</span><span class="p">,</span>
+</span><span id="__span-33-4"><a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="w">  </span><span class="nt">&quot;doc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Description of what mytool does&quot;</span><span class="p">,</span>
+</span><span id="__span-33-5"><a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="w">  </span><span class="nt">&quot;fileNamePattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-33-6"><a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a><span class="w">    </span><span class="nt">&quot;amd64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-33-7"><a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mytool-{version}-linux-amd64.tar.gz&quot;</span><span class="p">,</span>
+</span><span id="__span-33-8"><a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="w">      </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mytool-{version}-windows-amd64.zip&quot;</span><span class="p">,</span>
+</span><span id="__span-33-9"><a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="w">      </span><span class="nt">&quot;macos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mytool-{version}-darwin-amd64.tar.gz&quot;</span>
+</span><span id="__span-33-10"><a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a><span class="w">    </span><span class="p">},</span>
+</span><span id="__span-33-11"><a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a><span class="w">    </span><span class="nt">&quot;arm64&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-33-12"><a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a><span class="w">      </span><span class="nt">&quot;linux&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mytool-{version}-linux-arm64.tar.gz&quot;</span><span class="p">,</span>
+</span><span id="__span-33-13"><a id="__codelineno-33-13" name="__codelineno-33-13" href="#__codelineno-33-13"></a><span class="w">      </span><span class="nt">&quot;windows&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-33-14"><a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a><span class="w">      </span><span class="nt">&quot;macos&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mytool-{version}-darwin-arm64.tar.gz&quot;</span>
+</span><span id="__span-33-15"><a id="__codelineno-33-15" name="__codelineno-33-15" href="#__codelineno-33-15"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-33-16"><a id="__codelineno-33-16" name="__codelineno-33-16" href="#__codelineno-33-16"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-33-17"><a id="__codelineno-33-17" name="__codelineno-33-17" href="#__codelineno-33-17"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="step-2-add-to-package-groups-optional">Step 2: Add to Package Groups (Optional)<a class="headerlink" href="#step-2-add-to-package-groups-optional" title="Permanent link">&para;</a></h3>
+<p>Edit <code>jobs/installer/package_groups.py</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="n">PACKAGES_DEV_UTILS</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>    <span class="s2">&quot;devcontainer&quot;</span><span class="p">,</span>
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a>    <span class="s2">&quot;rust-analyzer&quot;</span><span class="p">,</span>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a>    <span class="s2">&quot;mytool&quot;</span><span class="p">,</span>  <span class="c1"># Add here</span>
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="p">]</span>
+</span></code></pre></div>
+<h3 id="step-3-create-custom-installer-if-needed">Step 3: Create Custom Installer (If Needed)<a class="headerlink" href="#step-3-create-custom-installer-if-needed" title="Permanent link">&para;</a></h3>
+<p>For complex installations, create <code>jobs/installer/python_scripts/mytool.py</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.schemas.installer.installer_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">InstallerData</span>
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">installer_data</span><span class="p">:</span> <span class="n">InstallerData</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>    <span class="c1"># Custom installation logic</span>
+</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a>    <span class="k">pass</span>
+</span></code></pre></div>
+<hr />
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<h3 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Package not found:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>❌ &#39;mypackage&#39; was not found.
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>🤔 Did you mean one of these?
+</span></code></pre></div></p>
+<p>The system uses fuzzy matching to suggest alternatives.</p>
+<p><strong>GitHub rate limit:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>🚫 Rate limit exceeded
+</span></code></pre></div></p>
+<p>Wait 60 minutes or authenticate with a GitHub token.</p>
+<p><strong>Permission denied on Linux:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>❌ MOVING executable failed
+</span></code></pre></div></p>
+<p>The installer uses <code>sudo</code> for <code>/usr/local/bin</code>. Ensure sudo access.</p>
+<p><strong>Windows execution policy:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>Script execution is disabled
+</span></code></pre></div></p>
+<p>Run: <code>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</code></p>
+<h3 id="debug-mode">Debug Mode<a class="headerlink" href="#debug-mode" title="Permanent link">&para;</a></h3>
+<p>Check installed versions cache:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>ls<span class="w"> </span>~/.config/machineconfig/install_versions/
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>cat<span class="w"> </span>~/.config/machineconfig/install_versions/btop
+</span></code></pre></div></p>
+<p>Clear version cache for fresh install:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_bulk</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="n">install_bulk</span><span class="p">(</span><span class="n">installers</span><span class="p">,</span> <span class="n">fresh</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Clears cache</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="api-reference"><abbr title="Application Programming Interface">API</abbr> Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<h3 id="core-functions">Core Functions<a class="headerlink" href="#core-functions" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="c1"># Main CLI entry point</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">main_installer_cli</span>
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>
+</span><span id="__span-42-4"><a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a><span class="c1"># Install specific packages</span>
+</span><span id="__span-42-5"><a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_clis</span>
+</span><span id="__span-42-6"><a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a><span class="n">install_clis</span><span class="p">(</span><span class="n">clis_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;btop&quot;</span><span class="p">,</span> <span class="s2">&quot;fd&quot;</span><span class="p">,</span> <span class="s2">&quot;bat&quot;</span><span class="p">])</span>
+</span><span id="__span-42-7"><a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>
+</span><span id="__span-42-8"><a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a><span class="c1"># Install package group</span>
+</span><span id="__span-42-9"><a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_group</span>
+</span><span id="__span-42-10"><a id="__codelineno-42-10" name="__codelineno-42-10" href="#__codelineno-42-10"></a><span class="n">install_group</span><span class="p">(</span><span class="n">package_group</span><span class="o">=</span><span class="s2">&quot;termabc&quot;</span><span class="p">)</span>
+</span><span id="__span-42-11"><a id="__codelineno-42-11" name="__codelineno-42-11" href="#__codelineno-42-11"></a>
+</span><span id="__span-42-12"><a id="__codelineno-42-12" name="__codelineno-42-12" href="#__codelineno-42-12"></a><span class="c1"># Interactive installation</span>
+</span><span id="__span-42-13"><a id="__codelineno-42-13" name="__codelineno-42-13" href="#__codelineno-42-13"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_interactively</span>
+</span><span id="__span-42-14"><a id="__codelineno-42-14" name="__codelineno-42-14" href="#__codelineno-42-14"></a><span class="n">install_interactively</span><span class="p">()</span>
+</span><span id="__span-42-15"><a id="__codelineno-42-15" name="__codelineno-42-15" href="#__codelineno-42-15"></a>
+</span><span id="__span-42-16"><a id="__codelineno-42-16" name="__codelineno-42-16" href="#__codelineno-42-16"></a><span class="c1"># Install if not present</span>
+</span><span id="__span-42-17"><a id="__codelineno-42-17" name="__codelineno-42-17" href="#__codelineno-42-17"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_if_missing</span>
+</span><span id="__span-42-18"><a id="__codelineno-42-18" name="__codelineno-42-18" href="#__codelineno-42-18"></a><span class="n">install_if_missing</span><span class="p">(</span><span class="s2">&quot;git&quot;</span><span class="p">)</span>  <span class="c1"># Returns True if available after call</span>
+</span></code></pre></div>
+<h3 id="utility-functions">Utility Functions<a class="headerlink" href="#utility-functions" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="c1"># Check if tool exists</span>
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_locator_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_tool_exists</span>
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a><span class="n">exists</span> <span class="o">=</span> <span class="n">check_tool_exists</span><span class="p">(</span><span class="s2">&quot;fd&quot;</span><span class="p">)</span>
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a>
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a><span class="c1"># Get all installers for platform</span>
+</span><span id="__span-43-6"><a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_installers</span>
+</span><span id="__span-43-7"><a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a><span class="n">installers</span> <span class="o">=</span> <span class="n">get_installers</span><span class="p">(</span><span class="n">os</span><span class="o">=</span><span class="s2">&quot;linux&quot;</span><span class="p">,</span> <span class="n">arch</span><span class="o">=</span><span class="s2">&quot;amd64&quot;</span><span class="p">,</span> <span class="n">which_cats</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</span><span id="__span-43-8"><a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a>
+</span><span id="__span-43-9"><a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a><span class="c1"># Get installed CLI apps</span>
+</span><span id="__span-43-10"><a id="__codelineno-43-10" name="__codelineno-43-10" href="#__codelineno-43-10"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.installer_runner</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_installed_cli_apps</span>
+</span><span id="__span-43-11"><a id="__codelineno-43-11" name="__codelineno-43-11" href="#__codelineno-43-11"></a><span class="n">apps</span> <span class="o">=</span> <span class="n">get_installed_cli_apps</span><span class="p">()</span>
+</span><span id="__span-43-12"><a id="__codelineno-43-12" name="__codelineno-43-12" href="#__codelineno-43-12"></a>
+</span><span id="__span-43-13"><a id="__codelineno-43-13" name="__codelineno-43-13" href="#__codelineno-43-13"></a><span class="c1"># Install from GitHub URL</span>
+</span><span id="__span-43-14"><a id="__codelineno-43-14" name="__codelineno-43-14" href="#__codelineno-43-14"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.install_from_url</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_from_github_url</span>
+</span><span id="__span-43-15"><a id="__codelineno-43-15" name="__codelineno-43-15" href="#__codelineno-43-15"></a><span class="n">install_from_github_url</span><span class="p">(</span><span class="s2">&quot;https://github.com/user/repo&quot;</span><span class="p">)</span>
+</span><span id="__span-43-16"><a id="__codelineno-43-16" name="__codelineno-43-16" href="#__codelineno-43-16"></a>
+</span><span id="__span-43-17"><a id="__codelineno-43-17" name="__codelineno-43-17" href="#__codelineno-43-17"></a><span class="c1"># Install from binary URL</span>
+</span><span id="__span-43-18"><a id="__codelineno-43-18" name="__codelineno-43-18" href="#__codelineno-43-18"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.installer_utils.install_from_url</span><span class="w"> </span><span class="kn">import</span> <span class="n">install_from_binary_url</span>
+</span><span id="__span-43-19"><a id="__codelineno-43-19" name="__codelineno-43-19" href="#__codelineno-43-19"></a><span class="n">install_from_binary_url</span><span class="p">(</span><span class="s2">&quot;https://example.com/tool.tar.gz&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="type-definitions">Type Definitions<a class="headerlink" href="#type-definitions" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">machineconfig.utils.schemas.installer.installer_types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>    <span class="n">InstallerData</span><span class="p">,</span>           <span class="c1"># Package definition</span>
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>    <span class="n">InstallerDataFiles</span><span class="p">,</span>      <span class="c1"># installer_data.json structure</span>
+</span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a>    <span class="n">CPU_ARCHITECTURES</span><span class="p">,</span>       <span class="c1"># &quot;amd64&quot; | &quot;arm64&quot;</span>
+</span><span id="__span-44-5"><a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>    <span class="n">OPERATING_SYSTEMS</span><span class="p">,</span>       <span class="c1"># &quot;windows&quot; | &quot;linux&quot; | &quot;macos&quot;</span>
+</span><span id="__span-44-6"><a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a>    <span class="n">get_os_name</span><span class="p">,</span>             <span class="c1"># Get current OS</span>
+</span><span id="__span-44-7"><a id="__codelineno-44-7" name="__codelineno-44-7" href="#__codelineno-44-7"></a>    <span class="n">get_normalized_arch</span><span class="p">,</span>     <span class="c1"># Get current architecture</span>
+</span><span id="__span-44-8"><a id="__codelineno-44-8" name="__codelineno-44-8" href="#__codelineno-44-8"></a><span class="p">)</span>
+</span></code></pre></div>
 
 
 
