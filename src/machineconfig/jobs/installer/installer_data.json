@@ -19,6 +19,23 @@
       }
     },
     {
+      "appName": "bun",
+      "repoURL": "CMD",
+      "doc": "js runtime and package manager, in one fast zig-based binary.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo nala install unzip -y; curl -fsSL https://bun.com/install | bash",
+          "windows": "powershell -c \"irm bun.sh/install.ps1|iex\"",
+          "macos": "curl -fsSL https://bun.com/install | bash"
+        },
+        "arm64": {
+          "linux": "sudo nala install unzip -y; curl -fsSL https://bun.com/install | bash",
+          "windows": "powershell -c \"irm bun.sh/install.ps1|iex\"",
+          "macos": "curl -fsSL https://bun.com/install | bash"
+        }
+      }
+    },
+    {
       "appName": "scrcpy",
       "repoURL": "https://github.com/Genymobile/scrcpy",
       "doc": "This application mirrors Android devices",
@@ -364,14 +381,14 @@
       "doc": "🔗 Easy file sharing tool",
       "fileNamePattern": {
         "amd64": {
-          "linux": "nvm install -g @ezshare/cli",
-          "windows": "nvm install -g @ezshare/cli",
-          "macos": "nvm install -g @ezshare/cli"
+          "linux": "bun install -g @ezshare/cli",
+          "windows": "bun install -g @ezshare/cli",
+          "macos": "bun install -g @ezshare/cli"
         },
         "arm64": {
-          "linux": "nvm install -g @ezshare/cli",
-          "windows": "nvm install -g @ezshare/cli",
-          "macos": "nvm install -g @ezshare/cli"
+          "linux": "bun install -g @ezshare/cli",
+          "windows": "bun install -g @ezshare/cli",
+          "macos": "bun install -g @ezshare/cli"
         }
       }
     },
@@ -1027,14 +1044,14 @@
       "doc": "🔍 ripgrep + semantic search from https://github.com/run-llama/semtools",
       "fileNamePattern": {
         "amd64": {
-          "linux": "nvm install -g @llamaindex/semtools",
-          "macos": "nvm install -g @llamaindex/semtools",
-          "windows": "nvm install -g @llamaindex/semtools"
+          "linux": "bun install -g @llamaindex/semtools",
+          "macos": "bun install -g @llamaindex/semtools",
+          "windows": "bun install -g @llamaindex/semtools"
         },
         "arm64": {
-          "linux": "nvm install -g @llamaindex/semtools",
-          "macos": "nvm install -g @llamaindex/semtools",
-          "windows": "nvm install -g @llamaindex/semtools"
+          "linux": "bun install -g @llamaindex/semtools",
+          "macos": "bun install -g @llamaindex/semtools",
+          "windows": "bun install -g @llamaindex/semtools"
         }
       }
     },
@@ -2847,7 +2864,7 @@
       "doc": "Terminal-based CLI agents from openai designed specifically for openai models.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "nvm install -g @openai/codex",
+          "linux": "bun install -g @openai/codex",
           "windows": "bun install -g @openai/codex",
           "macos": "bun install -g @openai/codex"
         },

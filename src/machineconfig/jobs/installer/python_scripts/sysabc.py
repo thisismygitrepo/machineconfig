@@ -81,10 +81,11 @@ sudo nala install build-essential python3-dev -y || true  # C build toolchain: W
 # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 # source ~/.bashrc || true
 # nvm install node || true
+
+sudo nala install unzip -y  # required by bun installer
 curl -fsSL https://bun.com/install | bash
-sudo nala install unzip  # required by bun installer
 . ~/.bashrc || true
-sudo ln -s $(which bun) /usr/local/bin/node
+sudo ln -s $(which bun) /usr/local/bin/node  # trick programs that expect node to use bun runtime.
 
 sudo nala install samba -y || true
 sudo nala install fuse3 -y || true
