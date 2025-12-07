@@ -207,11 +207,11 @@ def exit_then_run_shell_file(script_path: str, strict: bool):
     if platform.system() == "Windows":
         suffix = ".ps1"
         lexer = "powershell"
-        script = f'powershell -ExecutionPolicy Bypass -File "{script_path}"'
+        script = str(script_path)
     elif platform.system() == "Linux" or platform.system() == "Darwin":
         suffix = ".sh"
         lexer = "bash"
-        script = f"bash {str(script_path)}"
+        script = f"source {str(script_path)}"
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     op_program_path = Path(op_program_path)
