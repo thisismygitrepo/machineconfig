@@ -28,8 +28,11 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
                   command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
                   list_scripts: Annotated[bool, typer.Option(..., "--list", "-l", help="List available scripts in all locations")] = False,
                 ) -> None:
-    from pathlib import Path
+    if command:
+        exec(name)
+        return
 
+    from pathlib import Path
     if list_scripts:
         from machineconfig.scripts.python.helpers.helpers_search.script_help import list_available_scripts
         list_available_scripts(where=where)
@@ -60,9 +63,7 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
             except Exception as _e:
                 pass
 
-    if command:
-        exec(name)
-        return
+
     if target_file is None and Path(name).is_file():
         if name.endswith(".py"):
             import machineconfig
@@ -71,7 +72,10 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
             subprocess.run([sys.executable, name], cwd=machineconfig.__path__[0])
             return
         else:
-            raise RuntimeError(f"File '{name}' is not a python (.py) file.")
+            if Path(name).suffix in [".sh", ".ps1", ".bat", ".cmd", ""]:
+                target_file = Path(name)
+            else:
+                raise RuntimeError(f"File '{name}' is not a recognized script type. Supported types are {'.py', '.sh', '.ps1', '.bat', '.cmd', ''}.")
 
     from machineconfig.utils.source_of_truth import CONFIG_ROOT, LIBRARY_ROOT, DEFAULTS_PATH
     private_root = Path.home().joinpath("dotfiles/scripts")  # local directory
@@ -151,8 +155,8 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
         shell_script = get_uv_command_executing_python_file(python_file=str(target_file), uv_project_dir=None, uv_with=None, prepend_print=False)
         exit_then_run_shell_script(script=shell_script)
     else:
-        from machineconfig.utils.code import run_shell_file
-        run_shell_file(script_path=str(target_file), clean_env=False)
+        from machineconfig.utils.code import exit_then_run_shell_file
+        exit_then_run_shell_file(script_path=str(target_file), strict=True)
 
 
 def copy_script_to_local(name: Annotated[str, typer.Argument(help="Name of the temporary python script to copy, e.g., 'a' for a.py")],

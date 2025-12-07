@@ -147,7 +147,6 @@ def run_shell_script(script: str, display_script: bool = True, clean_env: bool =
 def exit_then_run_shell_script(script: str, strict: bool = False):
     import os
     from rich.console import Console
-    
     console = Console()
     op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
     if op_program_path is not None:
@@ -188,5 +187,37 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
         elif op_program_path is None:
             console.print("[cyan]ℹ️  OP_PROGRAM_PATH is not set.[/cyan] [yellow]Falling back to direct execution.[/yellow]")
         run_shell_script(script)
+    import sys
+    sys.exit(0)
+def exit_then_run_shell_file(script_path: str, strict: bool):
+    import os
+    from rich.console import Console
+    console = Console()
+    op_program_path = os.environ.get("OP_PROGRAM_PATH", None)
+    if op_program_path is None or Path(op_program_path).exists():
+        if strict:
+            console.print("[red]❌ OP_PROGRAM_PATH environment variable is not set or the file already exists in strict mode.[/red]")
+            import sys
+            sys.exit(1)
+    if op_program_path is None or Path(op_program_path).exists():
+        console.print("[cyan]ℹ️  OP_PROGRAM_PATH is not set.[/cyan] [yellow]Falling back to direct execution.[/yellow]")
+        run_shell_file(script_path=script_path, clean_env=False)
+        return
+    import platform
+    if platform.system() == "Windows":
+        suffix = ".ps1"
+        lexer = "powershell"
+        script = f'powershell -ExecutionPolicy Bypass -File "{script_path}"'
+    elif platform.system() == "Linux" or platform.system() == "Darwin":
+        suffix = ".sh"
+        lexer = "bash"
+        script = f"bash {str(script_path)}"
+    else:
+        raise NotImplementedError(f"Platform {platform.system()} not supported.")
+    op_program_path = Path(op_program_path)
+    op_program_path.parent.mkdir(parents=True, exist_ok=True)
+    op_program_path.write_text(script, encoding="utf-8")
+    _ = suffix, lexer
+    console.print(f"[cyan]🚀 Handing over to shell script runner via OP_PROGRAM_PATH @ {str(op_program_path)}[/cyan]")
     import sys
     sys.exit(0)
