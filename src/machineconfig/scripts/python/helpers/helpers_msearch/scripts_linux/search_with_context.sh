@@ -8,23 +8,6 @@
 
 # set -o pipefail
 
-# # Check for required tools
-# if ! command -v tv &> /dev/null; then
-#     echo "Error: 'tv' is not installed. Please install it first."
-#     exit 1
-# fi
-
-# if ! command -v bat &> /dev/null; then
-#     echo "Error: 'bat' is not installed. Please install it first."
-#     exit 1
-# fi
-
-# # Check if there is input from stdin
-# if [ -t 0 ]; then
-#     echo "Usage: command | $0"
-#     echo "Example: hyperfine --help | $0"
-#     exit 1
-# fi
 
 # Create a temporary file to store the stdin input
 TEMP_FILE=$(mktemp)
@@ -32,6 +15,7 @@ TEMP_FILE=$(mktemp)
 cat > "$TEMP_FILE"
 # Ensure cleanup of the temp file on exit
 trap "rm -f $TEMP_FILE" EXIT
+
 # Run tv with the following configuration:
 # 1. `nl -ba -w1 -s' '`: Add line numbers to the input (e.g., "1 line content").
 #    -ba: number all lines
@@ -58,6 +42,7 @@ trap "rm -f $TEMP_FILE" EXIT
 
 nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
     --preview-command "bat --color=always --highlight-line {split: :0} $TEMP_FILE" \
+    --preview-size 80 \
     --preview-offset "{split: :0}" \
     --source-output "{}" \
     | cut -d' ' -f2-
