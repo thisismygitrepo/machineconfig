@@ -62,9 +62,13 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
             return
         elif platform.system() == "Windows":
             # PowerShell equivalent: number lines, pipe to tv, extract content after line number
+            # IMPORTANT: Use -join to create a single string before piping to tv
+            # PowerShell enumerates collections when piping to native commands, treating each
+            # line as a separate argument. Using -join ensures tv receives a single stdin stream.
             abs_path_escaped = abs_path.replace("'", "''")
             code = f"""
-$i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ "$((++$i)) $_" }} | tv `
+$numbered = @(); $i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ $numbered += "$((++$i)) $_" }}
+($numbered -join "`n") | tv `
     --preview-command "bat --color=always --highlight-line {{split: :0}} '{abs_path_escaped}'" `
     --preview-size 80 `
     --preview-offset "{{split: :0}}" `
