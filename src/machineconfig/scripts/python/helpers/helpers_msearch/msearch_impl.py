@@ -27,11 +27,17 @@ def machineconfig_search(
     import platform
     import sys
     import tempfile
+    import io
     is_temp_file = False
     if not sys.stdin.isatty() and Path(path).is_dir():
-        content = sys.stdin.read()
+        # Use UTF-8 encoding to handle emoji and Unicode characters on Windows
+        if sys.stdin.encoding != 'utf-8':
+            stdin_wrapper = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8', errors='replace')
+            content = stdin_wrapper.read()
+        else:
+            content = sys.stdin.read()
         if content:
-            tf = tempfile.NamedTemporaryFile(mode='w', delete=False, prefix="msearch_stdin_")
+            tf = tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', delete=False, prefix="msearch_stdin_")
             tf.write(content)
             tf.close()
             path = tf.name
