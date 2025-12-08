@@ -38,7 +38,9 @@ def machineconfig_search(
             is_temp_file = True
 
     if Path(path).is_file():
-        if (platform.system() == "Linux" or platform.system() == "Darwin"):
+        from machineconfig.utils.code import exit_then_run_shell_script
+        abs_path = str(Path(path).absolute())
+        if platform.system() == "Linux" or platform.system() == "Darwin":
             code = """
 nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
     --preview-command "bat --color=always --highlight-line {split: :0} $TEMP_FILE" \
@@ -47,12 +49,25 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
     --source-output "{}" \
     | cut -d' ' -f2-
 """
-            code = code.replace("$TEMP_FILE", str(Path(path).absolute()))
+            code = code.replace("$TEMP_FILE", abs_path)
             if is_temp_file:
                 code += f"\nrm {path}"
-            from machineconfig.utils.code import exit_then_run_shell_script
             exit_then_run_shell_script(script=code, strict=False)
-            return        
+            return
+        elif platform.system() == "Windows":
+            # PowerShell equivalent: number lines, pipe to tv, extract content after line number
+            abs_path_escaped = abs_path.replace("'", "''")
+            code = f"""
+$i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ "$((++$i)) $_" }} | tv `
+    --preview-command "bat --color=always --highlight-line {{split: :0}} '{abs_path_escaped}'" `
+    --preview-size 80 `
+    --preview-offset "{{split: :0}}" `
+    --source-output "{{}}" | ForEach-Object {{ $_ -replace '^\\d+\\s+', '' }}
+"""
+            if is_temp_file:
+                code += f"\nRemove-Item '{abs_path_escaped}' -Force"
+            exit_then_run_shell_script(script=code, strict=False)
+            return
     _run_text_search(rga=rga, directory=None)
 
 
