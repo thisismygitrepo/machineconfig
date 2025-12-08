@@ -36,6 +36,23 @@
       }
     },
     {
+      "appName": "rust",
+      "repoURL": "CMD",
+      "doc": "Systems programming language",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+          "windows": "https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe",
+          "macos": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+        },
+        "arm64": {
+          "linux": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+          "windows": "https://static.rust-lang.org/rustup/dist/aarch64-pc-windows-msvc/rustup-init.exe",
+          "macos": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+        }
+      }
+    },
+    {
       "appName": "scrcpy",
       "repoURL": "https://github.com/Genymobile/scrcpy",
       "doc": "This application mirrors Android devices",
