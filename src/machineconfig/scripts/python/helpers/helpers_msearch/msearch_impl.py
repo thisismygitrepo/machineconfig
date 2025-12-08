@@ -8,6 +8,8 @@ def machineconfig_search(
     path: str, ast: bool, symantic: bool, extension: str, file: bool, no_dotfiles: bool, rga: bool, install_dependencies: bool
 ) -> None:
     """Machineconfig search helper."""
+    
+
     if install_dependencies:
         _install_dependencies()
         return
@@ -20,8 +22,21 @@ def machineconfig_search(
     if file:
         _run_file_search(no_dotfiles=no_dotfiles)
         return
+
     from pathlib import Path
     import platform
+    import sys
+    import tempfile
+    is_temp_file = False
+    if not sys.stdin.isatty() and Path(path).is_dir():
+        content = sys.stdin.read()
+        if content:
+            tf = tempfile.NamedTemporaryFile(mode='w', delete=False, prefix="msearch_stdin_")
+            tf.write(content)
+            tf.close()
+            path = tf.name
+            is_temp_file = True
+
     if Path(path).is_file():
         if (platform.system() == "Linux" or platform.system() == "Darwin"):
             code = """
@@ -33,6 +48,8 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
     | cut -d' ' -f2-
 """
             code = code.replace("$TEMP_FILE", str(Path(path).absolute()))
+            if is_temp_file:
+                code += f"\nrm {path}"
             from machineconfig.utils.code import exit_then_run_shell_script
             exit_then_run_shell_script(script=code, strict=False)
             return        
