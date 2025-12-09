@@ -112,7 +112,7 @@ def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets
     if Path.home().joinpath("code/machineconfig").exists():
         run_shell_script(f""" {uv_command} tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}" """)
     else:
-        run_shell_script(rf""" {uv_command} tool install --upgrade "machineconfig>=8.32" """)
+        run_shell_script(rf""" {uv_command} tool install --upgrade "machineconfig>=8.33" """)
     if copy_assets:
         from machineconfig.profile.create_shell_profile import create_default_shell_profile
         create_default_shell_profile()   # involves copying assets too
@@ -137,7 +137,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import exit_then_run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=8.32,textual" """
+    else: executable = """--with "machineconfig>=8.33,textual" """
     exit_then_run_shell_script(f"""uv run {executable} {path}""")
 
 def readme():
