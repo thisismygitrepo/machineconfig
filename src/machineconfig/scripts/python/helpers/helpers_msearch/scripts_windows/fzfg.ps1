@@ -9,7 +9,7 @@ if ($null -eq $QueryTokens) {
     $QueryTokens = @()
 }
 
-$initialQuery = if ($QueryTokens.Count -gt 0) { [string]::Join(' ', $QueryTokens) } else { '' }
+$initialQuery = ''
 $rgPrefix = 'rg --column --line-number --no-heading --color=always --smart-case '
 
 $escapedDefault = if ($initialQuery.Length -gt 0) {

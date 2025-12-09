@@ -6,7 +6,7 @@
 
 # Switch between Ripgrep launcher mode (CTRL-R) and fzf filtering mode (CTRL-F)
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
-INITIAL_QUERY="${*:-}"
+INITIAL_QUERY=""
 IFS=: read -ra selected < <(
   FZF_DEFAULT_COMMAND="$RG_PREFIX $(printf %q "$INITIAL_QUERY")" \
   fzf --ansi \
