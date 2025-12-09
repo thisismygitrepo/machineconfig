@@ -1,4 +1,7 @@
 {
+  "general": {
+    "previewFeatures": true
+  },
   // Appearance
   "theme": "Default",          // Could also be "GitHub", "Dracula", etc.
 
