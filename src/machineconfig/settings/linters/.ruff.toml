@@ -47,6 +47,7 @@ ignore = [
     "E702", 
     "E721",  # don't compare types use isinstance
     "E401",  # multiple imports in one line
+    "E402", # module level import not at top of file
           ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
