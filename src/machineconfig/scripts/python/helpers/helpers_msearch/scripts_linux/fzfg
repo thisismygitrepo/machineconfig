@@ -22,4 +22,3 @@ IFS=: read -ra selected < <(
       --preview-window 'up,60%,border-bottom,+{2}+3/3,~3'
 )
 [ -n "${selected[0]}" ] && hx "${selected[0]}:${selected[1]}:${selected[2]}"
-"

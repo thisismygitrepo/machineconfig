@@ -24,7 +24,6 @@ def machineconfig_search(
         return
 
     from pathlib import Path
-    import platform
     import sys
     import tempfile
     import io
@@ -45,39 +44,10 @@ def machineconfig_search(
 
     if Path(path).is_file():
         from machineconfig.utils.code import exit_then_run_shell_script
-        abs_path = str(Path(path).absolute())
-        if platform.system() == "Linux" or platform.system() == "Darwin":
-            code = """
-nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
-    --preview-command "bat --color=always --highlight-line {split: :0} $TEMP_FILE" \
-    --preview-size 80 \
-    --preview-offset "{split: :0}" \
-    --source-output "{}" \
-    | cut -d' ' -f2-
-"""
-            code = code.replace("$TEMP_FILE", abs_path)
-            if is_temp_file:
-                code += f"\nrm {path}"
-            exit_then_run_shell_script(script=code, strict=False)
-            return
-        elif platform.system() == "Windows":
-            # PowerShell equivalent: number lines, pipe to tv, extract content after line number
-            # IMPORTANT: Use -join to create a single string before piping to tv
-            # PowerShell enumerates collections when piping to native commands, treating each
-            # line as a separate argument. Using -join ensures tv receives a single stdin stream.
-            abs_path_escaped = abs_path.replace("'", "''")
-            code = f"""
-$numbered = @(); $i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ $numbered += "$((++$i)) $_" }}
-($numbered -join "`n") | tv `
-    --preview-command "bat --color=always --highlight-line {{split: :0}} '{abs_path_escaped}'" `
-    --preview-size 80 `
-    --preview-offset "{{split: :0}}" `
-    --source-output "{{}}" | ForEach-Object {{ $_ -replace '^\\d+\\s+', '' }}
-"""
-            if is_temp_file:
-                code += f"\nRemove-Item '{abs_path_escaped}' -Force"
-            exit_then_run_shell_script(script=code, strict=False)
-            return
+        code = search_file_with_context(path=path, is_temp_file=is_temp_file)
+        exit_then_run_shell_script(script=code, strict=False)
+        return
+
     _run_text_search(rga=rga, directory=None)
 
 
@@ -92,6 +62,43 @@ def _install_dependencies() -> None:
     install_if_missing("rg")
     install_if_missing("rga")
 
+
+
+def search_file_with_context(path: str, is_temp_file: bool) -> str:
+    import platform
+    from pathlib import Path
+    abs_path = str(Path(path).absolute())
+    if platform.system() == "Linux" or platform.system() == "Darwin":
+        code = """
+nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
+--preview-command "bat --color=always --style=numbers --highlight-line {split: :0} $TEMP_FILE" \
+--preview-size 80 \
+--preview-offset "{split: :0}" \
+--source-output "{}" \
+| cut -d' ' -f2-
+"""
+        code = code.replace("$TEMP_FILE", abs_path)
+        if is_temp_file:
+            code += f"\nrm {path}"
+    elif platform.system() == "Windows":
+        # PowerShell equivalent: number lines, pipe to tv, extract content after line number
+        # IMPORTANT: Use -join to create a single string before piping to tv
+        # PowerShell enumerates collections when piping to native commands, treating each
+        # line as a separate argument. Using -join ensures tv receives a single stdin stream.
+        abs_path_escaped = abs_path.replace("'", "''")
+        code = f"""
+$numbered = @(); $i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ $numbered += "$((++$i)) $_" }}
+($numbered -join "`n") | tv `
+--preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
+--preview-size 80 `
+--preview-offset "{{split: :0}}" `
+--source-output "{{}}" | ForEach-Object {{ $_ -replace '^\\d+\\s+', '' }}
+"""
+        if is_temp_file:
+            code += f"\nRemove-Item '{abs_path_escaped}' -Force"
+    else:
+        raise RuntimeError(f"Unsupported platform, {platform.system()}")
+    return code
 
 def _run_symantic_search(extension: str) -> None:
     """Run symantic search."""
