@@ -62,32 +62,31 @@ def main(
     from rich.console import Console
     from rich.panel import Panel
     from machineconfig.utils.links import symlink_map, copy_map
+    console = Console()
+    orig_path = Path(file).expanduser().absolute()
     match sensitivity:
         case "private" | "v":
-            backup_root = Path.home().joinpath("dotfiles/mapper")
+            backup_root = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
         case "public" | "b":
             from machineconfig.utils.source_of_truth import CONFIG_ROOT
             backup_root = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
 
-    console = Console()
-    orig_path = Path(file).expanduser().absolute()
     if destination == "":
         if shared:
             new_path = backup_root.joinpath("shared").joinpath(orig_path.name)
-            new_path.parent.mkdir(parents=True, exist_ok=True)
         else:
             new_path = backup_root.joinpath(orig_path.relative_to(Path.home()))
-            new_path.parent.mkdir(parents=True, exist_ok=True)
     else:
         if shared:
             dest_path = Path(destination).expanduser().absolute()
-            dest_path.mkdir(parents=True, exist_ok=True)
             new_path = dest_path.joinpath("shared").joinpath(orig_path.name)
-            new_path.parent.mkdir(parents=True, exist_ok=True)
         else:
             dest_path = Path(destination).expanduser().absolute()
-            dest_path.mkdir(parents=True, exist_ok=True)
             new_path = dest_path.joinpath(orig_path.name)
+    if not orig_path.exists() and not new_path.exists():
+        console.print(f"[red]Error:[/] Neither original file nor self-managed file exists:\n  Original: {orig_path}\n  Self-managed: {new_path}")
+        raise typer.Exit(code=1)
+    new_path.parent.mkdir(parents=True, exist_ok=True)
     match method:
         case "copy" | "c":
             try:
