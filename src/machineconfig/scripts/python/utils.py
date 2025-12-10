@@ -13,13 +13,12 @@ def kill_process(interactive: Annotated[bool, typer.Option(..., "--interactive",
     _ = ProcessManager
 
 
-def upgrade_packages() -> None:
+def upgrade_packages(root: Annotated[str, typer.Argument(help="Root directory of the project")] = ".") -> None:
     """⬆️ Upgrade project dependencies."""
     from machineconfig.utils.upgrade_packages import generate_uv_add_commands
     from pathlib import Path
-    generate_uv_add_commands(pyproject_path=Path.cwd() / "pyproject.toml", output_path=Path.cwd() / "pyproject_init.sh")
-
-
+    root_resolved = Path(root).expanduser().absolute().resolve()
+    generate_uv_add_commands(pyproject_path=root_resolved / "pyproject.toml", output_path=root_resolved / "pyproject_init.sh")
 def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(help="Which environment variable to display.")] = "ENV") -> None:
     """📚 NAVIGATE ENV/PATH variable with TUI."""
     from machineconfig.scripts.python.helpers.helpers_utils.python import tui_env as impl
