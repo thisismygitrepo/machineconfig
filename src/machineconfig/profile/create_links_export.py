@@ -64,22 +64,19 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c
 
 def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
                              on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-                             which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = "all",
-                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False):
+                             which: Annotated[str, typer.Option(..., "--which", "-w", help="Specific items to process")] = "all",
+                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False
+                             ):
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
     mapper_full = read_mapper()["private"]
-    if which is None:
-        if interactive is False:
-            typer.echo("[red]Error:[/] --which must be provided when not running in interactive mode.")
-            typer.Exit(code=1)
-            return
+    if interactive:
+        # if which is not None:
+        #     typer.echo("[red]Error:[/] Cannot use --which in interactive mode.")
+        #     typer.Exit(code=1)
+        #     return
         from machineconfig.utils.options import choose_from_options
         items_chosen = choose_from_options(msg="Which symlink to create?", options=list(mapper_full.keys()), tv=True, multi=True)
     else:
-        if interactive is True:
-            typer.echo("[yellow]Warning:[/] --which is provided, but its not allowed to be used together with --interactive. Ignoring --interactive flag.")
-            typer.Exit(code=0)
-            return
         if which == "all":
             items_chosen = list(mapper_full.keys())
         else:
