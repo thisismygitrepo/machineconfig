@@ -1,5 +1,5 @@
 
-from typing import Optional
+from typing import Optional, Any, Callable
 import platform
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
@@ -47,21 +47,34 @@ def main(installer_data: InstallerData, version: Optional[str]):
     
     yazi_plugins_path = yazi_plugins_dir.joinpath("plugins")
     yazi_flavours_path = yazi_plugins_dir.joinpath("flavors")
-    if yazi_plugins_path.exists():
-        if yazi_plugins_path.is_file():
-            yazi_plugins_path.unlink()
-        elif yazi_plugins_path.is_dir():
-            import shutil
-            shutil.rmtree(yazi_plugins_path)
+    import shutil
+    import os
+    import stat
+    import time
+
+    def on_rm_error(_func: Callable[..., Any], path: str, exc: BaseException) -> None:
+        os.chmod(path, stat.S_IWRITE)
+        try:
+            os.unlink(path)
+        except Exception:
+            pass
+
+    def force_remove(path: Path) -> None:
+        if path.exists():
+            if path.is_file():
+                path.unlink()
+            elif path.is_dir():
+                shutil.rmtree(path, onexc=on_rm_error)
+                if path.exists():
+                    time.sleep(0.1)
+                    shutil.rmtree(path, ignore_errors=True)
+
+    force_remove(yazi_plugins_path)
     yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
     import git
     git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
-    if yazi_flavours_path.exists():
-        if yazi_flavours_path.is_file():
-            yazi_flavours_path.unlink()
-        elif yazi_flavours_path.is_dir():
-            import shutil
-            shutil.rmtree(yazi_flavours_path)
+
+    force_remove(yazi_flavours_path)
     yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
     import git
     git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
@@ -106,7 +119,7 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
     script = """
 ya pkg add 'ndtoan96/ouch'  # make ouch default previewer in yazi for compressed files
 ya pkg add 'AnirudhG07/rich-preview'  # rich-cli based previewer for yazi
-ya pkg -a 'stelcodes/bunny'
+ya pkg add 'stelcodes/bunny'
 ya pkg add 'Tyarel8/goto-drives'
 ya pkg add 'uhs-robert/sshfs'
 ya pkg add 'boydaihungst/file-extra-metadata'
