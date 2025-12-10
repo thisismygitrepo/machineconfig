@@ -14,7 +14,7 @@ from rich.panel import Panel
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 
-LANGUAGES_SUPPORTED = ["python", "nu", "bash", "lua", "powershell"]
+LANGUAGES_SUPPORTED = ["python", "nu", "bash", "lua", "powershell", "json", "json5", "toml", "ini", "yaml", "markdown", "markdoc", "markdown_inline"]
 config_dict: InstallerData = {
     "appName": "hx",
     "repoURL": "CMD",

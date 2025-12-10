@@ -5,7 +5,7 @@ from typing import Optional
 
 
 def machineconfig_search(
-    path: str, ast: bool, symantic: bool, extension: str, file: bool, no_dotfiles: bool, rga: bool, install_dependencies: bool
+    path: str, ast: bool, symantic: bool, extension: str, file: bool, no_dotfiles: bool, rga: bool, edit: bool, install_dependencies: bool
 ) -> None:
     """Machineconfig search helper."""
     
@@ -42,9 +42,9 @@ def machineconfig_search(
             path = tf.name
             is_temp_file = True
 
-    if Path(path).is_file():
+    if Path(path).absolute().resolve().is_file():
         from machineconfig.utils.code import exit_then_run_shell_script
-        code = search_file_with_context(path=path, is_temp_file=is_temp_file)
+        code = search_file_with_context(path=path, is_temp_file=is_temp_file, edit=edit)
         exit_then_run_shell_script(script=code, strict=False)
         return
 
@@ -64,12 +64,25 @@ def _install_dependencies() -> None:
 
 
 
-def search_file_with_context(path: str, is_temp_file: bool) -> str:
+def search_file_with_context(path: str, is_temp_file: bool, edit: bool) -> str:
     import platform
     from pathlib import Path
     abs_path = str(Path(path).absolute())
     if platform.system() == "Linux" or platform.system() == "Darwin":
-        code = """
+        if edit:
+            code = """
+res=$(nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
+--preview-command "bat --color=always --style=numbers --highlight-line {split: :0} $TEMP_FILE" \
+--preview-size 80 \
+--preview-offset "{split: :0}" \
+--source-output "{}")
+if [ -n "$res" ]; then
+    line=$(echo "$res" | cut -d' ' -f1)
+    hx "$TEMP_FILE:$line"
+fi
+"""
+        else:
+            code = """
 nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
 --preview-command "bat --color=always --style=numbers --highlight-line {split: :0} $TEMP_FILE" \
 --preview-size 80 \
@@ -86,7 +99,21 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
         # PowerShell enumerates collections when piping to native commands, treating each
         # line as a separate argument. Using -join ensures tv receives a single stdin stream.
         abs_path_escaped = abs_path.replace("'", "''")
-        code = f"""
+        if edit:
+            code = f"""
+$numbered = @(); $i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ $numbered += "$((++$i)) $_" }}
+$res = ($numbered -join "`n") | tv `
+--preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
+--preview-size 80 `
+--preview-offset "{{split: :0}}" `
+--source-output "{{}}"
+if ($res) {{
+    $line = $res.Split(' ')[0]
+    hx "{abs_path_escaped}:$line"
+}}
+"""
+        else:
+            code = f"""
 $numbered = @(); $i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ $numbered += "$((++$i)) $_" }}
 ($numbered -join "`n") | tv `
 --preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `

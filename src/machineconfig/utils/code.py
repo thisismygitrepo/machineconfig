@@ -1,5 +1,4 @@
 
-from re import U
 from typing import Any, Literal, Optional, Callable, cast
 from machineconfig.utils.accessories import randstr
 from pathlib import Path
