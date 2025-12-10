@@ -33,21 +33,21 @@ def generate_uv_add_commands(pyproject_path: Path, output_path: Path) -> None:
     if "project" in pyproject_data and "dependencies" in pyproject_data["project"]:
         main_deps: list[str] = pyproject_data["project"]["dependencies"]
         if main_deps:
-            package_names: list[str] = [extract_package_name(dep) for dep in main_deps]
+            package_names: list[str] = [f"'{extract_package_name(dep)}'" for dep in main_deps]
             commands.append(f"uv add --no-cache {' '.join(package_names)}")
 
     if "project" in pyproject_data and "optional-dependencies" in pyproject_data["project"]:
         optional_deps: dict[str, list[str]] = pyproject_data["project"]["optional-dependencies"]
         for group_name, deps in optional_deps.items():
             if deps:
-                package_names = [extract_package_name(dep) for dep in deps]
+                package_names = [f"'{extract_package_name(dep)}'" for dep in deps]
                 commands.append(f"uv add --no-cache --group {group_name} {' '.join(package_names)}")
 
     if "dependency-groups" in pyproject_data:
         dep_groups: dict[str, list[str]] = pyproject_data["dependency-groups"]
         for group_name, deps in dep_groups.items():
             if deps:
-                package_names = [extract_package_name(dep) for dep in deps]
+                package_names = [f"'{extract_package_name(dep)}'" for dep in deps]
                 if group_name == "dev":
                     commands.append(f"uv add --no-cache --dev {' '.join(package_names)}")
                 else:
@@ -78,12 +78,8 @@ def extract_package_name(dependency_spec: str) -> str:
         "rich>=14.0.0" -> "rich"
         "requests>=2.32.5" -> "requests"
         "pywin32" -> "pywin32"
-        "package[extra]>=1.0" -> "package"
+        "package[extra]>=1.0" -> "package[extra]"
     """
-    # Handle extras like "package[extra]>=1.0" first
-    if "[" in dependency_spec:
-        dependency_spec = dependency_spec.split("[")[0].strip()
-
     # Split on common version operators and take the first part
     for operator in [">=", "<=", "==", "!=", ">", "<", "~=", "===", "@"]:
         if operator in dependency_spec:
