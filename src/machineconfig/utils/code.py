@@ -1,4 +1,5 @@
 
+from re import U
 from typing import Any, Literal, Optional, Callable, cast
 from machineconfig.utils.accessories import randstr
 from pathlib import Path
@@ -73,11 +74,14 @@ def get_uv_command_executing_python_script(python_script: str, uv_with: Optional
     return shell_script, python_file
 
 
-def run_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> None:
+def get_shell_script_running_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> tuple[str, Path]:
     from machineconfig.utils.meta import lambda_to_python_script
     code = lambda_to_python_script(lmb,
                                             in_global=True, import_module=False)
-    uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=uv_with, uv_project_dir=uv_project_dir)
+    uv_command, py_file = get_uv_command_executing_python_script(python_script=code, uv_with=uv_with, uv_project_dir=uv_project_dir)
+    return uv_command, py_file
+def run_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> None:
+    uv_command, _py_file = get_shell_script_running_lambda_function(lmb=lmb, uv_with=uv_with, uv_project_dir=uv_project_dir)
     run_shell_script(uv_command)
 
 
