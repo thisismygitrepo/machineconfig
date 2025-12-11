@@ -20,7 +20,7 @@ def machineconfig_search(
         _run_ast_search(directory=path)
         return
     if file:
-        _run_file_search(no_dotfiles=no_dotfiles)
+        _run_file_search(no_dotfiles=no_dotfiles, edit=edit)
         return
 
     from pathlib import Path
@@ -155,12 +155,60 @@ def _run_ast_search(directory: str) -> None:
         print(f"❌ Error during selection: {e}")
 
 
-def _run_file_search(no_dotfiles: bool) -> None:
+def _run_file_search(no_dotfiles: bool, edit: bool) -> None:
     """Run file search."""
-    script = """fzf --ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers,grid,header --line-range :300 {}' """
-    if no_dotfiles:
-        script = "fd | " + script
+    import platform
+
+    if not edit:
+        script = """fzf --ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers,grid,header --line-range :300 {}' """
+        if no_dotfiles:
+            script = "fd | " + script
+        from machineconfig.utils.code import run_shell_script
+
+        run_shell_script(script=script)
+        return
+
+    if platform.system() == "Linux" or platform.system() == "Darwin":
+        script = """
+selected=$({SOURCE_CMD} fzf --ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers,grid,header --line-range :300 {}')
+if [ -n "$selected" ]; then
+    res=$(nl -ba -w1 -s' ' "$selected" | tv \
+    --preview-command "bat --color=always --style=numbers --highlight-line {split: :0} $selected" \
+    --preview-size 80 \
+    --preview-offset "{split: :0}" \
+    --source-output "{}")
+    if [ -n "$res" ]; then
+        line=$(echo "$res" | cut -d' ' -f1)
+        hx "$selected:$line"
+    fi
+fi
+"""
+        source_cmd = "" if not no_dotfiles else "fd | "
+        script = script.replace("{SOURCE_CMD}", source_cmd)
+    elif platform.system() == "Windows":
+        script = r"""
+$selected = {SOURCE_CMD} fzf --ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers,grid,header --line-range :300 {}'
+if ($selected) {
+    $selectedEscaped = $selected.Replace("'", "''")
+    $numbered = @(); $i=0; Get-Content "$selected" | ForEach-Object { $numbered += "$((++$i)) $_" }
+    $res = ($numbered -join "`n") | tv `
+    --preview-command "bat --color=always --style=numbers --highlight-line {split: :0} '$selectedEscaped'" `
+    --preview-size 80 `
+    --preview-offset "{split: :0}" `
+    --source-output "{}"
+    if ($res) {
+        $line = $res.Split(' ')[0]
+        hx "$selected:$line"
+    }
+}
+"""
+        source_cmd = "" if not no_dotfiles else "fd | "
+        script = script.replace("{SOURCE_CMD}", source_cmd)
+    else:
+        raise RuntimeError("Unsupported platform")
+
     from machineconfig.utils.code import run_shell_script
+
     run_shell_script(script=script)
 
 
