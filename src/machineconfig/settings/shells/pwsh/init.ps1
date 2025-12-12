@@ -108,11 +108,15 @@ catch {
     # Do nothing
 }
 
-try {
-    $tvCmd = Get-Command tv -ErrorAction SilentlyContinue
-    if ($null -ne $tvCmd) {
-        Invoke-Expression -Command (& tv init power-shell | Out-String)
-}
-catch {
-    # Do nothing
-}
+# $tvCmd = Get-Command tv -ErrorAction SilentlyContinue
+# if ($null -ne $tvCmd) {
+#     try {
+#         $tvInit = (& tv init powershell 2>$null | Out-String)
+#         if (-not [string]::IsNullOrWhiteSpace($tvInit)) {
+#             Invoke-Expression -Command $tvInit
+#         }
+#     }
+#     catch {
+#         # Do nothing
+#     }
+# }
