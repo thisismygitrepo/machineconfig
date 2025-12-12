@@ -155,7 +155,6 @@ def choose_cloud_interactively() -> str:
 
 def get_ssh_hosts() -> list[str]:
     from paramiko import SSHConfig
-
     c = SSHConfig()
     c.parse(open(Path.home().joinpath(".ssh/config"), encoding="utf-8"))
     return list(c.get_hostnames())

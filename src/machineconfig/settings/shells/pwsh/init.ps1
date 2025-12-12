@@ -107,3 +107,12 @@ try {
 catch {
     # Do nothing
 }
+
+try {
+    $tvCmd = Get-Command tv -ErrorAction SilentlyContinue
+    if ($null -ne $tvCmd) {
+        Invoke-Expression -Command (& tv init power-shell | Out-String)
+}
+catch {
+    # Do nothing
+}

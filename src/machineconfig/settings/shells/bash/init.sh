@@ -94,7 +94,7 @@ if command -v mcfly &> /dev/null; then
 else
     # eval "$(tv init bash)"
     tv_shell_history() {
-        _disable_bracketed_paste
+        # _disable_bracketed_paste
         local current_prompt="${READLINE_LINE:0:$READLINE_POINT}"
         local output
         # move to the next line so that the prompt is not overwritten
@@ -112,7 +112,7 @@ else
         fi
         # move the cursor back to the previous line
         printf "\033[A"
-        _enable_bracketed_paste
+        # _enable_bracketed_paste
     }
     bind -x '"\C-r": tv_shell_history'
 fi
