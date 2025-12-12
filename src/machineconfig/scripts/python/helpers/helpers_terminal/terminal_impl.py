@@ -34,13 +34,16 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
         return ("run_script", f"zellij attach {session_name}")
     from machineconfig.utils.options import choose_from_options
     NEW_SESSION_LABEL = "NEW SESSION"
-    options = [NEW_SESSION_LABEL] + sessions
+    KILL_ALL_AND_NEW_LABEL = "KILL ALL SESSIONS & START NEW"
+    options = [NEW_SESSION_LABEL, KILL_ALL_AND_NEW_LABEL] + sessions
     session_name = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, tv=True)
     if session_name == NEW_SESSION_LABEL:
         cmd = "zellij --layout st2"
         if kill_all:
             cmd = f"zellij kill-sessions\n{cmd}"
         return ("run_script", cmd)
+    if session_name == KILL_ALL_AND_NEW_LABEL:
+        return ("run_script", "zellij kill-sessions\nzellij --layout st2")
     session_name = session_name.split(" [Created")[0]
     return ("run_script", f"zellij attach {session_name}")
 
