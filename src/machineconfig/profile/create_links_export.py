@@ -70,10 +70,6 @@ def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
     mapper_full = read_mapper()["private"]
     if interactive:
-        # if which is not None:
-        #     typer.echo("[red]Error:[/] Cannot use --which in interactive mode.")
-        #     typer.Exit(code=1)
-        #     return
         from machineconfig.utils.options import choose_from_options
         items_chosen = choose_from_options(msg="Which symlink to create?", options=list(mapper_full.keys()), tv=True, multi=True)
     else:

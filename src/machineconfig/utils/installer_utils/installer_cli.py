@@ -1,24 +1,10 @@
+
 """Devops Devapps Install
-
-
-sudo apt update && sudo apt install -y \
-  git gcc g++ clang \
-  yasm nasm pkg-config \
-  meson ninja-build \
-  autoconf automake libtool \
-  libx11-dev libxext-dev libxrandr-dev libxrender-dev libxss-dev \
-  libvdpau-dev libgl1-mesa-dev libegl1-mesa-dev libxv-dev \
-  libasound2-dev libpulse-dev \
-  libfribidi-dev libfreetype-dev libfontconfig1-dev libharfbuzz-dev \
-  libjpeg-dev libssl-dev zlib1g-dev python3-pip
-
-
 """
 
 from machineconfig.utils.installer_utils.installer_helper import get_group_name_to_repr
 import typer
 from typing import Annotated, Optional
-
 
 
 def main_installer_cli(
