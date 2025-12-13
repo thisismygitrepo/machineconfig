@@ -71,7 +71,9 @@ def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "
     mapper_full = read_mapper()["private"]
     if interactive:
         from machineconfig.utils.options import choose_from_options
-        items_chosen = choose_from_options(msg="Which symlink to create?", options=list(mapper_full.keys()), tv=True, multi=True)
+        options = list(mapper_full.keys())
+        print(f"Available options: {options}")
+        items_chosen: list[str] = choose_from_options(msg="Which symlink to create?", options=options, tv=True, multi=True)
     else:
         if which == "all":
             items_chosen = list(mapper_full.keys())
