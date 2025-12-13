@@ -203,16 +203,17 @@ if ($selected) {
     $i = 0
     Get-Content -LiteralPath "$selected" | ForEach-Object { $i = $i + 1; "{0} {1}" -f $i, $_ } | Set-Content -LiteralPath $choicesPath -Encoding utf8
     $sourceCmd = 'cmd /C type "' + $choicesPath + '"'
+    $previewCmd = "bat --color=always --style=numbers --highlight-line {split: :0} '" + $selectedEscaped + "'"
     $res = tv `
     --source-command $sourceCmd `
-    --preview-command "bat --color=always --style=numbers --highlight-line {split: :0} '$selectedEscaped'" `
+    --preview-command $previewCmd `
     --preview-size 80 `
     --preview-offset "{split: :0}" `
     --source-output "{}"
     Remove-Item -LiteralPath $choicesPath -Force -ErrorAction SilentlyContinue
     if ($res) {
         $line = $res.Split(' ')[0]
-        hx "$selected:$line"
+        hx "$($selected):$line"
     }
 }
 """
