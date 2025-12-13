@@ -122,7 +122,7 @@ git pull originEnc master
 
     shell_path = get_tmp_file()
     shell_path.write_text(script, encoding="utf-8")
-
+    import platform
     command = f". {shell_path}"
     if platform.system() == "Windows":
         completed = subprocess.run(["powershell", "-Command", command], capture_output=True, check=False, text=True)
@@ -151,6 +151,7 @@ git pull originEnc master
                                                         in_global=True, import_module=False)
         program1, _pyfile1 = get_uv_command_executing_python_script(python_script=program_1_py, uv_with=uv_with, uv_project_dir=uv_project_dir)
         # ================================================================================
+
         option2 = "Delete local repo and replace it with remote copy:"
         program_2 = f"""
 rm -rfd {repo_local_root}
