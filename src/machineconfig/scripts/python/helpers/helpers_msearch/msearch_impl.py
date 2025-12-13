@@ -66,6 +66,7 @@ def _install_dependencies() -> None:
 
 def search_file_with_context(path: str, is_temp_file: bool, edit: bool) -> str:
     import platform
+    import base64
     from pathlib import Path
     abs_path = str(Path(path).absolute())
     if platform.system() == "Linux" or platform.system() == "Darwin":
@@ -99,10 +100,18 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
         # Note: using `cmd /C type` here has proven brittle due to quoting/command-line parsing
         # differences; generate the numbered lines via a self-contained PowerShell command.
         abs_path_escaped = abs_path.replace("'", "''")
-        source_cmd = f"powershell -NoProfile -ExecutionPolicy Bypass -Command \"$i=0; Get-Content -LiteralPath '{abs_path_escaped}' | ForEach-Object {{ $i = $i + 1; \\\"{{0}} {{1}}\\\" -f $i, $_ }}\""
+        # Use `-EncodedCommand` to avoid nested quoting issues across PowerShell/tv/cmd.
+        ps_script = (
+            "$OutputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new(); "
+            "$i = 0; "
+            f"Get-Content -LiteralPath '{abs_path_escaped}' | ForEach-Object {{ $i = $i + 1; \"{{0}} {{1}}\" -f $i, $_ }}"
+        )
+        encoded = base64.b64encode(ps_script.encode("utf-16le")).decode("ascii")
+        source_cmd = f"powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand {encoded}"
+        source_cmd_ps_literal = source_cmd.replace("'", "''")
         if edit:
             code = f"""
-$sourceCmd = '{source_cmd}'
+$sourceCmd = '{source_cmd_ps_literal}'
 $res = tv `
 --source-command $sourceCmd `
 --preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
@@ -116,7 +125,7 @@ if ($res) {{
 """
         else:
             code = f"""
-$sourceCmd = '{source_cmd}'
+$sourceCmd = '{source_cmd_ps_literal}'
 tv `
 --source-command $sourceCmd `
 --preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
