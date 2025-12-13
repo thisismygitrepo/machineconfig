@@ -39,7 +39,6 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
         if platform.system() == "Windows":
             # PowerShell + TUI apps can be finicky when stdin is a pipe. Avoid piping into `tv` and
             # instead provide a `--source-command` so `tv` can keep stdin attached to the console.
-            #
             # Also: `tv --ansi` is a flag (no value). Passing `true` makes it a positional argument
             # (channel/path/command), which can lead to confusing behavior.
             source_cmd = f"cmd /C type \"{options_txt_path}\""
@@ -50,11 +49,10 @@ tv  {preview_line} --ansi --source-command '{source_cmd}' --source-output "{{}}"
             source_cmd = f'cat "{options_txt_path}"'
             tv_cmd = f"""tv  {preview_line} --ansi --source-command "{source_cmd}" --source-output "{{}}" > "{tv_out_path}" """
 
-        print(f"Running tv command: {tv_cmd}")
-        print(f"Options file: {options_txt_path}")
-        print(f"Content:\n{options_txt_path.read_text(encoding='utf-8')}")
-        print(f"tv output file: {tv_out_path}")
-        # res = subprocess.run(tv_cmd, shell=True)
+        # print(f"Running tv command: {tv_cmd}")
+        # print(f"Options file: {options_txt_path}")
+        # print(f"Content:\n{options_txt_path.read_text(encoding='utf-8')}")
+        # print(f"tv output file: {tv_out_path}")
         from machineconfig.utils.code import run_shell_script
         res = run_shell_script(tv_cmd, display_script=False, clean_env=False)
         

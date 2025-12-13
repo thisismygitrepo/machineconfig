@@ -48,7 +48,7 @@ def machineconfig_search(
         exit_then_run_shell_script(script=code, strict=False)
         return
 
-    _run_text_search(rga=rga, directory=None)
+    _run_text_search(rga=rga, directory=path)
 
 
 def _install_dependencies() -> None:
@@ -94,19 +94,23 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
         if is_temp_file:
             code += f"\nrm {path}"
     elif platform.system() == "Windows":
-        # PowerShell equivalent: number lines, pipe to tv, extract content after line number
-        # IMPORTANT: Use -join to create a single string before piping to tv
-        # PowerShell enumerates collections when piping to native commands, treating each
-        # line as a separate argument. Using -join ensures tv receives a single stdin stream.
+        # Windows: avoid piping INTO `tv` (it breaks TUI interactivity on Windows terminals).
+        # Instead, write numbered lines to a temp file and use `tv --source-command` so stdin
+        # remains attached to the console.
         abs_path_escaped = abs_path.replace("'", "''")
         if edit:
             code = f"""
-$numbered = @(); $i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ $numbered += "$((++$i)) $_" }}
-$res = ($numbered -join "`n") | tv `
+$choicesPath = Join-Path $env:TEMP ("msearch_choices_" + [guid]::NewGuid().ToString() + ".txt")
+$i = 0
+Get-Content -LiteralPath '{abs_path_escaped}' | ForEach-Object {{ $i = $i + 1; "{0} {1}" -f $i, $_ }} | Set-Content -LiteralPath $choicesPath -Encoding utf8
+$sourceCmd = 'cmd /C type "' + $choicesPath + '"'
+$res = tv `
+--source-command $sourceCmd `
 --preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
 --preview-size 80 `
 --preview-offset "{{split: :0}}" `
 --source-output "{{}}"
+Remove-Item -LiteralPath $choicesPath -Force -ErrorAction SilentlyContinue
 if ($res) {{
     $line = $res.Split(' ')[0]
     hx "{abs_path_escaped}:$line"
@@ -114,12 +118,17 @@ if ($res) {{
 """
         else:
             code = f"""
-$numbered = @(); $i=0; Get-Content '{abs_path_escaped}' | ForEach-Object {{ $numbered += "$((++$i)) $_" }}
-($numbered -join "`n") | tv `
+$choicesPath = Join-Path $env:TEMP ("msearch_choices_" + [guid]::NewGuid().ToString() + ".txt")
+$i = 0
+Get-Content -LiteralPath '{abs_path_escaped}' | ForEach-Object {{ $i = $i + 1; "{0} {1}" -f $i, $_ }} | Set-Content -LiteralPath $choicesPath -Encoding utf8
+$sourceCmd = 'cmd /C type "' + $choicesPath + '"'
+tv `
+--source-command $sourceCmd `
 --preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
 --preview-size 80 `
 --preview-offset "{{split: :0}}" `
 --source-output "{{}}" | ForEach-Object {{ $_ -replace '^\\d+\\s+', '' }}
+Remove-Item -LiteralPath $choicesPath -Force -ErrorAction SilentlyContinue
 """
         if is_temp_file:
             code += f"\nRemove-Item '{abs_path_escaped}' -Force"
@@ -190,12 +199,17 @@ fi
 $selected = {SOURCE_CMD} fzf --ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers,grid,header --line-range :300 {}'
 if ($selected) {
     $selectedEscaped = $selected.Replace("'", "''")
-    $numbered = @(); $i=0; Get-Content "$selected" | ForEach-Object { $numbered += "$((++$i)) $_" }
-    $res = ($numbered -join "`n") | tv `
+    $choicesPath = Join-Path $env:TEMP ("msearch_choices_" + [guid]::NewGuid().ToString() + ".txt")
+    $i = 0
+    Get-Content -LiteralPath "$selected" | ForEach-Object { $i = $i + 1; "{0} {1}" -f $i, $_ } | Set-Content -LiteralPath $choicesPath -Encoding utf8
+    $sourceCmd = 'cmd /C type "' + $choicesPath + '"'
+    $res = tv `
+    --source-command $sourceCmd `
     --preview-command "bat --color=always --style=numbers --highlight-line {split: :0} '$selectedEscaped'" `
     --preview-size 80 `
     --preview-offset "{split: :0}" `
     --source-output "{}"
+    Remove-Item -LiteralPath $choicesPath -Force -ErrorAction SilentlyContinue
     if ($res) {
         $line = $res.Split(' ')[0]
         hx "$selected:$line"
