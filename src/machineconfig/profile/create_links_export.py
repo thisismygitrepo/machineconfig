@@ -1,6 +1,6 @@
 
 import typer
-from typing import Optional, Literal, Annotated, TypeAlias
+from typing import Literal, Annotated, TypeAlias
 
 ON_CONFLICT_LOOSE: TypeAlias = Literal[
     "throw-error", "t",
@@ -26,7 +26,7 @@ ON_CONFLICT_MAPPER: dict[str, ON_CONFLICT_STRICT] = {
 
 def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
                             on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-                            which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = "all",
+                            which: Annotated[str, typer.Option(..., "--which", "-w", help="Specific items to process")] = "all",
                             interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False):
     """Terminology:
     SOURCE = Self-Managed-Config-File-Path
@@ -34,12 +34,12 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c
     For public config files, the source always exists, because we know it comes from machineconfig repo."""
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
     mapper_full = read_mapper()["public"]
-    if which is None:
-        assert interactive is True
+    if interactive:
+        assert which == "all", "Cannot use --which in interactive mode."
         from machineconfig.utils.options import choose_from_options
         items_chosen = choose_from_options(msg="Which symlink to create?", options=list(mapper_full.keys()), tv=True, multi=True)
     else:
-        assert interactive is False
+        assert interactive is False, "Interactive must be False if --which is used."
         if which == "all":
             items_chosen = list(mapper_full.keys())
         else:
