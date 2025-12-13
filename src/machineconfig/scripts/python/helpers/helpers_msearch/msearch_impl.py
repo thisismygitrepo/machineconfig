@@ -95,22 +95,20 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
             code += f"\nrm {path}"
     elif platform.system() == "Windows":
         # Windows: avoid piping INTO `tv` (it breaks TUI interactivity on Windows terminals).
-        # Instead, write numbered lines to a temp file and use `tv --source-command` so stdin
-        # remains attached to the console.
+        # Use `tv --source-command` so stdin remains attached to the console.
+        # Note: using `cmd /C type` here has proven brittle due to quoting/command-line parsing
+        # differences; generate the numbered lines via a self-contained PowerShell command.
         abs_path_escaped = abs_path.replace("'", "''")
+        source_cmd = f"powershell -NoProfile -ExecutionPolicy Bypass -Command \"$i=0; Get-Content -LiteralPath '{abs_path_escaped}' | ForEach-Object {{ $i = $i + 1; \\\"{{0}} {{1}}\\\" -f $i, $_ }}\""
         if edit:
             code = f"""
-$choicesPath = Join-Path $env:TEMP ("msearch_choices_" + [guid]::NewGuid().ToString() + ".txt")
-$i = 0
-Get-Content -LiteralPath '{abs_path_escaped}' | ForEach-Object {{ $i = $i + 1; "{0} {1}" -f $i, $_ }} | Set-Content -LiteralPath $choicesPath -Encoding utf8
-$sourceCmd = 'cmd /C type "' + $choicesPath + '"'
+$sourceCmd = '{source_cmd}'
 $res = tv `
 --source-command $sourceCmd `
 --preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
 --preview-size 80 `
 --preview-offset "{{split: :0}}" `
 --source-output "{{}}"
-Remove-Item -LiteralPath $choicesPath -Force -ErrorAction SilentlyContinue
 if ($res) {{
     $line = $res.Split(' ')[0]
     hx "{abs_path_escaped}:$line"
@@ -118,17 +116,13 @@ if ($res) {{
 """
         else:
             code = f"""
-$choicesPath = Join-Path $env:TEMP ("msearch_choices_" + [guid]::NewGuid().ToString() + ".txt")
-$i = 0
-Get-Content -LiteralPath '{abs_path_escaped}' | ForEach-Object {{ $i = $i + 1; "{0} {1}" -f $i, $_ }} | Set-Content -LiteralPath $choicesPath -Encoding utf8
-$sourceCmd = 'cmd /C type "' + $choicesPath + '"'
+$sourceCmd = '{source_cmd}'
 tv `
 --source-command $sourceCmd `
 --preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
 --preview-size 80 `
 --preview-offset "{{split: :0}}" `
 --source-output "{{}}" | ForEach-Object {{ $_ -replace '^\\d+\\s+', '' }}
-Remove-Item -LiteralPath $choicesPath -Force -ErrorAction SilentlyContinue
 """
         if is_temp_file:
             code += f"\nRemove-Item '{abs_path_escaped}' -Force"
