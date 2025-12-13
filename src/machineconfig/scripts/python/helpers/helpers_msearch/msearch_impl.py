@@ -114,7 +114,7 @@ nl -ba -w1 -s' ' "$TEMP_FILE" | tv \
 $sourceCmd = '{source_cmd_ps_literal}'
 $res = tv `
 --source-command $sourceCmd `
---preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
+--preview-command 'bat --color=always --style=numbers --highlight-line {{split: :0}} {abs_path}' `
 --preview-size 80 `
 --preview-offset "{{split: :0}}" `
 --source-output "{{}}"
@@ -128,7 +128,7 @@ if ($res) {{
 $sourceCmd = '{source_cmd_ps_literal}'
 tv `
 --source-command $sourceCmd `
---preview-command "bat --color=always --style=numbers --highlight-line {{split: :0}} '{abs_path_escaped}'" `
+--preview-command 'bat --color=always --style=numbers --highlight-line {{split: :0}} {abs_path}' `
 --preview-size 80 `
 --preview-offset "{{split: :0}}" `
 --source-output "{{}}" | ForEach-Object {{ $_ -replace '^\\d+\\s+', '' }}
@@ -201,12 +201,11 @@ fi
         script = r"""
 $selected = {SOURCE_CMD} fzf --ansi --preview-window 'right:60%' --preview 'bat --color=always --style=numbers,grid,header --line-range :300 {}'
 if ($selected) {
-    $selectedEscaped = $selected.Replace("'", "''")
     $choicesPath = Join-Path $env:TEMP ("msearch_choices_" + [guid]::NewGuid().ToString() + ".txt")
     $i = 0
     Get-Content -LiteralPath "$selected" | ForEach-Object { $i = $i + 1; "{0} {1}" -f $i, $_ } | Set-Content -LiteralPath $choicesPath -Encoding utf8
     $sourceCmd = 'cmd /C type "' + $choicesPath + '"'
-    $previewCmd = "bat --color=always --style=numbers --highlight-line {split: :0} '" + $selectedEscaped + "'"
+    $previewCmd = 'bat --color=always --style=numbers --highlight-line {split: :0} "' + $selected + '"'
     $res = tv `
     --source-command $sourceCmd `
     --preview-command $previewCmd `
