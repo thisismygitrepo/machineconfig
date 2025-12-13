@@ -37,7 +37,9 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c
     if interactive:
         assert which == "all", "Cannot use --which in interactive mode."
         from machineconfig.utils.options import choose_from_options
-        items_chosen = choose_from_options(msg="Which symlink to create?", options=list(mapper_full.keys()), tv=True, multi=True)
+        options = list(mapper_full.keys())
+        print(f"Available options here: {options}")
+        items_chosen = choose_from_options(msg="Which symlink to create?", options=options, tv=True, multi=True)
     else:
         assert interactive is False, "Interactive must be False if --which is used."
         if which == "all":
