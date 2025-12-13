@@ -40,11 +40,16 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
             # Set UTF-8 encoding for PowerShell to handle emojis properly when piping to external programs
             # $OutputEncoding controls what encoding PowerShell uses when piping to external programs
             # [Console]::OutputEncoding controls how PowerShell interprets output from external programs
-            tv_cmd = f"""$OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new(); Get-Content -Encoding UTF8 {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" | Out-File -Encoding utf8 -FilePath {tv_out_path} """
+            tv_cmd = f"""
+$OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
+Get-Content -Encoding UTF8 {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" | Out-File -Encoding utf8 -FilePath {tv_out_path} """
         else:
             tv_cmd = f"""cat {options_txt_path} | tv  {preview_line} --ansi true --source-output "{{strip_ansi}}" > {tv_out_path} """
 
         print(f"Running tv command: {tv_cmd}")
+        print(f"Options file: {options_txt_path}")
+        print(f"Content:\n{options_txt_path.read_text(encoding='utf-8')}")
+        print(f"tv output file: {tv_out_path}")
         # res = subprocess.run(tv_cmd, shell=True)
         from machineconfig.utils.code import run_shell_script
         res = run_shell_script(tv_cmd, display_script=False, clean_env=False)
