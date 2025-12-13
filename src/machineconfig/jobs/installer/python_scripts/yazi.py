@@ -80,6 +80,8 @@ def main(installer_data: InstallerData, version: Optional[str]):
     git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
 
     # previewers:
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    install_if_missing("glow")
     if platform.system() == "Linux":
         script = r"""
 sudo nala install poppler-utils -y || true  # For PDF preview, needed by yazi.
@@ -93,7 +95,6 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
         from machineconfig.utils.code import run_shell_script
         run_shell_script(script)
     elif platform.system() == "Windows":
-        from machineconfig.utils.installer_utils.installer_cli import install_if_missing
         install_if_missing("git")
         install_if_missing("7zip")
         popler_installer: InstallerData = {

@@ -1,7 +1,20 @@
 
-from typing import Optional, Literal, Annotated
 
+from typing import Optional, Literal, Annotated
 import typer
+
+def get_tmp_file():
+    from pathlib import Path
+    import platform
+    from machineconfig.utils.accessories import randstr
+    name = randstr(8)
+    if platform.system() == "Windows":
+        suffix = "ps1"
+    else:
+        suffix = "sh"
+    tmp_file = Path.home().joinpath(f"tmp_results/tmp_files/{name}.{suffix}")
+    tmp_file.parent.mkdir(parents=True, exist_ok=True)
+    return tmp_file
 
 
 def main(
@@ -38,7 +51,6 @@ def main(
     from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
     from machineconfig.utils.code import get_uv_command_executing_python_script
     from pathlib import Path
-    import platform
     import subprocess
     console = Console()
 
@@ -108,8 +120,7 @@ git pull originEnc master
         uv_with = ["machineconfig>=8.33"]
         uv_project_dir = None
 
-    import tempfile
-    shell_path = Path(tempfile.mkstemp(suffix=".ps1" if platform.system() == "Windows" else ".sh")[1])
+    shell_path = get_tmp_file()
     shell_path.write_text(script, encoding="utf-8")
 
     command = f". {shell_path}"
@@ -151,8 +162,7 @@ sudo chmod 600 $HOME/.ssh/*
 sudo chmod 700 $HOME/.ssh
 sudo chmod +x $HOME/dotfiles/scripts/linux -R
 """
-        import tempfile
-        shell_file_2 = Path(tempfile.mkstemp(suffix=".ps1" if platform.system() == "Windows" else ".sh")[1])
+        shell_file_2 = get_tmp_file()
         shell_file_2.write_text(program_2, encoding="utf-8")
 
         # ================================================================================
@@ -175,7 +185,7 @@ cd $HOME/dotfiles
 git commit -am "finished merging"
 {program1}
 """
-        shell_file_4 = Path(tempfile.mkstemp(suffix=".ps1" if platform.system() == "Windows" else ".sh")[1])
+        shell_file_4 = get_tmp_file()
         shell_file_4.write_text(program_4, encoding="utf-8")
         # ================================================================================
 
