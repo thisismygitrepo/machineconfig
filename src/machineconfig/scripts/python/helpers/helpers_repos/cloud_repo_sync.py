@@ -42,6 +42,7 @@ def main(
         "remove-rclone-conflict": "remove-rclone-conflict",
     }
     on_conflict = on_conflict_mapper[on_conflict]
+    import platform
     import git
     from rich.console import Console
     from rich.panel import Panel
@@ -53,6 +54,12 @@ def main(
     from pathlib import Path
     import subprocess
     console = Console()
+
+    def _bash_single_quote(val: str) -> str:
+        return "'" + val.replace("'", "'\"'\"'") + "'"
+
+    def _ps_single_quote(val: str) -> str:
+        return "'" + val.replace("'", "''") + "'"
 
     if cloud is None:
         try:
@@ -92,26 +99,65 @@ def main(
     if repo_remote_obj.is_dirty():
         console.print(Panel(f"⚠️  WARNING: REMOTE REPOSITORY IS DIRTY\nLocation: {repo_remote_root}\nPlease commit or stash changes before proceeding.", title="Warning", border_style="yellow"))
 
-    script = f"""
+    message_resolved = "sync" if message is None or message.strip() == "" else message
+
+    repo_local_root_str = str(repo_local_root)
+    repo_remote_root_str = str(repo_remote_root)
+
+    script_bash = f"""
 echo ""
-echo 'echo -e "\\033[1;34m═════ COMMITTING LOCAL CHANGES ═════\\033[0m"'
-cd {repo_local_root}
+echo -e "\\033[1;34m═════ COMMITTING LOCAL CHANGES ═════\\033[0m"
+cd {_bash_single_quote(repo_local_root_str)}
 git status
-git add .
-git commit -am "{message}"
+git add -A
+if git diff --cached --quiet; then
+  echo "-> No staged changes to commit."
+else
+  git commit -m {_bash_single_quote(message_resolved)} || true
+fi
 echo ""
 echo ""
-echo 'echo -e "\\033[1;34m═════ PULLING LATEST FROM REMOTE ═════\\033[0m"'
-cd {repo_local_root}
-echo '-> Trying to removing originEnc remote from local repo if it exists.'
-# git remote remove originEnc
+echo -e "\\033[1;34m═════ PULLING LATEST FROM REMOTE ═════\\033[0m"
+cd {_bash_single_quote(repo_local_root_str)}
+echo "-> Trying to removing originEnc remote from local repo if it exists."
 git remote remove originEnc 2>/dev/null || true
-echo '-> Adding originEnc remote to local repo'
-git remote add originEnc {repo_remote_root}
-echo '-> Fetching originEnc remote.'
+echo "-> Adding originEnc remote to local repo"
+git remote add originEnc {_bash_single_quote(repo_remote_root_str)}
+echo "-> Fetching originEnc remote."
 git pull originEnc master
 
 """
+
+    script_powershell = f"""
+Write-Host ""
+Write-Host "═════ COMMITTING LOCAL CHANGES ═════" -ForegroundColor Blue
+Set-Location -LiteralPath {_ps_single_quote(repo_local_root_str)}
+git status
+git add -A
+git diff --cached --quiet
+if ($LASTEXITCODE -eq 0) {{
+    Write-Host "-> No staged changes to commit."
+}} else {{
+    git commit -m {_ps_single_quote(message_resolved)}
+    if ($LASTEXITCODE -ne 0) {{
+        Write-Host "-> Commit skipped/failed (continuing)."
+    }}
+}}
+
+Write-Host ""
+Write-Host ""
+Write-Host "═════ PULLING LATEST FROM REMOTE ═════" -ForegroundColor Blue
+Set-Location -LiteralPath {_ps_single_quote(repo_local_root_str)}
+Write-Host "-> Trying to remove originEnc remote from local repo if it exists."
+git remote remove originEnc 2>$null
+Write-Host "-> Adding originEnc remote to local repo"
+git remote add originEnc {_ps_single_quote(repo_remote_root_str)}
+Write-Host "-> Fetching originEnc remote."
+git pull originEnc master
+exit $LASTEXITCODE
+"""
+
+    script = script_powershell if platform.system() == "Windows" else script_bash
 
     if Path.home().joinpath("code/machineconfig").exists():
         uv_project_dir = f"""{str(Path.home().joinpath("code/machineconfig"))}"""
@@ -122,12 +168,20 @@ git pull originEnc master
 
     shell_path = get_tmp_file()
     shell_path.write_text(script, encoding="utf-8")
-    import platform
-    command = f". {shell_path}"
     if platform.system() == "Windows":
-        completed = subprocess.run(["powershell", "-Command", command], capture_output=True, check=False, text=True)
+        completed = subprocess.run(
+            ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(shell_path)],
+            capture_output=True,
+            check=False,
+            text=True,
+        )
     else:
-        completed = subprocess.run(command, shell=True, capture_output=True, check=False, text=True)
+        completed = subprocess.run(
+            ["bash", str(shell_path)],
+            capture_output=True,
+            check=False,
+            text=True,
+        )
     res = Response.from_completed_process(completed).capture().print()
 
     if res.is_successful(strict_err=True, strict_returcode=True):
@@ -153,10 +207,16 @@ git pull originEnc master
         # ================================================================================
 
         option2 = "Delete local repo and replace it with remote copy:"
-        program_2 = f"""
-rm -rfd {repo_local_root}
-mv {repo_remote_root} {repo_local_root}
-"""
+        if platform.system() == "Windows":
+            program_2 = f"""
+Remove-Item -LiteralPath {_ps_single_quote(repo_local_root_str)} -Recurse -Force -ErrorAction SilentlyContinue
+Move-Item -LiteralPath {_ps_single_quote(repo_remote_root_str)} -Destination {_ps_single_quote(repo_local_root_str)} -Force
+    """
+        else:
+            program_2 = f"""
+rm -rfd {_bash_single_quote(repo_local_root_str)}
+mv {_bash_single_quote(repo_remote_root_str)} {_bash_single_quote(repo_local_root_str)}
+    """
         if platform.system() in ["Linux", "Darwin"]:
             program_2 += """
 sudo chmod 600 $HOME/.ssh/*
@@ -179,13 +239,23 @@ sudo chmod +x $HOME/dotfiles/scripts/linux -R
         # ================================================================================
 
         option4 = "Remove problematic rclone file from repo and replace with remote:"
-        program_4 = f"""
+        if platform.system() == "Windows":
+            program_4 = f"""
+Remove-Item -LiteralPath "$HOME/dotfiles/creds/rclone/rclone.conf" -Force -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Path "$HOME/dotfiles/creds/rclone" -Force | Out-Null
+Copy-Item -LiteralPath "$HOME/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf" -Destination "$HOME/dotfiles/creds/rclone/rclone.conf" -Force
+Set-Location -LiteralPath "$HOME/dotfiles"
+git commit -am "finished merging"
+{program1}
+    """
+        else:
+            program_4 = f"""
 rm $HOME/dotfiles/creds/rclone/rclone.conf
 cp $HOME/.config/machineconfig/remote/dotfiles/creds/rclone/rclone.conf $HOME/dotfiles/creds/rclone
 cd $HOME/dotfiles
 git commit -am "finished merging"
 {program1}
-"""
+    """
         shell_file_4 = get_tmp_file()
         shell_file_4.write_text(program_4, encoding="utf-8")
         # ================================================================================
