@@ -71,17 +71,25 @@ tv  {preview_line} --ansi --source-command '{source_cmd}' --source-output "{{}}"
         if not multi:
             try:
                 choice_one_string = choice_string_multi[0]
-                if isinstance(list(options)[0], str): return cast(T, choice_one_string)
+                if isinstance(list(options)[0], str):
+                    print(f"✅ Selected option: {choice_one_string}")
+                    return cast(T, choice_one_string)
                 choice_idx = options_strings.index(choice_one_string)
-                return list(options)[choice_idx]
+                choice_made =  list(options)[choice_idx]
+                print(f"✅ Selected option: {choice_made}")
+                return choice_made
             except IndexError as ie:
                 print(f"❌ Error: {options=}, {choice_string_multi=}")
                 print(f"🔍 Available choices: {choice_string_multi}")
                 raise ie
         if isinstance(list(options)[0], str):
-            return cast(list[T], choice_string_multi)
+            result2 = cast(list[T], choice_string_multi)
+            print(f"✅ Selected options: {result2}")
+            return result2
         choice_idx_s = [options_strings.index(x) for x in choice_string_multi]
-        return [list(options)[x] for x in choice_idx_s]
+        result = [list(options)[x] for x in choice_idx_s]
+        print(f"✅ Selected options: {result}")
+        return result
     else:
         if default is not None:
             assert default in options, f"Default `{default}` option not in options `{list(options)}`"
