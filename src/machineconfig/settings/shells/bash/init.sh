@@ -87,9 +87,11 @@ alias x='wrap_in_shell_script explore'
 eval "$(zoxide init bash)"
 # from https://github.com/starship/starship
 eval "$(starship init bash)"
+
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
-# from https://github.com/cantino/mcfly
-if command -v mcfly &> /dev/null; then
+if command -v atuin &> /dev/null; then
+    eval "$(atuin init bash)"
+elif command -v mcfly &> /dev/null; then
     eval "$(mcfly init bash)"
 else
     # eval "$(tv init bash)"
