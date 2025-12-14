@@ -3,8 +3,13 @@ import subprocess
 from pathlib import Path
 
 
+_ANSI_ESCAPE_RE = re.compile(
+    r"(?:\x1B|\u001B|\033)\[[0-?]*[ -/]*[@-~]|\[[0-9;?]+[ -/]*[@-~]|\[m"
+)
+
+
 def strip_ansi_codes(text: str) -> str:
-    return re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
+    return _ANSI_ESCAPE_RE.sub("", text)
 
 
 def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -> tuple[str, str | None]:
@@ -44,8 +49,9 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
         return ("run_script", cmd)
     if session_name == KILL_ALL_AND_NEW_LABEL:
         return ("run_script", "zellij kill-sessions\nzellij --layout st2")
-    session_name = session_name.split(" [Created")[0]
-    return ("run_script", f"zellij attach {session_name}")
+    session_name_clean = strip_ansi_codes(session_name)
+    session_name_clean = session_name_clean.split(" [Created")[0]
+    return ("run_script", f"zellij attach {session_name_clean}")
 
 
 def get_session_tabs() -> list[tuple[str, str]]:
