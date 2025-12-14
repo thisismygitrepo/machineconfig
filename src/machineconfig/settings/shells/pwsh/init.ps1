@@ -109,6 +109,16 @@ catch {
     # Do nothing
 }
 
+try {
+    $fuzzyHistoryScript = "$CONFIG_ROOT\settings\shells\pwsh\f.ps1"
+    if (Test-Path -LiteralPath $fuzzyHistoryScript) {
+        . $fuzzyHistoryScript
+    }
+}
+catch {
+    # Do nothing
+}
+
 # $tvCmd = Get-Command tv -ErrorAction SilentlyContinue
 # if ($null -ne $tvCmd) {
 #     try {

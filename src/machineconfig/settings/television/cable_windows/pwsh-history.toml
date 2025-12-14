@@ -3,4 +3,4 @@ name = "pwsh-history"
 description = "A channel to select from your powershell history"
 
 [source]
-command = "Get-Content (Get-PSReadLineOption).HistorySavePath | Select-Object -Last 500"
+command = "$p=(Get-PSReadLineOption).HistorySavePath; $l=Get-Content -LiteralPath $p -Tail 50000 -ErrorAction SilentlyContinue; [array]::Reverse($l); $l | ForEach-Object { $_.Trim() } | Where-Object { $_ } | Group-Object -NoElement | ForEach-Object { $_.Name }"
