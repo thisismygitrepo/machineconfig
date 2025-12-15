@@ -239,9 +239,8 @@ def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | 
         lines.append("    @staticmethod")
         lines.append(f'    def make({params_str}) -> "{wrapper_class_name}":')
         lines.append("        import polars as pl")
-        lines.append("        from machineconfig.type_hinting.polars_schema_typeddict import get_polars_schema_from_typeddict as get_polars_schema")
         lines.append(f"        from {source_module} import {class_name}")
-        lines.append(f"        return {wrapper_class_name}(pl.DataFrame({dict_str}, schema=get_polars_schema({class_name})))")
+        lines.append(f"        return {wrapper_class_name}(pl.DataFrame({dict_str}, schema=get_polars_schema_from_typeddict({class_name})))")
         lines.append("")
 
         lines.append("    @staticmethod")

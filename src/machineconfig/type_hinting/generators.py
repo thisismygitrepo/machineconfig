@@ -57,7 +57,11 @@ def generate_names_file(source_file_path: Path, output_file_path: Path, search_p
         elif type_name in local_classes:
             needed_local_classes.append(type_name)
 
-    lines: list[str] = ["from collections.abc import Iterable", "from typing import Annotated, Any, Literal, TypeAlias, TYPE_CHECKING, overload", ""]
+    lines: list[str] = [
+        "from collections.abc import Iterable",
+        "from typing import Annotated, Any, Literal, ReadOnly, TypeAlias, TYPE_CHECKING, get_args, get_origin, overload",
+        "",
+    ]
 
     target_class_names = [class_name for class_name, _ in target_classes]
     source_module = _get_module_name_from_path(source_file_path)
@@ -79,6 +83,30 @@ def generate_names_file(source_file_path: Path, output_file_path: Path, search_p
     all_type_checking_imports = sorted(set(needed_local_classes) - set(target_class_names))
     if all_type_checking_imports:
         lines.append(f"    from {source_module} import {', '.join(all_type_checking_imports)}")
+    lines.append("")
+    lines.append("")
+
+    lines.append('def get_polars_schema_from_typeddict(typed_dict: type) -> "dict[str, pl.DataType]":')
+    lines.append('    """Convert a TypedDict to a Polars schema, properly handling ReadOnly wrappers."""')
+    lines.append("    import polars as pl")
+    lines.append("")
+    lines.append("    schema: dict[str, pl.DataType] = {}")
+    lines.append("    for k, v in typed_dict.__annotations__.items():")
+    lines.append("        origin = get_origin(v)")
+    lines.append("        if origin is ReadOnly:")
+    lines.append("            args = get_args(v)")
+    lines.append("            v = args[0] if args else v")
+    lines.append("        if v is str:")
+    lines.append("            schema[k] = pl.String()")
+    lines.append("        elif v is float:")
+    lines.append("            schema[k] = pl.Float64()")
+    lines.append("        elif v is int:")
+    lines.append("            schema[k] = pl.Int64()")
+    lines.append("        elif v is bool:")
+    lines.append("            schema[k] = pl.Boolean()")
+    lines.append("        else:")
+    lines.append("            schema[k] = pl.String()")
+    lines.append("    return schema")
     lines.append("")
     lines.append("")
 
