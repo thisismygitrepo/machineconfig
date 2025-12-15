@@ -245,7 +245,6 @@ def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | 
 
         lines.append("    @staticmethod")
         lines.append(f'    def make_fake(n_rows: int) -> "{wrapper_class_name}":')
-        lines.append("        from machineconfig.type_hinting.polars_schema_typeddict import get_polars_df_random_data_from_typeddict")
         lines.append(f"        from {source_module} import {class_name}")
         lines.append(f"        return {wrapper_class_name}(get_polars_df_random_data_from_typeddict({class_name}, n_rows))")
     else:

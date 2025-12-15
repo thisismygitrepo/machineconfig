@@ -1,4 +1,6 @@
 import ast
+import inspect
+import textwrap
 from pathlib import Path
 
 from machineconfig.type_hinting.ast_utils import load_target_class_fields
@@ -22,6 +24,24 @@ def _get_module_name_from_path(file_path: Path) -> str:
         current = current.parent
     parts.reverse()
     return ".".join(parts)
+
+
+def _get_polars_schema_typeddict_helpers_source() -> list[str]:
+    from machineconfig.type_hinting import polars_schema_typeddict
+
+    helpers = (
+        polars_schema_typeddict.unwrap_type,
+        polars_schema_typeddict.get_polars_type,
+        polars_schema_typeddict.get_polars_schema_from_typeddict,
+        polars_schema_typeddict.get_polars_df_random_data_from_typeddict,
+    )
+
+    parts: list[str] = []
+    for fn in helpers:
+        source = textwrap.dedent(inspect.getsource(fn)).rstrip()
+        parts.append(source)
+
+    return "\n\n".join(parts).splitlines()
 
 
 def generate_names_file(source_file_path: Path, output_file_path: Path, search_paths: list[Path] | None = None) -> Path:
@@ -58,6 +78,8 @@ def generate_names_file(source_file_path: Path, output_file_path: Path, search_p
             needed_local_classes.append(type_name)
 
     lines: list[str] = [
+        "from __future__ import annotations",
+        "",
         "from collections.abc import Iterable",
         "from typing import Annotated, Any, Literal, ReadOnly, TypeAlias, TYPE_CHECKING, get_args, get_origin, overload",
         "",
@@ -86,27 +108,7 @@ def generate_names_file(source_file_path: Path, output_file_path: Path, search_p
     lines.append("")
     lines.append("")
 
-    lines.append('def get_polars_schema_from_typeddict(typed_dict: type) -> "dict[str, pl.DataType]":')
-    lines.append('    """Convert a TypedDict to a Polars schema, properly handling ReadOnly wrappers."""')
-    lines.append("    import polars as pl")
-    lines.append("")
-    lines.append("    schema: dict[str, pl.DataType] = {}")
-    lines.append("    for k, v in typed_dict.__annotations__.items():")
-    lines.append("        origin = get_origin(v)")
-    lines.append("        if origin is ReadOnly:")
-    lines.append("            args = get_args(v)")
-    lines.append("            v = args[0] if args else v")
-    lines.append("        if v is str:")
-    lines.append("            schema[k] = pl.String()")
-    lines.append("        elif v is float:")
-    lines.append("            schema[k] = pl.Float64()")
-    lines.append("        elif v is int:")
-    lines.append("            schema[k] = pl.Int64()")
-    lines.append("        elif v is bool:")
-    lines.append("            schema[k] = pl.Boolean()")
-    lines.append("        else:")
-    lines.append("            schema[k] = pl.String()")
-    lines.append("    return schema")
+    lines.extend(_get_polars_schema_typeddict_helpers_source())
     lines.append("")
     lines.append("")
 

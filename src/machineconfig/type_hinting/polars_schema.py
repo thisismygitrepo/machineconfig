@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 def get_polars_schema(typed_dict: type) -> "dict[str, pl.DataType]":
     import polars as pl
 
-    def _get_polars_type(python_type: Any) -> pl.DataType:
+    def get_polars_type(python_type: Any) -> pl.DataType:
         if python_type == str:
             return pl.String()
         if python_type == float:
@@ -20,5 +20,5 @@ def get_polars_schema(typed_dict: type) -> "dict[str, pl.DataType]":
 
     schema: dict[str, pl.DataType] = {}
     for k, v in typed_dict.__annotations__.items():
-        schema[k] = _get_polars_type(v)
+        schema[k] = get_polars_type(v)
     return schema
