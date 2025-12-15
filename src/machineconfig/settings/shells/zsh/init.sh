@@ -85,9 +85,35 @@ alias x='. $CONFIG_ROOT/scripts/wrap_mcfg explore'
 eval "$(zoxide init zsh)"
 # from https://github.com/starship/starship
 eval "$(starship init zsh)"
+
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
-# from https://github.com/cantino/mcfly
-eval "$(mcfly init zsh)"
-# Show elapsed runtime
-# _show_elapsed
+if command -v atuin &> /dev/null; then
+    eval "$(atuin init bash)"
+elif command -v mcfly &> /dev/null; then
+    eval "$(mcfly init bash)"
+else
+    # eval "$(tv init bash)"
+    tv_shell_history() {
+        # _disable_bracketed_paste
+        local current_prompt="${READLINE_LINE:0:$READLINE_POINT}"
+        local output
+        # move to the next line so that the prompt is not overwritten
+        printf "\n"
+        # Get history using tv with the same arguments as zsh version
+        output=$(tv bash-history --input "$current_prompt" --inline)
+
+        if [[ -n "$output" ]]; then
+            # Clear the right side of cursor and set new line
+            READLINE_LINE="$output"
+            READLINE_POINT=${#READLINE_LINE}
+            # Uncomment this to automatically accept the line
+            # (i.e. run the command without having to press enter twice)
+            # accept-line() { echo; }; accept-line
+        fi
+        # move the cursor back to the previous line
+        printf "\033[A"
+        # _enable_bracketed_paste
+    }
+    bind -x '"\C-r": tv_shell_history'
+fi
 

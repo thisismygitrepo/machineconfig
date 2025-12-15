@@ -109,25 +109,62 @@ catch {
     # Do nothing
 }
 
-# try {
-#     $fuzzyHistoryScript = "$CONFIG_ROOT\settings\shells\pwsh\f.ps1"
-#     if (Test-Path -LiteralPath $fuzzyHistoryScript) {
-#         . $fuzzyHistoryScript
-#     }
-# }
-# catch {
-#     # Do nothing
-# }
 
-# $tvCmd = Get-Command tv -ErrorAction SilentlyContinue
-# if ($null -ne $tvCmd) {
-#     try {
-#         $tvInit = (& tv init powershell 2>$null | Out-String)
-#         if (-not [string]::IsNullOrWhiteSpace($tvInit)) {
-#             Invoke-Expression -Command $tvInit
-#         }
-#     }
-#     catch {
-#         # Do nothing
-#     }
-# }
+# history search =====================================================
+
+if (Get-Command atuin -ErrorAction SilentlyContinue) {
+    try {
+        Invoke-Expression (& atuin init powershell | Out-String)
+    }
+    catch {
+        # Do nothing
+    }
+}
+elseif (Get-Command mcfly -ErrorAction SilentlyContinue) {
+    try {
+        Invoke-Expression (& mcfly init powershell | Out-String)
+    }
+    catch {
+        # Do nothing
+    }
+}
+else {
+    try {
+        Import-Module PSReadLine -ErrorAction Stop | Out-Null
+        Set-PSReadLineKeyHandler -Chord Ctrl+r -ScriptBlock {
+            param($key, $arg)
+
+            $buffer = $null
+            $cursor = 0
+            try { [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$buffer, [ref]$cursor) } catch { }
+
+            $selected = $null
+            try {
+                [Console]::WriteLine()
+                $selected = (& tv pwsh-history 2>$null | Select-Object -First 1)
+            }
+            catch {
+                $selected = $null
+            }
+
+            if ([string]::IsNullOrWhiteSpace($selected)) {
+                return
+            }
+
+            $selected = $selected.TrimEnd("`r", "`n")
+
+            try {
+                $existingLen = if ($null -eq $buffer) { 0 } else { $buffer.Length }
+                [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $existingLen, $selected)
+                try { [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selected.Length) } catch { }
+            }
+            catch {
+                try { [Microsoft.PowerShell.PSConsoleReadLine]::Insert($selected) } catch { }
+            }
+        }
+    }
+    catch {
+        # Do nothing
+    }
+}
+
