@@ -42,6 +42,28 @@ def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", 
     impl(hardware=hardware)
 
 
+def type_hint(path: Annotated[str, typer.Argument(..., help="Path to file/project dir to type hint.")] = ".") -> None:
+    from machineconfig.type_hinting.generators import generate_names_file
+    from pathlib import Path
+    path_resolved = Path(path).resolve()
+    if not path_resolved.exists():
+        typer.echo(f"Error: The provided path '{path}' does not exist.", err=True)
+        raise typer.Exit(code=1)
+    if path_resolved.is_file():
+        modules = [path_resolved]
+    else:
+        if not (path_resolved / "pyproject.toml").exists():
+            typer.echo("Error: Provided directory path is not a project root (missing pyproject.toml).", err=True)
+            raise typer.Exit(code=1)
+        else:
+            modules = [file for file in path_resolved.rglob("dtypes.py") if ".venv" not in str(file)]
+    for input_file in modules:
+        print(f"Worked on: {input_file}")
+        output_file = input_file.parent.joinpath(f"{input_file.stem}_names.py")
+        generated_file = generate_names_file(input_file, output_file, search_paths=None)
+        print(f"Generated: {generated_file}")
+
+
 def init_project(
     name: Annotated[Optional[str], typer.Option("--name", "-n", help="Name of the project.")] = None,
     tmp_dir: Annotated[bool, typer.Option("--tmp-dir", "-t", help="Use a temporary directory for the project initialization.")] = False,
@@ -107,6 +129,9 @@ def get_app() -> typer.Typer:
     app.command(name="pm", no_args_is_help=True, hidden=True)(merge_pdfs)
     app.command(name="pdf-compress", no_args_is_help=True, help="📦 [pc] Compress a PDF file.")(compress_pdf)
     app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
+
+    app.command(name="type-hint", no_args_is_help=True, help="📝 [t] Type hint a file or project directory.")(type_hint)
+    app.command(name="t", no_args_is_help=True, hidden=True)(type_hint)
 
     return app
 
