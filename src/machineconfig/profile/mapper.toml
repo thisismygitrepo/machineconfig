@@ -266,4 +266,12 @@ pylint = {original = '~/.pylintrc', self_managed = 'CONFIG_ROOT/settings/linters
 notepadpp = {original = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', self_managed = 'C:/Program Files/Notepad++/notepad++.exe'}
 # tesseract = {original = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', self_managed = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
+[atuin_linux]
+config = {original = '~/.config/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml'}
+themes = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true}
+
+[atuin_windows]
+config = {original = '~/AppData/Roaming/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml'}
+themes = {original = '~/AppData/Roaming/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true}
+
 
