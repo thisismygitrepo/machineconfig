@@ -1590,12 +1590,12 @@
         "amd64": {
           "linux": "dbeaver-ce-{version}-linux.gtk.x86_64.tar.gz",
           "macos": "dbeaver-ce-{version}-macos-x86_64.dmg",
-          "windows": "dbeaver-ce-{version}-x86_64-setup.exe"
+          "windows": "winget install DBeaver.DBeaver.Community --source winget --scope user --accept-package-agreements --accept-source-agreements"
         },
         "arm64": {
           "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz",
           "macos": "dbeaver-ce-{version}-macos-aarch64.dmg",
-          "windows": "dbeaver-ce-{version}-win32.win32.aarch64.zip"
+          "windows": "winget install DBeaver.DBeaver.Community --source winget --scope user --accept-package-agreements --accept-source-agreements"
         }
       }
     },

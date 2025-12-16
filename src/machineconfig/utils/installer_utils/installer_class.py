@@ -13,6 +13,9 @@ import subprocess
 from typing import Optional
 
 
+PACAKGE_MANAGERS = ["bun", "npm", "pip", "uv", "winget", "powershell", "irm", "brew", "curl", "sudo"]
+
+
 class Installer:
     def __init__(self, installer_data: InstallerData):
         self.installer_data: InstallerData = installer_data
@@ -62,8 +65,13 @@ class Installer:
         if installer_arch_os is None:
             raise ValueError(f"No installation pattern for {exe_name} on {os_name} {arch}")
         version_to_be_installed: str = "unknown"  # Initialize to ensure it's always bound
-        if repo_url == "CMD":
-            if any(pm in installer_arch_os.split(" ") for pm in ["bun", "npm", "pip", "uv", "winget", "powershell", "irm", "brew", "curl", "sudo"]):
+
+        package_manager_installer = any(pm in installer_arch_os.split(" ") for pm in PACAKGE_MANAGERS)
+        script_installer = installer_arch_os.endswith((".sh", ".py", ".ps1"))
+        binary_download_link = installer_arch_os.startswith("https://") or installer_arch_os.startswith("http://")
+
+        if (repo_url == "CMD") or package_manager_installer or script_installer or binary_download_link:
+            if package_manager_installer:
                 from rich import print as rprint
                 from rich.panel import Panel
                 from rich.console import Group
@@ -81,7 +89,7 @@ class Installer:
                         sub_panels.append(Panel(result.stderr, title="STDERR", style="red"))
                     group_content = Group(f"❌ {desc} failed\nReturn code: {result.returncode}", *sub_panels)
                     rprint(Panel(group_content, title=desc, style="red"))
-            elif installer_arch_os.endswith((".sh", ".py", ".ps1")):
+            elif script_installer:
                 import machineconfig.jobs.installer as module
                 from pathlib import Path
                 search_root = Path(module.__file__).parent
@@ -106,7 +114,7 @@ class Installer:
                     import runpy
                     runpy.run_path(str(installer_path), run_name=None)["main"](self.installer_data, version=version)
                     version_to_be_installed = str(version)
-            elif installer_arch_os.startswith("https://") or installer_arch_os.startswith("http://"):
+            elif binary_download_link:
                 downloaded_object = download_and_prepare(installer_arch_os)
                 if downloaded_object.suffix in [".exe", ""]:  # likely an executable
                     if platform.system() == "Windows":
