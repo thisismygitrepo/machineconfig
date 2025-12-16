@@ -1,5 +1,7 @@
 import ast
+import inspect
 from pathlib import Path
+from typing import Literal
 
 
 WRAPPER_TYPES = {"ReadOnly", "NotRequired", "Optional", "Required", "Final"}
@@ -151,7 +153,42 @@ def quote_pl_in_annotation(annotation_str: str) -> str:
     return re.sub(r"(?<!['\"])(\bpl\.\w+)(?!['\"])", r"'\1'", annotation_str)
 
 
-def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | None]], source_module: str) -> list[str]:
+def _get_module_name_from_output_path(file_path: Path) -> str:
+    """Get the module name from the output file path."""
+    resolved = file_path.resolve()
+    parts: list[str] = []
+    current = resolved.parent
+    while current != current.parent:
+        if not (current / "__init__.py").exists():
+            break
+        parts.append(current.name)
+        current = current.parent
+    parts.reverse()
+    return ".".join(parts) if parts else ""
+
+
+def get_module_level_helper_functions() -> list[str]:
+    """Get helper functions to be defined once at module level for self-contained mode.
+    Returns only the function definitions, not imports (imports are handled separately at file top).
+    """
+    from machineconfig.type_hinting import polars_schema_typeddict
+    
+    lines = []
+    lines.append("# Helper functions for self-contained mode (defined once at module level)")
+    lines.append("")
+    
+    # Add all helper functions
+    for func_name in ["_unwrap_type", "_get_polars_type", "get_polars_schema_from_typeddict", "get_polars_df_random_data_from_typeddict"]:
+        func = getattr(polars_schema_typeddict, func_name)
+        source = inspect.getsource(func)
+        for line in source.splitlines():
+            lines.append(line)
+        lines.append("")
+    
+    return lines
+
+
+def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | None]], source_module: str, dependency: Literal["import", "self-contained"] = "self-contained", output_file_path: Path | None = None) -> list[str]:
     lines: list[str] = []
     field_names = [fn for fn, _ in field_infos]
 
@@ -239,12 +276,34 @@ def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | 
         lines.append("    @staticmethod")
         lines.append(f'    def make({params_str}) -> "{wrapper_class_name}":')
         lines.append("        import polars as pl")
+        
+        if dependency == "import":
+            # Use fully qualified import from dtypes_utils
+            if output_file_path:
+                output_module = _get_module_name_from_output_path(output_file_path)
+                lines.append(f"        from {output_module}.dtypes_utils import get_polars_schema_from_typeddict as get_polars_schema")
+            else:
+                lines.append("        from machineconfig.type_hinting.polars_schema_typeddict import get_polars_schema_from_typeddict as get_polars_schema")
+        else:  # self-contained - use module-level function
+            lines.append("        get_polars_schema = get_polars_schema_from_typeddict")
+        
         lines.append(f"        from {source_module} import {class_name}")
-        lines.append(f"        return {wrapper_class_name}(pl.DataFrame({dict_str}, schema=get_polars_schema_from_typeddict({class_name})))")
+        lines.append(f"        return {wrapper_class_name}(pl.DataFrame({dict_str}, schema=get_polars_schema({class_name})))")
         lines.append("")
 
         lines.append("    @staticmethod")
         lines.append(f'    def make_fake(n_rows: int) -> "{wrapper_class_name}":')
+        
+        if dependency == "import":
+            # Use fully qualified import from dtypes_utils
+            if output_file_path:
+                output_module = _get_module_name_from_output_path(output_file_path)
+                lines.append(f"        from {output_module}.dtypes_utils import get_polars_df_random_data_from_typeddict")
+            else:
+                lines.append("        from machineconfig.type_hinting.polars_schema_typeddict import get_polars_df_random_data_from_typeddict")
+        else:  # self-contained - use module-level function
+            pass  # No imports needed, function is at module level
+        
         lines.append(f"        from {source_module} import {class_name}")
         lines.append(f"        return {wrapper_class_name}(get_polars_df_random_data_from_typeddict({class_name}, n_rows))")
     else:
