@@ -42,7 +42,9 @@ def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", 
     impl(hardware=hardware)
 
 
-def type_hint(path: Annotated[str, typer.Argument(..., help="Path to file/project dir to type hint.")] = ".") -> None:
+def type_hint(path: Annotated[str, typer.Argument(..., help="Path to file/project dir to type hint.")] = ".",
+              dependency: Annotated[Literal["self-contained", "import"], typer.Option(..., "--dependency", "-d", help="Generated file is self contained or performs imports")] = "self-contained"
+              ) -> None:
     from machineconfig.type_hinting.generators import generate_names_file
     from pathlib import Path
     path_resolved = Path(path).resolve()
@@ -60,7 +62,7 @@ def type_hint(path: Annotated[str, typer.Argument(..., help="Path to file/projec
     for input_file in modules:
         print(f"Worked on: {input_file}")
         output_file = input_file.parent.joinpath(f"{input_file.stem}_names.py")
-        generated_file = generate_names_file(input_file, output_file, search_paths=None)
+        generated_file = generate_names_file(input_file, output_file, search_paths=None, dependency=dependency)
         print(f"Generated: {generated_file}")
 
 
