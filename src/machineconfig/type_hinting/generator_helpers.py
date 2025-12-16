@@ -275,7 +275,6 @@ def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | 
         dict_str = "{" + ", ".join(dict_entries) + "}"
         lines.append("    @staticmethod")
         lines.append(f'    def make({params_str}) -> "{wrapper_class_name}":')
-        lines.append("        import polars as pl")
         
         if dependency == "import":
             # Use fully qualified import from dtypes_utils
@@ -287,7 +286,6 @@ def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | 
         else:  # self-contained - use module-level function
             lines.append("        get_polars_schema = get_polars_schema_from_typeddict")
         
-        lines.append(f"        from {source_module} import {class_name}")
         lines.append(f"        return {wrapper_class_name}(pl.DataFrame({dict_str}, schema=get_polars_schema({class_name})))")
         lines.append("")
 
@@ -304,7 +302,6 @@ def generate_for_class(class_name: str, field_infos: list[tuple[str, ast.expr | 
         else:  # self-contained - use module-level function
             pass  # No imports needed, function is at module level
         
-        lines.append(f"        from {source_module} import {class_name}")
         lines.append(f"        return {wrapper_class_name}(get_polars_df_random_data_from_typeddict({class_name}, n_rows))")
     else:
         lines.append("    @staticmethod")
