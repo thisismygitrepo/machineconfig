@@ -116,9 +116,17 @@ def gource_viz(
     background_color: Annotated[str, typer.Option(..., "--background-color", help="Background color in hex (e.g., 000000 for black)")] = "000000",
     font_size: Annotated[int, typer.Option(..., "--font-size", help="Font size")] = 22,
     camera_mode: Annotated[str, typer.Option(..., "--camera-mode", help="Camera mode: overview or track")] = "overview",
+    self: Annotated[bool, typer.Option(..., "--self", help="Clone machineconfig repository and act on it")] = False,
         ) -> None:
     """🎬 Visualize repository activity using Gource."""
     from machineconfig.scripts.python.helpers.helpers_repos.grource import visualize
+    if self:
+        repo_path = Path.home().joinpath("machineconfig")
+        if not repo_path.exists():
+            import git
+            repo_url = "https://github.com/thisismygitrepo/machineconfig.git"
+            git.Repo.clone_from(repo_url, to_path=repo_path.as_posix())
+            repo = repo_path.as_posix()
     visualize(repo=repo, output_file=output_file, resolution=resolution, seconds_per_day=seconds_per_day,
               auto_skip_seconds=auto_skip_seconds, title=title, hide_items=hide_items, key_items=key_items,
               fullscreen=fullscreen, viewport=viewport, start_date=start_date, stop_date=stop_date,
