@@ -28,6 +28,9 @@ class Read:
             elif suffix == "csv":
                 import polars as pl
                 return pl.read_csv(path, **kwargs)
+            elif suffix == "npz" or suffix == "npy":
+                import numpy as np
+                return np.load(str(path), **kwargs)
             try:
                 # guess = install_n_import('magic', 'python-magic').from_file(path)
                 guess = "IDKm"

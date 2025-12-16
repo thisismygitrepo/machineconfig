@@ -27,6 +27,7 @@ add_to_path_if_not_already \
     "$HOME/dotfiles/scripts/linux" \
     "$HOME/.local/bin" \
     "$HOME/.cargo/bin" \
+    "$HOME/.duckdb/cli/latest" \
     "/usr/games"
 # this way, if the script was run multiple times, e.g. due to nested shells in zellij, there will be no duplicates in the path
 # export DISPLAY=localhost:0.0  # xming server

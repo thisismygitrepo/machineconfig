@@ -38,6 +38,8 @@ rules = [
 [plugin]
 dir = "~/.config/yazi/plugins"
 
+
+
 prepend_previewers = [
 	# Markdown previewer
 	{ name = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
@@ -54,14 +56,22 @@ prepend_previewers = [
 	{ mime = "application/zstd",            run = "ouch" },
 	{ mime = "application/java-archive",    run = "ouch" },
 
-  # { name = "*.csv", run = "duckdb" },  
-  # { name = "*.tsv", run = "duckdb" },  
-  # { name = "*.json", run = "duckdb" },  
-  # { name = "*.parquet", run = "duckdb" },  
-  # { name = "*.txt", run = "duckdb" },  
-  # { name = "*.xlsx", run = "duckdb" },  
-  # { name = "*.db", run = "duckdb" },
-  # { name = "*.duckdb", run = "duckdb" }
+  { name = "*.tsv", run = "duckdb" },  
+  { name = "*.json", run = "duckdb" },  
+  { name = "*.parquet", run = "duckdb" },  
+  { name = "*.txt", run = "duckdb" },  
+  { name = "*.xlsx", run = "duckdb" },  
+  { name = "*.db", run = "duckdb" },
+  { name = "*.duckdb", run = "duckdb" }
+]
+
+prepend_preloaders = [  
+  # { name = "*.csv", run = "duckdb", multi = false },  
+  { name = "*.tsv", run = "duckdb", multi = false },  
+  # { name = "*.json", run = "duckdb", multi = false },  
+  { name = "*.parquet", run = "duckdb", multi = false },
+  # { name = "*.txt", run = "duckdb", multi = false },  
+  { name = "*.xlsx", run = "duckdb", multi = false }
 ]
 
 # prepend_preloaders = [   { name = "*.csv", run = "duckdb", multi = false },  
