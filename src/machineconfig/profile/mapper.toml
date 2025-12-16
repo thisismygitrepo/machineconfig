@@ -85,9 +85,8 @@ config = {original = '~/.config/presenterm/config.yaml', self_managed = 'CONFIG_
 [keras]
 config = {original = '~/.keras/keras.json', self_managed = 'CONFIG_ROOT/settings/keras/keras.json'}
 
-[streamlit]
-config = {original = '~/.streamlit/config.toml', self_managed = 'CONFIG_ROOT/settings/streamlit/config.toml'}
-
+# [streamlit]
+# config = {original = '~/.streamlit/config.toml', self_managed = 'CONFIG_ROOT/settings/streamlit/config.toml'}
 
 [procs]
 config = {original = '~/.procs.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml'}
