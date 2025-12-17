@@ -24,10 +24,10 @@ $preview_config = "$env:TEMP/starship_preview.toml"
 $preview_cmd = "powershell -c `"`$preset = '{}'.Split('`t')[0]; starship preset `$preset > $preview_config; `$env:STARSHIP_CONFIG='$preview_config'; `$env:STARSHIP_SHELL='powershell'; starship prompt`""
 
 if (Get-Command "tv" -ErrorAction SilentlyContinue) {
-    $selected_line = $input_list | tv --preview-command $preview_cmd --preview-size 30
+    $selected_line = $input_list | tv --preview-command $preview_cmd --preview-size 50
 } elseif (Get-Command "fzf" -ErrorAction SilentlyContinue) {
     # fzf fallback
-    $selected_line = $input_list | fzf --ansi --delimiter "`t" --with-nth 1,2 --preview "powershell -c `"`$preset = {1}; starship preset `$preset > $preview_config; `$env:STARSHIP_CONFIG='$preview_config'; `$env:STARSHIP_SHELL='powershell'; starship prompt`"" --preview-window bottom:30%
+    $selected_line = $input_list | fzf --ansi --delimiter "`t" --with-nth 1,2 --preview "powershell -c `"`$preset = {1}; starship preset `$preset > $preview_config; `$env:STARSHIP_CONFIG='$preview_config'; `$env:STARSHIP_SHELL='powershell'; starship prompt`"" --preview-window bottom:50%
 } else {
     Write-Host "Error: 'tv' or 'fzf' not found."
     exit 1
