@@ -107,6 +107,14 @@ cable = {original = '~/.config/television/cable', self_managed = 'CONFIG_ROOT/se
 [television_windows]
 cable = {original = '~/AppData/Local/television/config/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_windows', contents = true}
 
+[tv_linux]
+config = {original = '~/.config/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml'}
+themes = {original = '~/.config/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true}
+
+[tv_windows]
+config = {original = '~/AppData/Local/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml'}
+themes = {original = '~/AppData/Local/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true}
+
 
 [yazi_linux]
 yazi = {original = '~/.config/yazi/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml'}
@@ -272,5 +280,4 @@ themes = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/setti
 [atuin_windows]
 config = {original = '~/AppData/Roaming/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml'}
 themes = {original = '~/AppData/Roaming/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true}
-
 
