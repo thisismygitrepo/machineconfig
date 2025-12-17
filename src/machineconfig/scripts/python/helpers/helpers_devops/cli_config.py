@@ -32,86 +32,24 @@ def pwsh_theme():
 def starship_theme():
     """🔗 Select starship prompt theme."""
     import subprocess
-    import shutil
+    import platform
     import os
-    from machineconfig.utils.code import run_shell_script
+    from pathlib import Path
     
-    # Presets with descriptions
-    presets = {
-        "nerd-font-symbols": "Changes the symbols for each module to use Nerd Font symbols.",
-        "no-nerd-font": "Changes the symbols so that no Nerd Font symbols are used.",
-        "bracketed-segments": "Changes the format to show segments in brackets.",
-        "plain-text-symbols": "Changes the symbols for each module into plain text.",
-        "no-runtime-versions": "Hides the version of language runtimes.",
-        "no-empty-icons": "Does not show icons if the toolset is not found.",
-        "pure-preset": "Emulates the look and behavior of Pure.",
-        "pastel-powerline": "Inspired by M365Princess.",
-        "tokyo-night": "Inspired by tokyo-night-vscode-theme.",
-        "gruvbox-rainbow": "Inspired by Pastel Powerline and Tokyo Night.",
-        "jetpack": "Pseudo minimalist preset inspired by geometry and spaceship.",
-    }
-
-    # Check if fzf is available
-    fzf_path = shutil.which("fzf")
+    current_dir = Path(__file__).parent.joinpath("themes")
     
-    if fzf_path:
-        # Prepare input for fzf
-        fzf_input = "\n".join([f"{name}\t{desc}" for name, desc in presets.items()])
-        
-        # Preview command
-        preview_config = "/tmp/starship_preview.toml"
-        # Use STARSHIP_SHELL=fish to get raw ANSI codes without bash/zsh specific escaping
-        preview_cmd = f"starship preset {{1}} > {preview_config} && STARSHIP_CONFIG={preview_config} STARSHIP_SHELL=fish starship prompt"
-        
-        # Run fzf
+    if platform.system() == "Windows":
+        script_path = current_dir / "choose_starship_theme.ps1"
         try:
-            process = subprocess.Popen(
-                ["fzf", "--ansi", "--delimiter", "\t", "--with-nth", "1,2", "--preview", preview_cmd, "--preview-window", "bottom:30%"],
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                text=True
-            )
-            stdout, _ = process.communicate(input=fzf_input)
-            
-            if process.returncode == 0 and stdout.strip():
-                selected_line = stdout.strip()
-                selected_preset = selected_line.split("\t")[0]
-            else:
-                typer.echo("No selection made.")
-                return
-        except Exception as e:
-            typer.echo(f"Error running fzf: {e}")
-            return
-            
+            subprocess.run(["pwsh", "-File", str(script_path)], check=True)
+        except FileNotFoundError:
+             # Fallback to powershell if pwsh is not available
+            subprocess.run(["powershell", "-File", str(script_path)], check=True)
     else:
-        # Fallback to simple menu if fzf is not installed
-        typer.echo("\n🚀 Starship Theme Selector (Install 'fzf' for interactive preview)\n")
-        preset_list = list(presets.keys())
-        for idx, preset in enumerate(preset_list, start=1):
-            typer.echo(f"{idx}. {preset}: {presets[preset]}")
-        
-        choice = typer.prompt("Select a preset")
-        try:
-            choice_idx = int(choice)
-            if 1 <= choice_idx <= len(preset_list):
-                selected_preset = preset_list[choice_idx - 1]
-            else:
-                typer.echo("❌ Invalid selection")
-                return
-        except ValueError:
-            typer.echo("❌ Please enter a valid number")
-            return
-
-    # Apply selection
-    config_path = Path.home() / ".config" / "starship.toml"
-    typer.echo(f"\n✨ Applying {selected_preset}...")
-    run_shell_script(f"starship preset {selected_preset} -o {config_path}")
-    typer.echo(f"\n✅ {selected_preset} applied!")
-    
-    # Show final preview
-    typer.echo("\n📋 Current Prompt Preview:")
-    # Use fish shell to avoid bash/zsh specific escaping in the output
-    subprocess.run(["starship", "prompt"], env={**os.environ, "STARSHIP_SHELL": "fish"}, check=False)
+        script_path = current_dir / "choose_starship_theme.sh"
+        # Ensure executable
+        os.chmod(script_path, 0o755)
+        subprocess.run(["bash", str(script_path)])
 
 
 def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both", "b"], typer.Argument(..., help="Which assets to copy")]):
