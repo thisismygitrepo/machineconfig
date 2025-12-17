@@ -82,6 +82,7 @@ def main(installer_data: InstallerData, version: Optional[str]):
     # previewers:
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing("glow")
+    install_if_missing("duckdb")
     if platform.system() == "Linux":
         script = r"""
 sudo nala install poppler-utils -y || true  # For PDF preview, needed by yazi.
@@ -118,6 +119,7 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
         inst_poppler.install(version=None)
     # assuming ouch is already installed
     script = """
+
 ya pkg add 'ndtoan96/ouch'  # make ouch default previewer in yazi for compressed files
 ya pkg add 'AnirudhG07/rich-preview'  # rich-cli based previewer for yazi
 ya pkg add 'stelcodes/bunny'
@@ -125,7 +127,6 @@ ya pkg add 'Tyarel8/goto-drives'
 ya pkg add 'uhs-robert/sshfs'
 ya pkg add 'boydaihungst/file-extra-metadata'
 ya pkg add 'wylie102/duckdb'
-
 
 """
     from machineconfig.utils.code import run_shell_script
