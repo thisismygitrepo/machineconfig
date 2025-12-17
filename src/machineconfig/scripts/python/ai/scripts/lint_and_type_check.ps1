@@ -52,6 +52,8 @@ uv add --dev pylint --upgrade-package pylint
 uv add --dev mypy --upgrade-package mypy
 uv add --dev pyrefly --upgrade-package pyrefly
 uv add --dev cleanpy --upgrade-package cleanpy
+uv add --dev ruff --upgrade-package ruff
+uv add --dev ty --upgrade-package ty
 
 uv add types-requests types-toml types-PyYAML types-pytz types-paramiko types-urllib3 --dev
 uv add types-mysqlclient types-SQLAlchemy --dev
