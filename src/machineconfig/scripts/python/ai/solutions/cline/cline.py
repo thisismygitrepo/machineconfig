@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from machineconfig.scripts.python.ai.solutions._shared import get_generic_instructions_path
+from machineconfig.scripts.python.ai.utils.s shared import get_generic_instructions_path
 
 
 def build_configuration(repo_root: Path) -> None:

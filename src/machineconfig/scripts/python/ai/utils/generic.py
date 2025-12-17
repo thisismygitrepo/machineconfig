@@ -47,6 +47,7 @@ def adjust_gitignore(repo_root: Path) -> None:
         "GEMINI.md",
         "CLAUDE.md",
         "CRUSH.md",
+        "AGENTS.md",
         ".cursor",
         ".clinerules",
         ".github/instructions",
