@@ -7,7 +7,7 @@ ref: https://github.com/charmbracelet/crush
 
 from pathlib import Path
 import platform
-from machineconfig.scripts.python.ai.utils.s shared import get_generic_instructions_path
+from machineconfig.scripts.python.ai.utils.shared import get_generic_instructions_path
 
 
 

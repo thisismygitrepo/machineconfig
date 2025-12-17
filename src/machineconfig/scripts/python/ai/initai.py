@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from machineconfig.scripts.python.ai.solutions import generic
+from machineconfig.scripts.python.ai.utils import generic
 from machineconfig.scripts.python.ai.solutions.claude import claude
 from machineconfig.scripts.python.ai.solutions.cline import cline
 from machineconfig.scripts.python.ai.solutions.copilot import github_copilot
