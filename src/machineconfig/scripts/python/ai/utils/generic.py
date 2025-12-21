@@ -40,22 +40,8 @@ def adjust_gitignore(repo_root: Path) -> None:
 
     dot_git_ignore_content = dot_git_ignore_path.read_text(encoding="utf-8")
     entries_to_add: list[str] = []
-    required_entries: list[str] = [
-        ".links",
-        "notebooks",
-        ".ai",
-        "GEMINI.md",
-        "CLAUDE.md",
-        "CRUSH.md",
-        "AGENTS.md",
-        ".cursor",
-        ".clinerules",
-        ".github/instructions",
-        ".github/agents",
-        ".github/prompts",
-    ]
-
-    for entry in required_entries:
+    from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
+    for entry in EXCLUDE_DIRS:
         if entry not in dot_git_ignore_content:
             entries_to_add.append(entry)
 

@@ -5,7 +5,12 @@ Utils
 import machineconfig
 from pathlib import Path
 
-EXCLUDE_DIRS = [".links", ".ai", ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__", ".mypy_cache"]
+EXCLUDE_DIRS = [".links", "notebooks",
+                "GEMINI.md", "CLAUDE.md", "CRUSH.md", "AGENTS.md",
+                ".cursor", ".clinerules", ".github/instructions", ".github/agents", ".github/prompts",
+                ".ai",
+                ".venv", ".git", ".idea", ".vscode", "node_modules", "__pycache__", ".mypy_cache"
+                ]
 LIBRARY_ROOT = Path(machineconfig.__file__).resolve().parent
 
 CONFIG_ROOT = Path.home().joinpath(".config/machineconfig")
