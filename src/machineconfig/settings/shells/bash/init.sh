@@ -90,10 +90,10 @@ eval "$(zoxide init bash)"
 eval "$(starship init bash)"
 
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
-if command -v atuin &> /dev/null; then
-    eval "$(atuin init bash)"
-elif command -v mcfly &> /dev/null; then
+if command -v mcfly &> /dev/null; then
     eval "$(mcfly init bash)"
+elif command -v atuin &> /dev/null; then
+    eval "$(atuin init bash)"
 else
     # eval "$(tv init bash)"
     tv_shell_history() {
