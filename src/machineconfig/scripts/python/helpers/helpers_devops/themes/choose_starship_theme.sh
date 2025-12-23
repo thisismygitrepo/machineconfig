@@ -31,9 +31,9 @@ preview_cmd="preset=\$(echo '{}' | cut -f1); starship preset \"\$preset\" > $pre
 
 if command -v tv &> /dev/null; then
     # tv requires input from stdin if no source-command is given
-    selected_line=$(echo "$input_data" | tv --ansi --preview-command "$preview_cmd" --preview-size 50)
+    selected_line=$(printf "%s" "$input_data" | tv --ansi --preview-command "$preview_cmd" --preview-size 50)
 elif command -v fzf &> /dev/null; then
-    selected_line=$(echo "$input_data" | fzf --ansi --delimiter $'\t' --with-nth 1,2 --preview "preset={1}; starship preset \$preset > $preview_config && LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 STARSHIP_CONFIG=$preview_config STARSHIP_SHELL=fish starship prompt" --preview-window bottom:30%)
+    selected_line=$(printf "%s" "$input_data" | fzf --ansi --delimiter $'\t' --with-nth 1,2 --preview "preset={1}; starship preset \"\$preset\" > $preview_config && LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 STARSHIP_CONFIG=$preview_config STARSHIP_SHELL=fish starship prompt" --preview-window bottom:30%)
 else
     echo "Error: 'tv' or 'fzf' not found."
     exit 1
