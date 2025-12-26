@@ -151,6 +151,10 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             if not Path.home().joinpath("dotfiles").exists():
                 console.print("❌ Dotfiles directory still not found after attempted import. Exiting...", style="bold red")
                 sys.exit(1)
+            # devops config public --method  symlink --on-conflict overwrite-default-path
+            # devops config private --method symlink --on-conflict overwrite-default-path
+            from machineconfig.profile.create_links_export import main_private_from_parser
+            main_private_from_parser(method="symlink", on_conflict="overwrite-default-path", which="all", interactive=False)
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))

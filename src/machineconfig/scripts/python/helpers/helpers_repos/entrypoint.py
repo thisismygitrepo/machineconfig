@@ -13,6 +13,8 @@ def resolve_directory(directory: Optional[str]) -> Path:
         directory = Path.cwd().as_posix()
         typer.echo(f"📁 Using directory: {directory}")
     return Path(directory).expanduser().absolute()
+
+
 def git_operations(
     directory: Optional[str],
     *,
@@ -58,6 +60,7 @@ def resolve_spec_path(directory: Optional[str], cloud: Optional[str]) -> Path:
         f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
     )
     return repos_root
+
 def clone_from_specs(
     directory: Optional[str],
     cloud: Optional[str],

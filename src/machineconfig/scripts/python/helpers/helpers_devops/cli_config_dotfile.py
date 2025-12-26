@@ -203,6 +203,11 @@ def import_dotfiles(
         zipfile_path.unlink()
     zipfile_path.write_bytes(zipfile_bytes)
     print(f"✅ Decrypted zip file saved to: {zipfile_path}")
+    import zipfile
+    with zipfile.ZipFile(zipfile_path, 'r') as zip_ref:
+        zip_ref.extractall(Path.home())
+    print(f"✅ Dotfiles extracted to: {Path.home().joinpath('dotfiles')}")
+    zipfile_path.unlink()
 
 
 def arg_parser() -> None:
