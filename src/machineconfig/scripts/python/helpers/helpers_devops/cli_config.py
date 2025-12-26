@@ -78,6 +78,12 @@ def get_app():
     config_apps.command("b", no_args_is_help=True, help="Manage public configuration files.", hidden=True)(create_links_export.main_public_from_parser)
     config_apps.command("dotfile", no_args_is_help=True, help="🔗 [d] Manage dotfiles.")(dotfile_module.main)
     config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile_module.main)
+
+    config_apps.command("export-dotfiles", no_args_is_help=True, help="🔗 [e] Export dotfiles for migration to new machine.")(dotfile_module.export_dotfiles)
+    config_apps.command("e", no_args_is_help=True, help="Export dotfiles for migration to new machine.", hidden=True)(dotfile_module.export_dotfiles)
+    config_apps.command("import-dotfiles", no_args_is_help=False, help="🔗 [i] Import dotfiles from exported archive.")(dotfile_module.import_dotfiles)
+    config_apps.command("i", no_args_is_help=False, help="Import dotfiles from exported archive.", hidden=True)(dotfile_module.import_dotfiles)
+
     config_apps.command("shell", no_args_is_help=False, help="🔗 [s] Configure your shell profile.")(configure_shell_profile)
     config_apps.command("s", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(configure_shell_profile)
     config_apps.command("starship-theme", no_args_is_help=False, help="🔗 [t] Select starship prompt theme.")(starship_theme)

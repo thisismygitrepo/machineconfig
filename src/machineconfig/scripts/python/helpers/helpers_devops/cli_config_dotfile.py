@@ -116,6 +116,95 @@ def main(
         console.print(Panel(f"📝 Mapping recorded in: [cyan]{mapper_file}[/cyan]\n[{section}]\n{entry_name} = {{ original = '{orig_display}', self_managed = '{new_display}' }}", title="Mapper Entry Saved", border_style="cyan", padding=(1, 2),))
 
 
+def export_dotfiles(
+        pwd: Annotated[str, typer.Argument(..., help="Password for zip encryption")],
+        over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Use internet-based transfer (wormhole-magic)")] = False,
+        over_ssh: Annotated[bool, typer.Option("--over-ssh", "-s", help="Use SSH-based transfer (scp) to a remote machine")] = False,
+        ):
+    """🔗 Export dotfiles for migration to new machine."""
+    if over_ssh:
+        code_sample = """ftpx ~/dotfiles user@remote_host:^ -z"""
+        print("🔗 Exporting dotfiles via SSH-based transfer (scp).")
+        print(f"💡 Run the following command on your local machine to copy dotfiles to the remote machine:\n{code_sample}")
+        remote_address = typer.prompt("Enter the remote machine address (user@host) to copy dotfiles to ")
+        code_concrete = f"fptx ~/dotfiles {remote_address}:^ -z"
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(code_concrete)
+    dotfiles_dir = Path.home().joinpath("dotfiles")
+    if not dotfiles_dir.exists() or not dotfiles_dir.is_dir():
+        print(f"❌ Dotfiles directory does not exist: {dotfiles_dir}")
+        raise typer.Exit(code=1)
+    dotfiles_zip = Path.home().joinpath("dotfiles.zip")
+    if dotfiles_zip.exists():
+        dotfiles_zip.unlink()
+    import shutil
+    zipfile = shutil.make_archive(base_name=str(dotfiles_zip)[:-4], format="zip", root_dir=str(dotfiles_dir), base_dir=".", verbose=False)
+    from machineconfig.utils.io import encrypt
+    zipfile_enc_bytes = encrypt(
+        msg=Path(zipfile).read_bytes(),
+        pwd=pwd,
+    )
+    Path(zipfile).unlink()
+    zipfile_enc_path = Path(f"{zipfile}.enc")
+    if zipfile_enc_path.exists():
+        zipfile_enc_path.unlink()
+    zipfile_enc_path.write_bytes(zipfile_enc_bytes)
+    print(f"✅ Dotfiles exported to: {zipfile_enc_path}")
+    if over_internet:
+        # rm ~/dotfiles.zip || true
+        # ouch c ~/dotfiles dotfiles.zip
+        # # INSECURE OVER INTERNET: uvx wormhole-magic send ~/dotfiles.zip
+        raise NotImplementedError("Internet-based transfer not yet implemented.")
+    else:
+        # devops network share-server --no-auth ./dotfiles.zip
+        import machineconfig.scripts.python.helpers.helpers_devops.cli_share_server as cli_share_server
+        cli_share_server.web_file_explorer(
+            path=str(zipfile_enc_path),
+            no_auth=True,
+            # bind_address="
+        )
+
+
+def import_dotfiles(
+        # url: Annotated[str, typer.Argument(..., help="URL or local path to the encrypted dotfiles zip")],
+        # pwd: Annotated[str, typer.Argument(..., help="Password for zip decryption")],
+        use_ssh: Annotated[bool, typer.Option("--use-ssh", "-s", help="Use SSH-based transfer (scp) from a remote machine that has dotfiles.")]=False,
+        ):  
+    # # INSECURE cd $HOME; uvx wormhole-magic receive dotfiles.zip.enc --accept-file
+    # ☁️  [bold blue]Method 3: USING INTERNET SECURE SHARE[/bold blue]
+    #     [dim]cd ~
+    #     cloud copy SHARE_URL . --config ss[/dim]
+    if use_ssh:
+        print("🔗 Importing dotfiles via SSH-based transfer (scp).")
+        code = """fptx $USER@$(hostname):^ ~/dotfiles -z"""
+        print(f"💡 Run the following command on the remote machine that has the dotfiles:\n{code}")
+        url = typer.prompt("Enter the remote machine address (user@host) to copy dotfiles from ")
+        code_concrete = f"fptx {url}:^ ~/dotfiles -z"
+        from machineconfig.utils.code import run_shell_script
+        run_shell_script(code_concrete)
+        print("✅ Dotfiles copied via SSH.")
+        return
+
+    url = typer.prompt("Enter the URL or local path to the encrypted dotfiles zip (e..g 192.168.20.4:8888) ")
+    pwd = typer.prompt("Enter the password for zip decryption", hide_input=True)
+    from machineconfig.scripts.python.helpers.helpers_utils.download import download
+    downloaded_file = download(url=url, decompress=False, output_dir=str(Path.home()))
+    if downloaded_file is None or not downloaded_file.exists():
+        print(f"❌ Failed to download file from URL: {url}")
+        raise typer.Exit(code=1)
+    zipfile_enc_path = downloaded_file
+    from machineconfig.utils.io import decrypt
+    zipfile_bytes = decrypt(
+        token=zipfile_enc_path.read_bytes(),
+        pwd=pwd,
+    )
+    zipfile_path = Path(str(zipfile_enc_path)[:-4])
+    if zipfile_path.exists():
+        zipfile_path.unlink()
+    zipfile_path.write_bytes(zipfile_bytes)
+    print(f"✅ Decrypted zip file saved to: {zipfile_path}")
+
+
 def arg_parser() -> None:
     typer.run(main)
 

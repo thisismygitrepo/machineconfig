@@ -476,7 +476,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
         verbose: bool = True,
         content: bool = False,
         orig: bool = False,
-        pwd: Optional[str] = None,
         mode: FILE_MODE = "w",
         **kwargs: Any,
     ) -> "PathExtended":
@@ -493,7 +492,6 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             path_resolved = PathExtended(op_zip)
         else:
             import shutil
-
             if content:
                 root_dir, base_dir = slf, "."
             else:
@@ -501,7 +499,7 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             base_name = str(path_resolved)[:-4] if str(path_resolved).endswith(".zip") else str(path_resolved)
             op_zip = shutil.make_archive(base_name=base_name, format="zip", root_dir=str(root_dir), base_dir=str(base_dir), verbose=False, **kwargs)
             path_resolved = PathExtended(op_zip)
-        msg = f"ZIPPED {repr(slf)} ==>  {repr(path)}"
+        msg = f"ZIPPED {repr(slf)} ==> {repr(path_resolved)}"
         res_out = PathExtended(path_resolved)
         ret = self if orig else res_out
         delayed_msg = ""

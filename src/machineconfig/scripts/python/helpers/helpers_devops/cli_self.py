@@ -102,13 +102,15 @@ def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets
     from machineconfig.utils.code import run_shell_script, get_uv_command, get_shell_script_running_lambda_function, exit_then_run_shell_script
     from pathlib import Path
     import platform
+    mcfg_path = Path.home().joinpath("code/machineconfig")
     _ = run_shell_script
-    if dev and not Path.home().joinpath("code/machineconfig").exists():
+    if dev and not mcfg_path.exists():
         # clone: https://github.com/thisismygitrepo/machineconfig.git
         import git
-        repo_parent = Path.home().joinpath("code")
-        repo_parent.mkdir(parents=True, exist_ok=True)
-        git.Repo.clone_from("https://github.com/thisismygitrepo/machineconfig.git", str(repo_parent.joinpath("machineconfig")))
+        mcfg_path.parent.mkdir(parents=True, exist_ok=True)
+        git.Repo.clone_from("https://github.com/thisismygitrepo/machineconfig.git", str(mcfg_path))
+        # now we need to run `uv sync` to install dependencies
+
     uv_command = get_uv_command(platform=platform.system())
     if copy_assets:
         def func():
@@ -118,9 +120,11 @@ def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets
                                                           uv_with=["machineconfig"], uv_project_dir=None)
     else:
         uv_command2 = ""
-    if Path.home().joinpath("code/machineconfig").exists():
+    if mcfg_path.exists():
         exit_then_run_shell_script(f"""
-{uv_command} tool install --upgrade --editable "{str(Path.home().joinpath("code/machineconfig"))}"
+cd {str(mcfg_path)}
+{uv_command} sync
+{uv_command} tool install --upgrade --editable "{str(mcfg_path)}"
 {uv_command2}
 """)
     else:

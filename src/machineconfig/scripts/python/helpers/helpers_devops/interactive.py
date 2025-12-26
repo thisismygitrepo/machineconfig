@@ -2,16 +2,6 @@
 """
 Interactive Machine Configuration Setup Script
 
-A Python version of the interactive installation script that uses questionary
-for better user experience with checkbox selections.
-
-
-# echo # 📧 Thunderbird Setup Note:
-# Run after installing Thunderbird and starting it once:
-# cd ~/AppData/Roaming/ThunderBird/Profiles
-# $res = ls
-# $name = $res[0].Name
-# mv $backup_folder $name
 
 
 """
@@ -62,45 +52,6 @@ def display_header() -> None:
     console.print()
     console.print(Align.center(Text(bug_report, style="dim white")))
     console.print()
-def display_completion_message() -> None:
-    completion_text = Text("INSTALLATION COMPLETE", style="bold green")
-    subtitle_text = Text("System setup finished successfully", style="italic green")
-    console.print(Panel(f"✨ {completion_text}\n{subtitle_text}\n\n🎉 Your system has been configured successfully!\n🔄 You may need to reboot to apply all changes.", border_style="green", padding=(1, 2)))
-def display_dotfiles_instructions() -> None:
-    header_text = Text("DOTFILES MIGRATION", style="bold yellow")
-    subtitle_text = Text("Configuration transfer options", style="italic yellow")
-    instructions = """
-    On remote, run:
-    rm ~/dotfiles.zip || true
-    ouch c ~/dotfiles dotfiles.zip --password rew
-    # INSECURE OVER INTERNET: uvx wormhole-magic send ~/dotfiles.zip
-    # LOCAL NETWORK:
-    devops network share-server --no-auth ./dotfiles.zip
-    On new machine, run:
-    # INSECURE cd $HOME; uvx wormhole-magic receive dotfiles.zip --accept-file
-    cd $HOME;
-    rm ~/dotfiles.zip || true
-    utils download $URL
-    ouch d ~/dotfiles.zip
-
-🖱️  [bold blue]Method 1: USING MOUSE WITHOUT KB OR BROWSER SHARE[/bold blue]
-    On original machine, run:
-    [dim]cd ~/dotfiles/creds/msc
-    easy-sharing . --password rew --username al[/dim]
-    Then open brave on new machine to get MouseWithoutBorders password
-
-🔐 [bold blue]Method 2: USING SSH[/bold blue]
-    FROM REMOTE, RUN:
-    [dim]fptx ~/dotfiles $USER@$(hostname):^ -z
-    # OR, using IP address if router has not yet found the hostname:
-    fptx ~/dotfiles $USER@$(hostname -I | awk '{print $1}'):^ -z[/dim]
-
-☁️  [bold blue]Method 3: USING INTERNET SECURE SHARE[/bold blue]
-    [dim]cd ~
-    cloud copy SHARE_URL . --config ss[/dim]
-    (requires symlinks to be created first)
-    """
-    console.print(Panel(f"📂 {header_text}\n{subtitle_text}\n\n{instructions}", border_style="yellow", padding=(1, 2)))
 
 
 def get_installation_choices() -> list[str]:
@@ -165,6 +116,42 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         except Exception as e:
             console.print(f"❌ Error configuring shell profile: {e}", style="bold red")
 
+    if "retrieve_repositories" in selected_options or "retrieve_data" in selected_options:
+        # we cannot proceed before dotfiles are in place
+        if Path.home().joinpath("dotfiles").exists():
+            console.print("✅ Dotfiles directory found.", style="bold green")
+        else:
+            header_text = Text("DOTFILES MIGRATION", style="bold yellow")
+            subtitle_text = Text("Configuration transfer options", style="italic yellow")
+            instructions = """
+            On remote, run:
+            devops config export-dotfiles --password pwd
+            On new machine, run:
+            devops config import-dotfiles --password pwd
+            """
+            console.print(Panel(f"📂 {header_text}\n{subtitle_text}\n\n{instructions}", border_style="yellow", padding=(1, 2)))
+            options: list[str] = [
+                "I have sorted out dotfiles migration already and want to proceed.",
+                "Exit now and sort out dotfiles migration first.",
+                "I already exposed dotfiles over LAN, let's fetch them now.",
+                "I wanted to bring them using SSH SCP now.",
+            ]
+            answer = questionary.select("⚠️  DOTFILES NOT FOUND. How do you want to proceed?", choices=options).ask()
+            if answer == options[0]:
+                console.print("✅ Proceeding as per user confirmation.", style="bold green")
+            elif answer == options[1]:
+                console.print("❌ Exiting for dotfiles migration.", style="bold red")
+                sys.exit(0)
+            elif answer == options[2]:
+                from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import import_dotfiles
+                import_dotfiles(use_ssh=False)
+            elif answer == options[3]:
+                from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import import_dotfiles
+                import_dotfiles(use_ssh=True)
+            if not Path.home().joinpath("dotfiles").exists():
+                console.print("❌ Dotfiles directory still not found after attempted import. Exiting...", style="bold red")
+                sys.exit(1)
+
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
         from machineconfig.scripts.python.helpers.helpers_devops import cli_repos
@@ -179,6 +166,12 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             console.print("✅ Backup data retrieved successfully", style="bold green")
         except Exception as e:
             console.print(f"❌ Error retrieving backup data: {e}", style="bold red")
+    # echo # 📧 Thunderbird Setup Note:
+    # Run after installing Thunderbird and starting it once:
+    # cd ~/AppData/Roaming/ThunderBird/Profiles
+    # $res = ls
+    # $name = $res[0].Name
+    # mv $backup_folder $name
 
 
 def main() -> None:
@@ -193,7 +186,10 @@ def main() -> None:
         console.print("❌ Installation cancelled.", style="bold red")
         sys.exit(0)
     execute_installations(selected_options=selected_options)
-    display_completion_message()
+    completion_text = Text("INSTALLATION COMPLETE", style="bold green")
+    subtitle_text = Text("System setup finished successfully", style="italic green")
+    console.print(Panel(f"✨ {completion_text}\n{subtitle_text}\n\n🎉 Your system has been configured successfully!\n🔄 You may need to reboot to apply all changes.", border_style="green", padding=(1, 2)))
+
     from machineconfig.utils.code import exit_then_run_shell_script
     if platform.system() == "Windows":
         reload_init_script = "pwsh $PROFILE"

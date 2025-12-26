@@ -85,7 +85,9 @@ sudo nala install build-essential python3-dev -y || true  # C build toolchain: W
 sudo nala install unzip -y  # required by bun installer
 curl -fsSL https://bun.com/install | bash
 . ~/.bashrc || true
-sudo ln -s $(which bun) /usr/local/bin/node  # trick programs that expect node to use bun runtime.
+# sudo ln -s $(which bun) /usr/local/bin/node  # trick programs that expect node to use bun runtime.
+sudo ln -s ~/.bun/bin/bun /usr/local/bin/node
+
 
 sudo nala install samba -y || true
 sudo nala install fuse3 -y || true
