@@ -63,8 +63,6 @@ def record_mapping(orig_path: Path, new_path: Path, method: Literal["symlink", "
 
 
 def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "public", "b"], destination: Optional[str], shared: bool) -> Path:
-    from rich.console import Console
-    console = Console()
     match sensitivity:
         case "private" | "v":
             backup_root = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
@@ -83,9 +81,6 @@ def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "publi
         else:
             dest_path = Path(destination).expanduser().absolute()
             new_path = dest_path.joinpath(orig_path.name)
-    if not orig_path.exists() and not new_path.exists():
-        console.print(f"[red]Error:[/] Neither original file nor self-managed file exists:\n  Original: {orig_path}\n  Self-managed: {new_path}")
-        raise typer.Exit(code=1)
     return new_path
 
 
@@ -105,6 +100,9 @@ def main(
     console = Console()
     orig_path = Path(file).expanduser().absolute()
     new_path = get_backup_path(orig_path=orig_path, sensitivity=sensitivity, destination=destination, shared=shared)
+    if not orig_path.exists() and not new_path.exists():
+        console.print(f"[red]Error:[/] Neither original file nor self-managed file exists:\n  Original: {orig_path}\n  Self-managed: {new_path}")
+        raise typer.Exit(code=1)
     new_path.parent.mkdir(parents=True, exist_ok=True)
     match method:
         case "copy" | "c":

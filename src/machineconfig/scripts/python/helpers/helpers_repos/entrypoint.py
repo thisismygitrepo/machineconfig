@@ -51,11 +51,10 @@ def clone_from_specs(
     from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
     spec_path_self_managed = get_backup_path(
         orig_path=spec_path_default,
-        sensitivity="v",
+        sensitivity="private",
         destination=None,
         shared=False,
     )
-
     from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
     clone_repos(
         spec_path=spec_path_self_managed,

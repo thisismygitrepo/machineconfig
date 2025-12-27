@@ -244,14 +244,21 @@ def main_record(repos_root_str: Optional[str]):
     print(tree_structure)
 
     spec_path_default = Path(repos_root).expanduser().absolute().joinpath("repos.json")
-    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path, record_mapping
     spec_path_self_managed = get_backup_path(
         orig_path=spec_path_default,
-        sensitivity="v",
+        sensitivity="private",
         destination=None,
         shared=False,
     )
     save_json(obj=res, path=spec_path_self_managed, indent=4)
     pprint(f"📁 Result saved at {PathExtended(spec_path_self_managed)}")
+
+    # record_mapping(
+    #     orig_path=spec_path_default,
+
+    # )
+    _ = record_mapping
+
     print(">>>>>>>>> Finished Recording")
     return spec_path_self_managed
