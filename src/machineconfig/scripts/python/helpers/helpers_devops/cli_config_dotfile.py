@@ -225,6 +225,10 @@ def import_dotfiles(
     zipfile_path.write_bytes(zipfile_bytes)
     print(f"✅ Decrypted zip file saved to: {zipfile_path}")
     import zipfile
+    if Path.home().joinpath("dotfiles").exists():
+        print(f"⚠️  WARNING: Overwriting existing directory: {Path.home().joinpath('dotfiles')}")
+        import shutil
+        shutil.rmtree(Path.home().joinpath("dotfiles"))
     with zipfile.ZipFile(zipfile_path, 'r') as zip_ref:
         zip_ref.extractall(Path.home().joinpath("dotfiles"))
     print(f"✅ Dotfiles extracted to: {Path.home().joinpath('dotfiles')}")
