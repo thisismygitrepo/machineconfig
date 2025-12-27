@@ -22,7 +22,7 @@ def download(
     if output is not None and output_dir is not None:
         typer.echo("❌ Error: --output and --output-dir cannot be used together.", err=True)
         return None
-    typer.echo(f"📥 Downloading from: {url}")
+    typer.echo(f"    {url}")
 
     def _sanitize_candidate_filename(name: str) -> Optional[str]:
         candidate = Path(name).name.strip()

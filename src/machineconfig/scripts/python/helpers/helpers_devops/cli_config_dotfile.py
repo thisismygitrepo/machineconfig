@@ -172,7 +172,7 @@ def export_dotfiles(
         localipv4 = select_lan_ipv4(prefer_vpn=False)
         port = 8888
         msg = f"""On the remote machine, run the following:
-d c i -u {localipv4}:{port} -p {pwd}
+d c i -u http://{localipv4}:{port} -p {pwd}
 """
         from machineconfig.utils.accessories import display_with_flashy_style
         display_with_flashy_style(msg=msg, title="Remote Machine Instructions",)
@@ -220,12 +220,13 @@ def import_dotfiles(
     )
     zipfile_path = Path(str(zipfile_enc_path)[:-4])
     if zipfile_path.exists():
+        print(f"⚠️  WARNING: Overwriting existing file: {zipfile_path}")
         zipfile_path.unlink()
     zipfile_path.write_bytes(zipfile_bytes)
     print(f"✅ Decrypted zip file saved to: {zipfile_path}")
     import zipfile
     with zipfile.ZipFile(zipfile_path, 'r') as zip_ref:
-        zip_ref.extractall(Path.home())
+        zip_ref.extractall(Path.home().joinpath("dotfiles"))
     print(f"✅ Dotfiles extracted to: {Path.home().joinpath('dotfiles')}")
     zipfile_path.unlink()
 
