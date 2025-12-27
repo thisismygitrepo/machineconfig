@@ -14,7 +14,6 @@ from machineconfig.scripts.python.helpers.helpers_repos.cloud_repo_sync import m
 DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]
 RecursiveOption = Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")]
 UVsyncOption = Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")]
-CloudOption = Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️ Upload to or download from this cloud remote.")]
 
 
 def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
@@ -42,33 +41,25 @@ def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def capture(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
+def capture(directory: DirectoryArgument = None) -> None:
     """📝 Record repositories into a repos.json specification."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
-    repos_root = resolve_directory(directory)
     from machineconfig.scripts.python.helpers.helpers_repos.record import main_record as record_repos
-    save_path = record_repos(repos_root=repos_root)
-    from machineconfig.utils.path_extended import PathExtended
-    if cloud is not None:
-        PathExtended(save_path).to_cloud(rel2home=True, cloud=cloud)
+    save_path = record_repos(repos_root_str=directory)
+    print(f"\n✅ Saved repository specification to {save_path}")
 
 
-def clone(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
+def clone(directory: DirectoryArgument = None) -> None:
     """📥 Clone repositories described by a repos.json specification."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs
-    clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=False)
-
-
-def checkout_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
+    clone_from_specs(directory, checkout_branch_flag=False, checkout_commit_flag=False)
+def checkout_command(directory: DirectoryArgument = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs    
-    clone_from_specs(directory, cloud, checkout_branch_flag=False, checkout_commit_flag=True)
-
-
-def checkout_to_branch_command(directory: DirectoryArgument = None, cloud: CloudOption = None) -> None:
+    clone_from_specs(directory, checkout_branch_flag=False, checkout_commit_flag=True)
+def checkout_to_branch_command(directory: DirectoryArgument = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs
-    clone_from_specs(directory, cloud, checkout_branch_flag=True, checkout_commit_flag=False)
+    clone_from_specs(directory, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
 def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):

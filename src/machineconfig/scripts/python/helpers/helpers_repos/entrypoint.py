@@ -3,8 +3,6 @@
 
 from typing import Optional
 from pathlib import Path
-from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
-
 import typer
 
 
@@ -36,44 +34,31 @@ def git_operations(
         recursive=recursive,
         auto_uv_sync=auto_uv_sync,
     )
-def resolve_spec_path(directory: Optional[str], cloud: Optional[str]) -> Path:
-    repos_root = resolve_directory(directory)
-    from machineconfig.utils.path_extended import PathExtended
-    if not repos_root.exists() or repos_root.name != "repos.json":
-        relative_repos_root = PathExtended(repos_root).expanduser().absolute().relative_to(Path.home())
-        candidate = Path(CONFIG_ROOT).joinpath("repos").joinpath(relative_repos_root).joinpath("repos.json")
-        repos_root = candidate
-        if not repos_root.exists():
-            cloud_name: Optional[str]
-            if cloud is None:
-                from machineconfig.utils.io import read_ini
-                cloud_name = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
-                typer.echo(f"⚠️ Using default cloud: {cloud_name}")
-            else:
-                cloud_name = cloud
-            assert cloud_name is not None, (
-                f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
-            )
-            from machineconfig.utils.path_extended import PathExtended
-            PathExtended(repos_root).from_cloud(cloud=cloud_name, rel2home=True)
-    assert repos_root.exists() and repos_root.name == "repos.json", (
-        f"Path {repos_root} does not exist and cloud was not passed. You can't clone without one of them."
-    )
-    return repos_root
+
 
 def clone_from_specs(
     directory: Optional[str],
-    cloud: Optional[str],
     *,
     checkout_branch_flag: bool,
     checkout_commit_flag: bool,
 ) -> None:
     
     typer.echo("\n📥 Cloning or checking out repositories...")
-    spec_path = resolve_spec_path(directory, cloud)
+    # spec_path = resolve_spec_path(directory, cloud)
+    # /home/alex/code/machineconfig/src/machineconfig/scripts/python/helpers/helpers_devops/cli_config_dotfile.py
+    dir_obj = resolve_directory(directory)
+    spec_path_default = dir_obj.joinpath("repos.json")
+    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+    spec_path_self_managed = get_backup_path(
+        orig_path=spec_path_default,
+        sensitivity="v",
+        destination=None,
+        shared=False,
+    )
+
     from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
     clone_repos(
-        spec_path=spec_path,
+        spec_path=spec_path_self_managed,
         preferred_remote=None,
         checkout_branch_flag=checkout_branch_flag,
         checkout_commit_flag=checkout_commit_flag,

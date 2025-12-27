@@ -3,7 +3,6 @@ from pathlib import Path
 from machineconfig.utils.schemas.repos.repos_types import GitVersionInfo, RepoRecordDict, RepoRemote
 
 from machineconfig.utils.schemas.repos.repos_types import RepoRecordFile
-from machineconfig.utils.source_of_truth import CONFIG_ROOT
 from machineconfig.utils.io import save_json
 
 from typing import Optional
@@ -12,7 +11,7 @@ from rich import print as pprint
 from rich.progress import Progress, TaskID, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn, MofNCompleteColumn
 
 
-def build_tree_structure(repos: list[RepoRecordDict], repos_root: PathExtended) -> str:
+def build_tree_structure(repos: list[RepoRecordDict], repos_root: Path) -> str:
     """Build a tree structure representation of all repositories."""
     if not repos:
         return "No repositories found."
@@ -186,10 +185,12 @@ def record_repos_recursively(repos_root: str, r: bool, progress: Progress | None
     return res
 
 
-def main_record(repos_root: Path):
+def main_record(repos_root_str: Optional[str]):
     print("\n📝 Recording repositories...")
-    repos_root = PathExtended(repos_root).expanduser().absolute()
 
+    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
+    repos_root = resolve_directory(directory=repos_root_str)
+    
     # Count total directories and repositories for accurate progress tracking
     print("🔍 Analyzing directory structure...")
     total_dirs = count_total_directories(str(repos_root), r=True)
@@ -222,7 +223,7 @@ def main_record(repos_root: Path):
     if repos_with_no_remotes:
         print(f"\n⚠️  WARNING: {len(repos_with_no_remotes)} repositories have no remotes configured:")
         for repo in repos_with_no_remotes:
-            repo_path = PathExtended(repo["parentDir"]).joinpath(repo["name"])
+            repo_path = Path(repo["parentDir"]).joinpath(repo["name"])
             print(f"   • {repo['name']} ({repo_path})")
         print("   These repositories may be local-only or have configuration issues.")
     else:
@@ -231,7 +232,7 @@ def main_record(repos_root: Path):
     if dirty_repos:
         print(f"\n⚠️  WARNING: {len(dirty_repos)} repositories have uncommitted changes:")
         for repo in dirty_repos:
-            repo_path = PathExtended(repo["parentDir"]).joinpath(repo["name"])
+            repo_path = Path(repo["parentDir"]).joinpath(repo["name"])
             print(f"   • {repo['name']} ({repo_path}) [branch: {repo['currentBranch']}]")
         print("   These repositories have uncommitted changes that may need attention.")
     else:
@@ -239,12 +240,18 @@ def main_record(repos_root: Path):
 
     # Display repository tree structure
     print("\n🌳 Repository Tree Structure:")
-    tree_structure = build_tree_structure(repo_records, repos_root)
+    tree_structure = build_tree_structure(repos=repo_records, repos_root=repos_root)
     print(tree_structure)
 
-    relative_repos_root = PathExtended(repos_root).expanduser().absolute().relative_to(Path.home())
-    save_path = CONFIG_ROOT.joinpath("repos").joinpath(relative_repos_root).joinpath("repos.json")
-    save_json(obj=res, path=save_path, indent=4)
-    pprint(f"📁 Result saved at {PathExtended(save_path)}")
+    spec_path_default = Path(repos_root).expanduser().absolute().joinpath("repos.json")
+    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+    spec_path_self_managed = get_backup_path(
+        orig_path=spec_path_default,
+        sensitivity="v",
+        destination=None,
+        shared=False,
+    )
+    save_json(obj=res, path=spec_path_self_managed, indent=4)
+    pprint(f"📁 Result saved at {PathExtended(spec_path_self_managed)}")
     print(">>>>>>>>> Finished Recording")
-    return save_path
+    return spec_path_self_managed
