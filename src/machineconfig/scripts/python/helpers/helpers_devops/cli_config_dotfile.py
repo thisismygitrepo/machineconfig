@@ -170,14 +170,16 @@ def export_dotfiles(
         import machineconfig.scripts.python.helpers.helpers_devops.cli_share_server as cli_share_server
         from  machineconfig.scripts.python.helpers.helpers_network.address import select_lan_ipv4
         localipv4 = select_lan_ipv4(prefer_vpn=False)
+        port = 8888
         msg = f"""On the remote machine, run the following:
-d c i -u {localipv4} -p {pwd}
+d c i -u {localipv4}:{port} -p {pwd}
 """
         from machineconfig.utils.accessories import display_with_flashy_style
         display_with_flashy_style(msg=msg, title="Remote Machine Instructions",)
         cli_share_server.web_file_explorer(
             path=str(zipfile_enc_path),
             no_auth=True,
+            port=port,
             # bind_address="
         )
 
