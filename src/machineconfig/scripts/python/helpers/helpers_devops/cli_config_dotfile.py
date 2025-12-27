@@ -168,6 +168,13 @@ def export_dotfiles(
     else:
         # devops network share-server --no-auth ./dotfiles.zip
         import machineconfig.scripts.python.helpers.helpers_devops.cli_share_server as cli_share_server
+        from  machineconfig.scripts.python.helpers.helpers_network.address import select_lan_ipv4
+        localipv4 = select_lan_ipv4(prefer_vpn=False)
+        msg = f"""On the remote machine, run the following:
+d c i -u {localipv4} -p {pwd}
+"""
+        from machineconfig.utils.accessories import display_with_flashy_style
+        display_with_flashy_style(msg=msg, title="Remote Machine Instructions",)
         cli_share_server.web_file_explorer(
             path=str(zipfile_enc_path),
             no_auth=True,
@@ -176,8 +183,8 @@ def export_dotfiles(
 
 
 def import_dotfiles(
-        # url: Annotated[str, typer.Argument(..., help="URL or local path to the encrypted dotfiles zip")],
-        # pwd: Annotated[str, typer.Argument(..., help="Password for zip decryption")],
+        url: Annotated[Optional[str], typer.Option(..., "--url", "-u", help="URL or local path to the encrypted dotfiles zip")] = None,
+        pwd: Annotated[Optional[str], typer.Option(..., "--pwd", "-p", help="Password for zip decryption")] = None,
         use_ssh: Annotated[bool, typer.Option("--use-ssh", "-s", help="Use SSH-based transfer (scp) from a remote machine that has dotfiles.")]=False,
         ):  
     # # INSECURE cd $HOME; uvx wormhole-magic receive dotfiles.zip.enc --accept-file
@@ -194,9 +201,10 @@ def import_dotfiles(
         run_shell_script(code_concrete)
         print("✅ Dotfiles copied via SSH.")
         return
-
-    url = typer.prompt("Enter the URL or local path to the encrypted dotfiles zip (e..g 192.168.20.4:8888) ")
-    pwd = typer.prompt("Enter the password for zip decryption", hide_input=True)
+    if url is None:
+        url = typer.prompt("Enter the URL or local path to the encrypted dotfiles zip (e..g 192.168.20.4:8888) ")
+    if pwd is None:
+        pwd = typer.prompt("Enter the password for zip decryption", hide_input=True)
     from machineconfig.scripts.python.helpers.helpers_utils.download import download
     downloaded_file = download(url=url, decompress=False, output_dir=str(Path.home()))
     if downloaded_file is None or not downloaded_file.exists():

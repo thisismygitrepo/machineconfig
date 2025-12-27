@@ -1,35 +1,8 @@
 from pathlib import Path
 from typing import Optional, Annotated
 from machineconfig.scripts.python.helpers.helpers_devops.cli_share_file import share_file_receive, share_file_send
+from machineconfig.utils.accessories import display_with_flashy_style
 import typer
-
-
-def display_share_url(local_ip_v4: str, port: int, protocol: str = "http") -> None:
-    """Display a flashy, unmissable share URL announcement."""
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.text import Text
-    from rich.align import Align
-    console = Console()
-    # Create the main message with styling
-    url_text = Text(f"{protocol}://{local_ip_v4}:{port}", style="bold bright_cyan underline")
-    message = Text.assemble(
-        ("🚀 ", "bright_red"),
-        ("Share server is now accessible at: ", "bright_white bold"),
-        url_text,
-        (" 🚀", "bright_red")
-    )
-    # Create a fancy panel with borders and styling
-    panel = Panel(
-        Align.center(message),
-        title="[bold bright_green]🌐 SHARE SERVER READY 🌐[/bold bright_green]",
-        subtitle="[italic bright_yellow]⚡ Click the link above to access your shared files! ⚡[/italic bright_yellow]",
-        border_style="bright_magenta",
-        padding=(1, 2),
-        expand=False
-    )
-    # Print with extra spacing and attention-grabbing elements
-    console.print(panel)
 
 
 def web_file_explorer(
@@ -73,7 +46,7 @@ def web_file_explorer(
     local_ip_v4 = res
 
     protocol = "http"
-    display_share_url(local_ip_v4, port, protocol)
+    display_with_flashy_style(msg=f"{protocol}://{local_ip_v4}:{port}/", title="Local Network Share URL")
     
     path_obj = Path(path).resolve()
     if not path_obj.exists():

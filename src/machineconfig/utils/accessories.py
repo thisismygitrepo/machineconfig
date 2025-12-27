@@ -110,3 +110,27 @@ def get_repo_root(path: "Path") -> Optional["Path"]:
 
 if __name__ == "__main__":
     from pathlib import Path
+
+
+def display_with_flashy_style(msg: str, title: str) -> None:
+    """Display a flashy, unmissable share URL announcement."""
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.text import Text
+    from rich.align import Align
+    console = Console()
+    url_text = Text(msg, style="bold bright_cyan underline")
+    message = Text.assemble(
+        ("🚀 ", "bright_red"),
+        url_text,
+        (" 🚀", "bright_red")
+    )
+    panel = Panel(
+        Align.center(message),
+        title=f"[bold bright_green]🌐 {title} 🌐[/bold bright_green]",
+        subtitle="[italic bright_yellow]⚡ Click the link above to access your shared files! ⚡[/italic bright_yellow]",
+        border_style="bright_magenta",
+        padding=(1, 2),
+        expand=False
+    )
+    console.print(panel)
