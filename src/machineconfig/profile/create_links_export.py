@@ -1,6 +1,6 @@
 
 import typer
-from typing import Literal, Annotated, TypeAlias
+from typing import Literal, Annotated, Optional, TypeAlias
 
 
 ON_CONFLICT_LOOSE: TypeAlias = Literal[
@@ -32,8 +32,7 @@ def main_from_parser(
     method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
     repo: Annotated[REPO_LOOSE, typer.Option(..., "--repo", "-r", help="Mapper source to use for config files.")] = "library",
     on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-    which: Annotated[str, typer.Option(..., "--which", "-w", help="Specific items to process")] = "all",
-    interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False,
+    which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
 ):
     """Terminology:
     SOURCE = Self-Managed-Config-File-Path
@@ -55,8 +54,7 @@ def main_from_parser(
     sensitivity_key = sensitivity_map[sensitivity]
     repo_key = repo_map[repo]
     mapper_full = read_mapper(repo=repo)[sensitivity_key]
-    if interactive:
-        assert which == "all", "Cannot use --which in interactive mode."
+    if which is None:
         from machineconfig.utils.options import choose_from_options
         options = list(mapper_full.keys())
         print(f"Available options: {options}")

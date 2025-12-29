@@ -107,7 +107,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             create_default_shell_profile()
             console.print("✅ Shell profile configured successfully", style="bold green")
             from machineconfig.profile.create_links_export import main_from_parser
-            main_from_parser(sensitivity="public", method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
+            main_from_parser(sensitivity="public", method="copy", on_conflict="overwrite-default-path", which="all")
             if platform.system() == "Windows":
                 from machineconfig.jobs.installer.python_scripts.nerfont_windows_helper import install_nerd_fonts
                 install_nerd_fonts()
@@ -154,7 +154,7 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             # devops config sync --sensitivity public --method symlink --on-conflict overwrite-default-path
             # devops config sync --sensitivity private --method symlink --on-conflict overwrite-default-path
             from machineconfig.profile.create_links_export import main_from_parser
-            main_from_parser(sensitivity="private", method="symlink", on_conflict="overwrite-default-path", which="all", interactive=False)
+            main_from_parser(sensitivity="private", method="symlink", on_conflict="overwrite-default-path", which="all")
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
