@@ -8,21 +8,21 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 1 Custom Method
 
-### 1. `src/machineconfig/scripts/python/helpers_cloud/cloud_mount.py`
+### 1. `src/machineconfig/scripts/python/helpers/helpers_cloud/cloud_mount.py`
 - `.print()` - Print path
 - `PathExtended(path)` - Constructor
 
-### 2. `src/machineconfig/scripts/python/helpers_croshell/pomodoro.py`
+### 2. `src/machineconfig/scripts/python/helpers/helpers_croshell/pomodoro.py`
 - `.tmpfile()` - Create temporary file
 
-### 3. `src/machineconfig/scripts/python/helpers_croshell/scheduler.py`
+### 3. `src/machineconfig/scripts/python/helpers/helpers_croshell/scheduler.py`
 - `.append()` - Append suffix/name
 
-### 4. `src/machineconfig/scripts/python/helpers_devops/cli_repos.py`
+### 4. `src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py`
 - `.to_cloud()` - Upload to cloud storage
 - `PathExtended(path)` - Constructor
 
-### 5. `src/machineconfig/scripts/python/helpers_repos/entrypoint.py`
+### 5. `src/machineconfig/scripts/python/helpers/helpers_repos/entrypoint.py`
 - `.from_cloud()` - Download from cloud storage
 - `PathExtended(path)` - Constructor
 
@@ -41,11 +41,11 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `.print()` - Print path
 - `.with_suffix()` - Change file extension
 
-### 9. `src/machineconfig/scripts/python/helpers_croshell/viewer.py`
+### 9. `src/machineconfig/scripts/python/helpers/helpers_croshell/viewer.py`
 - `.split()` - Split path
 - `.tmpdir()` - Get temporary directory
 
-### 10. `src/machineconfig/scripts/python/helpers_repos/action.py`
+### 10. `src/machineconfig/scripts/python/helpers/helpers_repos/action.py`
 - `.append()` - Append suffix/name
 - `.search()` - Search for files matching pattern
 
@@ -80,19 +80,19 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `.split()` - Split path
 - `PathExtended(path)` - Constructor
 
-### 16. `src/machineconfig/scripts/python/helpers_cloud/helpers2.py`
+### 16. `src/machineconfig/scripts/python/helpers/helpers_cloud/helpers2.py`
 - `.get_remote_path()` - Get cloud storage path
 - `.print()` - Print path
 - `.split()` - Split path
 - `PathExtended(path)` - Constructor
 
-### 17. `src/machineconfig/scripts/python/helpers_repos/record.py`
+### 17. `src/machineconfig/scripts/python/helpers/helpers_repos/record.py`
 - `.append()` - Append suffix/name
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.search()` - Search for files matching pattern
 - `PathExtended(path)` - Constructor
 
-### 18. `src/machineconfig/scripts/python/helpers_repos/sync.py`
+### 18. `src/machineconfig/scripts/python/helpers/helpers_repos/sync.py`
 - `.delete()` - Delete files/directories
 - `.print()` - Print path
 - `.to_cloud()` - Upload to cloud storage
@@ -115,67 +115,61 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 4 Custom Methods
 
-### 22. `.ai/tmp_scripts/generate_pathextended_report.py`
-- `.append()` - Append suffix/name
-- `.search()` - Search for files matching pattern
-- `.split()` - Split path
-- `.tmpfile()` - Create temporary file
-
-### 23. `src/machineconfig/cluster/remote/distribute.py`
+### 22. `src/machineconfig/cluster/remote/distribute.py`
 - `.append()` - Append suffix/name
 - `.print()` - Print path
 - `.readit()` - Read file content (Custom)
 - `.split()` - Split path
 
-### 24. `src/machineconfig/cluster/remote/script_execution.py`
+### 23. `src/machineconfig/cluster/remote/script_execution.py`
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.copy()` - Copy files
 - `.print()` - Print path
 - `.tmp()` - Get temp directory/file
 
-### 25. `src/machineconfig/jobs/installer/python_scripts/hx.py`
+### 24. `src/machineconfig/jobs/installer/python_scripts/hx.py`
 - `.copy()` - Copy files
 - `.delete()` - Delete files/directories
 - `.move()` - Move files
 - `.print()` - Print path
 - `PathExtended(path)` - Constructor
 
-### 26. `src/machineconfig/scripts/python/helpers_croshell/start_slidev.py`
+### 25. `src/machineconfig/scripts/python/helpers/helpers_croshell/start_slidev.py`
 - `.copy()` - Copy files
 - `.print()` - Print path
 - `.split()` - Split path
 - `.with_name()` - Rename file
 - `PathExtended(path)` - Constructor
 
-### 27. `src/machineconfig/scripts/python/helpers_network/ssh_add_identity.py`
+### 26. `src/machineconfig/scripts/python/helpers/helpers_network/ssh_add_identity.py`
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.print()` - Print path
 - `.split()` - Split path
 - `.with_name()` - Rename file
 - `PathExtended(path)` - Constructor
 
-### 28. `src/machineconfig/scripts/python/helpers_repos/grource.py`
+### 27. `src/machineconfig/scripts/python/helpers/helpers_repos/grource.py`
 - `.append()` - Append suffix/name
 - `.download()` - Download from URL
 - `.resolve()` - Resolve path
 - `.split()` - Split path
 - `PathExtended(path)` - Constructor
 
-### 29. `src/machineconfig/settings/wt/set_wt_settings.py`
+### 28. `src/machineconfig/settings/wt/set_wt_settings.py`
 - `.append()` - Append suffix/name
 - `.copy()` - Copy files
 - `.print()` - Print path
 - `.split()` - Split path
 - `PathExtended(path)` - Constructor
 
-### 30. `src/machineconfig/utils/installer_utils/installer_runner.py`
+### 29. `src/machineconfig/utils/installer_utils/installer_runner.py`
 - `.append()` - Append suffix/name
 - `.delete()` - Delete files/directories
 - `.print()` - Print path
 - `.resolve()` - Resolve path
 - `PathExtended(path)` - Constructor
 
-### 31. `src/machineconfig/utils/scheduling.py`
+### 30. `src/machineconfig/utils/scheduling.py`
 - `.append()` - Append suffix/name
 - `.print()` - Print path
 - `.split()` - Split path
@@ -183,21 +177,21 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 5 Custom Methods
 
-### 32. `src/machineconfig/cluster/remote/file_manager.py`
+### 31. `src/machineconfig/cluster/remote/file_manager.py`
 - `.append()` - Append suffix/name
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.print()` - Print path
 - `.readit()` - Read file content (Custom)
 - `.with_suffix()` - Change file extension
 
-### 33. `src/machineconfig/cluster/remote/job_params.py`
+### 32. `src/machineconfig/cluster/remote/job_params.py`
 - `.append()` - Append suffix/name
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.listdir()` - List directory (Custom)
 - `.readit()` - Read file content (Custom)
 - `.split()` - Split path
 
-### 34. `src/machineconfig/scripts/python/helpers_devops/devops_status.py`
+### 33. `src/machineconfig/scripts/python/helpers/helpers_devops/devops_status.py`
 - `.append()` - Append suffix/name
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.print()` - Print path
@@ -205,7 +199,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `.with_suffix()` - Change file extension
 - `PathExtended(path)` - Constructor
 
-### 35. `src/machineconfig/scripts/python/helpers_repos/cloud_repo_sync.py`
+### 34. `src/machineconfig/scripts/python/helpers/helpers_repos/cloud_repo_sync.py`
 - `.delete()` - Delete files/directories
 - `.from_cloud()` - Download from cloud storage
 - `.get_remote_path()` - Get cloud storage path
@@ -213,7 +207,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `.to_cloud()` - Upload to cloud storage
 - `PathExtended(path)` - Constructor
 
-### 36. `src/machineconfig/utils/installer_utils/installer_helper.py`
+### 35. `src/machineconfig/utils/installer_utils/installer_helper.py`
 - `.append()` - Append suffix/name
 - `.decompress()` - Decompress archives
 - `.delete()` - Delete files/directories
@@ -221,7 +215,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `.print()` - Print path
 - `PathExtended(path)` - Constructor
 
-### 37. `src/machineconfig/utils/installer_utils/installer_locator_utils.py`
+### 36. `src/machineconfig/utils/installer_utils/installer_locator_utils.py`
 - `.chmod()` - Change file permissions
 - `.delete()` - Delete files/directories
 - `.move()` - Move files
@@ -231,7 +225,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 7 Custom Methods
 
-### 38. `src/machineconfig/utils/links.py`
+### 37. `src/machineconfig/utils/links.py`
 - `.append()` - Append suffix/name
 - `.copy()` - Copy files
 - `.delete()` - Delete files/directories
@@ -243,7 +237,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 8 Custom Methods
 
-### 39. `src/machineconfig/cluster/remote/remote_machine.py`
+### 38. `src/machineconfig/cluster/remote/remote_machine.py`
 - `.append()` - Append suffix/name
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.delete()` - Delete files/directories
@@ -253,7 +247,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 - `.split()` - Split path
 - `.to_cloud()` - Upload to cloud storage
 
-### 40. `src/machineconfig/jobs/installer/check_installations.py`
+### 39. `src/machineconfig/jobs/installer/checks/check_installations.py`
 - `.append()` - Append suffix/name
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.download()` - Download from URL
@@ -265,7 +259,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 9 Custom Methods
 
-### 41. `src/machineconfig/cluster/remote/cloud_manager.py`
+### 40. `src/machineconfig/cluster/remote/cloud_manager.py`
 - `.append()` - Append suffix/name
 - `.copy()` - Copy files
 - `.delete()` - Delete files/directories
@@ -278,7 +272,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 10 Custom Methods
 
-### 42. `src/machineconfig/cluster/remote/data_transfer.py`
+### 41. `src/machineconfig/cluster/remote/data_transfer.py`
 - `.as_url_str()` - Convert path to URL string
 - `.collapseuser()` - Collapse home directory to placeholder
 - `.decrypt_n_unzip()` - Decrypt and unzip
@@ -292,7 +286,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 12 Custom Methods
 
-### 43. `src/machineconfig/scripts/python/helpers_cloud/cloud_copy.py`
+### 42. `src/machineconfig/scripts/python/helpers/helpers_cloud/cloud_copy.py`
 - `.as_url_str()` - Convert path to URL string
 - `.decrypt()` - Decrypt file
 - `.delete()` - Delete files/directories
@@ -309,7 +303,7 @@ Files are ordered from least to most use of custom methods (not inherited method
 
 ## 25 Custom Methods
 
-### 44. `src/machineconfig/utils/path_extended.py`
+### 43. `src/machineconfig/utils/path_extended.py`
 - `.append()` - Append suffix/name
 - `.as_url_str()` - Convert path to URL string
 - `.as_zip_path()` - Get zip path

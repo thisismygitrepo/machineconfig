@@ -16,7 +16,7 @@ from pathlib import Path
 import tomllib
 
 
-OPTIONS = Literal["BACKUP", "RETRIEVE"]
+DIRECTION = Literal["BACKUP", "RETRIEVE"]
 
 LIBRARY_BACKUP_PATH = LIBRARY_ROOT.joinpath("profile/backup.toml")
 USER_BACKUP_PATH = Path.home().joinpath("dotfiles/machineconfig/backup.toml")
@@ -256,7 +256,7 @@ def register_backup_entry(
     return USER_BACKUP_PATH, entry_name, replaced
 
 
-def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str], repo: Literal["library", "l", "user", "u", "all", "a"]) -> None:
+def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Optional[str], repo: Literal["library", "l", "user", "u", "all", "a"]) -> None:
     console = Console()
     if cloud is None or not cloud.strip():
         try:
@@ -324,9 +324,9 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
         ))
         flag_arg = f" -{flags}" if flags else ""
         if direction == "BACKUP":
-            program += f"""\ncloud_copy "{local_path}" "{remote_spec}"{flag_arg}\n"""
+            program += f"""\ncloud copy "{local_path}" "{remote_spec}"{flag_arg}\n"""
         elif direction == "RETRIEVE":
-            program += f"""\ncloud_copy "{remote_spec}" "{local_path}"{flag_arg}\n"""
+            program += f"""\ncloud copy "{remote_spec}" "{local_path}"{flag_arg}\n"""
         else:
             console.print(Panel('❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either "BACKUP" or "RETRIEVE"', title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
             raise RuntimeError(f"Unknown direction: {direction}")

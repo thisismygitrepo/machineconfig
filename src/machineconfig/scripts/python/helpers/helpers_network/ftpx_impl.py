@@ -199,7 +199,7 @@ def _handle_cloud_transfer(ssh: "SSH", resolved_source: Optional[str], resolved_
             border_style="cyan",
         )
     )
-    ssh.run_shell_cmd_on_remote(command=f"cloud_copy {resolved_source} :^", verbose_output=True, description="Uploading from remote to the cloud.", strict_stderr=False, strict_return_code=False)
+    ssh.run_shell_cmd_on_remote(command=f"cloud copy {resolved_source} :^", verbose_output=True, description="Uploading from remote to the cloud.", strict_stderr=False, strict_return_code=False)
     console.print(
         Panel.fit(
             "⬇️  Cloud transfer mode — downloading from cloud to local...",
@@ -207,7 +207,7 @@ def _handle_cloud_transfer(ssh: "SSH", resolved_source: Optional[str], resolved_
             border_style="cyan",
         )
     )
-    ssh.run_shell_cmd_on_local(command=f"cloud_copy :^ {resolved_target}")
+    ssh.run_shell_cmd_on_local(command=f"cloud copy :^ {resolved_target}")
     return PathExtended(resolved_target)  # type: ignore
 
 
@@ -253,3 +253,11 @@ def _handle_direct_transfer(ssh: "SSH", resolved_source: Optional[str], resolved
         received_file = ssh.copy_from_here(source_path=resolved_source, target_rel2home=resolved_target, compress_with_zip=zipFirst, recursive=recursive, overwrite_existing=overwrite_existing)
 
     return received_file
+
+if __name__ == "__main__":
+    from machineconfig.utils.ssh import SSH
+    _ = SSH
+    from machineconfig.utils.path_extended import PathExtended
+    _ = PathExtended
+    from rich.console import Console
+    _ = Console
