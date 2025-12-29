@@ -11,8 +11,8 @@ ON_CONFLICT_LOOSE: TypeAlias = Literal[
     "backup-default-path", "bd"
     ]
 ON_CONFLICT_STRICT: TypeAlias = Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]
-SENSITIVITY_LOOSE: TypeAlias = Literal["private", "p", "public", "b",]
-REPO_LOOSE: TypeAlias = Literal["library", "l", "user", "i"]
+SENSITIVITY_LOOSE: TypeAlias = Literal["private", "p", "public", "b", "all", "a"]
+REPO_LOOSE: TypeAlias = Literal["library", "l", "user", "u"]
 ON_CONFLICT_MAPPER: dict[str, ON_CONFLICT_STRICT] = {
     "t": "throw-error",
     "os": "overwrite-self-managed",
@@ -45,15 +45,17 @@ def main_from_parser(
         "public": "public",
         "b": "public",
     }
-    repo_map: dict[str, Literal["library", "user"]] = {
+    repo_map: dict[str, Literal["library", "user", "all"]] = {
         "library": "library",
         "l": "library",
         "user": "user",
-        "i": "user",
+        "u": "user",
+        "a": "all",
+        "all": "all",
     }
     sensitivity_key = sensitivity_map[sensitivity]
     repo_key = repo_map[repo]
-    mapper_full = read_mapper(repo=repo)[sensitivity_key]
+    mapper_full = read_mapper(repo=repo_key)[sensitivity_key]
     if which is None:
         from machineconfig.utils.options import choose_from_options
         options = list(mapper_full.keys())

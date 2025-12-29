@@ -86,20 +86,29 @@ class MapperFileData(TypedDict):
     public: dict[str, list[ConfigMapper]]
     private: dict[str, list[ConfigMapper]]
 
-RepoLoose: TypeAlias = Literal["user", "library", "l", "i"]
+RepoLoose: TypeAlias = Literal["user", "library", "all"]
 
 
 def read_mapper(repo: RepoLoose) -> MapperFileData:
     repo_key = _normalize_repo_name(repo)
-    if repo_key == "user":
-        mapper_path = USER_MAPPER_PATH
-    elif repo_key == "library":
-        mapper_path = LIBRARY_MAPPER_PATH
-    else:
-        raise ValueError(f"Unsupported repo value: {repo}")
-
+    match repo_key:
+        case "user":
+            mapper_path = USER_MAPPER_PATH
+        case "library":
+            mapper_path = LIBRARY_MAPPER_PATH
+        case "all":
+            # Merge both mappers
+            if not USER_MAPPER_PATH.exists():
+                user_mapper = {"public": {}, "private": {}}
+            else:
+                user_mapper = read_mapper("user")
+            library_mapper = read_mapper("library")
+            merged_public: dict[str, list[ConfigMapper]] = {**library_mapper["public"], **user_mapper["public"]}
+            merged_private: dict[str, list[ConfigMapper]] = {**library_mapper["private"], **user_mapper["private"]}
+            return {"public": merged_public, "private": merged_private}
+        case _:
+            raise ValueError(f"Unsupported repo value: {repo}")
     mapper_data: dict[str, dict[str, Base]] = tomllib.loads(mapper_path.read_text(encoding="utf-8"))
-
     public: dict[str, list[ConfigMapper]] = {}
     private: dict[str, list[ConfigMapper]] = {}
     normalized_system = _normalize_os_name(SYSTEM)

@@ -89,6 +89,7 @@ def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "publi
             new_path = dest_path.joinpath(orig_path.name)
     return new_path
 
+
 def get_original_path_from_backup_path(backup_path: Path, sensitivity: Literal["private", "v", "public", "b"], destination: Optional[str], shared: bool) -> Path:
     match sensitivity:
         case "private" | "v":
