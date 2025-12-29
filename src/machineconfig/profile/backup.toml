@@ -2,53 +2,53 @@
 # locations to be backed up to the cloud.
 
 [thunderbird_windows]
-path = '~/AppData/Roaming/Thunderbird/Profiles'
-encrypt = 'True'
-zip = 'True'
-rel2home = 'True'
-os_specific = 'True'
+path_local = '~/AppData/Roaming/Thunderbird/Profiles'
+encrypt = true
+zip = true
+rel2home = true
+os_specific = true
 os = 'windows'
 
 
 [thunderbird_linux]
-path = '~/.thunderbird'
-encrypt = 'True'
-zip = 'True'
-rel2home = 'True'
-os_specific = 'True'
+path_local = '~/.thunderbird'
+encrypt = true
+zip = true
+rel2home = true
+os_specific = true
 os = 'linux'
 
 
 [zoxide_windows]
-path = '~/AppData/Local/zoxide/db.zo'
-encrypt = 'False'
-zip = 'False'
-rel2home = 'True'
-os_specific = 'True'
+path_local = '~/AppData/Local/zoxide/db.zo'
+encrypt = false
+zip = false
+rel2home = true
+os_specific = true
 os = 'windows'
 
 
 [zoxide_linux]
-path = '~/.local/share/zoxide/db.zo'
-encrypt = 'False'
-zip = 'False'
-rel2home = 'True'
-os_specific = 'True'
+path_local = '~/.local/share/zoxide/db.zo'
+encrypt = false
+zip = false
+rel2home = true
+os_specific = true
 os = 'linux'
 
 
 #[dotfiles]
-# path = '~/dotfiles'
-# encrypt = 'True'
-# zip = 'True'
-# rel2home = 'True'
-# os_specific = 'True'
+# path_local = '~/dotfiles'
+# encrypt = true
+# zip = true
+# rel2home = true
+# os_specific = true
 
 
 [ipython]
-path = '~/.ipython'
-encrypt = 'True'
-zip = 'True'
-rel2home = 'True'
-os_specific = 'False'
+path_local = '~/.ipython'
+encrypt = true
+zip = true
+rel2home = true
+os_specific = false
 os = 'any'
