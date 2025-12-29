@@ -62,13 +62,17 @@ def record_mapping(orig_path: Path, new_path: Path, method: Literal["symlink", "
     console.print(Panel(f"📝 Mapping recorded in: [cyan]{mapper_file}[/cyan]\n[{section}]\n{entry_name} = {{ original = '{orig_display}', self_managed = '{new_display}' }}", title="Mapper Entry Saved", border_style="cyan", padding=(1, 2),))
 
 
+backup_root_private = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
+from machineconfig.utils.source_of_truth import CONFIG_ROOT
+backup_root_public = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
+
+
 def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "public", "b"], destination: Optional[str], shared: bool) -> Path:
     match sensitivity:
         case "private" | "v":
-            backup_root = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
+            backup_root = backup_root_private
         case "public" | "b":
-            from machineconfig.utils.source_of_truth import CONFIG_ROOT
-            backup_root = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
+            backup_root = backup_root_public
     if destination is None:
         if shared:
             new_path = backup_root.joinpath("shared").joinpath(orig_path.name)
@@ -82,6 +86,27 @@ def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "publi
             dest_path = Path(destination).expanduser().absolute()
             new_path = dest_path.joinpath(orig_path.name)
     return new_path
+
+def get_original_path_from_backup_path(backup_path: Path, sensitivity: Literal["private", "v", "public", "b"], destination: Optional[str], shared: bool) -> Path:
+    match sensitivity:
+        case "private" | "v":
+            backup_root = backup_root_private
+        case "public" | "b":
+            backup_root = backup_root_public
+    if destination is None:
+        if shared:
+            relative_part = backup_path.relative_to(backup_root.joinpath("shared"))
+        else:
+            relative_part = backup_path.relative_to(backup_root)
+        original_path = Path.home().joinpath(relative_part)
+    else:
+        dest_path = Path(destination).expanduser().absolute()
+        if shared:
+            relative_part = backup_path.relative_to(dest_path.joinpath("shared"))
+        else:
+            relative_part = backup_path.relative_to(dest_path)
+        original_path = Path.home().joinpath(relative_part)
+    return original_path
 
 
 def main(

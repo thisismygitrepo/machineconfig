@@ -48,10 +48,31 @@ def capture(directory: DirectoryArgument = None) -> None:
     print(f"\n✅ Saved repository specification to {save_path}")
 
 
-def clone(directory: DirectoryArgument = None) -> None:
+def clone(directory: DirectoryArgument = None,
+          interactive: Annotated[bool, typer.Option("--interactive/--no-interactive", "-i/-ni", help="Select interactively.")]=False
+            ) -> None:
     """📥 Clone repositories described by a repos.json specification."""
+    if interactive:
+        from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import backup_root_private, backup_root_public, get_original_path_from_backup_path
+        results_public = list(backup_root_public.rglob("repos.json"))
+        results_private = list(backup_root_private.rglob("repos.json"))
+        if len(results_public) + len(results_private) == 0:
+            print("❌ No repos.json specifications found in backup directories.")
+            return
+        from machineconfig.utils.options import choose_from_options
+        chosen_files = choose_from_options(options=[str(p) for p in results_public + results_private], msg="Select a repos.json specification to clone from:", multi=True, tv=True)
+        for file in chosen_files:
+            from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs
+            if str(file).startswith(str(backup_root_private)):
+                original_path = get_original_path_from_backup_path(Path(file), sensitivity="private", destination=None, shared=False)
+            else:
+                original_path = get_original_path_from_backup_path(Path(file), sensitivity="public", destination=None, shared=False)
+            clone_from_specs(str(original_path), checkout_branch_flag=False, checkout_commit_flag=False)
+        return
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs
     clone_from_specs(directory, checkout_branch_flag=False, checkout_commit_flag=False)
+
+
 def checkout_command(directory: DirectoryArgument = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs    
