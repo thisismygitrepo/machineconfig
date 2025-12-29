@@ -110,23 +110,34 @@ def _parse_backup_config(raw: Mapping[str, object]) -> BackupConfig:
     return config
 
 
-def read_backup_config(which_backup: Literal["library", "user"]) -> BackupConfig:
+def read_backup_config(which_backup: Literal["library", "l", "user", "u", "all", "a"]) -> BackupConfig:
     # raw_config: dict[str, object] = tomllib.loads(LIBRARY_BACKUP_PATH.read_text(encoding="utf-8"))
     # bu_file = _parse_backup_config(raw_config)
     # console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_BACKUP_PATH}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
     match which_backup:
-        case "library":
+        case "library" | "l":
             path = LIBRARY_BACKUP_PATH
-        case "user":
+            raw_config: dict[str, object] = tomllib.loads(path.read_text(encoding="utf-8"))
+            bu_file = _parse_backup_config(raw_config)
+        case "user" | "u":
             path = USER_BACKUP_PATH
+            raw_config: dict[str, object] = tomllib.loads(path.read_text(encoding="utf-8"))
+            bu_file = _parse_backup_config(raw_config)
+        case "all" | "a":
+            console = Console()
+            console.print(Panel(f"🧰 LOADING LIBRARY BACKUP CONFIGURATION\n📄 File: {LIBRARY_BACKUP_PATH}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
+            raw_library: dict[str, object] = tomllib.loads(LIBRARY_BACKUP_PATH.read_text(encoding="utf-8"))
+            bu_library = _parse_backup_config(raw_library)
+            console.print(Panel(f"🧰 LOADING USER BACKUP CONFIGURATION\n📄 File: {USER_BACKUP_PATH}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
+            raw_user: dict[str, object] = tomllib.loads(USER_BACKUP_PATH.read_text(encoding="utf-8"))
+            bu_user = _parse_backup_config(raw_user)
+            bu_file = {**bu_library, **bu_user}
         case _:
-            raise RuntimeError(f"Unknown which_backup value: {which_backup}")
-    raw_config: dict[str, object] = tomllib.loads(path.read_text(encoding="utf-8"))
-    bu_file = _parse_backup_config(raw_config)
+            raise ValueError(f"Invalid which_backup value: {which_backup!r}.")
     return bu_file
 
 
-def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str], which_backup: Literal["library", "user"]) -> None:
+def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str], which_backup: Literal["library", "l", "user", "u", "all", "a"]) -> None:
     console = Console()
     if cloud is None or not cloud.strip():
         try:
