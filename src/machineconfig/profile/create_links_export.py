@@ -2,6 +2,7 @@
 import typer
 from typing import Literal, Annotated, TypeAlias
 
+
 ON_CONFLICT_LOOSE: TypeAlias = Literal[
     "throw-error", "t",
     "overwrite-self-managed", "os",
@@ -24,6 +25,7 @@ ON_CONFLICT_MAPPER: dict[str, ON_CONFLICT_STRICT] = {
     }
 
 
+
 def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for setting up the config file.")],
                             on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
                             which: Annotated[str, typer.Option(..., "--which", "-w", help="Specific items to process")] = "all",
@@ -33,7 +35,7 @@ def main_public_from_parser(method: Annotated[Literal["symlink", "s", "copy", "c
     TARGET = Config-File-Default-Path
     For public config files, the source always exists, because we know it comes from machineconfig repo."""
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
-    mapper_full = read_mapper()["public"]
+    mapper_full = read_mapper(repo="library")["public"]
     if interactive:
         assert which == "all", "Cannot use --which in interactive mode."
         from machineconfig.utils.options import choose_from_options
@@ -70,7 +72,7 @@ def main_private_from_parser(method: Annotated[Literal["symlink", "s", "copy", "
                              interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Run in interactive mode")] = False
                              ):
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
-    mapper_full = read_mapper()["private"]
+    mapper_full = read_mapper(repo="library")["private"]
     if interactive:
         from machineconfig.utils.options import choose_from_options
         options = list(mapper_full.keys())

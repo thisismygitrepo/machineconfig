@@ -9,7 +9,8 @@ import typer
 
 
 def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, self_managed_path: Path, method: Literal["symlink", "copy"], is_contents: bool, os_filter: str) -> Path:
-    mapper_path = Path.home().joinpath("dotfiles/machineconfig/mapper.toml")
+    from machineconfig.profile.create_links import USER_MAPPER_PATH
+    mapper_path = USER_MAPPER_PATH
     mapper_path.parent.mkdir(parents=True, exist_ok=True)
     if mapper_path.exists():
         content = mapper_path.read_text(encoding="utf-8")

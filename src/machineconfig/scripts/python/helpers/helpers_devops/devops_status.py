@@ -137,7 +137,7 @@ def _check_config_files_status() -> dict[str, Any]:
     from machineconfig.profile.create_links import read_mapper
 
     try:
-        mapper = read_mapper()
+        mapper = read_mapper(repo="library")
         public_configs = list(mapper.get("public", {}).keys())
         private_configs = list(mapper.get("private", {}).keys())
 

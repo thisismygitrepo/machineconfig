@@ -20,7 +20,11 @@ import platform
 import subprocess
 import tomllib
 from typing import Optional, Any, TypedDict, Literal
+from pathlib import Path
 
+
+LIBRARY_MAPPER_PATH = LIBRARY_ROOT.joinpath("profile/mapper.toml")
+USER_MAPPER_PATH  = Path.home().joinpath("dotfiles/machineconfig/mapper.toml")
 
 system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.
@@ -73,8 +77,15 @@ class ConfigMapper(TypedDict):
 class MapperFileData(TypedDict):
     public: dict[str, list[ConfigMapper]]
     private: dict[str, list[ConfigMapper]]
-def read_mapper() -> MapperFileData:
-    mapper_data: dict[str, dict[str, Base]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
+
+def read_mapper(repo: Literal["user", "library"]) -> MapperFileData:
+    if repo == "user":
+        mapper_path = USER_MAPPER_PATH
+    else:
+        mapper_path = LIBRARY_MAPPER_PATH
+
+    mapper_data: dict[str, dict[str, Base]] = tomllib.loads(mapper_path.read_text(encoding="utf-8"))
+
     public: dict[str, list[ConfigMapper]] = {}
     private: dict[str, list[ConfigMapper]] = {}
     normalized_system = _normalize_os_name(SYSTEM)
