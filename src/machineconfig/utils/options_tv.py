@@ -6,9 +6,10 @@ import pathlib
 import subprocess
 import tempfile
 import os
+from typing import Any
 
 
-def main(options_to_preview_mapping: dict[str, str]) -> str | None:
+def main(options_to_preview_mapping: dict[str, Any],) -> str | None:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
         return None
@@ -22,7 +23,7 @@ def main(options_to_preview_mapping: dict[str, str]) -> str | None:
             display_key = key.replace("\t", "    ").replace("\n", " ")
             entries.append(f"{idx}\t{display_key}")
             index_map[idx] = key
-            encoded_preview = base64.b64encode(options_to_preview_mapping[key].encode("utf-8")).decode("ascii")
+            encoded_preview = base64.b64encode(str(options_to_preview_mapping[key]).encode("utf-8")).decode("ascii")
             preview_rows.append(f"{idx}\t{encoded_preview}")
         preview_map_path.write_text("\n".join(preview_rows), encoding="utf-8")
         entries_path = tempdir / "entries.tsv"
@@ -66,7 +67,7 @@ name = "temp_options"
 description = "Temporary channel for selecting options"
 
 [source]
-command = "cat '{entries_path}'"
+command = "bat '{entries_path}'"
 display = "{{split:\\t:1}}"
 output = "{{split:\\t:0}}"
 
