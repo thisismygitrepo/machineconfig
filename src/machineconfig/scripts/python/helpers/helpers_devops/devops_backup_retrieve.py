@@ -110,7 +110,23 @@ def _parse_backup_config(raw: Mapping[str, object]) -> BackupConfig:
     return config
 
 
-def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str]) -> None:
+def read_backup_config(which_backup: Literal["library", "user"]) -> BackupConfig:
+    # raw_config: dict[str, object] = tomllib.loads(LIBRARY_BACKUP_PATH.read_text(encoding="utf-8"))
+    # bu_file = _parse_backup_config(raw_config)
+    # console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_BACKUP_PATH}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
+    match which_backup:
+        case "library":
+            path = LIBRARY_BACKUP_PATH
+        case "user":
+            path = USER_BACKUP_PATH
+        case _:
+            raise RuntimeError(f"Unknown which_backup value: {which_backup}")
+    raw_config: dict[str, object] = tomllib.loads(path.read_text(encoding="utf-8"))
+    bu_file = _parse_backup_config(raw_config)
+    return bu_file
+
+
+def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str], which_backup: Literal["library", "user"]) -> None:
     console = Console()
     if cloud is None or not cloud.strip():
         try:
@@ -123,10 +139,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
         cloud = cloud.strip()
         console.print(Panel(f"🌥️  Using provided cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
     assert cloud is not None
-    raw_config: dict[str, object] = tomllib.loads(LIBRARY_BACKUP_PATH.read_text(encoding="utf-8"))
-    bu_file = _parse_backup_config(raw_config)
-    console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_BACKUP_PATH}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
-
+    bu_file = read_backup_config(which_backup=which_backup)
     system_raw = system()
     normalized_system = _normalize_os_name(system_raw)
     bu_file = {
@@ -144,7 +157,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
 
     if which is None:
         console.print(Panel(f"🔍 SELECT {direction} ITEMS\n📋 Choose which configuration entries to process", title="[bold blue]Select Items[/bold blue]", border_style="blue"))
-        choices = choose_from_options(multi=True, msg=f"WHICH FILE of the following do you want to {direction}?", options=["all"] + list(bu_file.keys()))
+        choices = choose_from_options(multi=True, msg=f"WHICH FILE of the following do you want to {direction}?", options=["all"] + list(bu_file.keys()), tv=True)
     else:
         choices = which.split(",") if which else []
         console.print(Panel(f"🔖 PRE-SELECTED ITEMS\n📝 Using: {', '.join(choices)}", title="[bold blue]Pre-selected Items[/bold blue]", border_style="blue"))

@@ -7,11 +7,17 @@ def sync(
         direction: Annotated[Literal["up", "u", "down", "d"], typer.Argument(..., help="Direction of sync: backup or retrieve")],
         cloud: Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️  Cloud configuration name (rclone config name)")] = None,
         which: Annotated[Optional[str], typer.Option("--which", "-w", help="📝 Comma-separated list of items to BACKUP (from backup.toml), or 'all' for all items")] = None,
-        interactive: Annotated[bool, typer.Option("--interactive", "-i", help="🤔 Prompt the selection of which items to process")] = False,
+        which_backup: Annotated[Literal["library", "user"], typer.Option("--which-backup", "-b", help="📁 Which backup configuration to use: 'library' or 'user'")] = "library",
+        # interactive: Annotated[bool, typer.Option("--interactive", "-i", help="🤔 Prompt the selection of which items to process")] = False,
     ):
     
     from machineconfig.scripts.python.helpers.helpers_devops.devops_backup_retrieve import main_backup_retrieve
-    main_backup_retrieve(direction="BACKUP", which=which, cloud=cloud)
+    match direction:
+        case "up" | "u":
+            direction_resolved = "BACKUP"
+        case "down" | "d":
+            direction_resolved = "RETRIEVE"
+    main_backup_retrieve(direction=direction_resolved, which=which, cloud=cloud, which_backup=which_backup, )
 
 
 def get_app() -> typer.Typer:
