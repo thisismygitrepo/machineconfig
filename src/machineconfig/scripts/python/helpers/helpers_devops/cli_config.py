@@ -69,12 +69,11 @@ def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both"
     typer.echo(f"[red]Error:[/] Unknown asset type: {which}")
 
 
-
 def get_app():
     config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
-    config_apps.command("sync", no_args_is_help=True, help="🔗 Sync configuration files.")(create_links_export.main_from_parser)
-    config_apps.command("dotfile", no_args_is_help=True, help="🔗 [d] Manage dotfiles.")(dotfile_module.main)
-    config_apps.command("d", no_args_is_help=True,  hidden=True)(dotfile_module.main)
+    config_apps.command("sync", no_args_is_help=True, help="🔗 Sync dotfiles.")(create_links_export.main_from_parser)
+    config_apps.command("register", no_args_is_help=True, help="🔗 [r] Register dotfiles agains user mapper.toml")(dotfile_module.register_dotfile)
+    config_apps.command("r", no_args_is_help=True,  hidden=True)(dotfile_module.register_dotfile)
 
     config_apps.command("export-dotfiles", no_args_is_help=True, help="🔗 [e] Export dotfiles for migration to new machine.")(dotfile_module.export_dotfiles)
     config_apps.command("e", no_args_is_help=True, help="Export dotfiles for migration to new machine.", hidden=True)(dotfile_module.export_dotfiles)

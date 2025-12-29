@@ -11,7 +11,7 @@ ON_CONFLICT_LOOSE: TypeAlias = Literal[
     "backup-default-path", "bd"
     ]
 ON_CONFLICT_STRICT: TypeAlias = Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]
-SENSITIVITY_LOOSE: TypeAlias = Literal["private", "p", "public", "b"]
+SENSITIVITY_LOOSE: TypeAlias = Literal["private", "p", "public", "b",]
 REPO_LOOSE: TypeAlias = Literal["library", "l", "user", "i"]
 ON_CONFLICT_MAPPER: dict[str, ON_CONFLICT_STRICT] = {
     "t": "throw-error",

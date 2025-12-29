@@ -111,7 +111,7 @@ def get_original_path_from_backup_path(backup_path: Path, sensitivity: Literal["
     return original_path
 
 
-def main(
+def register_dotfile(
     file: Annotated[str, typer.Argument(help="file/folder path.")],
     method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")] = "copy",
     on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
@@ -264,7 +264,7 @@ def import_dotfiles(
 
 
 def arg_parser() -> None:
-    typer.run(main)
+    typer.run(register_dotfile)
 
 
 if __name__ == "__main__":
