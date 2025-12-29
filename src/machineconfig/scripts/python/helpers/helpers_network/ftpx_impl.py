@@ -7,7 +7,7 @@ from typing import Optional
 def ftpx(source: str, target: str, recursive: bool, zipFirst: bool, cloud: bool, overwrite_existing: bool) -> None:
     """File transfer utility through SSH."""
     if target == "wsl" or source == "wsl":
-        _handle_wsl_transfer(source=source, target=target, overwrite_existing=overwrite_existing, )
+        _handle_wsl_transfer(source=source, target=target, overwrite_existing=overwrite_existing)
         return
     elif source == "win" or target == "win":
         _handle_win_transfer(source=source, target=target, overwrite_existing=overwrite_existing, windows_username=None)
@@ -20,10 +20,7 @@ def ftpx(source: str, target: str, recursive: bool, zipFirst: bool, cloud: bool,
 
     console.print(
         Panel(
-            "\n".join([
-                "🚀 FTP File Transfer",
-                "📋 Starting transfer process...",
-            ]),
+            "\n".join(["🚀 FTP File Transfer", "📋 Starting transfer process..."]),
             title="Transfer Initialisation",
             border_style="blue",
             padding=(1, 2),
@@ -33,6 +30,7 @@ def ftpx(source: str, target: str, recursive: bool, zipFirst: bool, cloud: bool,
     resolved_source, resolved_target, machine, source_is_remote = _resolve_paths(source=source, target=target)
 
     from machineconfig.utils.accessories import pprint
+
     pprint({"source": str(resolved_source), "target": str(resolved_target), "machine": machine}, "CLI Resolution")
 
     ssh = _create_ssh_connection(machine=machine, console=console)
@@ -41,39 +39,31 @@ def ftpx(source: str, target: str, recursive: bool, zipFirst: bool, cloud: bool,
         received_file = _handle_cloud_transfer(ssh=ssh, resolved_source=resolved_source, resolved_target=resolved_target, console=console)
     else:
         received_file = _handle_direct_transfer(
-            ssh=ssh, resolved_source=resolved_source, resolved_target=resolved_target,
-            source_is_remote=source_is_remote, zipFirst=zipFirst, recursive=recursive,
-            overwrite_existing=overwrite_existing, console=console
+            ssh=ssh,
+            resolved_source=resolved_source,
+            resolved_target=resolved_target,
+            source_is_remote=source_is_remote,
+            zipFirst=zipFirst,
+            recursive=recursive,
+            overwrite_existing=overwrite_existing,
+            console=console,
         )
-
     if source_is_remote and received_file is not None:
-        from machineconfig.utils.path_extended import PathExtended
-        if isinstance(received_file, PathExtended):
-            console.print(
-                Panel(
-                    "\n".join([
-                        "📁 File Received",
-                        f"Parent: [cyan]{repr(received_file.parent)}[/cyan]",
-                        f"File: [cyan]{repr(received_file)}[/cyan]",
-                    ]),
-                    title="Transfer Result",
-                    border_style="green",
-                    padding=(1, 2),
-                )
+        console.print(
+            Panel(
+                "\n".join(["📁 File Received", f"Parent: [cyan]{repr(received_file.parent)}[/cyan]", f"File: [cyan]{repr(received_file)}[/cyan]"]),
+                title="Transfer Result",
+                border_style="green",
+                padding=(1, 2),
             )
-    console.print(
-        Panel(
-            "File transfer process finished successfully",
-            title="✅ Transfer Complete",
-            border_style="green",
-            padding=(1, 2),
         )
-    )
+    console.print(Panel("File transfer process finished successfully", title="✅ Transfer Complete", border_style="green", padding=(1, 2)))
 
 
 def _handle_wsl_transfer(source: str, target: str, overwrite_existing: bool) -> None:
     """Handle WSL transfer when inside Windows."""
     from machineconfig.utils.ssh_utils.wsl import copy_when_inside_windows
+
     if target == "wsl":
         target_obj = Path(source).expanduser().absolute().relative_to(Path.home())
         source_obj = target_obj
@@ -86,6 +76,7 @@ def _handle_wsl_transfer(source: str, target: str, overwrite_existing: bool) -> 
 def _handle_win_transfer(source: str, target: str, overwrite_existing: bool, windows_username: str | None) -> None:
     """Handle Windows transfer when inside WSL."""
     from machineconfig.utils.ssh_utils.wsl import copy_when_inside_wsl
+
     if source == "win":
         source_obj = Path(target).expanduser().absolute().relative_to(Path.home())
         target_obj = source_obj
@@ -171,47 +162,55 @@ def _create_ssh_connection(machine: str, console: "Console") -> "SSH":  # type: 
     except AuthenticationException:
         console.print(
             Panel(
-                "\n".join([
-                    "🔑 Authentication failed. Trying manual authentication...",
-                    "⚠️  Ensure that the username is provided correctly; only password prompts are handled here.",
-                ]),
+                "\n".join(
+                    [
+                        "🔑 Authentication failed. Trying manual authentication...",
+                        "⚠️  Ensure that the username is provided correctly; only password prompts are handled here.",
+                    ]
+                ),
                 title="Authentication Required",
                 border_style="yellow",
                 padding=(1, 2),
             )
         )
         import getpass
+
         pwd = getpass.getpass()
         ssh = SSH(host=rf"{machine}", username=None, hostname=None, ssh_key_path=None, password=pwd, port=22, enable_compression=True)
 
     return ssh
 
 
-def _handle_cloud_transfer(ssh: "SSH", resolved_source: Optional[str], resolved_target: Optional[str], console: "Console") -> Optional["PathExtended"]:  # type: ignore[name-defined]
+def _handle_cloud_transfer(
+    ssh: "SSH", resolved_source: Optional[str], resolved_target: Optional[str], console: "Console"
+) -> Optional["PathExtended"]:  # type: ignore[name-defined]
     """Handle cloud transfer mode."""
     from machineconfig.utils.path_extended import PathExtended
     from rich.panel import Panel
 
-    console.print(
-        Panel.fit(
-            "☁️  Cloud transfer mode — uploading from remote to cloud...",
-            title="Cloud Upload",
-            border_style="cyan",
-        )
+    console.print(Panel.fit("☁️  Cloud transfer mode — uploading from remote to cloud...", title="Cloud Upload", border_style="cyan"))
+    ssh.run_shell_cmd_on_remote(
+        command=f"cloud copy {resolved_source} :^",
+        verbose_output=True,
+        description="Uploading from remote to the cloud.",
+        strict_stderr=False,
+        strict_return_code=False,
     )
-    ssh.run_shell_cmd_on_remote(command=f"cloud copy {resolved_source} :^", verbose_output=True, description="Uploading from remote to the cloud.", strict_stderr=False, strict_return_code=False)
-    console.print(
-        Panel.fit(
-            "⬇️  Cloud transfer mode — downloading from cloud to local...",
-            title="Cloud Download",
-            border_style="cyan",
-        )
-    )
+    console.print(Panel.fit("⬇️  Cloud transfer mode — downloading from cloud to local...", title="Cloud Download", border_style="cyan"))
     ssh.run_shell_cmd_on_local(command=f"cloud copy :^ {resolved_target}")
     return PathExtended(resolved_target)  # type: ignore
 
 
-def _handle_direct_transfer(ssh: "SSH", resolved_source: Optional[str], resolved_target: Optional[str], source_is_remote: bool, zipFirst: bool, recursive: bool, overwrite_existing: bool, console: "Console") -> Optional["PathExtended"]:  # type: ignore[name-defined]
+def _handle_direct_transfer(
+    ssh: "SSH",
+    resolved_source: Optional[str],
+    resolved_target: Optional[str],
+    source_is_remote: bool,
+    zipFirst: bool,
+    recursive: bool,
+    overwrite_existing: bool,
+    console: "Console",
+) -> Optional["PathExtended"]:  # type: ignore[name-defined]
     """Handle direct SSH transfer."""
     from rich.panel import Panel
 
@@ -222,12 +221,14 @@ def _handle_direct_transfer(ssh: "SSH", resolved_source: Optional[str], resolved
         target_display = resolved_target or "<auto>"
         console.print(
             Panel(
-                "\n".join([
-                    "📥 Transfer Mode: Remote → Local",
-                    f"Source: [cyan]{resolved_source}[/cyan]",
-                    f"Target: [cyan]{target_display}[/cyan]",
-                    f"Options: {'ZIP compression' if zipFirst else 'No compression'}, {'Recursive' if recursive else 'Non-recursive'}",
-                ]),
+                "\n".join(
+                    [
+                        "📥 Transfer Mode: Remote → Local",
+                        f"Source: [cyan]{resolved_source}[/cyan]",
+                        f"Target: [cyan]{target_display}[/cyan]",
+                        f"Options: {'ZIP compression' if zipFirst else 'No compression'}, {'Recursive' if recursive else 'Non-recursive'}",
+                    ]
+                ),
                 title="Transfer Details",
                 border_style="cyan",
                 padding=(1, 2),
@@ -239,25 +240,37 @@ def _handle_direct_transfer(ssh: "SSH", resolved_source: Optional[str], resolved
         target_display = resolved_target or "<auto>"
         console.print(
             Panel(
-                "\n".join([
-                    "📤 Transfer Mode: Local → Remote",
-                    f"Source: [cyan]{resolved_source}[/cyan]",
-                    f"Target: [cyan]{target_display}[/cyan]",
-                    f"Options: {'ZIP compression' if zipFirst else 'No compression'}, {'Recursive' if recursive else 'Non-recursive'}",
-                ]),
+                "\n".join(
+                    [
+                        "📤 Transfer Mode: Local → Remote",
+                        f"Source: [cyan]{resolved_source}[/cyan]",
+                        f"Target: [cyan]{target_display}[/cyan]",
+                        f"Options: {'ZIP compression' if zipFirst else 'No compression'}, {'Recursive' if recursive else 'Non-recursive'}",
+                    ]
+                ),
                 title="Transfer Details",
                 border_style="cyan",
                 padding=(1, 2),
             )
         )
-        received_file = ssh.copy_from_here(source_path=resolved_source, target_rel2home=resolved_target, compress_with_zip=zipFirst, recursive=recursive, overwrite_existing=overwrite_existing)
+        received_file = ssh.copy_from_here(
+            source_path=resolved_source,
+            target_rel2home=resolved_target,
+            compress_with_zip=zipFirst,
+            recursive=recursive,
+            overwrite_existing=overwrite_existing,
+        )
 
     return received_file
 
+
 if __name__ == "__main__":
     from machineconfig.utils.ssh import SSH
+
     _ = SSH
     from machineconfig.utils.path_extended import PathExtended
+
     _ = PathExtended
     from rich.console import Console
+
     _ = Console
