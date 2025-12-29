@@ -2,6 +2,7 @@
 
 # import subprocess
 from collections.abc import Mapping
+import re
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT, DEFAULTS_PATH
 from machineconfig.utils.code import print_code
@@ -19,6 +20,7 @@ OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
 LIBRARY_BACKUP_PATH = LIBRARY_ROOT.joinpath("profile/backup.toml")
 USER_BACKUP_PATH = Path.home().joinpath("dotfiles/machineconfig/backup.toml")
+DEFAULT_BACKUP_HEADER = "# User-defined backup configuration\n# Created by `devops data register`\n"
 
 
 VALID_OS = {"any", "windows", "linux", "darwin"}
@@ -110,11 +112,11 @@ def _parse_backup_config(raw: Mapping[str, object]) -> BackupConfig:
     return config
 
 
-def read_backup_config(which_backup: Literal["library", "l", "user", "u", "all", "a"]) -> BackupConfig:
+def read_backup_config(repo: Literal["library", "l", "user", "u", "all", "a"]) -> BackupConfig:
     # raw_config: dict[str, object] = tomllib.loads(LIBRARY_BACKUP_PATH.read_text(encoding="utf-8"))
     # bu_file = _parse_backup_config(raw_config)
     # console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_BACKUP_PATH}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
-    match which_backup:
+    match repo:
         case "library" | "l":
             path = LIBRARY_BACKUP_PATH
             raw_config: dict[str, object] = tomllib.loads(path.read_text(encoding="utf-8"))
@@ -133,11 +135,128 @@ def read_backup_config(which_backup: Literal["library", "l", "user", "u", "all",
             bu_user = _parse_backup_config(raw_user)
             bu_file = {**bu_library, **bu_user}
         case _:
-            raise ValueError(f"Invalid which_backup value: {which_backup!r}.")
+            raise ValueError(f"Invalid which_backup value: {repo!r}.")
     return bu_file
 
 
-def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str], which_backup: Literal["library", "l", "user", "u", "all", "a"]) -> None:
+def _sanitize_entry_name(value: str) -> str:
+    token = value.strip().replace(".", "_").replace("-", "_")
+    token = re.sub(r"\s+", "_", token)
+    token = re.sub(r"[^A-Za-z0-9_]", "_", token)
+    return token or "backup_item"
+
+
+def _format_backup_entry_block(
+    entry_name: str,
+    path_local: str,
+    path_remote: Optional[str],
+    zip: bool,
+    encrypt: bool,
+    rel2home: bool,
+    os_specific: bool,
+    os_value: str,
+) -> str:
+    lines = [
+        f"[{entry_name}]",
+        f"path_local = '{path_local}'",
+    ]
+    if path_remote is not None:
+        lines.append(f"path_remote = '{path_remote}'")
+    lines.extend([
+        f"encrypt = {str(encrypt).lower()}",
+        f"zip = {str(zip).lower()}",
+        f"rel2home = {str(rel2home).lower()}",
+        f"os_specific = {str(os_specific).lower()}",
+        f"os = '{os_value}'",
+    ])
+    return "\n".join(lines)
+
+
+def _upsert_backup_entry(content: str, entry_name: str, entry_block: str) -> tuple[str, bool]:
+    header = f"[{entry_name}]"
+    lines = content.splitlines()
+    new_lines: list[str] = []
+    in_target = False
+    entry_written = False
+    replaced = False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            if in_target and new_lines and new_lines[-1].strip():
+                new_lines.append("")
+            in_target = False
+            if stripped == header:
+                if not entry_written:
+                    new_lines.extend(entry_block.splitlines())
+                    entry_written = True
+                replaced = True
+                in_target = True
+                continue
+            new_lines.append(line)
+            continue
+        if in_target:
+            continue
+        new_lines.append(line)
+    if not entry_written:
+        if new_lines and new_lines[-1].strip():
+            new_lines.append("")
+        new_lines.extend(entry_block.splitlines())
+    updated = "\n".join(new_lines).rstrip() + "\n"
+    return updated, replaced
+
+
+def register_backup_entry(
+    path_local: str,
+    entry_name: Optional[str] = None,
+    path_remote: Optional[str] = None,
+    zip: bool = True,
+    encrypt: bool = True,
+    rel2home: Optional[bool] = None,
+    os_specific: Optional[bool] = None,
+    os: str = "any",
+) -> tuple[Path, str, bool]:
+    local_path = Path(path_local).expanduser().absolute()
+    if not local_path.exists():
+        raise ValueError(f"Local path does not exist: {local_path}")
+    normalized_os = _normalize_os_name(os)
+    if normalized_os not in VALID_OS:
+        raise ValueError(f"Invalid os value: {os!r}. Expected one of: {sorted(VALID_OS)}")
+    home = Path.home()
+    in_home = local_path.is_relative_to(home)
+    if rel2home is None:
+        rel2home = in_home
+    if rel2home and not in_home:
+        raise ValueError("rel2home is true, but the local path is not under the home directory.")
+    if os_specific is None:
+        os_specific = normalized_os != "any"
+    if entry_name is None or not entry_name.strip():
+        base_name = _sanitize_entry_name(local_path.stem)
+        entry_name = f"{base_name}_{normalized_os}" if normalized_os != "any" else base_name
+    else:
+        entry_name = _sanitize_entry_name(entry_name)
+    local_display = f"~/{local_path.relative_to(home)}" if rel2home and in_home else local_path.as_posix()
+    remote_value = path_remote.strip() if path_remote and path_remote.strip() else None
+    entry_block = _format_backup_entry_block(
+        entry_name=entry_name,
+        path_local=local_display,
+        path_remote=remote_value,
+        zip=zip,
+        encrypt=encrypt,
+        rel2home=rel2home,
+        os_specific=os_specific,
+        os_value=normalized_os,
+    )
+    USER_BACKUP_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if USER_BACKUP_PATH.exists():
+        content = USER_BACKUP_PATH.read_text(encoding="utf-8")
+    else:
+        content = DEFAULT_BACKUP_HEADER
+    updated, replaced = _upsert_backup_entry(content=content, entry_name=entry_name, entry_block=entry_block)
+    USER_BACKUP_PATH.write_text(updated, encoding="utf-8")
+    return USER_BACKUP_PATH, entry_name, replaced
+
+
+def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str], repo: Literal["library", "l", "user", "u", "all", "a"]) -> None:
     console = Console()
     if cloud is None or not cloud.strip():
         try:
@@ -150,7 +269,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
         cloud = cloud.strip()
         console.print(Panel(f"🌥️  Using provided cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
     assert cloud is not None
-    bu_file = read_backup_config(which_backup=which_backup)
+    bu_file = read_backup_config(repo=repo)
     system_raw = system()
     normalized_system = _normalize_os_name(system_raw)
     bu_file = {

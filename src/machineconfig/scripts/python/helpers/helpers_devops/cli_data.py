@@ -7,7 +7,7 @@ def sync(
         direction: Annotated[Literal["up", "u", "down", "d"], typer.Argument(..., help="Direction of sync: backup or retrieve")],
         cloud: Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️  Cloud configuration name (rclone config name)")] = None,
         which: Annotated[Optional[str], typer.Option("--which", "-w", help="📝 Comma-separated list of items to BACKUP (from backup.toml), or 'all' for all items")] = None,
-        which_backup: Annotated[Literal["library", "l", "user", "u", "all", "a"], typer.Option("--which-backup", "-b", help="📁 Which backup configuration to use: 'library' or 'user'")] = "library",
+        repo: Annotated[Literal["library", "l", "user", "u", "all", "a"], typer.Option("--repo", "-r", help="📁 Which backup configuration to use: 'library' or 'user'")] = "library",
         # interactive: Annotated[bool, typer.Option("--interactive", "-i", help="🤔 Prompt the selection of which items to process")] = False,
     ):
     
@@ -17,7 +17,7 @@ def sync(
             direction_resolved = "BACKUP"
         case "down" | "d":
             direction_resolved = "RETRIEVE"
-    main_backup_retrieve(direction=direction_resolved, which=which, cloud=cloud, which_backup=which_backup, )
+    main_backup_retrieve(direction=direction_resolved, which=which, cloud=cloud, repo=repo, )
 
 
 def get_app() -> typer.Typer:
