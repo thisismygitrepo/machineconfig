@@ -1,7 +1,6 @@
 
 #!/usr/bin/env python3
 import base64
-import json
 import pathlib
 import pprint
 import shutil
@@ -11,15 +10,9 @@ import os
 from typing import Any
 
 
-def _format_preview_value(value: Any, extension: str | None) -> str:
+def _format_preview_value(value: Any) -> str:
     if isinstance(value, str):
         return value
-    normalized_extension = (extension or "").lower().lstrip(".")
-    if normalized_extension == "json":
-        try:
-            return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=True)
-        except (TypeError, ValueError):
-            pass
     return pprint.pformat(value, width=88, sort_dicts=True)
 
 
@@ -34,17 +27,34 @@ def _toml_inline_table(values: dict[str, str]) -> str:
     return "env = { " + ", ".join(parts) + " }\n"
 
 
+def _normalize_extension(extension: str | None) -> str | None:
+    if extension is None:
+        return None
+    trimmed = extension.strip()
+    if trimmed.startswith("."):
+        trimmed = trimmed[1:]
+    if not trimmed:
+        return None
+    return trimmed
+
+
+def _infer_extension_from_key(key: str) -> str | None:
+    if not isinstance(key, str):
+        return None
+    candidate = key.strip()
+    if not candidate or any(char.isspace() for char in candidate):
+        return None
+    suffix = pathlib.Path(candidate).suffix
+    if not suffix:
+        return None
+    return _normalize_extension(suffix)
+
+
 def main(options_to_preview_mapping: dict[str, Any], extension: str | None = None) -> str | None:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
         return None
-    normalized_extension = None
-    if extension is not None:
-        trimmed_extension = extension.strip()
-        if trimmed_extension.startswith("."):
-            trimmed_extension = trimmed_extension[1:]
-        if trimmed_extension:
-            normalized_extension = trimmed_extension
+    normalized_extension = _normalize_extension(extension)
     preview_panel_size = 50
     terminal_width = shutil.get_terminal_size(fallback=(120, 40)).columns
     preview_width = max(20, int(terminal_width * preview_panel_size / 100) - 4)
@@ -58,9 +68,10 @@ def main(options_to_preview_mapping: dict[str, Any], extension: str | None = Non
             display_key = key.replace("\t", "    ").replace("\n", " ")
             entries.append(f"{idx}\t{display_key}")
             index_map[idx] = key
-            preview_value = _format_preview_value(options_to_preview_mapping[key], normalized_extension)
+            preview_value = _format_preview_value(options_to_preview_mapping[key])
             encoded_preview = base64.b64encode(preview_value.encode("utf-8")).decode("ascii")
-            preview_rows.append(f"{idx}\t{encoded_preview}")
+            entry_extension = normalized_extension or _infer_extension_from_key(key) or ""
+            preview_rows.append(f"{idx}\t{encoded_preview}\t{entry_extension}")
         preview_map_path.write_text("\n".join(preview_rows), encoding="utf-8")
         entries_path = tempdir / "entries.tsv"
         entries_path.write_text("\n".join(entries), encoding="utf-8")
@@ -85,7 +96,8 @@ fi
 
 preview_content="$(printf '%s' "${encoded_preview}" | base64 --decode)"
 
-preview_ext="${MCFG_PREVIEW_EXT:-}"
+preview_ext_from_row="$(awk -F '\t' -v idx="${idx}" '($1==idx){print $3; exit}' "${previews_file}" || true)"
+preview_ext="${MCFG_PREVIEW_EXT:-${preview_ext_from_row}}"
 preview_width="${MCFG_PREVIEW_WIDTH:-}"
 preview_size_pct="${MCFG_PREVIEW_SIZE_PCT:-}"
 
