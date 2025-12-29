@@ -132,12 +132,6 @@ config = {original = '~/.config/glow/glow.yml', self_managed = 'CONFIG_ROOT/sett
 [gromit_linux]
 config = {original = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', self_managed = 'CONFIG_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true, os = 'linux'}
 
-# zoxide can't read symlink files see: https://github.com/ajeetdsouza/zoxide/issues?q=is%3Aissue+is%3Aopen+symlink
-# [zoxide_windows]
-# database = {original = '~/AppData/Local/zoxide/db.zo', self_managed = '~/dotfiles/settings/zoxide_windows/db.zo'}
-
-# [zoxide_linux]
-# database = {original = '~/.local/share/zoxide/db.zo', self_managed = '~/dotfiles/settings/zoxide_linux/db.zo'}
 
 #[broot_windows]
 #config = { original = '~/AppData/Roaming/dystroy/config', self_managed = 'CONFIG_ROOT/settings/broot/config' }
@@ -171,6 +165,7 @@ config = {original = '~/.config/pudb/pudb.cfg', self_managed = 'CONFIG_ROOT/sett
 # CurrentUserAllHosts = {original = '~/Documents/PowerShell/profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/profile.ps1'}
 # AllUsersCurrentHost = {original = 'C:/Program Files/PowerShell/7/Microsoft.PowerShell_profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
 # AllUsersAllHosts = {original = 'C:/Program Files/PowerShell/7/profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
+
 
 [nushell]
 config_windows = {original = '~/AppData/Roaming/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu', os = 'windows'}

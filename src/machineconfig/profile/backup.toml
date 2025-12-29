@@ -36,6 +36,39 @@ rel2home = true
 os_specific = true
 os = 'linux'
 
+[atuin]
+path_local = '~/.local/share/atuin/history.db'
+encrypt = true
+zip = false
+rel2home = true
+os_specific = false
+os = 'any'
+
+
+[bash_history]
+path_local = '~/.bash_history'
+encrypt = true
+zip = false
+rel2home = true
+os_specific = true
+os = 'linux'
+
+[zsh_history]
+path_local = '~/.zsh_history'
+encrypt = true
+zip = false
+rel2home = true
+os_specific = true
+os = 'darwin'
+
+[pwsh_history]
+path_local = '~/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt'
+encrypt = true
+zip = false
+rel2home = true
+os_specific = true
+os = 'windows'
+
 
 #[dotfiles]
 # path_local = '~/dotfiles'
