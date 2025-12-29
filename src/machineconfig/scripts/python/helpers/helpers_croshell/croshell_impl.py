@@ -16,10 +16,20 @@ def croshell(
     profile: Optional[str],
 ) -> None:
     """Cross-shell command execution."""
+    interactivity = "-i"
+    interpreter = "python" if python else "ipython"
     if uv_with is not None:
-        user_uv_with_line = f"--with {uv_with} "
+        match interpreter:
+            case "ipython":
+                user_uv_with_line = f"--with {uv_with},ipython"
+            case "python":
+                user_uv_with_line = f"--with {uv_with}"
     else:
-        user_uv_with_line = ""
+        match interpreter:
+            case "ipython":
+                user_uv_with_line = "--with ipython"
+            case "python":
+                user_uv_with_line = ""
 
     if project_path is not None:
         uv_project_line = f'--project {project_path}'
@@ -37,8 +47,6 @@ def croshell(
     from rich.panel import Panel
     console = Console()
 
-    interactivity = "-i"
-    interpreter = "python" if python else "ipython"
     ipython_profile: Optional[str] = profile
     file_obj = Path.cwd()
     if path is not None:
