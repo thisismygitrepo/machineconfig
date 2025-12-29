@@ -235,8 +235,19 @@ def register_backup_entry(
     local_path = Path(path_local).expanduser().absolute()
     if not local_path.exists():
         raise ValueError(f"Local path does not exist: {local_path}")
-    normalized_os = _normalize_os_name(os)
-    if normalized_os not in VALID_OS:
+    os_parts = [part.strip() for part in os.split(",")]
+    os_tokens: list[str] = []
+    for part in os_parts:
+        if not part:
+            continue
+        token = _normalize_os_name(part)
+        if token in {"any", "all", "*"}:
+            os_tokens = ["any"]
+            break
+        if token not in VALID_OS:
+            raise ValueError(f"Invalid os value: {os!r}. Expected one of: {sorted(VALID_OS)}")
+        os_tokens.append(token)
+    if not os_tokens:
         raise ValueError(f"Invalid os value: {os!r}. Expected one of: {sorted(VALID_OS)}")
     home = Path.home()
     in_home = local_path.is_relative_to(home)
@@ -247,11 +258,13 @@ def register_backup_entry(
     group_name = _sanitize_entry_name(group) if group and group.strip() else "default"
     if entry_name is None or not entry_name.strip():
         base_name = _sanitize_entry_name(local_path.stem)
-        entry_name = f"{base_name}_{normalized_os}" if normalized_os != "any" else base_name
+        os_tag = "any" if "any" in os_tokens else "_".join(os_tokens)
+        entry_name = f"{base_name}_{os_tag}" if os_tag != "any" else base_name
     else:
         entry_name = _sanitize_entry_name(entry_name)
     local_display = f"~/{local_path.relative_to(home)}" if rel2home and in_home else local_path.as_posix()
     cloud_value = path_cloud.strip() if path_cloud and path_cloud.strip() else ES
+    os_value = "any" if "any" in os_tokens else ",".join(os_tokens)
     entry_block = _format_backup_entry_block(
         entry_name=entry_name,
         path_local=local_display,
@@ -259,7 +272,7 @@ def register_backup_entry(
         zip=zip,
         encrypt=encrypt,
         rel2home=rel2home,
-        os_value=normalized_os,
+        os_value=os_value,
     )
     USER_BACKUP_PATH.parent.mkdir(parents=True, exist_ok=True)
     if USER_BACKUP_PATH.exists():

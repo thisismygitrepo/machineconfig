@@ -1,6 +1,6 @@
 
 # locations to be backed up to the cloud.
-# os can be 'windows', 'linux', 'darwin' or 'any'
+# os can be 'windows', 'linux', 'darwin' or 'any' or comma separated values of the previous values.
 
 [thunderbird]
 windows_files = {path_local = '~/AppData/Roaming/Thunderbird/Profiles', path_cloud = '^', encrypt = true, zip = true, rel2home = true, os = 'windows'}

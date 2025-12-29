@@ -32,7 +32,7 @@ def register_data(
     zip_: Annotated[bool, typer.Option("--zip/--no-zip", "-z/-nz", help="Zip before uploading.")] = True,
     encrypt: Annotated[bool, typer.Option("--encrypt/--no-encrypt", "-e/-ne", help="Encrypt before uploading.")] = True,
     rel2home: Annotated[Optional[bool], typer.Option("--rel2home/--no-rel2home", "-r/-nr", help="Treat the local path as relative to home.")] = None,
-    os: Annotated[Literal["any", "windows", "linux", "darwin"], typer.Option("--os", "-o", help="OS filter for this backup entry.")] = "any",
+    os: Annotated[str, typer.Option("--os", "-o", help="OS filter for this backup entry (comma-separated, or 'any').")] = "any",
 ) -> None:
     from machineconfig.scripts.python.helpers.helpers_devops.devops_backup_retrieve import register_backup_entry
 
