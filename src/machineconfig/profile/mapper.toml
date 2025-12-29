@@ -1,46 +1,43 @@
 
 
 # =================== PRIVATE ================================
+# os can be 'windows', 'linux', 'macos' or 'any'
 
 [git]
-gitconfig = {original = '~/.gitconfig', self_managed = '~/dotfiles/creds/git/.gitconfig'}
-gitcred = {original = '~/.git-credentials', self_managed = '~/dotfiles/creds/git/.git-credentials'}
+gitconfig = {original = '~/.gitconfig', self_managed = '~/dotfiles/creds/git/.gitconfig', os = 'any'}
+gitcred = {original = '~/.git-credentials', self_managed = '~/dotfiles/creds/git/.git-credentials', os = 'any'}
 
 [ssh]
-keys = {original = '~/.ssh', self_managed = '~/dotfiles/creds/.ssh', contents = true}
+keys = {original = '~/.ssh', self_managed = '~/dotfiles/creds/.ssh', contents = true, os = 'any'}
 
 [gpg]
-keys = {original = '~/.gnupg', self_managed = '~/dotfiles/creds/.gnupg', contents = true}
+keys = {original = '~/.gnupg', self_managed = '~/dotfiles/creds/.gnupg', contents = true, os = 'any'}
 
 [pypi]
-creds = {original = '~/.pypirc', self_managed = '~/dotfiles/creds/msc/.pypirc'}
+creds = {original = '~/.pypirc', self_managed = '~/dotfiles/creds/msc/.pypirc', os = 'any'}
 
-[rclone_linux]
-config = {original = '~/.config/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf'}
-
-[rclone_windows]
-config = {original = '~/AppData/Roaming/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf'}
+[rclone]
+config_xdg = {original = '~/.config/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf', os = 'linux'}
+config_windows = {original = '~/AppData/Roaming/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf', os = 'windows'}
 
 [cloudflare]
-config = {original = '~/.cloudflared', self_managed = '~/dotfiles/creds/cloudflare/.cloudflared'}
+config = {original = '~/.cloudflared', self_managed = '~/dotfiles/creds/cloudflare/.cloudflared', os = 'any'}
 
-[ngrok_linux]
-config = {original = '~/.config/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml'}
-
-[ngrok_windows]
-config = {original = '~/AppData/Local/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml'}
+[ngrok]
+config_linux = {original = '~/.config/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml', os = 'linux'}
+config_windows = {original = '~/AppData/Local/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml', os = 'windows'}
 
 [m365]
-config1 = {original = '~/.cli-m365-msal.json',            self_managed = '~/dotfiles/creds/tokens/.cli-m365-msal.json'}
-config2 = {original = '~/.cli-m365-all-connections.json', self_managed = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json'}
-config3 = {original = '~/.cli-m365-connection.json',      self_managed = '~/dotfiles/creds/tokens/.cli-m365-connection.json'}
+config1 = {original = '~/.cli-m365-msal.json',            self_managed = '~/dotfiles/creds/tokens/.cli-m365-msal.json', os = 'any'}
+config2 = {original = '~/.cli-m365-all-connections.json', self_managed = '~/dotfiles/creds/tokens/.cli-m365-all-connections.json', os = 'any'}
+config3 = {original = '~/.cli-m365-connection.json',      self_managed = '~/dotfiles/creds/tokens/.cli-m365-connection.json', os = 'any'}
 # config2 = {original = '~/.cli-m365-tokens.json',        self_managed = '~/dotfiles/creds/tokens/.cli-m365-tokens.json'}
 
 [remmina]
-data = {original = '~/.var/app/org.remmina.Remmina/data/remmina', self_managed = '~/dotfiles/creds/RDP/remmina/data/remmina'}
+data = {original = '~/.var/app/org.remmina.Remmina/data/remmina', self_managed = '~/dotfiles/creds/RDP/remmina/data/remmina', os = 'any'}
 
 [webapp_linux]
-brave = {original = '~/.local/share/applications', self_managed = '~/dotfiles/config/webapps/linux/brave', contents = true}
+brave = {original = '~/.local/share/applications', self_managed = '~/dotfiles/config/webapps/linux/brave', contents = true, os = 'linux'}
 
 # [startup_windows]
 # startup = {original = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', self_managed = '~/dotfiles/scripts/windows_startup', contents = true}
@@ -49,100 +46,91 @@ brave = {original = '~/.local/share/applications', self_managed = '~/dotfiles/co
 # config = {original = '~/.aws/config', self_managed = '~/dotfiles/aws/.aws', contents = true}
 
 [wt_windows]
-settings = { original = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', self_managed = 'CONFIG_ROOT/settings/shells/wt/settings.json' }
+settings = { original = '~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json', self_managed = 'CONFIG_ROOT/settings/shells/wt/settings.json' , os = 'windows'}
 
 
 # =================== LLMs ============================
 
 [chatgpt]
-config = { original = '~/.config/chatgpt/config.json', self_managed = '~/dotfiles/creds/llm/chatgpt_cli/config.json' }
+config = { original = '~/.config/chatgpt/config.json', self_managed = '~/dotfiles/creds/llm/chatgpt_cli/config.json' , os = 'any'}
 
 [mods]
-config = {original = '~/.config/mods/mods.yml', self_managed = '~/dotfiles/creds/llm/mods_cli/mods.yml'}
+config = {original = '~/.config/mods/mods.yml', self_managed = '~/dotfiles/creds/llm/mods_cli/mods.yml', os = 'any'}
 
 [github_cli_token]
-token = {original = '~/.copilot-cli-access-token', self_managed = '~/dotfiles/creds/llm/github_cli/.copilot-cli-access-token'}
+token = {original = '~/.copilot-cli-access-token', self_managed = '~/dotfiles/creds/llm/github_cli/.copilot-cli-access-token', os = 'any'}
 
 [aider]
-config = {original = '~/.aider.conf.yml', self_managed = '~/dotfiles/creds/llm/aider/.aider.conf.yml'}
+config = {original = '~/.aider.conf.yml', self_managed = '~/dotfiles/creds/llm/aider/.aider.conf.yml', os = 'any'}
 
 [marvin]
-config = {original = '~/.marvin/.env', self_managed = '~/dotfiles/creds/llm/marvin/.env'}
-threads = {original = '~/.marvin/cli/threads/default.json', self_managed = '~/dotfiles/creds/llm/marvin/threads/default.json'}
+config = {original = '~/.marvin/.env', self_managed = '~/dotfiles/creds/llm/marvin/.env', os = 'any'}
+threads = {original = '~/.marvin/cli/threads/default.json', self_managed = '~/dotfiles/creds/llm/marvin/threads/default.json', os = 'any'}
 
 [docker]
-config = {original = '~/.docker/config.json', self_managed = '~/dotfiles/creds/docker/config.json'}
+config = {original = '~/.docker/config.json', self_managed = '~/dotfiles/creds/docker/config.json', os = 'any'}
 
 
 # =========================== PUBLIC ======================================
 
 [marimo]
-config = {original = '~/.config/marimo/marimo.toml', self_managed = 'CONFIG_ROOT/settings/marimo/marimo.toml'}
+config = {original = '~/.config/marimo/marimo.toml', self_managed = 'CONFIG_ROOT/settings/marimo/marimo.toml', os = 'any'}
 
 [presenterm]
-config = {original = '~/.config/presenterm/config.yaml', self_managed = 'CONFIG_ROOT/settings/presenterm/config.yaml'}
+config = {original = '~/.config/presenterm/config.yaml', self_managed = 'CONFIG_ROOT/settings/presenterm/config.yaml', os = 'any'}
 
 [keras]
-config = {original = '~/.keras/keras.json', self_managed = 'CONFIG_ROOT/settings/keras/keras.json'}
+config = {original = '~/.keras/keras.json', self_managed = 'CONFIG_ROOT/settings/keras/keras.json', os = 'any'}
 
 # [streamlit]
 # config = {original = '~/.streamlit/config.toml', self_managed = 'CONFIG_ROOT/settings/streamlit/config.toml'}
 
 [procs]
-config = {original = '~/.procs.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml'}
-config_again = {original = '~/.config/procs/config.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml'}
+config = {original = '~/.procs.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml', os = 'any'}
+config_again = {original = '~/.config/procs/config.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml', os = 'any'}
 
 [rofi_linux]
-config = {original = '~/.config/rofi/config.rasi', self_managed = 'CONFIG_ROOT/settings/rofi/config.rasi'}
+config = {original = '~/.config/rofi/config.rasi', self_managed = 'CONFIG_ROOT/settings/rofi/config.rasi', os = 'linux'}
 
-[yazi_windows]
-yazi = {original = '~/AppData/Roaming/yazi/config/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_windows.toml'}
-keymap = {original = '~/AppData/Roaming/yazi/config/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_windows.toml'}
-theme = {original = '~/AppData/Roaming/yazi/config/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml'}
-init = {original = '~/AppData/Roaming/yazi/config/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua'}
+[yazi]
+yazi_windows = {original = '~/AppData/Roaming/yazi/config/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_windows.toml', os = 'windows'}
+keymap_windows = {original = '~/AppData/Roaming/yazi/config/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_windows.toml', os = 'windows'}
+theme_windows = {original = '~/AppData/Roaming/yazi/config/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml', os = 'windows'}
+init_windows = {original = '~/AppData/Roaming/yazi/config/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua', os = 'windows'}
+yazi_linux = {original = '~/.config/yazi/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml', os = 'linux'}
+keymap_linux = {original = '~/.config/yazi/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_linux.toml', os = 'linux'}
+theme_linux = {original = '~/.config/yazi/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml', os = 'linux'}
+init_linux = {original = '~/.config/yazi/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua', os = 'linux'}
 
-[television_linux]
-cable = {original = '~/.config/television/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_unix', contents = true}
+[television]
+cable_linux = {original = '~/.config/television/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_unix', contents = true, os = 'linux'}
+cable_windows = {original = '~/AppData/Local/television/config/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_windows', contents = true, os = 'windows'}
 
-[television_windows]
-cable = {original = '~/AppData/Local/television/config/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_windows', contents = true}
+[tv]
+config_linux = {original = '~/.config/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml', os = 'linux'}
+themes_linux = {original = '~/.config/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true, os = 'linux'}
+config_windows = {original = '~/AppData/Local/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml', os = 'windows'}
+themes_windows = {original = '~/AppData/Local/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true, os = 'windows'}
 
-[tv_linux]
-config = {original = '~/.config/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml'}
-themes = {original = '~/.config/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true}
-
-[tv_windows]
-config = {original = '~/AppData/Local/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml'}
-themes = {original = '~/AppData/Local/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true}
-
-
-[yazi_linux]
-yazi = {original = '~/.config/yazi/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml'}
-keymap = {original = '~/.config/yazi/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_linux.toml'}
-theme = {original = '~/.config/yazi/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml'}
-init = {original = '~/.config/yazi/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua'}
-
-[lf_windows]
-config = {original = '~/AppData/Local/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/windows/lfrc'}
-colors = {original = '~/AppData/Local/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/windows/colors'}
-icons = {original = '~/AppData/Local/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/windows/icons'}
-
-[lf_linux]
-colors = {original = '~/.config/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/linux/colors'}
-config = {original = '~/.config/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/linux/lfrc'}
-icons = {original = '~/.config/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/linux/icons'}
+[lf]
+config_windows = {original = '~/AppData/Local/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/windows/lfrc', os = 'windows'}
+colors_windows = {original = '~/AppData/Local/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/windows/colors', os = 'windows'}
+icons_windows = {original = '~/AppData/Local/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/windows/icons', os = 'windows'}
+config_linux = {original = '~/.config/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/linux/lfrc', os = 'linux'}
+colors_linux = {original = '~/.config/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/linux/colors', os = 'linux'}
+icons_linux = {original = '~/.config/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/linux/icons', os = 'linux'}
 
 [broot]
-config = {original = '~/.config/broot/conf.toml', self_managed = 'CONFIG_ROOT/settings/broot/conf.toml'}
+config = {original = '~/.config/broot/conf.toml', self_managed = 'CONFIG_ROOT/settings/broot/conf.toml', os = 'any'}
 
 [pistol_linux]
-config = {original = '~/.config/pistol/pistol.conf', self_managed = 'CONFIG_ROOT/settings/pistol/pistol.conf'}
+config = {original = '~/.config/pistol/pistol.conf', self_managed = 'CONFIG_ROOT/settings/pistol/pistol.conf', os = 'linux'}
 
 [glow]
-config = {original = '~/.config/glow/glow.yml', self_managed = 'CONFIG_ROOT/settings/glow/glow.yml'}
+config = {original = '~/.config/glow/glow.yml', self_managed = 'CONFIG_ROOT/settings/glow/glow.yml', os = 'any'}
 
 [gromit_linux]
-config = {original = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', self_managed = 'CONFIG_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true}
+config = {original = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', self_managed = 'CONFIG_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true, os = 'linux'}
 
 # zoxide can't read symlink files see: https://github.com/ajeetdsouza/zoxide/issues?q=is%3Aissue+is%3Aopen+symlink
 # [zoxide_windows]
@@ -155,19 +143,19 @@ config = {original = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx
 #config = { original = '~/AppData/Roaming/dystroy/config', self_managed = 'CONFIG_ROOT/settings/broot/config' }
 
 [starship]
-config = {original = '~/.config/starship.toml', self_managed = 'CONFIG_ROOT/settings/shells/starship/starship.toml'}
+config = {original = '~/.config/starship.toml', self_managed = 'CONFIG_ROOT/settings/shells/starship/starship.toml', os = 'any'}
 
 
 [kanata]
-config = {original = '~/.config/kanata/kanata.kbd', self_managed = 'CONFIG_ROOT/settings/keyboard/kanata/kanata.kbd'}
+config = {original = '~/.config/kanata/kanata.kbd', self_managed = 'CONFIG_ROOT/settings/keyboard/kanata/kanata.kbd', os = 'any'}
 
 [espanso]
-config = {original = '~/.config/espanso/config/default.yml', self_managed = 'CONFIG_ROOT/settings/keyboard/espanso/config/default.yml'}
-match = {original = '~/.config/espanso/match/base.yml', self_managed = 'CONFIG_ROOT/settings/keyboard/espanso/match/base.yml', copy = true}
+config = {original = '~/.config/espanso/config/default.yml', self_managed = 'CONFIG_ROOT/settings/keyboard/espanso/config/default.yml', os = 'any'}
+match = {original = '~/.config/espanso/match/base.yml', self_managed = 'CONFIG_ROOT/settings/keyboard/espanso/match/base.yml', copy = true, os = 'any'}
 
 
 [pudb]
-config = {original = '~/.config/pudb/pudb.cfg', self_managed = 'CONFIG_ROOT/settings/pudb/pudb.cfg'}
+config = {original = '~/.config/pudb/pudb.cfg', self_managed = 'CONFIG_ROOT/settings/pudb/pudb.cfg', os = 'any'}
 
 
 # ============================= shells profiles ==================================
@@ -184,42 +172,38 @@ config = {original = '~/.config/pudb/pudb.cfg', self_managed = 'CONFIG_ROOT/sett
 # AllUsersCurrentHost = {original = 'C:/Program Files/PowerShell/7/Microsoft.PowerShell_profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
 # AllUsersAllHosts = {original = 'C:/Program Files/PowerShell/7/profile.ps1', self_managed = 'CONFIG_ROOT/settings/shells/pwsh/init.ps1'}
 
-[nushell_windows]
-config = {original = '~/AppData/Roaming/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu'}
-env = {original = '~/AppData/Roaming/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu'}
-
-[nushell_linux]
-config = {original = '~/.config/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu'}
-env = {original = '~/.config/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu'}
+[nushell]
+config_windows = {original = '~/AppData/Roaming/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu', os = 'windows'}
+env_windows = {original = '~/AppData/Roaming/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu', os = 'windows'}
+config_linux = {original = '~/.config/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu', os = 'linux'}
+env_linux = {original = '~/.config/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu', os = 'linux'}
 
 [kitty_linux]
-config = {original = '~/.config/kitty/kitty.conf', self_managed = 'CONFIG_ROOT/settings/shells/kitty/kitty.conf'}
+config = {original = '~/.config/kitty/kitty.conf', self_managed = 'CONFIG_ROOT/settings/shells/kitty/kitty.conf', os = 'linux'}
 
-[alacritty_linux]
-config = {original = '~/.config/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml'}
-config_yaml = {original = '~/.config/alacritty/alacritty.yml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.yml'}
-
-[alacritty_windows]
-config = {original = '~/AppData/Roaming/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml'}
+[alacritty]
+config_linux = {original = '~/.config/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml', os = 'linux'}
+config_yaml_linux = {original = '~/.config/alacritty/alacritty.yml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.yml', os = 'linux'}
+config_windows = {original = '~/AppData/Roaming/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml', os = 'windows'}
 
 [hyper_terminal]
-config = {original = '~/.hyper.js', self_managed = 'CONFIG_ROOT/settings/shells/hyper/.hyper.js'}
+config = {original = '~/.hyper.js', self_managed = 'CONFIG_ROOT/settings/shells/hyper/.hyper.js', os = 'any'}
 
 [wezterminal]
-config = {original = '~/.config/wezterm/wezterm.lua', self_managed = 'CONFIG_ROOT/settings/shells/wezterm/wezterm.lua'}
+config = {original = '~/.config/wezterm/wezterm.lua', self_managed = 'CONFIG_ROOT/settings/shells/wezterm/wezterm.lua', os = 'any'}
 
 [vtm_windows]
-settings = {original = '~/.config/vtm/settings.xml', self_managed = 'CONFIG_ROOT/settings/shells/vtm/settings.xml'}
+settings = {original = '~/.config/vtm/settings.xml', self_managed = 'CONFIG_ROOT/settings/shells/vtm/settings.xml', os = 'windows'}
 
 [wsl_windows]
-config = {original = '~/.wslconfig', self_managed = 'CONFIG_ROOT/settings/wsl/.wslconfig'}
+config = {original = '~/.wslconfig', self_managed = 'CONFIG_ROOT/settings/wsl/.wslconfig', os = 'windows'}
 
 # [ipython_default_config]
 # config = {original = '~/.ipython/profile_default/ipython_config.py', self_managed = 'CONFIG_ROOT/settings/shells/ipy/profiles/default/ipython_config.py'}
 # play_extension = {original = '~/.ipython/profile_default/startup/playext.py', self_managed = 'CONFIG_ROOT/settings/shells/ipy/profiles/default/startup/playext.py'}
 
 [mprocs_windows]
-config = {original = '~/mprocs.yaml', self_managed = 'CONFIG_ROOT/settings/mprocs/windows/mprocs.yaml'}
+config = {original = '~/mprocs.yaml', self_managed = 'CONFIG_ROOT/settings/mprocs/windows/mprocs.yaml', os = 'windows'}
 
 # [tmux_linux]
 # config = {original = '~/.tmux.conf', self_managed = 'CONFIG_ROOT/settings/tmux/.tmux.conf'}
@@ -227,7 +211,7 @@ config = {original = '~/mprocs.yaml', self_managed = 'CONFIG_ROOT/settings/mproc
 
 
 [zellij_linux]
-config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/zellij' }
+config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/zellij' , os = 'linux'}
 #themes = { original = '~/.config/zellij/themes', self_managed = 'CONFIG_ROOT/settings/zellij/themes' }
 #layouts = { original = '~/.config/zellij/layouts', self_managed = 'CONFIG_ROOT/settings/zellij/layouts' }
 
@@ -235,49 +219,40 @@ config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/z
 # ===================== IDEs ============================
 
 [zed_linux]
-settings = {original = '~/.config/zed/settings.json', self_managed = 'CONFIG_ROOT/settings/zed/settings.json'}
+settings = {original = '~/.config/zed/settings.json', self_managed = 'CONFIG_ROOT/settings/zed/settings.json', os = 'linux'}
 
-[helix_windows]
-languages = { original = '~/AppData/Roaming/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' }
-config = { original = '~/AppData/Roaming/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' }
+[helix]
+languages_windows = { original = '~/AppData/Roaming/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' , os = 'windows'}
+config_windows = { original = '~/AppData/Roaming/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' , os = 'windows'}
+languages_linux = { original = '~/.config/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' , os = 'linux'}
+config_linux = { original = '~/.config/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' , os = 'linux'}
+yazi_picker_linux = { original = '~/.config/helix/yazi-picker.sh', self_managed = 'CONFIG_ROOT/settings/helix/yazi-picker.sh' , os = 'linux'}
 
-[helix_linux]
-languages = { original = '~/.config/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' }
-config = { original = '~/.config/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' }
-yazi_picker = { original = '~/.config/helix/yazi-picker.sh', self_managed = 'CONFIG_ROOT/settings/helix/yazi-picker.sh' }
-
-[lvim_windows]
-config = { original = '~/AppData/Local/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/windows/config.lua' }
-
-[lvim_linux]
-config = { original = '~/.config/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/linux/config.lua' }
+[lvim]
+config_windows = { original = '~/AppData/Local/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/windows/config.lua' , os = 'windows'}
+config_linux = { original = '~/.config/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/linux/config.lua' , os = 'linux'}
 
 
-[svim_windows]
-init = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/windows/init.toml' }
-
-[svim_linux]
-init = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/linux/init.toml' }
+[svim]
+init_windows = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/windows/init.toml' , os = 'windows'}
+init_linux = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/linux/init.toml' , os = 'linux'}
 
 [linters]
-flake8 = {original = '~/.flake8', self_managed = 'CONFIG_ROOT/settings/linters/.flake8'}
+flake8 = {original = '~/.flake8', self_managed = 'CONFIG_ROOT/settings/linters/.flake8', os = 'any'}
 # as per https://mypy.readthedocs.io/en/stable/config_file.html
-mypy = {original = '~/mypy/config/mypy.ini', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini'}
-mypy2 = {original = '~/.config/mypy/config', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini'}
-ruff = {original = '~/.ruff.toml', self_managed = 'CONFIG_ROOT/settings/linters/.ruff.toml'}
-pylint = {original = '~/.pylintrc', self_managed = 'CONFIG_ROOT/settings/linters/.pylintrc'}
+mypy = {original = '~/mypy/config/mypy.ini', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini', os = 'any'}
+mypy2 = {original = '~/.config/mypy/config', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini', os = 'any'}
+ruff = {original = '~/.ruff.toml', self_managed = 'CONFIG_ROOT/settings/linters/.ruff.toml', os = 'any'}
+pylint = {original = '~/.pylintrc', self_managed = 'CONFIG_ROOT/settings/linters/.pylintrc', os = 'any'}
 
 # ======================= OS ===============================
 
 [apps_windows]
-notepadpp = {original = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', self_managed = 'C:/Program Files/Notepad++/notepad++.exe'}
+notepadpp = {original = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', self_managed = 'C:/Program Files/Notepad++/notepad++.exe', os = 'windows'}
 # tesseract = {original = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', self_managed = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
-[atuin_linux]
-config = {original = '~/.config/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml'}
-themes = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true}
-
-[atuin_windows]
-config = {original = '~/AppData/Roaming/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml'}
-themes = {original = '~/AppData/Roaming/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true}
-
+[atuin]
+config_linux = {original = '~/.config/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'linux'}
+themes_linux = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'linux'}
+config_windows = {original = '~/AppData/Roaming/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'windows'}
+themes_windows = {original = '~/AppData/Roaming/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'windows'}

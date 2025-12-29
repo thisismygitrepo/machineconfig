@@ -8,7 +8,7 @@ from pathlib import Path
 import typer
 
 
-def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, self_managed_path: Path, method: Literal["symlink", "copy"], is_contents: bool) -> Path:
+def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, self_managed_path: Path, method: Literal["symlink", "copy"], is_contents: bool, os_filter: str) -> Path:
     mapper_path = Path.home().joinpath("dotfiles/machineconfig/mapper.toml")
     mapper_path.parent.mkdir(parents=True, exist_ok=True)
     if mapper_path.exists():
@@ -23,6 +23,7 @@ def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, se
         entry_dict_parts.append("contents = true")
     if method == "copy":
         entry_dict_parts.append("copy = true")
+    entry_dict_parts.append(f"os = '{os_filter}'")
     entry_line = f"{entry_name} = {{ {', '.join(entry_dict_parts)} }}"
     section_header = f"[{section}]"
     if section_header in content:
@@ -49,17 +50,17 @@ def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, se
     mapper_path.write_text(content, encoding="utf-8")
     return mapper_path
 
-def record_mapping(orig_path: Path, new_path: Path, method: Literal["symlink", "s", "copy", "c"], section: str) -> None:
+def record_mapping(orig_path: Path, new_path: Path, method: Literal["symlink", "s", "copy", "c"], section: str, os_filter: str) -> None:
     entry_name = orig_path.stem.replace(".", "_").replace("-", "_")
     method_resolved: Literal["symlink", "copy"] = "symlink" if method in ("symlink", "s") else "copy"
-    mapper_file = _write_to_user_mapper(section=section, entry_name=entry_name, original_path=orig_path, self_managed_path=new_path, method=method_resolved, is_contents=False)
+    mapper_file = _write_to_user_mapper(section=section, entry_name=entry_name, original_path=orig_path, self_managed_path=new_path, method=method_resolved, is_contents=False, os_filter=os_filter)
     home = Path.home()
     orig_display = f"~/{orig_path.relative_to(home)}" if orig_path.is_relative_to(home) else orig_path.as_posix()
     new_display = f"~/{new_path.relative_to(home)}" if new_path.is_relative_to(home) else new_path.as_posix()
     from rich.console import Console
     from rich.panel import Panel
     console = Console()
-    console.print(Panel(f"📝 Mapping recorded in: [cyan]{mapper_file}[/cyan]\n[{section}]\n{entry_name} = {{ original = '{orig_display}', self_managed = '{new_display}' }}", title="Mapper Entry Saved", border_style="cyan", padding=(1, 2),))
+    console.print(Panel(f"📝 Mapping recorded in: [cyan]{mapper_file}[/cyan]\n[{section}]\n{entry_name} = {{ original = '{orig_display}', self_managed = '{new_display}', os = '{os_filter}' }}", title="Mapper Entry Saved", border_style="cyan", padding=(1, 2),))
 
 
 backup_root_private = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
@@ -116,6 +117,7 @@ def main(
     sensitivity: Annotated[Literal["private", "v", "public", "b"], typer.Option(..., "--sensitivity", "-s", help="Sensitivity of the config file.")] = "private",
     destination: Annotated[Optional[str], typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = None,
     section: Annotated[str, typer.Option("--section", "-se", help="Section name in mapper.toml to record this mapping.")] = "default",
+    os_filter: Annotated[str, typer.Option("--os", help="Comma-separated OS list or 'any' to apply everywhere.")] = "any",
     shared: Annotated[bool, typer.Option("--shared", "-sh", help="Whether the config file is shared across destinations directory.")] = False,
     record: Annotated[bool, typer.Option("--record", "-r", help="Record the mapping in user's mapper.toml")] = True,
     ) -> None:
@@ -148,7 +150,7 @@ def main(
             raise ValueError(f"Unknown method: {method}")
     console.print(Panel("\n".join(["✅ Symbolic link created successfully!", "🔄 Add the following snippet to mapper.toml to persist this mapping:",]), title="Symlink Created", border_style="green", padding=(1, 2),))
     if record:
-        record_mapping(orig_path=orig_path, new_path=new_path, method=method, section=section)
+        record_mapping(orig_path=orig_path, new_path=new_path, method=method, section=section, os_filter=os_filter)
 
 
 def export_dotfiles(

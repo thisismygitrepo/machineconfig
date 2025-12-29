@@ -7,6 +7,7 @@ encrypt = 'True'
 zip = 'True'
 rel2home = 'True'
 os_specific = 'True'
+os = 'windows'
 
 
 [thunderbird_linux]
@@ -15,6 +16,7 @@ encrypt = 'True'
 zip = 'True'
 rel2home = 'True'
 os_specific = 'True'
+os = 'linux'
 
 
 [zoxide_windows]
@@ -23,6 +25,7 @@ encrypt = 'False'
 zip = 'False'
 rel2home = 'True'
 os_specific = 'True'
+os = 'windows'
 
 
 [zoxide_linux]
@@ -31,6 +34,7 @@ encrypt = 'False'
 zip = 'False'
 rel2home = 'True'
 os_specific = 'True'
+os = 'linux'
 
 
 #[dotfiles]
@@ -47,3 +51,4 @@ encrypt = 'True'
 zip = 'True'
 rel2home = 'True'
 os_specific = 'False'
+os = 'any'

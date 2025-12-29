@@ -16,6 +16,70 @@ import tomllib
 
 OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
+OS_ALIASES = {
+    "mac": "darwin",
+    "macos": "darwin",
+    "osx": "darwin",
+}
+
+
+def _normalize_os_name(value: str) -> str:
+    return OS_ALIASES.get(value.strip().lower(), value.strip().lower())
+
+
+def _parse_os_field(os_field: Any) -> set[str]:
+    if not os_field:
+        return {"any"}
+    if isinstance(os_field, list):
+        raw_values = [str(item) for item in os_field]
+    else:
+        raw_values = str(os_field).split(",")
+    values: set[str] = set()
+    for raw in raw_values:
+        token = _normalize_os_name(raw)
+        if not token:
+            continue
+        if token in {"any", "all", "*"}:
+            return {"any"}
+        values.add(token)
+    return values or {"any"}
+
+
+def _section_os(section_name: str) -> Optional[str]:
+    name = section_name.lower()
+    suffix_map = {
+        "_windows": "windows",
+        "_linux": "linux",
+        "_darwin": "darwin",
+        "_macos": "darwin",
+        "_mac": "darwin",
+    }
+    for suffix, os_name in suffix_map.items():
+        if name.endswith(suffix):
+            return os_name
+    return None
+
+
+def _resolve_os_values(os_field: Any, section_name: str) -> set[str]:
+    if os_field is None:
+        section_value = _section_os(section_name)
+        if section_value:
+            return {section_value}
+        return {"any"}
+    return _parse_os_field(os_field)
+
+
+def _os_applies(os_values: set[str], system_name: str) -> bool:
+    return "any" in os_values or system_name in os_values
+
+
+def _parse_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    return str(value).strip().lower() in {"true", "1", "yes", "y"}
+
 
 def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Optional[str]) -> None:
     console = Console()
@@ -28,12 +92,20 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
     bu_file: dict[str, Any] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/backup.toml").read_text(encoding="utf-8"))
     console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_ROOT.joinpath('profile/backup.toml')}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
 
-    if system() == "Linux":
-        bu_file = {key: val for key, val in bu_file.items() if "windows" not in key}
-        console.print(Panel(f"🐧 LINUX ENVIRONMENT DETECTED\n🔍 Filtering out Windows-specific entries\n✅ Found {len(bu_file)} applicable backup configuration entries", title="[bold blue]Linux Environment[/bold blue]", border_style="blue"))
-    elif system() == "Windows":
-        bu_file = {key: val for key, val in bu_file.items() if "linux" not in key}
-        console.print(Panel(f"🪟 WINDOWS ENVIRONMENT DETECTED\n🔍 Filtering out Linux-specific entries\n✅ Found {len(bu_file)} applicable backup configuration entries", title="[bold blue]Windows Environment[/bold blue]", border_style="blue"))
+    system_raw = system()
+    normalized_system = _normalize_os_name(system_raw)
+    bu_file = {
+        key: val
+        for key, val in bu_file.items()
+        if _os_applies(_resolve_os_values(val.get("os"), key), normalized_system)
+    }
+    console.print(Panel(
+        f"🖥️  {system_raw} ENVIRONMENT DETECTED\n"
+        "🔍 Filtering entries by os field\n"
+        f"✅ Found {len(bu_file)} applicable backup configuration entries",
+        title="[bold blue]Environment[/bold blue]",
+        border_style="blue",
+    ))
 
     if which is None:
         console.print(Panel(f"🔍 SELECT {direction} ITEMS\n📋 Choose which configuration entries to process", title="[bold blue]Select Items[/bold blue]", border_style="blue"))
@@ -48,14 +120,14 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
     else:
         items = {key: val for key, val in bu_file.items() if key in choices}
         console.print(Panel(f"📋 PROCESSING SELECTED ENTRIES\n🔢 Total entries to process: {len(items)}", title="[bold blue]Process Selected Entries[/bold blue]", border_style="blue"))
-    program = f"""$cloud = "{cloud}:{ES}" \n """ if system() == "Windows" else f"""cloud="{cloud}:{ES}" \n """
+    program = f"""$cloud = "{cloud}:{ES}" \n """ if system_raw == "Windows" else f"""cloud="{cloud}:{ES}" \n """
     console.print(Panel(f"🚀 GENERATING {direction} SCRIPT\n🌥️  Cloud: {cloud}\n🗂️  Items: {len(items)}", title="[bold blue]Script Generation[/bold blue]", border_style="blue"))
     for item_name, item in items.items():
         flags = ""
-        flags += "z" if item["zip"] == "True" else ""
-        flags += "e" if item["encrypt"] == "True" else ""
-        flags += "r" if item["rel2home"] == "True" else ""
-        flags += "o" if system().lower() in item_name else ""
+        flags += "z" if _parse_bool(item.get("zip")) else ""
+        flags += "e" if _parse_bool(item.get("encrypt")) else ""
+        flags += "r" if _parse_bool(item.get("rel2home")) else ""
+        flags += "o" if _parse_bool(item.get("os_specific")) else ""
         console.print(Panel(f"📦 PROCESSING: {item_name}\n📂 Path: {Path(item['path']).as_posix()}\n🏳️  Flags: {flags or 'None'}", title=f"[bold blue]Processing Item: {item_name}[/bold blue]", border_style="blue"))
         if flags:
             flags = "-" + flags
@@ -66,7 +138,7 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
         else:
             console.print(Panel('❌ ERROR: INVALID DIRECTION\n⚠️  Direction must be either "BACKUP" or "RETRIEVE"', title="[bold red]Error: Invalid Direction[/bold red]", border_style="red"))
             raise RuntimeError(f"Unknown direction: {direction}")
-        if item_name == "dotfiles" and system() == "Linux":
+        if item_name == "dotfiles" and system_raw == "Linux":
             program += """\nchmod 700 ~/.ssh/*\n"""
             console.print(Panel("🔒 SPECIAL HANDLING: SSH PERMISSIONS\n🛠️  Setting secure permissions for SSH files\n📝 Command: chmod 700 ~/.ssh/*", title="[bold blue]Special Handling: SSH Permissions[/bold blue]", border_style="blue"))
     print_code(program, lexer="shell", desc=f"{direction} script")

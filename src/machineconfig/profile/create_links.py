@@ -28,18 +28,48 @@ SYSTEM = system.lower()
 
 console = Console()
 
+OS_ALIASES = {
+    "mac": "darwin",
+    "macos": "darwin",
+    "osx": "darwin",
+}
+
+
+def _normalize_os_name(value: str) -> str:
+    return OS_ALIASES.get(value.strip().lower(), value.strip().lower())
+
+
+def _parse_os_field(os_field: Any) -> set[str]:
+    if not os_field:
+        return {"any"}
+    if isinstance(os_field, list):
+        raw_values = [str(item) for item in os_field]
+    else:
+        raw_values = str(os_field).split(",")
+    values: set[str] = set()
+    for raw in raw_values:
+        token = _normalize_os_name(raw)
+        if not token:
+            continue
+        if token in {"any", "all", "*"}:
+            return {"any"}
+        values.add(token)
+    return values or {"any"}
+
 
 class Base(TypedDict):
     original: str
     self_managed: str
     contents: Optional[bool]
     copy: Optional[bool]
+    os: Optional[str]
 class ConfigMapper(TypedDict):
     file_name: str
     config_file_default_path: str
     self_managed_config_file_path: str
     contents: Optional[bool]
     copy: Optional[bool]
+    os: Optional[str]
 class MapperFileData(TypedDict):
     public: dict[str, list[ConfigMapper]]
     private: dict[str, list[ConfigMapper]]
@@ -47,26 +77,19 @@ def read_mapper() -> MapperFileData:
     mapper_data: dict[str, dict[str, Base]] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/mapper.toml").read_text(encoding="utf-8"))
     public: dict[str, list[ConfigMapper]] = {}
     private: dict[str, list[ConfigMapper]] = {}
-    # def get_other_systems(current_system: str) -> list[str]:
-    #     all_systems = ["linux", "windows", "darwin"]
-    #     return [s for s in all_systems if s != current_system.lower()]
-    # OTHER_SYSTEMS = get_other_systems(SYSTEM)
+    normalized_system = _normalize_os_name(SYSTEM)
     for program_key, program_map in mapper_data.items():
-        parts = program_key.split("_")
-        if len(parts) > 1:
-            if parts[-1].lower() == "windows" and SYSTEM != "windows":
-                # console.print(f"Skipping Windows-only program mapping: {program_key}")
-                continue
-            elif parts[-1].lower() == "linux" and SYSTEM == "windows":
-                # console.print(f"Skipping Linux-only program mapping: {program_key}")
-                continue
         for file_name, file_base in program_map.items():
+            os_values = _parse_os_field(file_base.get("os"))
+            if "any" not in os_values and normalized_system not in os_values:
+                continue
             file_map: ConfigMapper = {
                 "file_name": file_name,
                 "config_file_default_path": file_base["original"],
                 "self_managed_config_file_path": file_base["self_managed"],
                 "contents": file_base.get("contents"),
                 "copy": file_base.get("copy"),
+                "os": file_base.get("os"),
             }
             if "CONFIG_ROOT" in file_map["self_managed_config_file_path"]:
                 if program_key not in public:
