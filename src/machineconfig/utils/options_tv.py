@@ -1,18 +1,53 @@
 
-
 #!/usr/bin/env python3
 import base64
+import json
 import pathlib
+import pprint
+import shutil
 import subprocess
 import tempfile
 import os
 from typing import Any
 
 
-def main(options_to_preview_mapping: dict[str, Any],) -> str | None:
+def _format_preview_value(value: Any, extension: str | None) -> str:
+    if isinstance(value, str):
+        return value
+    normalized_extension = (extension or "").lower().lstrip(".")
+    if normalized_extension == "json":
+        try:
+            return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=True)
+        except (TypeError, ValueError):
+            pass
+    return pprint.pformat(value, width=88, sort_dicts=True)
+
+
+def _toml_inline_table(values: dict[str, str]) -> str:
+    if not values:
+        return ""
+    parts: list[str] = []
+    for key in sorted(values.keys()):
+        raw_value = values[key]
+        escaped = raw_value.replace("\\", "\\\\").replace('"', '\\"')
+        parts.append(f'{key} = "{escaped}"')
+    return "env = { " + ", ".join(parts) + " }\n"
+
+
+def main(options_to_preview_mapping: dict[str, Any], extension: str | None = None) -> str | None:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
         return None
+    normalized_extension = None
+    if extension is not None:
+        trimmed_extension = extension.strip()
+        if trimmed_extension.startswith("."):
+            trimmed_extension = trimmed_extension[1:]
+        if trimmed_extension:
+            normalized_extension = trimmed_extension
+    preview_panel_size = 50
+    terminal_width = shutil.get_terminal_size(fallback=(120, 40)).columns
+    preview_width = max(20, int(terminal_width * preview_panel_size / 100) - 4)
     with tempfile.TemporaryDirectory(prefix="tv_channel_") as tmpdir:
         tempdir = pathlib.Path(tmpdir)
         entries: list[str] = []
@@ -23,7 +58,8 @@ def main(options_to_preview_mapping: dict[str, Any],) -> str | None:
             display_key = key.replace("\t", "    ").replace("\n", " ")
             entries.append(f"{idx}\t{display_key}")
             index_map[idx] = key
-            encoded_preview = base64.b64encode(str(options_to_preview_mapping[key]).encode("utf-8")).decode("ascii")
+            preview_value = _format_preview_value(options_to_preview_mapping[key], normalized_extension)
+            encoded_preview = base64.b64encode(preview_value.encode("utf-8")).decode("ascii")
             preview_rows.append(f"{idx}\t{encoded_preview}")
         preview_map_path.write_text("\n".join(preview_rows), encoding="utf-8")
         entries_path = tempdir / "entries.tsv"
@@ -49,12 +85,31 @@ fi
 
 preview_content="$(printf '%s' "${encoded_preview}" | base64 --decode)"
 
+preview_ext="${MCFG_PREVIEW_EXT:-}"
+preview_width="${MCFG_PREVIEW_WIDTH:-}"
+preview_size_pct="${MCFG_PREVIEW_SIZE_PCT:-}"
+
+if [[ -z "${preview_width}" && -n "${COLUMNS:-}" ]]; then
+    if [[ "${preview_size_pct}" =~ ^[0-9]+$ ]]; then
+        preview_width=$((COLUMNS * preview_size_pct / 100))
+    else
+        preview_width="${COLUMNS}"
+    fi
+fi
+
 if command -v bat >/dev/null 2>&1; then
-    printf '%s' "${preview_content}" | glow -
-elif command -v bat >/dev/null 2>&1; then
-    printf '%s' "${preview_content}" | bat --language=markdown --color=always --style=plain --paging=never
+    bat_args=(--force-colorization --style=plain --paging=never --wrap=character)
+    if [[ -n "${preview_ext}" ]]; then
+        bat_args+=(--language "${preview_ext}")
+    fi
+    if [[ "${preview_width}" =~ ^[0-9]+$ ]]; then
+        bat_args+=(--terminal-width "${preview_width}")
+    fi
+    printf '%s' "${preview_content}" | bat "${bat_args[@]}"
 elif command -v glow >/dev/null 2>&1; then
     printf '%s' "${preview_content}" | glow -
+elif command -v fold >/dev/null 2>&1 && [[ "${preview_width}" =~ ^[0-9]+$ ]]; then
+    printf '%s' "${preview_content}" | fold -s -w "${preview_width}"
 else
     printf '%s' "${preview_content}"
 fi
@@ -62,6 +117,15 @@ fi
             encoding="utf-8"
         )
         preview_script.chmod(0o755)
+        preview_env: dict[str, str] = {
+            "BAT_THEME": "ansi",
+            "MCFG_PREVIEW_SIZE_PCT": str(preview_panel_size),
+        }
+        if normalized_extension is not None:
+            preview_env["MCFG_PREVIEW_EXT"] = normalized_extension
+        if preview_width > 0:
+            preview_env["MCFG_PREVIEW_WIDTH"] = str(preview_width)
+        preview_env_line = _toml_inline_table(preview_env)
         channel_config = f"""[metadata]
 name = "temp_options"
 description = "Temporary channel for selecting options"
@@ -73,9 +137,10 @@ output = "{{split:\\t:0}}"
 
 [preview]
 command = "{preview_script} {{split:\\t:0}}"
+{preview_env_line}
 
 [ui.preview_panel]
-size = 50
+size = {preview_panel_size}
 """
         channel_path = tempdir / "temp_options.toml"
         channel_path.write_text(channel_config, encoding="utf-8")

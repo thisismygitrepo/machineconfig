@@ -326,7 +326,7 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
         else:
             from machineconfig.utils.options_tv import main
             choice = main(
-                options_to_preview_mapping=bu_file,
+                options_to_preview_mapping=bu_file, extension="json",
             )
             if choice is None:
                 console.print(Panel("❌ NO ITEMS SELECTED\n⚠️  Exiting without processing any items", title="[bold red]No Items Selected[/bold red]", border_style="red"))
