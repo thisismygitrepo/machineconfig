@@ -35,7 +35,8 @@ class BackupItem(TypedDict):
     os: set[str]
 
 
-BackupConfig = dict[str, dict[str, BackupItem]]
+BackupGroup = dict[str, BackupItem]
+BackupConfig = dict[str, BackupGroup]
 
 
 def _normalize_os_name(value: str) -> str:
@@ -297,16 +298,15 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
         cloud = cloud.strip()
         console.print(Panel(f"🌥️  Using provided cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
     assert cloud is not None
-    bu_file = read_backup_config(repo=repo)
+    bu_file: BackupConfig = read_backup_config(repo=repo)
     system_raw = system()
     normalized_system = _normalize_os_name(system_raw)
     filtered: BackupConfig = {}
     for group_name, group_items in bu_file.items():
-        matched = {
-            key: val
-            for key, val in group_items.items()
-            if _os_applies(val["os"], system_name=normalized_system)
-        }
+        matched: BackupGroup = {}
+        for key, val in group_items.items():
+            if _os_applies(val["os"], system_name=normalized_system):
+                matched[key] = val
         if matched:
             filtered[group_name] = matched
     bu_file = filtered
@@ -325,11 +325,12 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
         choices = [token.strip() for token in which.split(",")] if which else []
         console.print(Panel(f"🔖 PRE-SELECTED ITEMS\n📝 Using: {', '.join(choices)}", title="[bold blue]Pre-selected Items[/bold blue]", border_style="blue"))
 
+    items: BackupConfig
     if "all" in choices:
         items = bu_file
         console.print(Panel(f"📋 PROCESSING ALL ENTRIES\n🔢 Total entries to process: {sum(len(item) for item in bu_file.values())}", title="[bold blue]Process All Entries[/bold blue]", border_style="blue"))
     else:
-        items: BackupConfig = {}
+        items = {}
         unknown: list[str] = []
         for choice in choices:
             if not choice:
