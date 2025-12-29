@@ -26,8 +26,9 @@ def sync(
 
 def register_data(
     path_local: Annotated[str, typer.Argument(..., help="Local file/folder path to back up.")],
-    name: Annotated[Optional[str], typer.Option("--name", "-n", help="Entry name in the user backup.toml.")] = None,
-    path_remote: Annotated[Optional[str], typer.Option("--remote", "-R", help="Remote path override (optional).")] = None,
+    group: Annotated[str, typer.Option("--group", "-g", help="Group section name in backup.toml.")] = "default",
+    name: Annotated[Optional[str], typer.Option("--name", "-n", help="Entry name inside the group in backup.toml.")] = None,
+    path_cloud: Annotated[Optional[str], typer.Option("--path-cloud", "-C", help="Cloud path override (optional).")] = None,
     zip_: Annotated[bool, typer.Option("--zip/--no-zip", "-z/-nz", help="Zip before uploading.")] = True,
     encrypt: Annotated[bool, typer.Option("--encrypt/--no-encrypt", "-e/-ne", help="Encrypt before uploading.")] = True,
     rel2home: Annotated[Optional[bool], typer.Option("--rel2home/--no-rel2home", "-r/-nr", help="Treat the local path as relative to home.")] = None,
@@ -38,8 +39,9 @@ def register_data(
     try:
         backup_path, entry_name, replaced = register_backup_entry(
             path_local=path_local,
+            group=group,
             entry_name=name,
-            path_remote=path_remote,
+            path_cloud=path_cloud,
             zip=zip_,
             encrypt=encrypt,
             rel2home=rel2home,

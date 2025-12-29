@@ -1,77 +1,36 @@
 
 # locations to be backed up to the cloud.
+# os can be 'windows', 'linux', 'darwin' or 'any'
 
-[thunderbird_windows]
-path_local = '~/AppData/Roaming/Thunderbird/Profiles'
-encrypt = true
-zip = true
-rel2home = true
-os = 'windows'
+[thunderbird]
+windows_files = {path_local = '~/AppData/Roaming/Thunderbird/Profiles', path_cloud = '^', encrypt = true, zip = true, rel2home = true, os = 'windows'}
+linux_files = {path_local = '~/.thunderbird', path_cloud = '^', encrypt = true, zip = true, rel2home = true, os = 'linux'}
 
 
-[thunderbird_linux]
-path_local = '~/.thunderbird'
-encrypt = true
-zip = true
-rel2home = true
-os = 'linux'
+[zoxide]
+windows_db = {path_local = '~/AppData/Local/zoxide/db.zo', path_cloud = '^', encrypt = false, zip = false, rel2home = true, os = 'windows'}
+linux_db = {path_local = '~/.local/share/zoxide/db.zo', path_cloud = '^', encrypt = false, zip = false, rel2home = true, os = 'linux'}
 
-
-[zoxide_windows]
-path_local = '~/AppData/Local/zoxide/db.zo'
-encrypt = false
-zip = false
-rel2home = true
-os = 'windows'
-
-
-[zoxide_linux]
-path_local = '~/.local/share/zoxide/db.zo'
-encrypt = false
-zip = false
-rel2home = true
-os = 'linux'
 
 [atuin]
-path_local = '~/.local/share/atuin/history.db'
-encrypt = true
-zip = false
-rel2home = true
-os = 'any'
+history = {path_local = '~/.local/share/atuin/history.db', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'any'}
 
 
-[bash_history]
-path_local = '~/.bash_history'
-encrypt = true
-zip = false
-rel2home = true
-os = 'linux'
+[bash]
+history = {path_local = '~/.bash_history', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'linux'}
 
-[zsh_history]
-path_local = '~/.zsh_history'
-encrypt = true
-zip = false
-rel2home = true
-os = 'darwin'
 
-[pwsh_history]
-path_local = '~/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt'
-encrypt = true
-zip = false
-rel2home = true
-os = 'windows'
+[zsh]
+history = {path_local = '~/.zsh_history', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'darwin'}
+
+
+[pwsh]
+history = {path_local = '~/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'windows'}
 
 
 #[dotfiles]
-# path_local = '~/dotfiles'
-# encrypt = true
-# zip = true
-# rel2home = true
+# repo = {path_local = '~/dotfiles', path_cloud = '^', encrypt = true, zip = true, rel2home = true, os = 'any'}
 
 
 [ipython]
-path_local = '~/.ipython'
-encrypt = true
-zip = true
-rel2home = true
-os = 'any'
+profile = {path_local = '~/.ipython', path_cloud = '^', encrypt = true, zip = true, rel2home = true, os = 'any'}
