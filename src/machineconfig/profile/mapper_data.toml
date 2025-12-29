@@ -16,16 +16,10 @@ linux_db = {path_local = '~/.local/share/zoxide/db.zo', path_cloud = '^', encryp
 history = {path_local = '~/.local/share/atuin/history.db', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'any'}
 
 
-[bash]
-history = {path_local = '~/.bash_history', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'linux'}
-
-
-[zsh]
-history = {path_local = '~/.zsh_history', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'darwin'}
-
-
-[pwsh]
-history = {path_local = '~/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'windows'}
+[shell_history]
+bash_history = {path_local = '~/.bash_history', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'linux'}
+zsh_history = {path_local = '~/.zsh_history', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'darwin'}
+pwsh_history = {path_local = '~/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleHost_history.txt', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'windows'}
 
 
 #[dotfiles]

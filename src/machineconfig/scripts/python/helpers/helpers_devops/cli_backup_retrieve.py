@@ -301,10 +301,10 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
     system_raw = system()
     normalized_system = _normalize_os_name(system_raw)
     filtered: BackupConfig = {}
-    for group_name, items in bu_file.items():
+    for group_name, group_items in bu_file.items():
         matched = {
             key: val
-            for key, val in items.items()
+            for key, val in group_items.items()
             if _os_applies(val["os"], system_name=normalized_system)
         }
         if matched:
