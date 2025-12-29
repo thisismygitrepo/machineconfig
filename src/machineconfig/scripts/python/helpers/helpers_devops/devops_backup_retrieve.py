@@ -16,6 +16,10 @@ import tomllib
 
 OPTIONS = Literal["BACKUP", "RETRIEVE"]
 
+LIBRARY_BACKUP_PATH = LIBRARY_ROOT.joinpath("profile/backup.toml")
+USER_BACKUP_PATH = Path.home().joinpath("dotfiles/machineconfig/backup.toml")
+
+
 OS_ALIASES = {
     "mac": "darwin",
     "macos": "darwin",
@@ -27,7 +31,7 @@ def _normalize_os_name(value: str) -> str:
     return OS_ALIASES.get(value.strip().lower(), value.strip().lower())
 
 
-def _parse_os_field(os_field: Any) -> set[str]:
+def _parse_os_field(os_field: Optional[str]) -> set[str]:
     if not os_field:
         return {"any"}
     if isinstance(os_field, list):
@@ -44,29 +48,6 @@ def _parse_os_field(os_field: Any) -> set[str]:
         values.add(token)
     return values or {"any"}
 
-
-def _section_os(section_name: str) -> Optional[str]:
-    name = section_name.lower()
-    suffix_map = {
-        "_windows": "windows",
-        "_linux": "linux",
-        "_darwin": "darwin",
-        "_macos": "darwin",
-        "_mac": "darwin",
-    }
-    for suffix, os_name in suffix_map.items():
-        if name.endswith(suffix):
-            return os_name
-    return None
-
-
-def _resolve_os_values(os_field: Any, section_name: str) -> set[str]:
-    if os_field is None:
-        section_value = _section_os(section_name)
-        if section_value:
-            return {section_value}
-        return {"any"}
-    return _parse_os_field(os_field)
 
 
 def _os_applies(os_values: set[str], system_name: str) -> bool:
@@ -89,15 +70,15 @@ def main_backup_retrieve(direction: OPTIONS, which: Optional[str], cloud: Option
     except (FileNotFoundError, KeyError, IndexError):
         console.print(Panel("🔍 DEFAULT CLOUD NOT FOUND\n🔄 Please select a cloud configuration from the options below", title="[bold red]Error: Cloud Not Found[/bold red]", border_style="red"))
         cloud = choose_cloud_interactively()
-    bu_file: dict[str, Any] = tomllib.loads(LIBRARY_ROOT.joinpath("profile/backup.toml").read_text(encoding="utf-8"))
-    console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_ROOT.joinpath('profile/backup.toml')}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
+    bu_file: dict[str, Any] = tomllib.loads(LIBRARY_BACKUP_PATH.read_text(encoding="utf-8"))
+    console.print(Panel(f"🧰 LOADING BACKUP CONFIGURATION\n📄 File: {LIBRARY_BACKUP_PATH}", title="[bold blue]Backup Configuration[/bold blue]", border_style="blue"))
 
     system_raw = system()
     normalized_system = _normalize_os_name(system_raw)
     bu_file = {
         key: val
         for key, val in bu_file.items()
-        if _os_applies(_resolve_os_values(val.get("os"), key), normalized_system)
+        if _os_applies(_parse_os_field(val.get("os")), system_name=normalized_system)
     }
     console.print(Panel(
         f"🖥️  {system_raw} ENVIRONMENT DETECTED\n"

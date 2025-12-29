@@ -11,7 +11,7 @@ from rich.table import Table
 from rich.text import Text
 
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH, LIBRARY_ROOT
+from machineconfig.utils.source_of_truth import CONFIG_ROOT, DEFAULTS_PATH
 
 
 console = Console()
@@ -205,7 +205,8 @@ def _check_backup_config() -> dict[str, Any]:
         cloud_config = "Not configured"
 
     try:
-        backup_file = LIBRARY_ROOT.joinpath("profile/backup.toml")
+        from machineconfig.scripts.python.helpers.helpers_devops.devops_backup_retrieve import LIBRARY_BACKUP_PATH
+        backup_file = LIBRARY_BACKUP_PATH
         if backup_file.exists():
             backup_data = tomllib.loads(backup_file.read_text(encoding="utf-8"))
             backup_items = list(backup_data.keys())
