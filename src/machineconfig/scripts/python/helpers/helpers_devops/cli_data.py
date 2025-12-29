@@ -14,7 +14,7 @@ def sync(
     ] = "library",
     # interactive: Annotated[bool, typer.Option("--interactive", "-i", help="🤔 Prompt the selection of which items to process")] = False,
 ):
-    from machineconfig.scripts.python.helpers.helpers_devops.devops_backup_retrieve import main_backup_retrieve
+    from machineconfig.scripts.python.helpers.helpers_devops.cli_backup_retrieve import main_backup_retrieve
 
     match direction:
         case "up" | "u":
@@ -34,7 +34,7 @@ def register_data(
     rel2home: Annotated[Optional[bool], typer.Option("--rel2home/--no-rel2home", "-r/-nr", help="Treat the local path as relative to home.")] = None,
     os: Annotated[str, typer.Option("--os", "-o", help="OS filter for this backup entry (comma-separated, or 'any').")] = "any",
 ) -> None:
-    from machineconfig.scripts.python.helpers.helpers_devops.devops_backup_retrieve import register_backup_entry
+    from machineconfig.scripts.python.helpers.helpers_devops.cli_backup_retrieve import register_backup_entry
 
     try:
         backup_path, entry_name, replaced = register_backup_entry(

@@ -18,8 +18,8 @@ import tomllib
 
 DIRECTION = Literal["BACKUP", "RETRIEVE"]
 
-LIBRARY_BACKUP_PATH = LIBRARY_ROOT.joinpath("profile/backup.toml")
-USER_BACKUP_PATH = Path.home().joinpath("dotfiles/machineconfig/backup.toml")
+LIBRARY_BACKUP_PATH = LIBRARY_ROOT.joinpath("profile/mapper_data.toml")
+USER_BACKUP_PATH = Path.home().joinpath("dotfiles/machineconfig/mapper_data.toml")
 DEFAULT_BACKUP_HEADER = "# User-defined backup configuration\n# Created by `devops data register`\n"
 
 

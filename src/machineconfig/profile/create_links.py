@@ -23,8 +23,8 @@ from typing import Optional, Any, TypedDict, Literal, TypeAlias
 from pathlib import Path
 
 
-LIBRARY_MAPPER_PATH = LIBRARY_ROOT.joinpath("profile/mapper.toml")
-USER_MAPPER_PATH  = Path.home().joinpath("dotfiles/machineconfig/mapper.toml")
+LIBRARY_MAPPER_PATH = LIBRARY_ROOT.joinpath("profile/mapper_dotfiles.toml")
+USER_MAPPER_PATH  = Path.home().joinpath("dotfiles/machineconfig/mapper_dotfiles.toml")
 
 system = platform.system()  # Linux or Windows
 ERROR_LIST: list[Any] = []  # append to this after every exception captured.

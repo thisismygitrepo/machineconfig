@@ -205,7 +205,7 @@ def _check_backup_config() -> dict[str, Any]:
         cloud_config = "Not configured"
 
     try:
-        from machineconfig.scripts.python.helpers.helpers_devops.devops_backup_retrieve import LIBRARY_BACKUP_PATH
+        from machineconfig.scripts.python.helpers.helpers_devops.cli_backup_retrieve import LIBRARY_BACKUP_PATH
         backup_file = LIBRARY_BACKUP_PATH
         if backup_file.exists():
             backup_data = tomllib.loads(backup_file.read_text(encoding="utf-8"))

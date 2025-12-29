@@ -117,7 +117,7 @@ def register_dotfile(
     on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
     sensitivity: Annotated[Literal["private", "v", "public", "b"], typer.Option(..., "--sensitivity", "-s", help="Sensitivity of the config file.")] = "private",
     destination: Annotated[Optional[str], typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = None,
-    section: Annotated[str, typer.Option("--section", "-se", help="Section name in mapper.toml to record this mapping.")] = "default",
+    section: Annotated[str, typer.Option("--section", "-se", help="Section name in mapper_dotfiles.toml to record this mapping.")] = "default",
     os_filter: Annotated[str, typer.Option("--os", help="Comma-separated OS list or 'any' to apply everywhere.")] = "any",
     shared: Annotated[bool, typer.Option("--shared", "-sh", help="Whether the config file is shared across destinations directory.")] = False,
     record: Annotated[bool, typer.Option("--record", "-r", help="Record the mapping in user's mapper.toml")] = True,
