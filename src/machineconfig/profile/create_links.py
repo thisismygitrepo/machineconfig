@@ -19,7 +19,7 @@ from machineconfig.utils.source_of_truth import LIBRARY_ROOT, CONFIG_ROOT
 import platform
 import subprocess
 import tomllib
-from typing import Optional, Any, TypedDict, Literal
+from typing import Optional, Any, TypedDict, Literal, TypeAlias
 from pathlib import Path
 
 
@@ -37,10 +37,18 @@ OS_ALIASES = {
     "macos": "darwin",
     "osx": "darwin",
 }
+REPO_ALIASES = {
+    "l": "library",
+    "i": "user",
+}
 
 
 def _normalize_os_name(value: str) -> str:
     return OS_ALIASES.get(value.strip().lower(), value.strip().lower())
+
+
+def _normalize_repo_name(value: str) -> str:
+    return REPO_ALIASES.get(value.strip().lower(), value.strip().lower())
 
 
 def _parse_os_field(os_field: Any) -> set[str]:
@@ -78,11 +86,17 @@ class MapperFileData(TypedDict):
     public: dict[str, list[ConfigMapper]]
     private: dict[str, list[ConfigMapper]]
 
-def read_mapper(repo: Literal["user", "library"]) -> MapperFileData:
-    if repo == "user":
+RepoLoose: TypeAlias = Literal["user", "library", "l", "i"]
+
+
+def read_mapper(repo: RepoLoose) -> MapperFileData:
+    repo_key = _normalize_repo_name(repo)
+    if repo_key == "user":
         mapper_path = USER_MAPPER_PATH
-    else:
+    elif repo_key == "library":
         mapper_path = LIBRARY_MAPPER_PATH
+    else:
+        raise ValueError(f"Unsupported repo value: {repo}")
 
     mapper_data: dict[str, dict[str, Base]] = tomllib.loads(mapper_path.read_text(encoding="utf-8"))
 

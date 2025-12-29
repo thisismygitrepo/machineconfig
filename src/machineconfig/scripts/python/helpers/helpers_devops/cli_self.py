@@ -91,7 +91,7 @@ uv tool install --no-cache --upgrade machineconfig
             copy_both_assets()
         if link_public_configs:
             import machineconfig.profile.create_links_export as create_links_export
-            create_links_export.main_public_from_parser(method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
+            create_links_export.main_from_parser(sensitivity="public", method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
 
 
 def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True,
@@ -194,4 +194,3 @@ def get_app():
     cli_app.command("readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
     cli_app.command("r", no_args_is_help=False, hidden=True)(readme)
     return cli_app
-

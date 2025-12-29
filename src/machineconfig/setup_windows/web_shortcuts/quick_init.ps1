@@ -8,7 +8,7 @@ devops install --group sysabc
 
 # configs
 devops config copy-assets both
-devops config public --method copy --on-conflict overwrite-default-path --which all
+devops config sync --sensitivity public --method copy --on-conflict overwrite-default-path --which all
 devops config shell
 devops config shell --which nushell
 

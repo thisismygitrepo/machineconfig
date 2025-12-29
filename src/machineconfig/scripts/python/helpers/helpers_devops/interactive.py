@@ -106,8 +106,8 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             from machineconfig.profile.create_shell_profile import create_default_shell_profile
             create_default_shell_profile()
             console.print("✅ Shell profile configured successfully", style="bold green")
-            from machineconfig.profile.create_links_export import main_public_from_parser
-            main_public_from_parser(method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
+            from machineconfig.profile.create_links_export import main_from_parser
+            main_from_parser(sensitivity="public", method="copy", on_conflict="overwrite-default-path", which="all", interactive=False)
             if platform.system() == "Windows":
                 from machineconfig.jobs.installer.python_scripts.nerfont_windows_helper import install_nerd_fonts
                 install_nerd_fonts()
@@ -151,10 +151,10 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             if not Path.home().joinpath("dotfiles").exists():
                 console.print("❌ Dotfiles directory still not found after attempted import. Exiting...", style="bold red")
                 sys.exit(1)
-            # devops config public --method  symlink --on-conflict overwrite-default-path
-            # devops config private --method symlink --on-conflict overwrite-default-path
-            from machineconfig.profile.create_links_export import main_private_from_parser
-            main_private_from_parser(method="symlink", on_conflict="overwrite-default-path", which="all", interactive=False)
+            # devops config sync --sensitivity public --method symlink --on-conflict overwrite-default-path
+            # devops config sync --sensitivity private --method symlink --on-conflict overwrite-default-path
+            from machineconfig.profile.create_links_export import main_from_parser
+            main_from_parser(sensitivity="private", method="symlink", on_conflict="overwrite-default-path", which="all", interactive=False)
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))

@@ -159,20 +159,12 @@ class CommandTree(Tree[CommandInfo]):
             is_group=True
         ))
 
-        config_node.add("🔗 private - Manage private configuration files", data=CommandInfo(
-            name="private",
-            description="Manage private configuration files",
-            command="devops config private",
+        config_node.add("🔗 sync - Sync configuration files", data=CommandInfo(
+            name="sync",
+            description="Sync configuration files",
+            command="devops config sync",
             parent="config",
-            help_text="devops config private --method <symlink|copy> --on-conflict <action> --which <items> --interactive"
-        ))
-
-        config_node.add("🔗 public - Manage public configuration files", data=CommandInfo(
-            name="public",
-            description="Manage public configuration files",
-            command="devops config public",
-            parent="config",
-            help_text="devops config public --method <symlink|copy> --on-conflict <action> --which <items> --interactive"
+            help_text="devops config sync --sensitivity <public|private> --method <symlink|copy> --on-conflict <action> --which <items> --interactive --repo <library|user>"
         ))
 
         config_node.add("🔗 dotfile - Manage dotfiles", data=CommandInfo(

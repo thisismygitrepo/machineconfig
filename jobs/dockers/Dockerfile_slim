@@ -18,7 +18,7 @@ RUN /root/.local/bin/uv tool install --python 3.14 --editable .
 
 RUN /root/.local/bin/devops install --group sysabc
 RUN /root/.local/bin/devops install --group termabc
-RUN /root/.local/bin/devops config public --method symlink --which all
+RUN /root/.local/bin/devops config sync --sensitivity public --method symlink --which all
 RUN /root/.local/bin/devops config shell
 
 RUN touch /root/.bash_history
