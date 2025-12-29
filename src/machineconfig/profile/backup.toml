@@ -6,7 +6,6 @@ path_local = '~/AppData/Roaming/Thunderbird/Profiles'
 encrypt = true
 zip = true
 rel2home = true
-os_specific = true
 os = 'windows'
 
 
@@ -15,7 +14,6 @@ path_local = '~/.thunderbird'
 encrypt = true
 zip = true
 rel2home = true
-os_specific = true
 os = 'linux'
 
 
@@ -24,7 +22,6 @@ path_local = '~/AppData/Local/zoxide/db.zo'
 encrypt = false
 zip = false
 rel2home = true
-os_specific = true
 os = 'windows'
 
 
@@ -33,7 +30,6 @@ path_local = '~/.local/share/zoxide/db.zo'
 encrypt = false
 zip = false
 rel2home = true
-os_specific = true
 os = 'linux'
 
 [atuin]
@@ -41,7 +37,6 @@ path_local = '~/.local/share/atuin/history.db'
 encrypt = true
 zip = false
 rel2home = true
-os_specific = false
 os = 'any'
 
 
@@ -50,7 +45,6 @@ path_local = '~/.bash_history'
 encrypt = true
 zip = false
 rel2home = true
-os_specific = true
 os = 'linux'
 
 [zsh_history]
@@ -58,7 +52,6 @@ path_local = '~/.zsh_history'
 encrypt = true
 zip = false
 rel2home = true
-os_specific = true
 os = 'darwin'
 
 [pwsh_history]
@@ -66,7 +59,6 @@ path_local = '~/AppData/Roaming/Microsoft/Windows/PowerShell/PSReadLine/ConsoleH
 encrypt = true
 zip = false
 rel2home = true
-os_specific = true
 os = 'windows'
 
 
@@ -75,7 +67,6 @@ os = 'windows'
 # encrypt = true
 # zip = true
 # rel2home = true
-# os_specific = true
 
 
 [ipython]
@@ -83,5 +74,4 @@ path_local = '~/.ipython'
 encrypt = true
 zip = true
 rel2home = true
-os_specific = false
 os = 'any'

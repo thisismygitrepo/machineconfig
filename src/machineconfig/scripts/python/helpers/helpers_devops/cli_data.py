@@ -32,7 +32,6 @@ def register_data(
     encrypt: Annotated[bool, typer.Option("--encrypt/--no-encrypt", "-e/-ne", help="Encrypt before uploading.")] = True,
     rel2home: Annotated[Optional[bool], typer.Option("--rel2home/--no-rel2home", "-r/-nr", help="Treat the local path as relative to home.")] = None,
     os: Annotated[Literal["any", "windows", "linux", "darwin"], typer.Option("--os", "-o", help="OS filter for this backup entry.")] = "any",
-    os_specific: Annotated[Optional[bool], typer.Option("--os-specific/--no-os-specific", "-O/-nO", help="Mark the path as OS-specific.")] = None,
 ) -> None:
     from machineconfig.scripts.python.helpers.helpers_devops.devops_backup_retrieve import register_backup_entry
 
@@ -44,7 +43,6 @@ def register_data(
             zip=zip_,
             encrypt=encrypt,
             rel2home=rel2home,
-            os_specific=os_specific,
             os=os,
         )
     except ValueError as exc:

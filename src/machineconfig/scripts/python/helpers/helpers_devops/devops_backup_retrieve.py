@@ -32,7 +32,6 @@ class BackupItem(TypedDict):
     zip: bool
     encrypt: bool
     rel2home: bool
-    os_specific: bool
     os: set[str]
 
 
@@ -100,13 +99,14 @@ def _parse_backup_config(raw: Mapping[str, object]) -> BackupConfig:
         item = _require_mapping(value, item_name)
         if "path" in item:
             raise ValueError(f"Backup entry '{item_name}' uses 'path'; use 'path_local' instead.")
+        if "os_specific" in item:
+            raise ValueError(f"Backup entry '{item_name}' uses 'os_specific'; use 'os' only.")
         config[item_name] = {
             "path_local": _require_str_field(item, "path_local", item_name),
             "path_remote": _optional_str_field(item, "path_remote", item_name),
             "zip": _require_bool_field(item, "zip", item_name),
             "encrypt": _require_bool_field(item, "encrypt", item_name),
             "rel2home": _require_bool_field(item, "rel2home", item_name),
-            "os_specific": _require_bool_field(item, "os_specific", item_name),
             "os": _parse_os_field(item.get("os"), item_name),
         }
     return config
@@ -153,7 +153,6 @@ def _format_backup_entry_block(
     zip: bool,
     encrypt: bool,
     rel2home: bool,
-    os_specific: bool,
     os_value: str,
 ) -> str:
     lines = [
@@ -166,7 +165,6 @@ def _format_backup_entry_block(
         f"encrypt = {str(encrypt).lower()}",
         f"zip = {str(zip).lower()}",
         f"rel2home = {str(rel2home).lower()}",
-        f"os_specific = {str(os_specific).lower()}",
         f"os = '{os_value}'",
     ])
     return "\n".join(lines)
@@ -212,7 +210,6 @@ def register_backup_entry(
     zip: bool = True,
     encrypt: bool = True,
     rel2home: Optional[bool] = None,
-    os_specific: Optional[bool] = None,
     os: str = "any",
 ) -> tuple[Path, str, bool]:
     local_path = Path(path_local).expanduser().absolute()
@@ -227,8 +224,6 @@ def register_backup_entry(
         rel2home = in_home
     if rel2home and not in_home:
         raise ValueError("rel2home is true, but the local path is not under the home directory.")
-    if os_specific is None:
-        os_specific = normalized_os != "any"
     if entry_name is None or not entry_name.strip():
         base_name = _sanitize_entry_name(local_path.stem)
         entry_name = f"{base_name}_{normalized_os}" if normalized_os != "any" else base_name
@@ -243,7 +238,6 @@ def register_backup_entry(
         zip=zip,
         encrypt=encrypt,
         rel2home=rel2home,
-        os_specific=os_specific,
         os_value=normalized_os,
     )
     USER_BACKUP_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -305,7 +299,7 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
         flags += "z" if item["zip"] else ""
         flags += "e" if item["encrypt"] else ""
         flags += "r" if item["rel2home"] else ""
-        flags += "o" if item["os_specific"] else ""
+        flags += "o" if "any" not in item["os"] else ""
         local_path = Path(item["path_local"]).as_posix()
         if item["path_remote"] is None:
             remote_path = ES
