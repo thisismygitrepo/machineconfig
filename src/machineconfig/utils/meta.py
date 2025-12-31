@@ -68,7 +68,7 @@ def lambda_to_python_script(lmb: Callable[[], Any],
 
     # sanity checks
     if not (callable(lmb) and isinstance(lmb, _types.LambdaType)):
-        raise TypeError("Expected a lambda function object")
+        raise TypeError(f"Expected a lambda function object, got {type(lmb)}")
 
     src = _inspect.getsource(lmb)
     src = _textwrap.dedent(src)
@@ -81,7 +81,7 @@ def lambda_to_python_script(lmb: Callable[[], Any],
             lambda_node = n
             break
     if lambda_node is None:
-        raise ValueError("Could not find a lambda expression in source")
+        raise ValueError(f"""Could not find a lambda expression in source, got:\n{lmb}\nwhich is not a lambda, its a {src}""")
 
     body = lambda_node.body
     if not isinstance(body, _ast.Call):

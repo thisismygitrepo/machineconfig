@@ -9,6 +9,8 @@ import tempfile
 import os
 from typing import Any
 
+from git import Optional
+
 
 def _format_preview_value(value: Any) -> str:
     if isinstance(value, str):
@@ -38,7 +40,7 @@ def _normalize_extension(extension: str | None) -> str | None:
     return trimmed
 
 
-def _infer_extension_from_key(key: str) -> str | None:
+def _infer_extension_from_key(key: Optional[str]) -> str | None:
     if not isinstance(key, str):
         return None
     candidate = key.strip()
