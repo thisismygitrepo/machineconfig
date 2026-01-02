@@ -129,7 +129,7 @@ cd {str(mcfg_path)}
 """)
     else:
         exit_then_run_shell_script(rf"""
-{uv_command} tool install --upgrade "machineconfig>=8.38"
+{uv_command} tool install --upgrade "machineconfig>=8.39"
 {uv_command2}
 """)
 
@@ -153,7 +153,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import exit_then_run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=8.38,textual" """
+    else: executable = """--with "machineconfig>=8.39,textual" """
     exit_then_run_shell_script(f"""uv run {executable} {path}""")
 
 def readme():
