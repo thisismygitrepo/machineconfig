@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "8.39"
+version = "8.40"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -100,6 +100,7 @@ dev = [
     "mkdocs-autorefs>=1.4.3",
     "mkdocs-material>=9.7.0",
     "mkdocstrings>=1.0.0",
+    "mkdocstrings-python>=2.0.1",
     "mypy>=1.19.0",
     "numpy>=2.3.5",
     "pandas>=2.3.3",
