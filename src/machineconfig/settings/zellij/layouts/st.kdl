@@ -9,8 +9,8 @@ layout {
     }
 
     tab name="📂" focus=false {
-        pane name="lfpane" {
-            command "lf"
+        pane name="yPane" {
+            command "y"
         }
     }
 

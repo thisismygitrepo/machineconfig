@@ -39,7 +39,7 @@ layout {
             }
             pane name="bottomMiddle" size="70%" {
                 pane name="bottomMiddle1" size="30%" {
-                    command "lf"
+                    command "y"
                 }
             pane name="bottomMiddle2" size="70%" {
                     command "timeout"

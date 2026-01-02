@@ -206,7 +206,7 @@ if __name__ == "__main__":
     # Example usage with new schema
     sample_layout: LayoutConfig = {
         "layoutName": "SampleBots",
-        "layoutTabs": [{"tabName": "Explorer", "startDir": "~/code", "command": "lf"}, {"tabName": "🤖Bot2", "startDir": "~", "command": "cmatrix"}, {"tabName": "📊Monitor", "startDir": "~", "command": "htop"}, {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"}],
+        "layoutTabs": [{"tabName": "Explorer", "startDir": "~/code", "command": "yazi"}, {"tabName": "🤖Bot2", "startDir": "~", "command": "cmatrix"}, {"tabName": "📊Monitor", "startDir": "~", "command": "htop"}, {"tabName": "📝Logs", "startDir": "/var/log", "command": "tail -f /var/log/app.log"}],
     }
     try:
         # Create layout using the generator with new design

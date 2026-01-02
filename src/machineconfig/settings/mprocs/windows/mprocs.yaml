@@ -3,8 +3,8 @@ procs:
   explorer:
     shell:
       $select: os
-      windows: "lf"
-      $else: "lf"
+      windows: "y"
+      $else: "y"
     env:
       TEXT:
         $select: os

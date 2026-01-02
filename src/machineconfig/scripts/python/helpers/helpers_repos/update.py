@@ -246,12 +246,6 @@ def update_repository(repo: git.Repo, auto_uv_sync: bool, allow_password_prompt:
                 result["permissions_updated"] = True
                 print(f"✅ Set permissions for {linux_jobs_path}")
 
-            lf_exe_path = repo_path / "src" / "machineconfig" / "settings" / "lf" / "linux" / "exe"
-            if lf_exe_path.exists():
-                set_permissions_recursive(lf_exe_path)
-                result["permissions_updated"] = True
-                print(f"✅ Set permissions for {lf_exe_path}")
-
         # Run uv sync if dependencies changed and auto_sync is enabled
         if result["dependencies_changed"] and auto_uv_sync:
             result["uv_sync_ran"] = True

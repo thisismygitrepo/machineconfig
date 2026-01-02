@@ -206,7 +206,7 @@ if __name__ == "__main__":
     sample_layout: LayoutConfig = {"layoutName": "TestLayout",
                                    "layoutTabs": [
             {"tabName": "Frontend", "startDir": "~/code", "command": "btm"},
-            {"tabName": "Monitor", "startDir": "~", "command": "lf"}
+            {"tabName": "Monitor", "startDir": "~", "command": "yazi"},
             ]}
     try:
         session_name = sample_layout["layoutName"]
