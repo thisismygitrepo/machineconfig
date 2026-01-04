@@ -44,6 +44,7 @@ def network(ctx: typer.Context) -> None:
 
 
 def execute(
+    ctx: typer.Context,
     name: Annotated[str, typer.Argument(help="Name of script to run, e.g., 'a' for a.py, or command to execute")] = "",
     where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "dynamic", "d", "custom", "c"], typer.Option("--where", "-w", help="Where to look for the script")] = "all",
     interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactive selection of scripts to run")] = False,
@@ -52,7 +53,7 @@ def execute(
 ) -> None:
     """▶️ Execute python/shell scripts from pre-defined directories or as command."""
     import machineconfig.scripts.python.helpers.helpers_devops.run_script as run_py_script_module
-    run_py_script_module.run_py_script(name=name, where=where, interactive=interactive, command=command, list_scripts=list_scripts)
+    run_py_script_module.run_py_script(ctx=ctx, name=name, where=where, interactive=interactive, command=command, list_scripts=list_scripts)
 
 
 def get_app() -> typer.Typer:

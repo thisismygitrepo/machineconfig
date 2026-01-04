@@ -22,7 +22,8 @@ import typer
 from typing import Annotated, Optional, Literal
 
 
-def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to run, e.g., 'a' for a.py, or command to execute")] = "",
+def run_py_script(ctx: typer.Context,
+                  name: Annotated[str, typer.Argument(help="Name of script to run, e.g., 'a' for a.py, or command to execute")] = "",
                   where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "dynamic", "d", "custom", "c"], typer.Option("--where", "-w", help="Where to look for the script")] = "all",
                   interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactive selection of scripts to run")] = False,
                   command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
@@ -138,20 +139,21 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
         if len(potential_matches) == 1:
             target_file = potential_matches[0]
         elif len(potential_matches) == 0:
-            # typer
-            print(f"❌ ERROR: Could not find script '{name}'.")
-            print("Searched in:")
+            typer.echo(ctx.get_help())
+            typer.echo()
+            typer.echo(typer.style(f"❌ ERROR: Could not find script '{name}'.", fg=typer.colors.RED, bold=True))
+            typer.echo("Searched in:")
             for r in roots:
-                print(f"  - {r}")
+                typer.echo(f"  - {r}")
             raise typer.Exit(code=1)
         else:
-            print(f"Warning: Could not find script '{name}'. Checked {len(potential_matches)} candidate files, trying interactively:")
+            typer.echo(typer.style(f"Warning: Could not find script '{name}'. Checked {len(potential_matches)} candidate files, trying interactively:", fg=typer.colors.YELLOW))
             from machineconfig.utils.options import choose_from_options
             options = [str(p) for p in potential_matches]
             chosen_file_part = choose_from_options(options, multi=False, msg="Select the script to run:", tv=True, preview="bat")
             target_file = Path(chosen_file_part)
 
-    print(f"✅ Found script at: {target_file}")
+    typer.echo(typer.style(f"✅ Found script at: {target_file}", fg=typer.colors.GREEN))
     if target_file.suffix == ".py":
         from machineconfig.utils.code import get_uv_command_executing_python_file, exit_then_run_shell_script
         shell_script = get_uv_command_executing_python_file(python_file=str(target_file), uv_project_dir=None, uv_with=None, prepend_print=False)
@@ -161,7 +163,8 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
         exit_then_run_shell_file(script_path=str(target_file), strict=True)
 
 
-def copy_script_to_local(name: Annotated[str, typer.Argument(help="Name of the temporary python script to copy, e.g., 'a' for a.py")],
+def copy_script_to_local(ctx: typer.Context,
+                         name: Annotated[str, typer.Argument(help="Name of the temporary python script to copy, e.g., 'a' for a.py")],
                          alias: Annotated[Optional[str], typer.Option("--alias", "-a", help="Whether to create call it a different name locally")] = None
                          ) -> None:
     """
@@ -171,14 +174,16 @@ def copy_script_to_local(name: Annotated[str, typer.Argument(help="Name of the t
     import requests
     response = requests.get(url)
     if response.status_code != 200:
-        print(f"❌ ERROR: Could not fetch script '{name}.py' from repository. Status Code: {response.status_code}")
+        typer.echo(ctx.get_help())
+        typer.echo()
+        typer.echo(typer.style(f"❌ ERROR: Could not fetch script '{name}.py' from repository. Status Code: {response.status_code}", fg=typer.colors.RED, bold=True))
         raise typer.Exit(code=1)
     script_content = response.text
     from machineconfig.utils.source_of_truth import CONFIG_ROOT
     local_path = CONFIG_ROOT.joinpath(f"scripts_python/{alias or name}.py")
     with open(local_path, "w") as f:
         f.write(script_content)
-    print(f"✅ Script '{name}.py' has been copied to '{local_path}'.")
+    typer.echo(typer.style(f"✅ Script '{name}.py' has been copied to '{local_path}'.", fg=typer.colors.GREEN))
 
 
 def get_app():
