@@ -15,7 +15,8 @@ sudo nala install openssh-server -y || true  # try to install first
 echo "✅ FINISHED installing openssh-server."
 """
     else:
-        raise NotImplementedError(f"Platform {platform.system()} is not supported.")
+        print(f"❌ Error: Platform {platform.system()} is not supported.")
+        raise typer.Exit(code=1)
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script=script)
 
@@ -24,7 +25,8 @@ def change_ssh_port(port: Annotated[int, typer.Option(..., "--port", "-p", help=
     """🔌 Change SSH port (Linux/WSL only, default: 2222)"""
     import platform
     if platform.system() != "Linux":
-        raise NotImplementedError("change_ssh_port requires Linux environment")
+        print("❌ Error: change_ssh_port requires Linux environment")
+        raise typer.Exit(code=1)
     from machineconfig.utils.ssh_utils.wsl import change_ssh_port as _change_ssh_port
     _change_ssh_port(port=port)
 
@@ -146,7 +148,8 @@ def debug_ssh() -> None:
         import machineconfig.scripts.python.helpers.helpers_network.ssh_debug_windows as helper
         helper.ssh_debug_windows()
     else:
-        raise NotImplementedError(f"Platform {system()} is not supported.")
+        print(f"❌ Error: Platform {system()} is not supported.")
+        raise typer.Exit(code=1)
 
 
 def get_app() -> typer.Typer:

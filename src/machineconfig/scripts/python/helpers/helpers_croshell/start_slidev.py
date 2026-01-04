@@ -87,7 +87,8 @@ def main(
         if len(res) == 1:
             md_file = res[0]
         else:
-            raise FileNotFoundError(f"❌ slides.md not found in {report_dir}")
+            print(f"❌ Error: slides.md not found in {report_dir}")
+            raise typer.Exit(code=1)
 
     print("📂 Copying files to Slidev repository...")
     for item in report_dir.glob("*"):

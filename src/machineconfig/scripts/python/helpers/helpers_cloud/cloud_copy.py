@@ -107,7 +107,7 @@ def main(
                 print("🔄 Converting Google Drive link to direct download URL")
             else:
                 console.print(Panel("❌ Invalid Google Drive link format", title="[bold red]Error[/bold red]", border_style="red"))
-                raise ValueError("Invalid Google Drive link format")
+                raise typer.Exit(code=1)
         return get_securely_shared_file(url=source, folder=target)
 
     if args_obj.rel2home is True and args_obj.root is None:
@@ -122,7 +122,7 @@ def main(
 
     if args_obj.key is not None:
         console.print(Panel("❌ Key-based encryption is not supported yet", title="[bold red]Error[/bold red]", border_style="red"))
-        raise ValueError("Key-based encryption is not supported yet.")
+        raise typer.Exit(code=1)
 
     if cloud in source:
         console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source.replace(cloud + ':', '')}\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
@@ -159,7 +159,7 @@ def main(
             console.print(Panel(f"🔗 SHARE URL GENERATED\n📝 URL file: {share_url_path}\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
     else:
         console.print(Panel(f"❌ ERROR: Cloud '{cloud}' not found in source or target", title="[bold red]Error[/bold red]", border_style="red", width=152))
-        raise ValueError(f"Cloud `{cloud}` not found in source or target.")
+        raise typer.Exit(code=1)
 
 
 def arg_parser() -> None:

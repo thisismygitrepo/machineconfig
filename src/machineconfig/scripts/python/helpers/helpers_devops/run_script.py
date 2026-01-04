@@ -75,7 +75,8 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
             if Path(name).suffix in [".sh", ".ps1", ".bat", ".cmd", ""]:
                 target_file = Path(name)
             else:
-                raise RuntimeError(f"File '{name}' is not a recognized script type. Supported types are {'.py', '.sh', '.ps1', '.bat', '.cmd', ''}.")
+                print(f"❌ Error: File '{name}' is not a recognized script type. Supported types are {'.py', '.sh', '.ps1', '.bat', '.cmd', ''}.")
+                raise typer.Exit(code=1)
 
     from machineconfig.utils.source_of_truth import CONFIG_ROOT, LIBRARY_ROOT, DEFAULTS_PATH
     private_root = Path.home().joinpath("dotfiles/scripts")  # local directory
@@ -137,6 +138,7 @@ def run_py_script(name: Annotated[str, typer.Argument(help="Name of script to ru
         if len(potential_matches) == 1:
             target_file = potential_matches[0]
         elif len(potential_matches) == 0:
+            # typer
             print(f"❌ ERROR: Could not find script '{name}'.")
             print("Searched in:")
             for r in roots:
@@ -170,7 +172,7 @@ def copy_script_to_local(name: Annotated[str, typer.Argument(help="Name of the t
     response = requests.get(url)
     if response.status_code != 200:
         print(f"❌ ERROR: Could not fetch script '{name}.py' from repository. Status Code: {response.status_code}")
-        raise RuntimeError(f"Could not fetch script '{name}.py' from repository.")
+        raise typer.Exit(code=1)
     script_content = response.text
     from machineconfig.utils.source_of_truth import CONFIG_ROOT
     local_path = CONFIG_ROOT.joinpath(f"scripts_python/{alias or name}.py")

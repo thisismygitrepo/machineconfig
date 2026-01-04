@@ -71,7 +71,8 @@ def mount(
         if type(res) is str:
             cloud = res
         else:
-            raise ValueError("no cloud selected")
+            print("❌ Error: No cloud selected")
+            raise typer.Exit(code=1)
         print(f"🌩️  Selected cloud: {cloud}")
 
     if network is None:
@@ -98,13 +99,15 @@ def mount(
                 console.print(Panel(f"{warning_line}\n{err_line}", title="Warning", border_style="yellow"))
                 pass
         else:
-            raise ValueError("unsupported platform")
+            print("❌ Error: Unsupported platform")
+            raise typer.Exit(code=1)
 
     elif network and platform.system() == "Windows":
         mount_loc = "X: --network-mode"
         print(f"🔌 Setting up network mount at {mount_loc}")
     else:
-        raise ValueError("network mount only supported on windows")
+        print("❌ Error: Network mount only supported on Windows")
+        raise typer.Exit(code=1)
 
     mount_cmd = f"rclone mount {cloud}: {mount_loc} --vfs-cache-mode full --file-perms=0777"
     console.print(Panel(f"🚀 Preparing mount command:\n{mount_cmd}", border_style="blue"))
@@ -149,7 +152,8 @@ zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
 zellij action move-focus up
 """
     else:
-        raise ValueError("unsupported platform")
+        print("❌ Error: Unsupported platform")
+        raise typer.Exit(code=1)
     # print(f"running command: \n{txt}")
     # PROGRAM_PATH.write_text(txt, encoding="utf-8")
     import subprocess

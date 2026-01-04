@@ -46,6 +46,7 @@ def share_terminal(
     port: Annotated[Optional[int], typer.Option("--port", "-p", help="Port to run the terminal server on (default: 7681)")] = None,
     username: Annotated[Optional[str], typer.Option("--username", "-u", help="Username for terminal access (default: current user)")] = None,
     password: Annotated[Optional[str], typer.Option("--password", "-w", help="Password for terminal access (default: from ~/dotfiles/creds/passwords/quick_password)")] = None,
+    no_auth: Annotated[bool, typer.Option("--no-auth", "-n", help="Disable authentication (not recommended)")] = False,
     start_command: Annotated[Optional[str], typer.Option("--start-command", "-s", help="Command to run on terminal start (default: bash/powershell)")] = None,
     ssl: Annotated[bool, typer.Option("--ssl", "-S", help="Enable SSL")] = False,
     ssl_cert: Annotated[Optional[str], typer.Option("--ssl-cert", "-C", help="SSL certificate file path")] = None,
@@ -61,12 +62,14 @@ def share_terminal(
     if username is None:
         import getpass
         username = getpass.getuser()
-    if password is None:
+    if password is None and not no_auth:
         pwd_path = Path.home().joinpath("dotfiles/creds/passwords/quick_password")
         if pwd_path.exists():
             password = pwd_path.read_text(encoding="utf-8").strip()
         else:
-            raise ValueError("Password not provided and default password file does not exist.")
+            # raise ValueError("Password not provided and default password file does not exist.")
+            print("❌ Error: Password not provided and default password file does not exist.")
+            raise typer.Exit(code=1)
 
     if port is None:
         port = 7681  # Default port for ttyd
@@ -83,12 +86,15 @@ def share_terminal(
         key_path = Path(ssl_key)
         
         if not cert_path.exists():
-            raise FileNotFoundError(f"SSL certificate file not found: {ssl_cert}")
+            print(f"❌ Error: SSL certificate file not found: {ssl_cert}")
+            raise typer.Exit(code=1)
         if not key_path.exists():
-            raise FileNotFoundError(f"SSL key file not found: {ssl_key}")
+            print(f"❌ Error: SSL key file not found: {ssl_key}")
+            raise typer.Exit(code=1)
         
         if ssl_ca and not Path(ssl_ca).exists():
-            raise FileNotFoundError(f"SSL CA file not found: {ssl_ca}")
+            print(f"❌ Error: SSL CA file not found: {ssl_ca}")
+            raise typer.Exit(code=1)
 
     import machineconfig.scripts.python.helpers.helpers_network.address as helper
     res = helper.select_lan_ipv4(prefer_vpn=False)

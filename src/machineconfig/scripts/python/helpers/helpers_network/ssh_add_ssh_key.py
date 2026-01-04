@@ -108,7 +108,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
         key_path.parent.mkdir(parents=True, exist_ok=True)
         if not key_path.exists():
             console.print(Panel(f"❌ Key path does not exist: {key_path}", title="[bold red]Error[/bold red]", border_style="red"))
-            raise FileNotFoundError(f"Provided key path does not exist: {key_path}")
+            raise typer.Exit(code=1)
         info_lines.append(f"📄 Source: Local file │ {key_path}")
         program, status_msg = get_add_ssh_key_script(key_path)
 
@@ -140,7 +140,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
         response = requests.get(f"https://api.github.com/users/{from_github}/keys")
         if response.status_code != 200:
             console.print(Panel(f"❌ GitHub API error for user '{from_github}' │ Status: {response.status_code}", title="[bold red]Error[/bold red]", border_style="red"))
-            raise RuntimeError(f"Failed to fetch keys from GitHub user {from_github}: Status Code {response.status_code}")
+            raise typer.Exit(code=1)
         keys = response.json()
         if not keys:
             console.print(Panel(f"⚠️  No public keys found for GitHub user: {from_github}", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
@@ -153,7 +153,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
 
     else:
         console.print(Panel("❌ No key source specified. Use --help for options.", title="[bold red]Error[/bold red]", border_style="red"))
-        raise ValueError("No method provided to add SSH key. Use --help for options.")
+        raise typer.Exit(code=1)
 
     combined_info = "\n".join(info_lines + [""] + status_msg.split("\n"))
     console.print(Panel(combined_info, title="[bold blue]🔑 SSH Key Authorization[/bold blue]", border_style="blue"))
