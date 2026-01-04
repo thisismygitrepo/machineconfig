@@ -51,7 +51,7 @@ def execute(
     command: Annotated[Optional[bool], typer.Option(..., "--command", "-c", help="Run as command")] = False,
     list_scripts: Annotated[bool, typer.Option(..., "--list", "-l", help="List available scripts in all locations")] = False,
 ) -> None:
-    """▶️ Execute python/shell scripts from pre-defined directories or as command."""
+    """🚀 Execute python/shell scripts from pre-defined directories or as command."""
     import machineconfig.scripts.python.helpers.helpers_devops.run_script as run_py_script_module
     run_py_script_module.run_py_script(ctx=ctx, name=name, where=where, interactive=interactive, command=command, list_scripts=list_scripts)
 
@@ -60,12 +60,12 @@ def get_app() -> typer.Typer:
     cli_app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=True, add_completion=False)
     ctx_settings: dict[str, object] = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True, "help_option_names": []}
 
-    cli_app.command("install", no_args_is_help=True, help=install.__doc__, short_help="🛠️ [i] Install essential packages")(install)
+    cli_app.command("install", no_args_is_help=True, help=install.__doc__, short_help="🛠️  [i] Install essential packages")(install)
     cli_app.command("i", no_args_is_help=True, help=install.__doc__, hidden=True)(install)
 
     cli_app.command("repos", help="📁 [r] Manage development repositories", context_settings=ctx_settings)(repos)
     cli_app.command("r", hidden=True, context_settings=ctx_settings)(repos)
-    cli_app.command("config", help="⚙️ [c] Configuration management", context_settings=ctx_settings)(config)
+    cli_app.command("config", help="🔩 [c] Configuration management", context_settings=ctx_settings)(config)
     cli_app.command("c", hidden=True, context_settings=ctx_settings)(config)
     cli_app.command("data", help="💾 [d] Data management", context_settings=ctx_settings)(data)
     cli_app.command("d", hidden=True, context_settings=ctx_settings)(data)
@@ -74,7 +74,7 @@ def get_app() -> typer.Typer:
     cli_app.command("network", help="🌐 [n] Network management", context_settings=ctx_settings)(network)
     cli_app.command("n", hidden=True, context_settings=ctx_settings)(network)
 
-    cli_app.command("execute", no_args_is_help=True, short_help="▶️ [e] Execute python/shell scripts from pre-defined directories or as command")(execute)
+    cli_app.command("execute", no_args_is_help=True, short_help="🚀 [e] Execute python/shell scripts from pre-defined directories or as command")(execute)
     cli_app.command("e", no_args_is_help=True, hidden=True)(execute)
 
     return cli_app
