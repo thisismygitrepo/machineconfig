@@ -166,7 +166,10 @@ class CacheMemory[T]():
         else:
             age = datetime.now() - self.time_produced
             if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):
-                self.logger.warning(f"""🔄 CACHE UPDATE ⚠️  {self.name} cache: Updating cache from source func. """ + f""" ⏱️  Age = {age} > {self.expire}""" if not fresh else f""" ⏱️  Age = {age}. Fresh flag raised.""")
+                if not fresh:
+                    self.logger.warning(f"""🔄 CACHE STALE 📦 {self.name} cache: Populating fresh cache from source func. """ + f"""⏱️  Age = {age} > Expiry {self.expire} """ )
+                else:
+                    self.logger.warning(f"""⚠️ Fresh flag raised, age = {age} > {tolerance_seconds} seconds of tolerance. Updating {self.name} cache from source func.""")
                 t0 = time.time()
                 self.cache = self.source_func()
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
@@ -202,7 +205,10 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
             if self.path.exists():  # prefer to read from disk over source func as a default source of cache.
                 age = datetime.now() - datetime.fromtimestamp(self.path.stat().st_mtime)
                 if (age > self.expire) or (fresh and (age.total_seconds() > tolerance_seconds)):  # cache is old or if fresh flag is raised
-                    self.logger.warning(f"""🔄 CACHE STALE 📦 {self.name} cache: Populating fresh cache from source func. """ + f"""⏱️  Age = {age} > Expiry {self.expire} """ if not fresh else """⚠️  Fresh flag raised.""")
+                    if not fresh:
+                        self.logger.warning(f"""🔄 CACHE STALE 📦 {self.name} cache: Populating fresh cache from source func. """ + f"""⏱️  Age = {age} > Expiry {self.expire} """ )
+                    else:
+                        self.logger.warning(f"""⚠️ Fresh flag raised, age = {age} > {tolerance_seconds} seconds of tolerance. Updating {self.name} cache from source func.""")
                     t0 = time.time()
                     self.cache = self.source_func()  # fresh data.
                     self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
