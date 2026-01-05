@@ -10,7 +10,7 @@ def choose_zellij_session(
     from machineconfig.scripts.python.helpers.helpers_terminal.terminal_impl import choose_zellij_session as impl
     action, payload = impl(name=name, new_session=new_session, kill_all=kill_all)
     if action == "error":
-        print(payload)
+        typer.echo(payload, err=True, color=True)
         raise typer.Exit()
     if action == "run_script" and payload:
         from machineconfig.utils.code import exit_then_run_shell_script

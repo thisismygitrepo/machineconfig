@@ -65,6 +65,10 @@ tv  {preview_line} --ansi --source-command '{source_cmd}' --source-output "{{}}"
         out_text = tv_out_path.read_text(encoding="utf-8-sig")
         choice_string_multi = [x for x in out_text.splitlines() if x.strip() != ""]
 
+        # if len(choice_string_multi) == 0:  # e.g. user pressed escape
+        #     console.print(Panel("❓ No option selected!", title="Error", expand=False))
+        #     return choose_from_options(msg=msg, options=options, header=header, tail=tail, prompt=prompt, default=default, tv=tv, multi=multi, custom_input=custom_input)
+
         # Cleanup temporary files
         options_txt_path.unlink(missing_ok=True)
         tv_out_path.unlink(missing_ok=True)
@@ -79,8 +83,8 @@ tv  {preview_line} --ansi --source-command '{source_cmd}' --source-output "{{}}"
                 print(f"✅ Selected option: {choice_made}")
                 return choice_made
             except IndexError as ie:
-                print(f"❌ Error: {options=}, {choice_string_multi=}")
-                print(f"🔍 Available choices: {choice_string_multi}")
+                # print(f"❌ Error: {options=}, {choice_string_multi=}")
+                print(f"🔍 Available choices: {len(choice_string_multi)}")
                 raise ie
         if isinstance(list(options)[0], str):
             result2 = cast(list[T], choice_string_multi)

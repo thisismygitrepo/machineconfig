@@ -41,7 +41,10 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
     NEW_SESSION_LABEL = "NEW SESSION"
     KILL_ALL_AND_NEW_LABEL = "KILL ALL SESSIONS & START NEW"
     options = sessions + [NEW_SESSION_LABEL, KILL_ALL_AND_NEW_LABEL]
-    session_name = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, tv=True)
+    try:
+        session_name = choose_from_options(msg="Choose a Zellij session to attach to:", multi=False, options=options, tv=True)
+    except Exception as e:
+        return ("error", f"Error choosing Zellij session: {e}")
     if session_name == NEW_SESSION_LABEL:
         cmd = "zellij --layout st2"
         if kill_all:
