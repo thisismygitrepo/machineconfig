@@ -44,6 +44,7 @@ class CommandBuilderScreen(ModalScreen[str]):
                     is_flag=False,
                     placeholder=placeholder,
                     flag=f"--{arg_name}",
+                    long_flags=[f"--{arg_name}"],
                 ))
                 seen_names.add(arg_name)
 
@@ -56,6 +57,7 @@ class CommandBuilderScreen(ModalScreen[str]):
                     is_required=False,
                     is_flag=True,
                     flag=f"--{arg_name}",
+                    long_flags=[f"--{arg_name}"],
                 ))
                 seen_names.add(arg_name)
 

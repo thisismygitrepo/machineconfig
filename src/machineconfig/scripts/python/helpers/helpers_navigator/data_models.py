@@ -3,7 +3,7 @@ Data models for the command navigator.
 """
 
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -17,6 +17,8 @@ class ArgumentInfo:
     is_positional: bool = False
     flag: str = ""
     negated_flag: str = ""
+    long_flags: list[str] = field(default_factory=list)
+    short_flags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -30,3 +32,4 @@ class CommandInfo:
     help_text: str = ""
     module_path: str = ""
     arguments: Optional[list[ArgumentInfo]] = None
+    long_description: str = ""

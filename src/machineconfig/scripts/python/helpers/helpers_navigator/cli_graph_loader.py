@@ -46,6 +46,7 @@ def _build_node(node: dict[str, Any], parent_tokens: list[str], parent_name: str
     command = " ".join(tokens).strip()
     is_group = kind == "group"
     description = _node_description(node)
+    long_description = _node_long_description(node, description)
     module_path = _node_module_path(node)
     arguments = _parse_signature(node.get("signature"))
     help_text = _build_usage(command, arguments) if (command and not is_group) else ""
@@ -59,6 +60,7 @@ def _build_node(node: dict[str, Any], parent_tokens: list[str], parent_name: str
         help_text=help_text,
         module_path=module_path,
         arguments=arguments,
+        long_description=long_description,
     )
 
     children = [
@@ -82,6 +84,17 @@ def _node_description(node: dict[str, Any]) -> str:
         or node.get("doc")
         or node.get("name", "")
     )
+
+
+def _node_long_description(node: dict[str, Any], fallback: str) -> str:
+    if node.get("kind") == "group":
+        return (
+            node.get("app", {}).get("help")
+            or node.get("help")
+            or node.get("doc")
+            or fallback
+        )
+    return node.get("help") or node.get("doc") or fallback
 
 
 def _node_module_path(node: dict[str, Any]) -> str:
@@ -116,6 +129,8 @@ def _parse_signature(signature: dict[str, Any] | None) -> list[ArgumentInfo]:
 
         if kind == "option":
             flag, negated_flag = _select_flags(typer_info, name)
+            long_flags = list(typer_info.get("long_flags") or [])
+            short_flags = list(typer_info.get("short_flags") or [])
             is_flag = _is_bool_type(param.get("type"))
             arguments.append(
                 ArgumentInfo(
@@ -126,6 +141,8 @@ def _parse_signature(signature: dict[str, Any] | None) -> list[ArgumentInfo]:
                     description=description,
                     flag=flag,
                     negated_flag=negated_flag,
+                    long_flags=long_flags,
+                    short_flags=short_flags,
                 )
             )
             continue
