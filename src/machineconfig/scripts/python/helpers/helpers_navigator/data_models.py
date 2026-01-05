@@ -7,6 +7,19 @@ from dataclasses import dataclass
 
 
 @dataclass
+class ArgumentInfo:
+    """Information about a command argument."""
+    name: str
+    is_required: bool
+    is_flag: bool
+    placeholder: str = ""
+    description: str = ""
+    is_positional: bool = False
+    flag: str = ""
+    negated_flag: str = ""
+
+
+@dataclass
 class CommandInfo:
     """Information about a CLI command."""
     name: str
@@ -16,13 +29,4 @@ class CommandInfo:
     is_group: bool = False
     help_text: str = ""
     module_path: str = ""
-
-
-@dataclass
-class ArgumentInfo:
-    """Information about a command argument."""
-    name: str
-    is_required: bool
-    is_flag: bool
-    placeholder: str = ""
-    description: str = ""
+    arguments: Optional[list[ArgumentInfo]] = None
