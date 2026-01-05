@@ -14,7 +14,11 @@ class Read:
         if suffix in ("sqlite", "sqlite3", "db", "duckdb"):
             from machineconfig.utils.files.dbms import DBMS
             res = DBMS.from_local_db(path=path)
-            print(res.describe_db())
+            try:
+                print(res.describe_db())
+            except Exception:
+                print("💥 Could not describe the database.")
+                pass
             return res
         try: return getattr(Read, suffix)(str(path), **kwargs)
         except AttributeError as err:

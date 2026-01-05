@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "machineconfig"
-version = "8.40"
+version = "8.41"
 description = "Dotfiles management package"
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -21,6 +21,7 @@ classifiers = [
 requires-python = ">=3.13"
 dependencies = [
     "cryptography>=46.0.3",
+    "duckdb>=1.4.3",
     "fire>=0.7.1",
     "gitpython>=3.1.45",
     "joblib>=1.5.2",
