@@ -1,0 +1,2560 @@
+{
+  "schema": {
+    "version": "1.0",
+    "description": "Hierarchical CLI graph for the MachineConfig Typer-based CLI. Nodes capture command groups and leaf commands; aliases are stored on nodes rather than separate alias nodes.",
+    "node": {
+      "kind": "root | group | command",
+      "name": "CLI token for this node",
+      "help": "Command help string as registered on parent (if any)",
+      "short_help": "Short help string (if set)",
+      "doc": "Docstring text for leaf commands or wrapper functions",
+      "aliases": "List of alias objects with name/hidden/help/short_help",
+      "source": "Where the callable or Typer app is defined",
+      "registered_in": "Where the command was registered if different from source",
+      "command_context_settings": "Typer context_settings used when registering the command",
+      "app": "Typer app configuration for groups",
+      "typer": "Typer command configuration for leaf commands",
+      "signature": "Function signature lines (list of strings) for leaf commands",
+      "children": "Nested subcommands"
+    }
+  },
+  "meta": {
+    "root_entrypoint": "src/machineconfig/scripts/python/mcfg_entry.py",
+    "notes": [
+      "Graph derived from static source inspection; lazy-loading wrappers dispatch to sub-app factories.",
+      "Aliases are recorded on each node with hidden flags; no standalone alias nodes.",
+      "Signature lines preserve Annotated/Option/Argument declarations to retain CLI help metadata."
+    ],
+    "annotation_aliases": {
+      "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py": {
+        "DirectoryArgument": "Annotated[Optional[str], typer.Argument(help=\"📁 Directory containing repo(s).\")]",
+        "RecursiveOption": "Annotated[bool, typer.Option(\"--recursive\", \"-r\", help=\"🔍 Recurse into nested repositories.\")]",
+        "UVsyncOption": "Annotated[bool, typer.Option(\"--uv-sync/--no-uv-sync\", \"-u/-ns\", help=\"Automatic uv sync after pulls.\")]"
+      }
+    }
+  },
+  "root": {
+    "kind": "root",
+    "name": "mcfg",
+    "help": "MachineConfig CLI - Manage your machine configurations and workflows",
+    "source": {
+      "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+      "module": "machineconfig.scripts.python.mcfg_entry",
+      "app_factory": "machineconfig.scripts.python.mcfg_entry.get_app"
+    },
+    "app": {
+      "help": "MachineConfig CLI - Manage your machine configurations and workflows",
+      "no_args_is_help": true,
+      "add_help_option": true,
+      "add_completion": false
+    },
+    "children": [
+      {
+        "kind": "group",
+        "name": "devops",
+        "help": "[d] DevOps related commands",
+        "aliases": [
+          {
+            "name": "d",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "devops",
+          "dispatches_to": "machineconfig.scripts.python.devops.get_app"
+        },
+        "command_context_settings": {
+          "allow_extra_args": true,
+          "allow_interspersed_args": true,
+          "ignore_unknown_options": true
+        },
+        "app": {
+          "help": "🛠️ DevOps operations",
+          "no_args_is_help": true,
+          "add_help_option": true,
+          "add_completion": false
+        },
+        "children": [
+          {
+            "kind": "command",
+            "name": "install",
+            "help": "📦 Install packages",
+            "short_help": "🛠️  [i] Install essential packages",
+            "doc": "📦 Install packages",
+            "aliases": [
+              {
+                "name": "i",
+                "hidden": true,
+                "help": "📦 Install packages"
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/devops.py",
+              "module": "machineconfig.scripts.python.devops",
+              "callable": "install"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def install(",
+              "    which: Annotated[Optional[str], typer.Argument(..., help=\"Comma-separated list of program names to install, or group name if --group flag is set.\")] = None,",
+              "    group: Annotated[bool, typer.Option(..., \"--group\", \"-g\", help=\"Treat 'which' as a group name. A group is bundle of apps.\")] = False,",
+              "    interactive: Annotated[bool, typer.Option(..., \"--interactive\", \"-i\", help=\"Interactive selection of programs to install.\")] = False,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "group",
+            "name": "repos",
+            "help": "📁 [r] Manage development repositories",
+            "doc": "📁 [r] Manage development repositories",
+            "aliases": [
+              {
+                "name": "r",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/devops.py",
+              "module": "machineconfig.scripts.python.devops",
+              "callable": "repos",
+              "dispatches_to": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos.get_app"
+            },
+            "command_context_settings": {
+              "allow_extra_args": true,
+              "allow_interspersed_args": true,
+              "ignore_unknown_options": true
+            },
+            "app": {
+              "help": "📁 [r] Manage development repositories",
+              "no_args_is_help": true,
+              "add_help_option": true,
+              "add_completion": false
+            },
+            "children": [
+              {
+                "kind": "group",
+                "name": "mirror",
+                "help": "🔄 [m] mirror repositories using saved specs",
+                "aliases": [
+                  {
+                    "name": "m",
+                    "hidden": true,
+                    "help": "mirror repositories using saved specs"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "app_factory": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos.get_app",
+                  "app_name": "mirror_app"
+                },
+                "app": {
+                  "help": "🔄 [m] Manage repository specifications and syncing",
+                  "no_args_is_help": true,
+                  "add_help_option": true,
+                  "add_completion": false
+                },
+                "children": [
+                  {
+                    "kind": "command",
+                    "name": "capture",
+                    "help": "📝 [cap] Record repositories into a repos.json specification",
+                    "doc": "📝 Record repositories into a repos.json specification.",
+                    "aliases": [
+                      {
+                        "name": "cap",
+                        "hidden": true,
+                        "help": "Record repositories into a repos.json specification"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                      "callable": "capture"
+                    },
+                    "signature": [
+                      "def capture(directory: DirectoryArgument = None) -> None:"
+                    ]
+                  },
+                  {
+                    "kind": "command",
+                    "name": "clone",
+                    "help": "📥 [clo] Clone repositories described by a repos.json specification",
+                    "doc": "📥 Clone repositories described by a repos.json specification.",
+                    "aliases": [
+                      {
+                        "name": "clo",
+                        "hidden": true,
+                        "help": "Clone repositories described by a repos.json specification"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                      "callable": "clone"
+                    },
+                    "signature": [
+                      "def clone(",
+                      "    directory: DirectoryArgument = None,",
+                      "    interactive: Annotated[bool, typer.Option(\"--interactive/--no-interactive\", \"-i/-ni\", help=\"Select interactively.\")] = False",
+                      ") -> None:"
+                    ]
+                  },
+                  {
+                    "kind": "command",
+                    "name": "checkout-to-commit",
+                    "help": "🔀 [ctc] Check out specific commits listed in the specification",
+                    "doc": "🔀 Check out specific commits listed in the specification.",
+                    "aliases": [
+                      {
+                        "name": "ctc",
+                        "hidden": true,
+                        "help": "Check out specific commits listed in the specification"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                      "callable": "checkout_command"
+                    },
+                    "signature": [
+                      "def checkout_command(directory: DirectoryArgument = None) -> None:"
+                    ]
+                  },
+                  {
+                    "kind": "command",
+                    "name": "checkout-to-branch",
+                    "help": "🔀 [ctb] Check out to the main branch defined in the specification",
+                    "doc": "🔀 Check out to the main branch defined in the specification.",
+                    "aliases": [
+                      {
+                        "name": "ctb",
+                        "hidden": true,
+                        "help": "Check out to the main branch defined in the specification"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                      "callable": "checkout_to_branch_command"
+                    },
+                    "signature": [
+                      "def checkout_to_branch_command(directory: DirectoryArgument = None) -> None:"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "push",
+                "help": "🚀 [p] Push changes across repositories",
+                "doc": "🚀 Push changes across repositories.",
+                "aliases": [
+                  {
+                    "name": "p",
+                    "hidden": true,
+                    "help": "Push changes across repositories"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "push"
+                },
+                "signature": [
+                  "def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "pull",
+                "help": "⬇️  [P] Pull changes across repositories",
+                "doc": "⬇️ Pull changes across repositories.",
+                "aliases": [
+                  {
+                    "name": "P",
+                    "hidden": true,
+                    "help": "Pull changes across repositories"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "pull"
+                },
+                "signature": [
+                  "def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "commit",
+                "help": "💾 [c] Commit changes across repositories",
+                "doc": "💾 Commit changes across repositories.",
+                "aliases": [
+                  {
+                    "name": "c",
+                    "hidden": true,
+                    "help": "Commit changes across repositories"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "commit"
+                },
+                "signature": [
+                  "def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "sync",
+                "help": "🔄 [y] Pull, commit, and push changes across repositories",
+                "doc": "🔄 Pull, commit, and push changes across repositories.",
+                "aliases": [
+                  {
+                    "name": "y",
+                    "hidden": true,
+                    "help": "Pull, commit, and push changes across repositories"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "sync"
+                },
+                "signature": [
+                  "def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "analyze",
+                "help": "📊 [a] Analyze repository development over time",
+                "aliases": [
+                  {
+                    "name": "a",
+                    "hidden": true,
+                    "help": "Analyze repository development over time"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "analyze_repo_development"
+                },
+                "signature": [
+                  "def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help=\"Path to the git repository\")]):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "secure",
+                "help": "🔐 [s] Securely sync git repository to/from cloud with encryption",
+                "aliases": [
+                  {
+                    "name": "s",
+                    "hidden": true,
+                    "help": "Securely sync git repository to/from cloud with encryption"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_repos/cloud_repo_sync.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_repos.cloud_repo_sync",
+                  "callable": "main"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos"
+                },
+                "signature": [
+                  "def main(",
+                  "    cloud: Annotated[Optional[str], typer.Option(..., \"--cloud\", \"-c\", help=\"Cloud storage profile name. If not provided, uses default from config.\")] = None,",
+                  "    repo: Annotated[Optional[str], typer.Option(..., \"--repo\", \"-r\", help=\"Path to the local repository. Defaults to current working directory.\")] = None,",
+                  "    message: Annotated[Optional[str], typer.Option(..., \"--message\", \"-m\", help=\"Commit message for local changes.\")] = None,",
+                  "    on_conflict: Annotated[",
+                  "        Literal[",
+                  "            \"ask\", \"a\",",
+                  "            \"push-local-merge\", \"p\",",
+                  "            \"overwrite-local\", \"o\",",
+                  "            \"stop-on-conflict\", \"s\",",
+                  "            \"remove-rclone-conflict\", \"r\",",
+                  "        ],",
+                  "        typer.Option(..., \"--on-conflict\", \"-o\", help=\"Action to take on merge conflict. Default is 'ask'.\")",
+                  "    ] = \"ask\",",
+                  "    pwd: Annotated[Optional[str], typer.Option(..., \"--password\", help=\"Password for encryption/decryption of the remote repository.\")] = None,",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "viz",
+                "help": "🎬 [v] Visualize repository activity using Gource",
+                "doc": "🎬 Visualize repository activity using Gource.",
+                "aliases": [
+                  {
+                    "name": "v",
+                    "hidden": true,
+                    "help": "Visualize repository activity using Gource"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "gource_viz"
+                },
+                "signature": [
+                  "def gource_viz(",
+                  "    repo: Annotated[str, typer.Option(..., \"--repo\", \"-r\", help=\"Path to git repository to visualize\")] = \".\",",
+                  "    output_file: Annotated[Optional[Path], typer.Option(..., \"--output\", \"-o\", help=\"Output video file (e.g., output.mp4). If specified, gource will render to video.\")] = None,",
+                  "    resolution: Annotated[str, typer.Option(..., \"--resolution\", \"-res\", help=\"Video resolution (e.g., 1920x1080, 1280x720)\")] = \"1920x1080\",",
+                  "    seconds_per_day: Annotated[float, typer.Option(..., \"--seconds-per-day\", \"-spd\", help=\"Speed of simulation (lower = faster)\")] = 0.1,",
+                  "    auto_skip_seconds: Annotated[float, typer.Option(..., \"--auto-skip-seconds\", \"-as\", help=\"Skip to next entry if nothing happens for X seconds\")] = 1.0,",
+                  "    title: Annotated[Optional[str], typer.Option(..., \"--title\", \"-t\", help=\"Title for the visualization\")] = None,",
+                  "    hide_items: Annotated[list[str], typer.Option(..., \"--hide\", \"-h\", help=\"Items to hide: bloom, date, dirnames, files, filenames, mouse, progress, root, tree, users, usernames\")] = [],",
+                  "    key_items: Annotated[bool, typer.Option(..., \"--key\", \"-k\", help=\"Show file extension key\")] = False,",
+                  "    fullscreen: Annotated[bool, typer.Option(..., \"--fullscreen\", \"-f\", help=\"Run in fullscreen mode\")] = False,",
+                  "    viewport: Annotated[Optional[str], typer.Option(..., \"--viewport\", \"-v\", help=\"Camera viewport (e.g., '1000x1000')\")] = None,",
+                  "    start_date: Annotated[Optional[str], typer.Option(..., \"--start-date\", help=\"Start date (YYYY-MM-DD)\")] = None,",
+                  "    stop_date: Annotated[Optional[str], typer.Option(..., \"--stop-date\", help=\"Stop date (YYYY-MM-DD)\")] = None,",
+                  "    user_image_dir: Annotated[Optional[Path], typer.Option(..., \"--user-image-dir\", help=\"Directory with user avatar images\")] = None,",
+                  "    max_files: Annotated[int, typer.Option(..., \"--max-files\", help=\"Maximum number of files to show (0 = no limit)\")] = 0,",
+                  "    max_file_lag: Annotated[float, typer.Option(..., \"--max-file-lag\", help=\"Max time files remain on screen after last change\")] = 5.0,",
+                  "    file_idle_time: Annotated[int, typer.Option(..., \"--file-idle-time\", help=\"Time in seconds files remain idle before being removed\")] = 0,",
+                  "    framerate: Annotated[int, typer.Option(..., \"--framerate\", help=\"Frames per second for video output\")] = 60,",
+                  "    background_color: Annotated[str, typer.Option(..., \"--background-color\", help=\"Background color in hex (e.g., 000000 for black)\")] = \"000000\",",
+                  "    font_size: Annotated[int, typer.Option(..., \"--font-size\", help=\"Font size\")] = 22,",
+                  "    camera_mode: Annotated[str, typer.Option(..., \"--camera-mode\", help=\"Camera mode: overview or track\")] = \"overview\",",
+                  "    self: Annotated[bool, typer.Option(..., \"--self\", help=\"Clone machineconfig repository and act on it\")] = False,",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "count-lines",
+                "help": "📄 [l] Count python lines of code in current repo + historical edits.",
+                "aliases": [
+                  {
+                    "name": "l",
+                    "hidden": true,
+                    "help": "Count python lines of code in current repo + historical edits."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "count_lines_in_repo"
+                },
+                "signature": [
+                  "def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help=\"Path to the git repository\")]):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "cleanup",
+                "help": "🧹 [n] Clean repository directories from cache files",
+                "doc": "🧹 Clean repository directories from cache files.",
+                "aliases": [
+                  {
+                    "name": "n",
+                    "hidden": true,
+                    "help": "Clean repository directories from cache files"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_repos.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_repos",
+                  "callable": "cleanup"
+                },
+                "signature": [
+                  "def cleanup(repo: DirectoryArgument = None, recursive: RecursiveOption = False) -> None:"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "group",
+            "name": "config",
+            "help": "🔩 [c] Configuration management",
+            "aliases": [
+              {
+                "name": "c",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/devops.py",
+              "module": "machineconfig.scripts.python.devops",
+              "callable": "config",
+              "dispatches_to": "machineconfig.scripts.python.helpers.helpers_devops.cli_config.get_app"
+            },
+            "command_context_settings": {
+              "allow_extra_args": true,
+              "allow_interspersed_args": true,
+              "ignore_unknown_options": true
+            },
+            "app": {
+              "help": "⚙️ [c] configuration subcommands",
+              "no_args_is_help": true,
+              "add_help_option": true,
+              "add_completion": false
+            },
+            "children": [
+              {
+                "kind": "command",
+                "name": "sync",
+                "help": "🔗 [s] Sync dotfiles.",
+                "doc": "Terminology:\nSOURCE = Self-Managed-Config-File-Path\nTARGET = Config-File-Default-Path\nFor public config files in the library repo, the source always exists.",
+                "aliases": [
+                  {
+                    "name": "s",
+                    "hidden": true,
+                    "help": "Sync dotfiles."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/profile/create_links_export.py",
+                  "module": "machineconfig.profile.create_links_export",
+                  "callable": "main_from_parser"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def main_from_parser(",
+                  "    sensitivity: Annotated[SENSITIVITY_LOOSE, typer.Option(..., \"--sensitivity\", \"-s\", help=\"Sensitivity of the configuration files to manage.\")],",
+                  "    method: Annotated[Literal[\"symlink\", \"s\", \"copy\", \"c\"], typer.Option(..., \"--method\", \"-m\", help=\"Method to use for linking files\")],",
+                  "    repo: Annotated[REPO_LOOSE, typer.Option(..., \"--repo\", \"-r\", help=\"Mapper source to use for config files.\")] = \"library\",",
+                  "    on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., \"--on-conflict\", \"-o\", help=\"Action to take on conflict\")] = \"throw-error\",",
+                  "    which: Annotated[Optional[str], typer.Option(..., \"--which\", \"-w\", help=\"Specific items to process\")] = None,",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "register",
+                "help": "🔗 [r] Register dotfiles agains user mapper.toml",
+                "aliases": [
+                  {
+                    "name": "r",
+                    "hidden": true
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config_dotfile.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile",
+                  "callable": "register_dotfile"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def register_dotfile(",
+                  "    file: Annotated[str, typer.Argument(help=\"file/folder path.\")],",
+                  "    method: Annotated[Literal[\"symlink\", \"s\", \"copy\", \"c\"], typer.Option(..., \"--method\", \"-m\", help=\"Method to use for linking files\")] = \"copy\",",
+                  "    on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., \"--on-conflict\", \"-o\", help=\"Action to take on conflict\")] = \"throw-error\",",
+                  "    sensitivity: Annotated[Literal[\"private\", \"v\", \"public\", \"b\"], typer.Option(..., \"--sensitivity\", \"-s\", help=\"Sensitivity of the config file.\")] = \"private\",",
+                  "    destination: Annotated[Optional[str], typer.Option(\"--destination\", \"-d\", help=\"destination folder (override the default, use at your own risk)\")] = None,",
+                  "    section: Annotated[str, typer.Option(\"--section\", \"-se\", help=\"Section name in mapper_dotfiles.toml to record this mapping.\")] = \"default\",",
+                  "    os_filter: Annotated[str, typer.Option(\"--os\", help=\"Comma-separated OS list or 'any' to apply everywhere.\")] = \"any\",",
+                  "    shared: Annotated[bool, typer.Option(\"--shared\", \"-sh\", help=\"Whether the config file is shared across destinations directory.\")] = False,",
+                  "    record: Annotated[bool, typer.Option(\"--record\", \"-r\", help=\"Record the mapping in user's mapper.toml\")] = True,",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "export-dotfiles",
+                "help": "🔗 [e] Export dotfiles for migration to new machine.",
+                "doc": "🔗 Export dotfiles for migration to new machine.",
+                "aliases": [
+                  {
+                    "name": "e",
+                    "hidden": true,
+                    "help": "Export dotfiles for migration to new machine."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config_dotfile.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile",
+                  "callable": "export_dotfiles"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def export_dotfiles(",
+                  "    pwd: Annotated[str, typer.Argument(..., help=\"Password for zip encryption\")],",
+                  "    over_internet: Annotated[bool, typer.Option(\"--over-internet\", \"-i\", help=\"Use internet-based transfer (wormhole-magic)\")] = False,",
+                  "    over_ssh: Annotated[bool, typer.Option(\"--over-ssh\", \"-s\", help=\"Use SSH-based transfer (scp) to a remote machine\")] = False,",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "import-dotfiles",
+                "help": "🔗 [i] Import dotfiles from exported archive.",
+                "aliases": [
+                  {
+                    "name": "i",
+                    "hidden": true,
+                    "help": "Import dotfiles from exported archive."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config_dotfile.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile",
+                  "callable": "import_dotfiles"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def import_dotfiles(",
+                  "    url: Annotated[Optional[str], typer.Option(..., \"--url\", \"-u\", help=\"URL or local path to the encrypted dotfiles zip\")] = None,",
+                  "    pwd: Annotated[Optional[str], typer.Option(..., \"--pwd\", \"-p\", help=\"Password for zip decryption\")] = None,",
+                  "    use_ssh: Annotated[bool, typer.Option(\"--use-ssh\", \"-s\", help=\"Use SSH-based transfer (scp) from a remote machine that has dotfiles.\")] = False,",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "shell",
+                "help": "🔗 [S] Configure your shell profile.",
+                "doc": "🔗 Configure your shell profile.",
+                "aliases": [
+                  {
+                    "name": "S",
+                    "hidden": true,
+                    "help": "Configure your shell profile."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config",
+                  "callable": "configure_shell_profile"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def configure_shell_profile(which: Annotated[Literal[\"default\", \"d\", \"nushell\", \"n\"], typer.Option(..., \"--which\", \"-w\", help=\"Which shell profile to create/configure\")]= \"default\"):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "starship-theme",
+                "help": "🔗 [t] Select starship prompt theme.",
+                "doc": "🔗 Select starship prompt theme.",
+                "aliases": [
+                  {
+                    "name": "t",
+                    "hidden": true,
+                    "help": "Select starship prompt theme."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config",
+                  "callable": "starship_theme"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def starship_theme():"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "pwsh-theme",
+                "help": "🔗 [T] Select powershell prompt theme.",
+                "doc": "🔗 Select powershell prompt theme.",
+                "aliases": [
+                  {
+                    "name": "T",
+                    "hidden": true,
+                    "help": "Select powershell prompt theme."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config",
+                  "callable": "pwsh_theme"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def pwsh_theme():"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "copy-assets",
+                "help": "🔗 [c] Copy asset files from library to machine.",
+                "doc": "🔗 Copy asset files from library to machine.",
+                "aliases": [
+                  {
+                    "name": "c",
+                    "hidden": true,
+                    "help": "Copy asset files from library to machine."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_config.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_config",
+                  "callable": "copy_assets"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def copy_assets(which: Annotated[Literal[\"scripts\", \"s\", \"settings\", \"t\", \"both\", \"b\"], typer.Argument(..., help=\"Which assets to copy\")]):"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "group",
+            "name": "data",
+            "help": "💾 [d] Data management",
+            "aliases": [
+              {
+                "name": "d",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/devops.py",
+              "module": "machineconfig.scripts.python.devops",
+              "callable": "data",
+              "dispatches_to": "machineconfig.scripts.python.helpers.helpers_devops.cli_data.get_app"
+            },
+            "command_context_settings": {
+              "allow_extra_args": true,
+              "allow_interspersed_args": true,
+              "ignore_unknown_options": true
+            },
+            "app": {
+              "help": "🗄️ [d] Backup and retrieve configuration files and directories to/from cloud storage using rclone.",
+              "no_args_is_help": true,
+              "add_help_option": true,
+              "add_completion": false
+            },
+            "children": [
+              {
+                "kind": "command",
+                "name": "sync",
+                "help": "🔄 [s] Sync (backup) files and directories to cloud storage using rclone.",
+                "aliases": [
+                  {
+                    "name": "s",
+                    "hidden": true
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_data.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_data",
+                  "callable": "sync"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def sync(",
+                  "    direction: Annotated[Literal[\"up\", \"u\", \"down\", \"d\"], typer.Argument(..., help=\"Direction of sync: backup or retrieve\")],",
+                  "    cloud: Annotated[Optional[str], typer.Option(\"--cloud\", \"-c\", help=\"☁️  Cloud configuration name (rclone config name)\")] = None,",
+                  "    which: Annotated[Optional[str], typer.Option(\"--which\", \"-w\", help=\"📝 Comma-separated list of items to BACKUP (from backup.toml), or 'all' for all items\")] = None,",
+                  "    repo: Annotated[",
+                  "        Literal[\"library\", \"l\", \"user\", \"u\", \"all\", \"a\"],",
+                  "        typer.Option(\"--repo\", \"-r\", help=\"📁 Which backup configuration to use: 'library' or 'user'\"),",
+                  "    ] = \"library\",",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "register",
+                "help": "📝 [r] Register a new backup entry in user backup.toml.",
+                "aliases": [
+                  {
+                    "name": "r",
+                    "hidden": true
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_data.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_data",
+                  "callable": "register_data"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def register_data(",
+                  "    path_local: Annotated[str, typer.Argument(..., help=\"Local file/folder path to back up.\")],",
+                  "    group: Annotated[str, typer.Option(\"--group\", \"-g\", help=\"Group section name in backup.toml.\")] = \"default\",",
+                  "    name: Annotated[Optional[str], typer.Option(\"--name\", \"-n\", help=\"Entry name inside the group in backup.toml.\")] = None,",
+                  "    path_cloud: Annotated[Optional[str], typer.Option(\"--path-cloud\", \"-C\", help=\"Cloud path override (optional).\")] = None,",
+                  "    zip_: Annotated[bool, typer.Option(\"--zip/--no-zip\", \"-z/-nz\", help=\"Zip before uploading.\")] = True,",
+                  "    encrypt: Annotated[bool, typer.Option(\"--encrypt/--no-encrypt\", \"-e/-ne\", help=\"Encrypt before uploading.\")] = True,",
+                  "    rel2home: Annotated[Optional[bool], typer.Option(\"--rel2home/--no-rel2home\", \"-r/-nr\", help=\"Treat the local path as relative to home.\")] = None,",
+                  "    os: Annotated[str, typer.Option(\"--os\", \"-o\", help=\"OS filter for this backup entry (comma-separated, or 'any').\")] = \"any\",",
+                  ") -> None:"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "group",
+            "name": "self",
+            "help": "🔧 [s] Self management",
+            "aliases": [
+              {
+                "name": "s",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/devops.py",
+              "module": "machineconfig.scripts.python.devops",
+              "callable": "self_cmd",
+              "dispatches_to": "machineconfig.scripts.python.helpers.helpers_devops.cli_self.get_app"
+            },
+            "command_context_settings": {
+              "allow_extra_args": true,
+              "allow_interspersed_args": true,
+              "ignore_unknown_options": true
+            },
+            "app": {
+              "help": "🔄 [s] self operations subcommands",
+              "no_args_is_help": true,
+              "add_help_option": true,
+              "add_completion": false
+            },
+            "children": [
+              {
+                "kind": "command",
+                "name": "update",
+                "help": "🔄 [u] UPDATE machineconfig",
+                "doc": "🔄 UPDATE uv and machineconfig",
+                "aliases": [
+                  {
+                    "name": "u",
+                    "hidden": true
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_self.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_self",
+                  "callable": "update"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def update(",
+                  "    copy_assets: Annotated[bool, typer.Option(\"--assets-copy/--no-assets-copy\", \"-a/-na\", help=\"Copy (overwrite) assets to the machine after the update\")] = True,",
+                  "    link_public_configs: Annotated[bool, typer.Option(\"--link-public-configs/--no-link-public-configs\", \"-b/-nb\", help=\"Link public configs after update (overwrites your configs!)\")] = False,",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "interactive",
+                "help": "🤖 [ia] INTERACTIVE configuration of machine.",
+                "doc": "🤖 INTERACTIVE configuration of machine.",
+                "aliases": [
+                  {
+                    "name": "ia",
+                    "hidden": true,
+                    "help": "INTERACTIVE configuration of machine."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_self.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_self",
+                  "callable": "interactive"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def interactive():"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "init",
+                "help": "🦐 [t] Define and manage configurations",
+                "aliases": [
+                  {
+                    "name": "t",
+                    "hidden": true
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_self.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_self",
+                  "callable": "init"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def init(",
+                  "    which: Annotated[Literal[\"init\", \"ia\", \"live\", \"wrap\"], typer.Argument(..., help=\"Comma-separated list of script names to run all initialization scripts.\")] = \"init\",",
+                  "    run: Annotated[bool, typer.Option(\"--run/--no-run\", \"-r/-nr\", help=\"Run the script after displaying it.\")] = False,",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "status",
+                "help": "📊 [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.",
+                "doc": "📊 STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.",
+                "aliases": [
+                  {
+                    "name": "s",
+                    "hidden": true,
+                    "help": "STATUS of machine, shell profile, apps, symlinks, dotfiles, etc."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_self.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_self",
+                  "callable": "status"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def status():"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "install",
+                "help": "📋 [i] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.",
+                "doc": "📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.",
+                "aliases": [
+                  {
+                    "name": "i",
+                    "hidden": true,
+                    "help": "CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_self.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_self",
+                  "callable": "install"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def install(",
+                  "    copy_assets: Annotated[bool, typer.Option(\"--copy-assets/--no-assets-copy\", \"-a/-na\", help=\"Copy (overwrite) assets to the machine after the update\")] = True,",
+                  "    dev: Annotated[bool, typer.Option(\"--dev\", \"-d\", help=\"Install from local development code instead of PyPI\")] = False,",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "navigate",
+                "help": "📚 [n] NAVIGATE command structure with TUI",
+                "doc": "📚 NAVIGATE command structure with TUI",
+                "aliases": [
+                  {
+                    "name": "n",
+                    "hidden": true,
+                    "help": "NAVIGATE command structure with TUI"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_self.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_self",
+                  "callable": "navigate"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def navigate():"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "readme",
+                "help": "📚 [r] render readme markdown in terminal.",
+                "aliases": [
+                  {
+                    "name": "r",
+                    "hidden": true
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_self.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_self",
+                  "callable": "readme"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def readme():"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "group",
+            "name": "network",
+            "help": "🌐 [n] Network management",
+            "aliases": [
+              {
+                "name": "n",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/devops.py",
+              "module": "machineconfig.scripts.python.devops",
+              "callable": "network",
+              "dispatches_to": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw.get_app"
+            },
+            "command_context_settings": {
+              "allow_extra_args": true,
+              "allow_interspersed_args": true,
+              "ignore_unknown_options": true
+            },
+            "app": {
+              "help": "🔐 [n] Network subcommands",
+              "no_args_is_help": true,
+              "add_help_option": true,
+              "add_completion": false
+            },
+            "children": [
+              {
+                "kind": "command",
+                "name": "share-terminal",
+                "help": "📡 [t] Share terminal via web browser",
+                "aliases": [
+                  {
+                    "name": "t",
+                    "hidden": true,
+                    "help": "Share terminal via web browser"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_share_terminal.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_share_terminal",
+                  "callable": "share_terminal"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw"
+                },
+                "signature": [
+                  "def share_terminal(",
+                  "    port: Annotated[Optional[int], typer.Option(\"--port\", \"-p\", help=\"Port to run the terminal server on (default: 7681)\")] = None,",
+                  "    username: Annotated[Optional[str], typer.Option(\"--username\", \"-u\", help=\"Username for terminal access (default: current user)\")] = None,",
+                  "    password: Annotated[Optional[str], typer.Option(\"--password\", \"-w\", help=\"Password for terminal access (default: from ~/dotfiles/creds/passwords/quick_password)\")] = None,",
+                  "    no_auth: Annotated[bool, typer.Option(\"--no-auth\", \"-n\", help=\"Disable authentication (not recommended)\")] = False,",
+                  "    start_command: Annotated[Optional[str], typer.Option(\"--start-command\", \"-s\", help=\"Command to run on terminal start (default: bash/powershell)\")] = None,",
+                  "    ssl: Annotated[bool, typer.Option(\"--ssl\", \"-S\", help=\"Enable SSL\")] = False,",
+                  "    ssl_cert: Annotated[Optional[str], typer.Option(\"--ssl-cert\", \"-C\", help=\"SSL certificate file path\")] = None,",
+                  "    ssl_key: Annotated[Optional[str], typer.Option(\"--ssl-key\", \"-K\", help=\"SSL key file path\")] = None,",
+                  "    ssl_ca: Annotated[Optional[str], typer.Option(\"--ssl-ca\", \"-A\", help=\"SSL CA file path for client certificate verification\")] = None,",
+                  "    over_internet: Annotated[bool, typer.Option(\"--over-internet\", \"-i\", help=\"Expose the terminal over the internet using ngrok\")] = False",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "share-server",
+                "help": "🌐 [s] Start local/global server to share files/folders via web browser",
+                "aliases": [
+                  {
+                    "name": "s",
+                    "hidden": true,
+                    "help": "Start local/global server to share files/folders via web browser"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_share_server.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_share_server",
+                  "callable": "web_file_explorer"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def web_file_explorer(",
+                  "    path: Annotated[str, typer.Argument(help=\"Path to the file or directory to share\")],",
+                  "    port: Annotated[Optional[int], typer.Option(\"--port\", \"-p\", help=\"Port to run the share server on (default: 8080)\")] = None,",
+                  "    username: Annotated[Optional[str], typer.Option(\"--username\", \"-u\", help=\"Username for share access (default: current user)\")] = None,",
+                  "    no_auth: Annotated[bool, typer.Option(\"--no-auth\", \"-na\", help=\"Disable authentication for share access\")] = False,",
+                  "    password: Annotated[Optional[str], typer.Option(\"--password\", \"-w\", help=\"Password for share access (default: from ~/dotfiles/creds/passwords/quick_password)\")] = None,",
+                  "    bind_address: Annotated[str, typer.Option(\"--bind\", \"-a\", help=\"Address to bind the server to\")] = \"0.0.0.0\",",
+                  "    over_internet: Annotated[bool, typer.Option(\"--over-internet\", \"-i\", help=\"Expose the share server over the internet using ngrok\")] = False,",
+                  "    backend: Annotated[str, typer.Option(\"--backend\", \"-b\", help=\"Backend to use: filebrowser (default), miniserve, qrcp, or easy-sharing\")] = \"miniserve\",",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "send",
+                "help": "📁 [sx] send files from here.",
+                "doc": "Send a file using croc with relay server.",
+                "aliases": [
+                  {
+                    "name": "sx",
+                    "hidden": true,
+                    "help": "📁 [sx] send files from here."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_share_file.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_share_file",
+                  "callable": "share_file_send"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def share_file_send(",
+                  "    path: Annotated[str, typer.Argument(help=\"Path to the file or directory to send\")],",
+                  "    zip_folder: Annotated[bool, typer.Option(\"--zip\", help=\"Zip folder before sending\")] = False,",
+                  "    code: Annotated[str | None, typer.Option(\"--code\", \"-c\", help=\"Codephrase used to connect to relay\")] = None,",
+                  "    text: Annotated[str | None, typer.Option(\"--text\", \"-t\", help=\"Send some text\")] = None,",
+                  "    qrcode: Annotated[bool, typer.Option(\"--qrcode\", \"--qr\", help=\"Show receive code as a qrcode\")] = False,",
+                  "    backend: Annotated[Literal[\"wormhole\", \"w\", \"croc\", \"c\"], typer.Option(\"--backend\", \"-b\", help=\"Backend to use\")] = \"croc\",",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "receive",
+                "help": "📁 [rx] receive files to here.",
+                "doc": "Receive a file using croc with relay server.\nUsage examples:\n    devops network receive 7121-donor-olympic-bicycle\n    devops network receive -- --relay 10.17.62.206:443 7121-donor-olympic-bicycle\n    devops network receive -- croc --relay 10.17.62.206:443 7121-donor-olympic-bicycle",
+                "aliases": [
+                  {
+                    "name": "rx",
+                    "hidden": true,
+                    "help": "📁 [rx] receive files to here."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_share_file.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_share_file",
+                  "callable": "share_file_receive"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def share_file_receive(",
+                  "    code_args: Annotated[list[str], typer.Argument(help=\"Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'\")],",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "group",
+                "name": "ssh",
+                "help": "🔐 [S] SSH subcommands",
+                "aliases": [
+                  {
+                    "name": "S",
+                    "hidden": true,
+                    "help": "SSH subcommands"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_ssh.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_ssh",
+                  "app_factory": "machineconfig.scripts.python.helpers.helpers_devops.cli_ssh.get_app"
+                },
+                "registered_in": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw"
+                },
+                "app": {
+                  "help": "🔐 SSH subcommands",
+                  "no_args_is_help": true,
+                  "add_help_option": true,
+                  "add_completion": false
+                },
+                "children": [
+                  {
+                    "kind": "command",
+                    "name": "install-server",
+                    "help": "📡 [i] Install SSH server",
+                    "doc": "📡 Install SSH server",
+                    "aliases": [
+                      {
+                        "name": "i",
+                        "hidden": true,
+                        "help": "Install SSH server"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_ssh.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_ssh",
+                      "callable": "install_ssh_server"
+                    },
+                    "signature": [
+                      "def install_ssh_server() -> None:"
+                    ]
+                  },
+                  {
+                    "kind": "command",
+                    "name": "change-port",
+                    "help": "🔌 [p] Change SSH port (Linux/WSL only)",
+                    "doc": "🔌 Change SSH port (Linux/WSL only, default: 2222)",
+                    "aliases": [
+                      {
+                        "name": "p",
+                        "hidden": true,
+                        "help": "Change SSH port"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_ssh.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_ssh",
+                      "callable": "change_ssh_port"
+                    },
+                    "signature": [
+                      "def change_ssh_port(port: Annotated[int, typer.Option(..., \"--port\", \"-p\", help=\"SSH port to use\")] = 2222) -> None:"
+                    ]
+                  },
+                  {
+                    "kind": "command",
+                    "name": "add-key",
+                    "help": "🔑 [k] Add SSH public key to this machine",
+                    "doc": "🔑 Add SSH public key to this machine so its accessible by owner of corresponding private key.",
+                    "aliases": [
+                      {
+                        "name": "k",
+                        "hidden": true,
+                        "help": "Add SSH public key to this machine"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_ssh.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_ssh",
+                      "callable": "add_ssh_key"
+                    },
+                    "typer": {
+                      "no_args_is_help": true
+                    },
+                    "signature": [
+                      "def add_ssh_key(",
+                      "    path: Annotated[Optional[str], typer.Option(..., help=\"Path to the public key file\")] = None,",
+                      "    choose: Annotated[bool, typer.Option(..., \"--choose\", \"-c\", help=\"Choose from available public keys in ~/.ssh/*.pub\")] = False,",
+                      "    value: Annotated[bool, typer.Option(..., \"--value\", \"-v\", help=\"Paste the public key content manually\")] = False,",
+                      "    github: Annotated[Optional[str], typer.Option(..., \"--github\", \"-g\", help=\"Fetch public keys from a GitHub username\")] = None,",
+                      ") -> None:"
+                    ]
+                  },
+                  {
+                    "kind": "command",
+                    "name": "add-identity",
+                    "help": "🗝️ [A] Add SSH identity (private key) to this machine",
+                    "doc": "🗝️ Add SSH identity (private key) to this machine",
+                    "aliases": [
+                      {
+                        "name": "A",
+                        "hidden": true,
+                        "help": "Add SSH identity (private key) to this machine"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_ssh.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_ssh",
+                      "callable": "add_ssh_identity"
+                    },
+                    "signature": [
+                      "def add_ssh_identity() -> None:"
+                    ]
+                  },
+                  {
+                    "kind": "command",
+                    "name": "debug",
+                    "help": "🐛 [d] Debug SSH connection",
+                    "doc": "🐛 Debug SSH connection",
+                    "aliases": [
+                      {
+                        "name": "d",
+                        "hidden": true,
+                        "help": "Debug SSH connection"
+                      }
+                    ],
+                    "source": {
+                      "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_ssh.py",
+                      "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_ssh",
+                      "callable": "debug_ssh"
+                    },
+                    "signature": [
+                      "def debug_ssh() -> None:"
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "show-address",
+                "help": "📌 [a] Show this computer addresses on network",
+                "doc": "📌 Show this computer addresses on network",
+                "aliases": [
+                  {
+                    "name": "a",
+                    "hidden": true,
+                    "help": "Show this computer addresses on network"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "show_address"
+                },
+                "signature": [
+                  "def show_address() -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "switch-public-ip",
+                "help": "🔁 [c] Switch public IP address (Cloudflare WARP)",
+                "doc": "🔁 Switch public IP address (Cloudflare WARP)",
+                "aliases": [
+                  {
+                    "name": "c",
+                    "hidden": true,
+                    "help": "Switch public IP address (Cloudflare WARP)"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "switch_public_ip_address"
+                },
+                "signature": [
+                  "def switch_public_ip_address(",
+                  "    wait_seconds: Annotated[float, typer.Option(..., \"--wait\", \"-w\", help=\"Seconds to wait between steps\")] = 2.0,",
+                  "    max_trials: Annotated[int, typer.Option(..., \"--max-trials\", \"-m\", help=\"Max number of switch attempts\")] = 10,",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "wifi-select",
+                "help": "📶 [w] WiFi connection utility.",
+                "doc": "Main function with fallback network selection",
+                "aliases": [
+                  {
+                    "name": "w",
+                    "hidden": true
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "wifi_select"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def wifi_select(",
+                  "    ssid: Annotated[str, typer.Option(\"-n\", \"--ssid\", help=\"🔗 SSID of WiFi (from config)\")] = \"MyPhoneHotSpot\",",
+                  "    manual: Annotated[bool, typer.Option(\"-m\", \"--manual\", help=\"🔍 Manual network selection mode\")] = False,",
+                  "    list_: Annotated[bool, typer.Option(\"-l\", \"--list\", help=\"📡 List available networks only\")] = False,",
+                  ") -> None:"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "bind-wsl-port",
+                "help": "🔌 [b] Bind WSL port to Windows host",
+                "aliases": [
+                  {
+                    "name": "b",
+                    "hidden": true,
+                    "help": "Bind WSL port to Windows host"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "bind_wsl_port"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def bind_wsl_port(port: Annotated[int, typer.Option(..., \"--port\", \"-p\", help=\"Port number to bind\")]):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "open-wsl-port",
+                "help": "🔥 [o] Open Windows firewall ports for WSL.",
+                "doc": "🔥 Open Windows firewall ports for WSL (Windows only).",
+                "aliases": [
+                  {
+                    "name": "o",
+                    "hidden": true,
+                    "help": "Open Windows firewall ports for WSL."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "open_wsl_port"
+                },
+                "typer": {
+                  "no_args_is_help": true
+                },
+                "signature": [
+                  "def open_wsl_port(ports: Annotated[str, typer.Argument(..., help=\"Comma-separated ports or port ranges (e.g., '8080,3000-3005,443')\")]):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "link-wsl-windows",
+                "help": "🔗 [l] Link WSL home and Windows home directories.",
+                "doc": "🔗 Link WSL home and Windows home directories.",
+                "aliases": [
+                  {
+                    "name": "l",
+                    "hidden": true,
+                    "help": "Link WSL home and Windows home directories."
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "link_wsl_and_windows_home"
+                },
+                "typer": {
+                  "no_args_is_help": false
+                },
+                "signature": [
+                  "def link_wsl_and_windows_home(",
+                  "    windows_username: Annotated[str | None, typer.Option(\"--windows-username\", \"-u\", help=\"Windows username to use (optional, auto-detected if not provided)\")] = None",
+                  "):"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "reset-cloudflare-tunnel",
+                "help": "☁️  [r] Reset Cloudflare tunnel service",
+                "aliases": [
+                  {
+                    "name": "r",
+                    "hidden": true,
+                    "help": "Reset Cloudflare tunnel service"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "reset_cloudflare_tunnel"
+                },
+                "signature": [
+                  "def reset_cloudflare_tunnel():"
+                ]
+              },
+              {
+                "kind": "command",
+                "name": "add-ip-exclusion-to-warp",
+                "help": "🚫 [p] Add IP exclusion to WARP",
+                "aliases": [
+                  {
+                    "name": "p",
+                    "hidden": true,
+                    "help": "Add IP exclusion to WARP"
+                  }
+                ],
+                "source": {
+                  "file": "src/machineconfig/scripts/python/helpers/helpers_devops/cli_nw.py",
+                  "module": "machineconfig.scripts.python.helpers.helpers_devops.cli_nw",
+                  "callable": "add_ip_exclusion_to_warp"
+                },
+                "signature": [
+                  "def add_ip_exclusion_to_warp(ip: Annotated[str, typer.Option(..., \"--ip\", help=\"IP address to exclude from WARP\")]):"
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "execute",
+            "short_help": "🚀 [e] Execute python/shell scripts from pre-defined directories or as command",
+            "doc": "🚀 Execute python/shell scripts from pre-defined directories or as command.",
+            "aliases": [
+              {
+                "name": "e",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/devops.py",
+              "module": "machineconfig.scripts.python.devops",
+              "callable": "execute"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def execute(",
+              "    ctx: typer.Context,",
+              "    name: Annotated[str, typer.Argument(help=\"Name of script to run, e.g., 'a' for a.py, or command to execute\")] = \"\",",
+              "    where: Annotated[Literal[\"all\", \"a\", \"private\", \"p\", \"public\", \"b\", \"library\", \"l\", \"dynamic\", \"d\", \"custom\", \"c\"], typer.Option(\"--where\", \"-w\", help=\"Where to look for the script\")] = \"all\",",
+              "    interactive: Annotated[bool, typer.Option(..., \"--interactive\", \"-i\", help=\"Interactive selection of scripts to run\")] = False,",
+              "    command: Annotated[Optional[bool], typer.Option(..., \"--command\", \"-c\", help=\"Run as command\")] = False,",
+              "    list_scripts: Annotated[bool, typer.Option(..., \"--list\", \"-l\", help=\"List available scripts in all locations\")] = False,",
+              ") -> None:"
+            ],
+            "help": "🚀 Execute python/shell scripts from pre-defined directories or as command."
+          }
+        ]
+      },
+      {
+        "kind": "group",
+        "name": "cloud",
+        "help": "[c] Cloud management commands",
+        "aliases": [
+          {
+            "name": "c",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "cloud",
+          "dispatches_to": "machineconfig.scripts.python.cloud.get_app"
+        },
+        "command_context_settings": {
+          "allow_extra_args": true,
+          "allow_interspersed_args": true,
+          "ignore_unknown_options": true
+        },
+        "app": {
+          "help": "☁️ Cloud management commands",
+          "no_args_is_help": true,
+          "add_help_option": true,
+          "add_completion": false
+        },
+        "children": [
+          {
+            "kind": "command",
+            "name": "sync",
+            "help": "🔄 Synchronize files/folders between local and cloud storage.",
+            "short_help": "🔄 [s] Synchronize files/folders between local and cloud storage.",
+            "doc": "🔄 Synchronize files/folders between local and cloud storage.",
+            "aliases": [
+              {
+                "name": "s",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/cloud.py",
+              "module": "machineconfig.scripts.python.cloud",
+              "callable": "sync"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def sync(",
+              "    source: Annotated[str, typer.Argument(help=\"source\")],",
+              "    target: Annotated[str, typer.Argument(help=\"target\")],",
+              "    transfers: Annotated[int, typer.Option(\"--transfers\", \"-t\", help=\"Number of threads in syncing.\")] = 10,",
+              "    root: Annotated[str, typer.Option(\"--root\", \"-R\", help=\"Remote root.\")] = \"myhome\",",
+              "    key: Annotated[Optional[str], typer.Option(\"--key\", \"-k\", help=\"Key for encryption\")] = None,",
+              "    pwd: Annotated[Optional[str], typer.Option(\"--pwd\", \"-P\", help=\"Password for encryption\")] = None,",
+              "    encrypt: Annotated[bool, typer.Option(\"--encrypt\", \"-e\", help=\"Decrypt after receiving.\")] = False,",
+              "    zip_: Annotated[bool, typer.Option(\"--zip\", \"-z\", help=\"unzip after receiving.\")] = False,",
+              "    bisync: Annotated[bool, typer.Option(\"--bisync\", \"-b\", help=\"Bidirectional sync.\")] = False,",
+              "    delete: Annotated[bool, typer.Option(\"--delete\", \"-D\", help=\"Delete files in remote that are not in local.\")] = False,",
+              "    verbose: Annotated[bool, typer.Option(\"--verbose\", \"-v\", help=\"Verbosity of mprocs to show details of syncing.\")] = False,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "copy",
+            "help": "📤 Upload or 📥 Download files/folders to/from cloud storage services.",
+            "short_help": "📤 [c] Upload or 📥 Download files/folders to/from cloud storage.",
+            "doc": "📤 Upload or 📥 Download files/folders to/from cloud storage services.",
+            "aliases": [
+              {
+                "name": "c",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/cloud.py",
+              "module": "machineconfig.scripts.python.cloud",
+              "callable": "copy"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def copy(",
+              "    source: Annotated[str, typer.Argument(help=\"📂 file/folder path to be taken from here.\")],",
+              "    target: Annotated[str, typer.Argument(help=\"🎯 file/folder path to be be sent to here.\")],",
+              "    overwrite: Annotated[bool, typer.Option(\"--overwrite\", \"-o\", help=\"✍️ Overwrite existing file.\")] = False,",
+              "    share: Annotated[bool, typer.Option(\"--share\", \"-s\", help=\"🔗 Share file / directory\")] = False,",
+              "    rel2home: Annotated[bool, typer.Option(\"--relative2home\", \"-r\", help=\"🏠 Relative to `myhome` folder\")] = False,",
+              "    root: Annotated[Optional[str], typer.Option(\"--root\", \"-R\", help=\"🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.\")] = None,",
+              "    key: Annotated[Optional[str], typer.Option(\"--key\", \"-k\", help=\"🔑 Key for encryption\")] = None,",
+              "    pwd: Annotated[Optional[str], typer.Option(\"--password\", \"-p\", help=\"🔒 Password for encryption\")] = None,",
+              "    encrypt: Annotated[bool, typer.Option(\"--encrypt\", \"-e\", help=\"🔐 Encrypt before sending.\")] = False,",
+              "    zip_: Annotated[bool, typer.Option(\"--zip\", \"-z\", help=\"📦 unzip after receiving.\")] = False,",
+              "    os_specific: Annotated[bool, typer.Option(\"--os-specific\", \"-O\", help=\"💻 choose path specific for this OS.\")] = False,",
+              "    config: Annotated[Optional[str], typer.Option(\"--config\", \"-c\", help=\"⚙️ path to cloud.json file.\")] = None,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "mount",
+            "help": "🔗 Mount cloud storage services as local drives.",
+            "short_help": "🔗 [m] Mount cloud storage services as local drives.",
+            "doc": "🔗 Mount cloud storage services as local drives.",
+            "aliases": [
+              {
+                "name": "m",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/cloud.py",
+              "module": "machineconfig.scripts.python.cloud",
+              "callable": "mount"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def mount(",
+              "    cloud: Annotated[Optional[str], typer.Option(help=\"cloud to mount\")] = None,",
+              "    destination: Annotated[Optional[str], typer.Option(help=\"destination to mount\")] = None,",
+              "    network: Annotated[Optional[str], typer.Option(help=\"mount network drive\")] = None,",
+              ") -> None:"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "group",
+        "name": "sessions",
+        "help": "[s] Session and layout management",
+        "aliases": [
+          {
+            "name": "s",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "sessions",
+          "dispatches_to": "machineconfig.scripts.python.sessions.get_app"
+        },
+        "command_context_settings": {
+          "allow_extra_args": true,
+          "allow_interspersed_args": true,
+          "ignore_unknown_options": true
+        },
+        "app": {
+          "help": "Layouts management subcommands",
+          "no_args_is_help": true,
+          "add_help_option": true,
+          "add_completion": false
+        },
+        "children": [
+          {
+            "kind": "command",
+            "name": "create-from-function",
+            "short_help": "[c] Create a layout from a function",
+            "doc": "Create a layout from a function to run in multiple processes.",
+            "aliases": [
+              {
+                "name": "c",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/sessions.py",
+              "module": "machineconfig.scripts.python.sessions",
+              "callable": "create_from_function"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def create_from_function(",
+              "    num_process: Annotated[int, typer.Option(..., \"--num-process\", \"-n\", help=\"Number of parallel processes to run\")],",
+              "    path: Annotated[str, typer.Option(..., \"--path\", \"-p\", help=\"Path to a Python or Shell script file or a directory containing such files\")] = \".\",",
+              "    function: Annotated[Optional[str], typer.Option(..., \"--function\", \"-f\", help=\"Function to run from the Python file. If not provided, you will be prompted to choose.\")] = None,",
+              ") -> None:"
+            ],
+            "help": "Create a layout from a function to run in multiple processes."
+          },
+          {
+            "kind": "command",
+            "name": "run",
+            "help": "Launch terminal sessions based on a layout configuration file.",
+            "short_help": "[r] Run the selected layout(s)",
+            "doc": "Launch terminal sessions based on a layout configuration file.",
+            "aliases": [
+              {
+                "name": "r",
+                "hidden": true,
+                "help": "Launch terminal sessions based on a layout configuration file."
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/sessions.py",
+              "module": "machineconfig.scripts.python.sessions",
+              "callable": "run"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def run(",
+              "    ctx: typer.Context,",
+              "    layout_path: Annotated[Optional[str], typer.Argument(..., help=\"Path to the layout.json file\")] = None,",
+              "    max_tabs: Annotated[int, typer.Option(..., \"--max-tabs\", \"-mt\", help=\"A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.\")] = 10,",
+              "    max_layouts: Annotated[int, typer.Option(..., \"--max-layouts\", \"-ml\", help=\"A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.\")] = 10,",
+              "    sleep_inbetween: Annotated[float, typer.Option(..., \"--sleep-inbetween\", \"-si\", help=\"Sleep time in seconds between launching layouts\")] = 1.0,",
+              "    monitor: Annotated[bool, typer.Option(..., \"--monitor\", \"-m\", help=\"Monitor the layout sessions for completion\")] = False,",
+              "    parallel: Annotated[bool, typer.Option(..., \"--parallel\", \"-p\", help=\"Launch multiple layouts in parallel\")] = False,",
+              "    kill_upon_completion: Annotated[bool, typer.Option(..., \"--kill-upon-completion\", \"-k\", help=\"Kill session(s) upon completion (only relevant if monitor flag is set)\")] = False,",
+              "    choose: Annotated[Optional[str], typer.Option(..., \"--choose\", \"-c\", help=\"Comma separated names of layouts to be selected from the layout file passed\")] = None,",
+              "    choose_interactively: Annotated[bool, typer.Option(..., \"--choose-interactively\", \"-i\", help=\"Select layouts interactively\")] = False,",
+              "    subsitute_home: Annotated[bool, typer.Option(..., \"--substitute-home\", \"-sh\", help=\"Substitute ~ and $HOME in layout file with actual home directory path\")] = False,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "balance-load",
+            "help": "Adjust layout file to limit max tabs per layout, etc.",
+            "short_help": "[b] Balance the load across sessions",
+            "doc": "Adjust layout file to limit max tabs per layout, etc.",
+            "aliases": [
+              {
+                "name": "b",
+                "hidden": true,
+                "help": "Adjust layout file to limit max tabs per layout, etc."
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/sessions.py",
+              "module": "machineconfig.scripts.python.sessions",
+              "callable": "balance_load"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def balance_load(",
+              "    layout_path: Annotated[str, typer.Argument(..., help=\"Path to the layout.json file\")],",
+              "    max_thresh: Annotated[int, typer.Option(..., \"--max-threshold\", \"-m\", help=\"Maximum tabs per layout\")],",
+              "    thresh_type: Annotated[Literal[\"number\", \"n\", \"weight\", \"w\"], typer.Option(..., \"--threshold-type\", \"-t\", help=\"Threshold type\")],",
+              "    breaking_method: Annotated[Literal[\"moreLayouts\", \"ml\", \"combineTabs\", \"ct\"], typer.Option(..., \"--breaking-method\", \"-b\", help=\"Breaking method\")],",
+              "    output_path: Annotated[Optional[str], typer.Option(..., \"--output-path\", \"-o\", help=\"Path to write the adjusted layout.json file\")] = None,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "create-template",
+            "help": "Create a layout template file.",
+            "short_help": "[t] Create a layout template file",
+            "doc": "Create a layout template file.",
+            "aliases": [
+              {
+                "name": "t",
+                "hidden": true,
+                "help": "Create a layout template file."
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/sessions.py",
+              "module": "machineconfig.scripts.python.sessions",
+              "callable": "create_template"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def create_template(",
+              "    name: Annotated[Optional[str], typer.Argument(..., help=\"Name of the layout template to create\")] = None,",
+              "    num_tabs: Annotated[int, typer.Option(..., \"--num-tabs\", \"-t\", help=\"Number of tabs to include in the template\")] = 3,",
+              ") -> None:"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "group",
+        "name": "agents",
+        "help": "[a] 🤖 AI Agents management commands",
+        "aliases": [
+          {
+            "name": "a",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "agents",
+          "dispatches_to": "machineconfig.scripts.python.agents.get_app"
+        },
+        "command_context_settings": {
+          "allow_extra_args": true,
+          "allow_interspersed_args": true,
+          "ignore_unknown_options": true
+        },
+        "app": {
+          "help": "🤖 AI Agents management subcommands",
+          "no_args_is_help": true,
+          "add_help_option": true,
+          "add_completion": false
+        },
+        "children": [
+          {
+            "kind": "command",
+            "name": "create",
+            "help": "[c] Create agents layout file, ready to run.\n\nPROVIDER options: azure, google, aws, openai, anthropic, openrouter, xai\n\nAGENT options: cursor-agent, gemini, qwen-code, copilot, crush, q, opencode, kilocode, cline, auggie, warp, droid",
+            "short_help": "[c] Create agents layout file, ready to run.",
+            "doc": "[c] Create agents layout file, ready to run.\n\nPROVIDER options: azure, google, aws, openai, anthropic, openrouter, xai\n\nAGENT options: cursor-agent, gemini, qwen-code, copilot, crush, q, opencode, kilocode, cline, auggie, warp, droid",
+            "aliases": [
+              {
+                "name": "c",
+                "hidden": true,
+                "help": "[c] Create agents layout file, ready to run.\n\nPROVIDER options: azure, google, aws, openai, anthropic, openrouter, xai\n\nAGENT options: cursor-agent, gemini, qwen-code, copilot, crush, q, opencode, kilocode, cline, auggie, warp, droid"
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/agents.py",
+              "module": "machineconfig.scripts.python.agents",
+              "callable": "agents_create"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def agents_create(",
+              "    agent: Annotated[AGENTS, typer.Option(..., \"--agents\", \"-a\", help=f\"Agent type. One of {', '.join(get_args(AGENTS)[:3])}\")],",
+              "    host: Annotated[HOST, typer.Option(..., \"--host\", \"-h\", help=f\"Machine to run agents on. One of {', '.join(get_args(HOST))}\")],",
+              "    model: Annotated[str, typer.Option(..., \"--model\", \"-m\", help=\"Model to use (for crush agent).\")],",
+              "    provider: Annotated[PROVIDER, typer.Option(..., \"--provider\", \"-p\", help=f\"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}\")],",
+              "    context_path: Annotated[Optional[str], typer.Option(..., \"--context-path\", \"-c\", help=\"Path to the context file/folder, defaults to .ai/todo/\")] = None,",
+              "    separator: Annotated[str, typer.Option(..., \"--separator\", \"-s\", help=\"Separator for context\")] = \"\\\\n\",",
+              "    agent_load: Annotated[int, typer.Option(..., \"--agent-load\", \"-al\", help=\"Number of tasks per prompt\")] = 13,",
+              "    prompt: Annotated[Optional[str], typer.Option(..., \"--prompt\", \"-P\", help=\"Prompt prefix as string\")] = None,",
+              "    prompt_path: Annotated[Optional[str], typer.Option(..., \"--prompt-path\", \"-pp\", help=\"Path to prompt file\")] = None,",
+              "    job_name: Annotated[str, typer.Option(..., \"--job-name\", \"-j\", help=\"Job name\")] = \"AI_Agents\",",
+              "    separate: Annotated[bool, typer.Option(..., \"--separate\", \"-S\", help=\"Keep prompt material in separate file to the context.\")] = True,",
+              "    output_path: Annotated[Optional[str], typer.Option(..., \"--output-path\", \"-o\", help=\"Path to write the layout.json file\")] = None,",
+              "    agents_dir: Annotated[Optional[str], typer.Option(..., \"--agents-dir\", \"-ad\", help=\"Directory to store agent files. If not provided, will be constructed automatically.\")] = None,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "collect",
+            "help": "Collect all material files from an agent directory and concatenate them.",
+            "short_help": "[T] Collect all agent materials into a single file.",
+            "doc": "Collect all material files from an agent directory and concatenate them.",
+            "aliases": [
+              {
+                "name": "T",
+                "hidden": true,
+                "help": "Collect all material files from an agent directory and concatenate them."
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/agents.py",
+              "module": "machineconfig.scripts.python.agents",
+              "callable": "collect"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def collect(",
+              "    agent_dir: Annotated[str, typer.Argument(..., help=\"Path to the agent directory containing the prompts folder\")],",
+              "    output_path: Annotated[str, typer.Argument(..., help=\"Path to write the concatenated material files\")],",
+              "    separator: Annotated[str, typer.Option(..., help=\"Separator to use when concatenating material files\")] = \"\\\\n\",",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "make-template",
+            "help": "Create a template for fire agents.",
+            "short_help": "[t] Create a template for fire agents",
+            "doc": "Create a template for fire agents.",
+            "aliases": [
+              {
+                "name": "t",
+                "hidden": true,
+                "help": "Create a template for fire agents"
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/agents.py",
+              "module": "machineconfig.scripts.python.agents",
+              "callable": "make_agents_command_template"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def make_agents_command_template() -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "make-config",
+            "help": "Initialize AI configurations in the current repository.",
+            "short_help": "[g] Initialize AI configurations in the current repository",
+            "doc": "Initialize AI configurations in the current repository.",
+            "aliases": [
+              {
+                "name": "g",
+                "hidden": true,
+                "help": "Initialize AI configurations in the current repository"
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/agents.py",
+              "module": "machineconfig.scripts.python.agents",
+              "callable": "init_config"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def init_config(root: Annotated[Optional[str], typer.Option(..., \"--root\", \"-r\", help=\"Root directory of the repository to initialize AI configs in. Defaults to current directory.\")] = None) -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "make-todo",
+            "short_help": "[d] Generate a markdown file listing all Python files in the repo",
+            "doc": "Generate checklist with Python and shell script files in the repository filtered by pattern.",
+            "aliases": [
+              {
+                "name": "d",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/agents.py",
+              "module": "machineconfig.scripts.python.agents",
+              "callable": "make_todo_files"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def make_todo_files(",
+              "    pattern: Annotated[str, typer.Argument(help=\"Pattern or keyword to match files by\")] = \".py\",",
+              "    repo: Annotated[str, typer.Argument(help=\"Repository path. Can be any directory within a git repository.\")] = \".\",",
+              "    strategy: Annotated[Literal[\"name\", \"keywords\"], typer.Option(\"-s\", \"--strategy\", help=\"Strategy to filter files: 'name' for filename matching, 'keywords' for content matching\")] = \"name\",",
+              "    exclude_init: Annotated[bool, typer.Option(\"-x\", \"--exclude-init\", help=\"Exclude __init__.py files from the checklist\")] = True,",
+              "    include_line_count: Annotated[bool, typer.Option(\"-l\", \"--line-count\", help=\"Include line count column in the output\")] = False,",
+              "    output_path: Annotated[str, typer.Option(\"-o\", \"--output-path\", help=\"Base path for output files relative to repo root\")] = \".ai/todo/files\",",
+              "    format_type: Annotated[Literal[\"csv\", \"md\", \"txt\"], typer.Option(\"-f\", \"--format\", help=\"Output format: csv, md (markdown), or txt\")] = \"md\",",
+              "    split_every: Annotated[Optional[int], typer.Option(\"--split-every\", \"-e\", help=\"Split output into multiple files, each containing at most this many results\")] = None,",
+              "    split_to: Annotated[Optional[int], typer.Option(\"--split-to\", \"-t\", help=\"Split output into exactly this many files\")] = None,",
+              ") -> None:"
+            ],
+            "help": "Generate checklist with Python and shell script files in the repository filtered by pattern."
+          },
+          {
+            "kind": "command",
+            "name": "make-symlinks",
+            "short_help": "[s] Create symlinks to the current repo in ~/code_copies/",
+            "doc": "Create symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}.",
+            "aliases": [
+              {
+                "name": "s",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/agents.py",
+              "module": "machineconfig.scripts.python.agents",
+              "callable": "create_symlink_command"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def create_symlink_command(",
+              "    num: Annotated[int, typer.Argument(help=\"Number of symlinks to create (1-5).\")] = 5,",
+              ") -> None:"
+            ],
+            "help": "Create symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}."
+          }
+        ]
+      },
+      {
+        "kind": "group",
+        "name": "utils",
+        "help": "[u] Utility commands",
+        "aliases": [
+          {
+            "name": "u",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "utils",
+          "dispatches_to": "machineconfig.scripts.python.utils.get_app"
+        },
+        "command_context_settings": {
+          "allow_extra_args": true,
+          "allow_interspersed_args": true,
+          "ignore_unknown_options": true
+        },
+        "app": {
+          "help": "🛠️ utilities operations",
+          "no_args_is_help": true,
+          "add_help_option": true,
+          "add_completion": false
+        },
+        "children": [
+          {
+            "kind": "command",
+            "name": "kill-process",
+            "help": "⚔️ [k] Choose a process to kill",
+            "doc": "⚔️ Choose a process to kill.",
+            "aliases": [
+              {
+                "name": "k",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "kill_process"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def kill_process(interactive: Annotated[bool, typer.Option(..., \"--interactive\", \"-i\", help=\"Interactively choose the process to kill\")] = True) -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "environment",
+            "help": "📚 [v] NAVIGATE ENV/PATH variable with TUI",
+            "doc": "📚 NAVIGATE ENV/PATH variable with TUI.",
+            "aliases": [
+              {
+                "name": "v",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "tui_env"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def tui_env(which: Annotated[Literal[\"PATH\", \"p\", \"ENV\", \"e\"], typer.Argument(help=\"Which environment variable to display.\")] = \"ENV\") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "upgrade-packages",
+            "help": "⬆️ [up] Upgrade project dependencies.",
+            "doc": "⬆️ Upgrade project dependencies.",
+            "aliases": [
+              {
+                "name": "up",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "upgrade_packages"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def upgrade_packages(root: Annotated[str, typer.Argument(help=\"Root directory of the project\")] = \".\") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "download",
+            "help": "⬇️ [d] Download a file from a URL and optionally decompress it.",
+            "doc": "⬇️ Download a file from a URL and optionally decompress it.",
+            "aliases": [
+              {
+                "name": "d",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "download"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def download(",
+              "    url: Annotated[Optional[str], typer.Argument(..., help=\"The URL to download the file from.\")] = None,",
+              "    decompress: Annotated[bool, typer.Option(..., \"--decompress\", \"-d\", help=\"Decompress the file if it's an archive.\")] = False,",
+              "    output: Annotated[Optional[str], typer.Option(\"--output\", \"-o\", help=\"The output file path.\")] = None,",
+              "    output_dir: Annotated[Optional[str], typer.Option(\"--output-dir\", help=\"Directory to place the downloaded file in.\")] = None,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "get-machine-specs",
+            "help": "💻 [g] Get machine specifications.",
+            "doc": "💻 Get machine specifications.",
+            "aliases": [
+              {
+                "name": "g",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "get_machine_specs"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def get_machine_specs(hardware: Annotated[bool, typer.Option(..., \"--hardware\", \"-h\", help=\"Show compute capability\")] = False) -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "init-project",
+            "help": "🚀 [i] Initialize a project with a uv virtual environment and install dev packages.",
+            "doc": "🚀 Initialize a project with a uv virtual environment and install dev packages.",
+            "aliases": [
+              {
+                "name": "i",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "init_project"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def init_project(",
+              "    name: Annotated[Optional[str], typer.Option(\"--name\", \"-n\", help=\"Name of the project.\")] = None,",
+              "    tmp_dir: Annotated[bool, typer.Option(\"--tmp-dir\", \"-t\", help=\"Use a temporary directory for the project initialization.\")] = False,",
+              "    python: Annotated[Literal[\"3.11\", \"3.12\", \"3.13\", \"3.14\"], typer.Option(\"--python\", \"-p\", help=\"Python sub version for the uv virtual environment.\")] = \"3.13\",",
+              "    libraries: Annotated[Optional[str], typer.Option(\"--libraries\", \"-l\", help=\"Additional packages to include in the uv virtual environment (space separated).\")] = None,",
+              "    group: Annotated[Optional[str], typer.Option(\"--group\", \"-g\", help=\"group of packages names (no separation) p:plot, t:types, l:linting, i:interactive, d:data\")] = \"p,t,l,i,d\",",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "edit",
+            "help": "✏️ [e] Open a file in the default editor.",
+            "doc": "✏️ Open a file in the default editor.",
+            "aliases": [
+              {
+                "name": "e",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "edit_file_with_hx"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def edit_file_with_hx(path: Annotated[Optional[str], typer.Argument(..., help=\"The root directory of the project to edit, or a file path.\")] = None) -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "pdf-merge",
+            "help": "📄 [pm] Merge two PDF files into one.",
+            "doc": "📄 Merge two PDF files into one.",
+            "aliases": [
+              {
+                "name": "pm",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "merge_pdfs"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def merge_pdfs(",
+              "    pdfs: Annotated[list[str], typer.Argument(..., help=\"Paths to the PDF files to merge.\")],",
+              "    output: Annotated[Optional[str], typer.Option(\"--output\", \"-o\", help=\"Output merged PDF file path.\")] = None,",
+              "    compress: Annotated[bool, typer.Option(\"--compress\", \"-c\", help=\"Compress the output PDF.\")] = False,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "pdf-compress",
+            "help": "📦 [pc] Compress a PDF file.",
+            "doc": "📦 Compress a PDF file.",
+            "aliases": [
+              {
+                "name": "pc",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "compress_pdf"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def compress_pdf(",
+              "    pdf_input: Annotated[str, typer.Argument(..., help=\"Path to the input PDF file to compress.\")],",
+              "    output: Annotated[Optional[str], typer.Option(\"--output\", \"-o\", help=\"Output compressed PDF file path.\")] = None,",
+              "    quality: Annotated[int, typer.Option(\"--quality\", \"-q\", help=\"JPEG quality for image compression (0-100, 0=no change, 100=best).\")]= 85,",
+              "    image_dpi: Annotated[int, typer.Option(\"--image-dpi\", \"-d\", help=\"Target DPI for image resampling.\")] = 0,",
+              "    compress_streams: Annotated[bool, typer.Option(\"--compress-streams\", \"-c\", help=\"Compress uncompressed streams.\")] = True,",
+              "    use_objstms: Annotated[bool, typer.Option(\"--object-streams\", \"-s\", help=\"Use object streams for additional compression.\")] = True,",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "type-hint",
+            "help": "📝 [t] Type hint a file or project directory.",
+            "aliases": [
+              {
+                "name": "t",
+                "hidden": true
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/utils.py",
+              "module": "machineconfig.scripts.python.utils",
+              "callable": "type_hint"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def type_hint(",
+              "    path: Annotated[str, typer.Argument(..., help=\"Path to file/project dir to type hint.\")] = \".\",",
+              "    dependency: Annotated[Literal[\"self-contained\", \"import\"], typer.Option(..., \"--dependency\", \"-d\", help=\"Generated file is self contained or performs imports\")] = \"self-contained\",",
+              ") -> None:"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "group",
+        "name": "terminal",
+        "help": "[t] Terminal management commands",
+        "aliases": [
+          {
+            "name": "t",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "terminal",
+          "dispatches_to": "machineconfig.scripts.python.terminal.get_app"
+        },
+        "command_context_settings": {
+          "allow_extra_args": true,
+          "allow_interspersed_args": true,
+          "ignore_unknown_options": true
+        },
+        "app": {
+          "help": "🖥️ Terminal utilities",
+          "no_args_is_help": true,
+          "add_help_option": true,
+          "add_completion": false
+        },
+        "children": [
+          {
+            "kind": "command",
+            "name": "attach-to-zellij",
+            "help": "Choose a Zellij session to attach to.",
+            "short_help": "[z] Choose a Zellij session to attach to",
+            "doc": "Choose a Zellij session to attach to.",
+            "aliases": [
+              {
+                "name": "z",
+                "hidden": true,
+                "help": "Choose a Zellij session to attach to."
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/terminal.py",
+              "module": "machineconfig.scripts.python.terminal",
+              "callable": "choose_zellij_session"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def choose_zellij_session(",
+              "    name: Annotated[str | None, typer.Argument(help=\"Name of the Zellij session to attach to. If not provided, a list will be shown to choose from.\")] = None,",
+              "    new_session: Annotated[bool, typer.Option(\"--new-session\", \"-n\", help=\"Create a new Zellij session instead of attaching to an existing one.\", show_default=True)] = False,",
+              "    kill_all: Annotated[bool, typer.Option(\"--kill-all\", \"-k\", help=\"Kill all existing Zellij sessions before creating a new one.\", show_default=True)] = False",
+              ") -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "start-wt",
+            "help": "Start a Windows Terminal layout by name.",
+            "short_help": "[w] Start a Windows Terminal layout by name.",
+            "doc": "Start a Windows Terminal layout by name.",
+            "aliases": [
+              {
+                "name": "w",
+                "hidden": true,
+                "help": "Start a Windows Terminal layout by name."
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/terminal.py",
+              "module": "machineconfig.scripts.python.terminal",
+              "callable": "start_wt"
+            },
+            "typer": {
+              "no_args_is_help": true
+            },
+            "signature": [
+              "def start_wt(layout_name: Annotated[str, typer.Argument(help=\"Layout name to start.\")]) -> None:"
+            ]
+          },
+          {
+            "kind": "command",
+            "name": "get-session-tabs",
+            "help": "Get all Zellij session tabs.",
+            "short_help": "[zt] Get all Zellij session tabs.",
+            "doc": "Get all Zellij session tabs.",
+            "aliases": [
+              {
+                "name": "zt",
+                "hidden": true,
+                "help": "Get all Zellij session tabs."
+              }
+            ],
+            "source": {
+              "file": "src/machineconfig/scripts/python/terminal.py",
+              "module": "machineconfig.scripts.python.terminal",
+              "callable": "get_session_tabs"
+            },
+            "typer": {
+              "no_args_is_help": false
+            },
+            "signature": [
+              "def get_session_tabs() -> list[tuple[str, str]]:"
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "command",
+        "name": "fire",
+        "help": "[f] Fire and manage jobs",
+        "doc": "Fire and manage jobs.",
+        "aliases": [
+          {
+            "name": "f",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "fire"
+        },
+        "typer": {
+          "no_args_is_help": false,
+          "context_settings": {
+            "allow_extra_args": true,
+            "allow_interspersed_args": false
+          }
+        },
+        "signature": [
+          "def fire(",
+          "    ctx: typer.Context,",
+          "    path: Annotated[str, typer.Argument(help=\"Path to the Python file to run\")] = \".\",",
+          "    function: Annotated[Optional[str], typer.Argument(help=\"Function to run\")] = None,",
+          "    ve: Annotated[str, typer.Option(\"--ve\", \"-v\", help=\"Virtual environment name\")] = \"\",",
+          "    cmd: Annotated[bool, typer.Option(\"--cmd\", \"-B\", help=\"Create a cmd fire command to launch the job asynchronously\")] = False,",
+          "    interactive: Annotated[bool, typer.Option(\"--interactive\", \"-i\", help=\"Whether to run the job interactively using IPython\")] = False,",
+          "    debug: Annotated[bool, typer.Option(\"--debug\", \"-d\", help=\"Enable debug mode\")] = False,",
+          "    choose_function: Annotated[bool, typer.Option(\"--choose-function\", \"-c\", help=\"Choose function interactively\")] = False,",
+          "    loop: Annotated[bool, typer.Option(\"--loop\", \"-l\", help=\"Infinite recursion (runs again after completion/interruption)\")] = False,",
+          "    jupyter: Annotated[bool, typer.Option(\"--jupyter\", \"-j\", help=\"Open in a jupyter notebook\")] = False,",
+          "    marimo: Annotated[bool, typer.Option(\"--marimo\", \"-M\", help=\"Open in a marimo notebook\")] = False,",
+          "    module: Annotated[bool, typer.Option(\"--module\", \"-m\", help=\"Launch the main file\")] = False,",
+          "    script: Annotated[bool, typer.Option(\"--script\", \"-s\", help=\"Launch as a script without fire\")] = False,",
+          "    optimized: Annotated[bool, typer.Option(\"--optimized\", \"-O\", help=\"Run the optimized version of the function\")] = False,",
+          "    zellij_tab: Annotated[Optional[str], typer.Option(\"--zellij-tab\", \"-z\", help=\"Open in a new zellij tab\")] = None,",
+          "    submit_to_cloud: Annotated[bool, typer.Option(\"--submit-to-cloud\", \"-C\", help=\"Submit to cloud compute\")] = False,",
+          "    remote: Annotated[bool, typer.Option(\"--remote\", \"-r\", help=\"Launch on a remote machine\")] = False,",
+          "    streamlit: Annotated[bool, typer.Option(\"--streamlit\", \"-S\", help=\"Run as streamlit app\")] = False,",
+          "    environment: Annotated[str, typer.Option(\"--environment\", \"-E\", help=\"Choose ip, localhost, hostname or arbitrary url\")] = \"\",",
+          "    holdDirectory: Annotated[bool, typer.Option(\"--holdDirectory\", \"-D\", help=\"Hold current directory and avoid cd'ing to the script directory\")] = False,",
+          "    PathExport: Annotated[bool, typer.Option(\"--PathExport\", \"-P\", help=\"Augment the PYTHONPATH with repo root\")] = False,",
+          "    git_pull: Annotated[bool, typer.Option(\"--git-pull\", \"-g\", help=\"Start by pulling the git repo\")] = False,",
+          "    watch: Annotated[bool, typer.Option(\"--watch\", \"-w\", help=\"Watch the file for changes\")] = False,",
+          ") -> None:"
+        ]
+      },
+      {
+        "kind": "command",
+        "name": "ftpx",
+        "help": "[ff] File transfer utility though SSH",
+        "doc": "File transfer utility though SSH.",
+        "aliases": [
+          {
+            "name": "ff",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "ftpx"
+        },
+        "typer": {
+          "no_args_is_help": true
+        },
+        "signature": [
+          "def ftpx(",
+          "    source: Annotated[str, typer.Argument(help=\"Source path (machine:path)\")],",
+          "    target: Annotated[str, typer.Argument(help=\"Target path (machine:path)\")],",
+          "    recursive: Annotated[bool, typer.Option(\"--recursive\", \"-r\", help=\"Send recursively.\")] = False,",
+          "    zipFirst: Annotated[bool, typer.Option(\"--zipFirst\", \"-z\", help=\"Zip before sending.\")] = False,",
+          "    cloud: Annotated[bool, typer.Option(\"--cloud\", \"-c\", help=\"Transfer through the cloud.\")] = False,",
+          "    overwrite_existing: Annotated[bool, typer.Option(\"--overwrite-existing\", \"-o\", help=\"Overwrite existing files on remote when sending from local to remote.\")] = False,",
+          ") -> None:"
+        ]
+      },
+      {
+        "kind": "command",
+        "name": "croshell",
+        "help": "[r] Cross-shell command execution",
+        "doc": "Cross-shell command execution.",
+        "aliases": [
+          {
+            "name": "r",
+            "hidden": true
+          }
+        ],
+        "source": {
+          "file": "src/machineconfig/scripts/python/mcfg_entry.py",
+          "module": "machineconfig.scripts.python.mcfg_entry",
+          "callable": "croshell"
+        },
+        "typer": {
+          "no_args_is_help": false
+        },
+        "signature": [
+          "def croshell(",
+          "    path: Annotated[Optional[str], typer.Argument(help=\"path of file to read.\")] = None,",
+          "    project_path: Annotated[Optional[str], typer.Option(\"--project\", \"-p\", help=\"specify uv project to use\")] = None,",
+          "    uv_with: Annotated[Optional[str], typer.Option(\"--uv-with\", \"-w\", help=\"specify uv with packages to use\")] = None,",
+          "    marimo: Annotated[bool, typer.Option(\"--marimo\", \"-m\", help=\"open the notebook using marimo if available\")] = False,",
+          "    jupyter: Annotated[bool, typer.Option(\"--jupyter\", \"-j\", help=\"run in jupyter interactive console\")] = False,",
+          "    vscode: Annotated[bool, typer.Option(\"--vscode\", \"-c\", help=\"open the script in vscode\")] = False,",
+          "    visidata: Annotated[bool, typer.Option(\"--visidata\", \"-v\", help=\"open data file in visidata\")] = False,",
+          "    python: Annotated[bool, typer.Option(\"--python\", \"-P\", help=\"flag to use python over IPython.\")] = False,",
+          "    profile: Annotated[Optional[str], typer.Option(\"--profile\", \"-r\", help=\"ipython profile to use, defaults to default profile.\")] = None,",
+          ") -> None:"
+        ]
+      }
+    ]
+  }
+}
