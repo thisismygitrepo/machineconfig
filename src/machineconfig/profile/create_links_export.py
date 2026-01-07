@@ -39,12 +39,14 @@ def main_from_parser(
     TARGET = Config-File-Default-Path
     For public config files in the library repo, the source always exists."""
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
-    sensitivity_map: dict[str, Literal["public", "private"]] = {
-        "private": "private",
-        "p": "private",
-        "public": "public",
-        "b": "public",
-    }
+    # sensitivity_map: dict[str, Literal["public", "private"]] = {
+    #     "private": "private",
+    #     "p": "private",
+    #     "public": "public",
+    #     "b": "public",
+    #     "all": "public",
+    #     "a": "public",
+    # }
     repo_map: dict[str, Literal["library", "user", "all"]] = {
         "library": "library",
         "l": "library",
@@ -53,9 +55,16 @@ def main_from_parser(
         "a": "all",
         "all": "all",
     }
-    sensitivity_key = sensitivity_map[sensitivity]
     repo_key = repo_map[repo]
-    mapper_full = read_mapper(repo=repo_key)[sensitivity_key]
+    mapper_full_obj = read_mapper(repo=repo_key)
+    match sensitivity:
+        case "private" | "p":
+            mapper_full = mapper_full_obj["private"]
+        case "public" | "b":
+            mapper_full = mapper_full_obj["public"]
+        case "all" | "a":
+            mapper_full = {**mapper_full_obj["private"], **mapper_full_obj["public"]}
+            
     if which is None:
         from machineconfig.utils.options import choose_from_options
         options = list(mapper_full.keys())
@@ -71,10 +80,11 @@ def main_from_parser(
         typer.echo("[red]Error:[/] No valid items selected.")
         typer.Exit(code=1)
         return
-    from machineconfig.profile.create_links import apply_mapper
-    if sensitivity_key == "public" and repo_key == "library":
+
+    if (sensitivity == "public" or sensitivity == "b") and repo_key == "library":
         from machineconfig.profile.create_helper import copy_assets_to_machine
         copy_assets_to_machine(which="settings")  # config files live here and will be linked to.
+
     method_map: dict[str, Literal["symlink", "copy"]] = {
         "s": "symlink",
         "symlink": "symlink",
@@ -82,4 +92,5 @@ def main_from_parser(
         "copy": "copy",
     }
     method = method_map[method]
+    from machineconfig.profile.create_links import apply_mapper
     apply_mapper(mapper_data=items_objections, on_conflict=ON_CONFLICT_MAPPER[on_conflict], method=method)
