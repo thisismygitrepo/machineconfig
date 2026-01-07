@@ -39,14 +39,6 @@ def main_from_parser(
     TARGET = Config-File-Default-Path
     For public config files in the library repo, the source always exists."""
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
-    # sensitivity_map: dict[str, Literal["public", "private"]] = {
-    #     "private": "private",
-    #     "p": "private",
-    #     "public": "public",
-    #     "b": "public",
-    #     "all": "public",
-    #     "a": "public",
-    # }
     repo_map: dict[str, Literal["library", "user", "all"]] = {
         "library": "library",
         "l": "library",
