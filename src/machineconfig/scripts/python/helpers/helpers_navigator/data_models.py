@@ -3,7 +3,22 @@ Data models for the command navigator.
 """
 
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+
+@dataclass
+class ArgumentInfo:
+    """Information about a command argument."""
+    name: str
+    is_required: bool
+    is_flag: bool
+    placeholder: str = ""
+    description: str = ""
+    is_positional: bool = False
+    flag: str = ""
+    negated_flag: str = ""
+    long_flags: list[str] = field(default_factory=list)
+    short_flags: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -16,13 +31,5 @@ class CommandInfo:
     is_group: bool = False
     help_text: str = ""
     module_path: str = ""
-
-
-@dataclass
-class ArgumentInfo:
-    """Information about a command argument."""
-    name: str
-    is_required: bool
-    is_flag: bool
-    placeholder: str = ""
-    description: str = ""
+    arguments: Optional[list[ArgumentInfo]] = None
+    long_description: str = ""

@@ -16,7 +16,11 @@ class CommandBuilderScreen(ModalScreen[str]):
     def __init__(self, command_info: CommandInfo) -> None:
         super().__init__()
         self.command_info = command_info
-        self.arguments = self._parse_arguments()
+        self.arguments = (
+            command_info.arguments
+            if command_info.arguments is not None
+            else self._parse_arguments()
+        )
         self.input_widgets: dict[str, Input] = {}
 
     def _parse_arguments(self) -> list[ArgumentInfo]:
@@ -34,21 +38,40 @@ class CommandBuilderScreen(ModalScreen[str]):
             arg_name = match.group(1)
             placeholder = match.group(2)
             if arg_name not in seen_names:
-                args.append(ArgumentInfo(name=arg_name, is_required=False, is_flag=False, placeholder=placeholder))
+                args.append(ArgumentInfo(
+                    name=arg_name,
+                    is_required=False,
+                    is_flag=False,
+                    placeholder=placeholder,
+                    flag=f"--{arg_name}",
+                    long_flags=[f"--{arg_name}"],
+                ))
                 seen_names.add(arg_name)
 
         flag_pattern = re.compile(r'--(\w+(?:-\w+)*)(?:\s|$)')
         for match in flag_pattern.finditer(help_text):
             arg_name = match.group(1)
             if arg_name not in seen_names:
-                args.append(ArgumentInfo(name=arg_name, is_required=False, is_flag=True))
+                args.append(ArgumentInfo(
+                    name=arg_name,
+                    is_required=False,
+                    is_flag=True,
+                    flag=f"--{arg_name}",
+                    long_flags=[f"--{arg_name}"],
+                ))
                 seen_names.add(arg_name)
 
         positional_pattern = re.compile(r'<(\w+)>(?!\s*>)')
         for match in positional_pattern.finditer(help_text):
             arg_name = match.group(1)
             if arg_name not in seen_names and not re.search(rf'--\w+\s+<{arg_name}>', help_text):
-                args.append(ArgumentInfo(name=arg_name, is_required=True, is_flag=False, placeholder=arg_name))
+                args.append(ArgumentInfo(
+                    name=arg_name,
+                    is_required=True,
+                    is_flag=False,
+                    placeholder=arg_name,
+                    is_positional=True,
+                ))
                 seen_names.add(arg_name)
 
         return args
@@ -63,12 +86,22 @@ class CommandBuilderScreen(ModalScreen[str]):
             else:
                 for arg in self.arguments:
                     if arg.is_flag:
-                        label_text = f"--{arg.name} (flag, leave empty to skip)"
+                        flag = arg.flag or f"--{arg.name}"
+                        if arg.negated_flag:
+                            label_text = f"{flag} / {arg.negated_flag} (flag, leave empty to skip)"
+                        else:
+                            label_text = f"{flag} (flag, leave empty to skip)"
                         yield Label(label_text)
                         input_widget = Input(placeholder="yes/no or leave empty", id=f"arg_{arg.name}")
-                    else:
+                    elif arg.is_positional:
                         required_marker = "[red]*[/red]" if arg.is_required else "[dim](optional)[/dim]"
-                        label_text = f"--{arg.name} {required_marker}"
+                        label_text = f"{arg.name} {required_marker}"
+                        yield Label(label_text)
+                        input_widget = Input(placeholder=arg.placeholder or arg.name, id=f"arg_{arg.name}")
+                    else:
+                        flag = arg.flag or f"--{arg.name}"
+                        required_marker = "[red]*[/red]" if arg.is_required else "[dim](optional)[/dim]"
+                        label_text = f"{flag} {required_marker}"
                         yield Label(label_text)
                         input_widget = Input(placeholder=arg.placeholder or arg.name, id=f"arg_{arg.name}")
 
@@ -96,16 +129,31 @@ class CommandBuilderScreen(ModalScreen[str]):
     def _build_command(self) -> str:
         """Build the complete command with arguments."""
         parts = [self.command_info.command]
+        yes_values = {"yes", "y", "true", "1", "on"}
+        no_values = {"no", "n", "false", "0", "off"}
 
         for arg in self.arguments:
             input_widget = self.input_widgets.get(arg.name)
             if input_widget:
                 value = input_widget.value.strip()
                 if value:
+                    if arg.is_positional:
+                        parts.append(value)
+                        continue
+
                     if arg.is_flag:
-                        if value.lower() in ('yes', 'y', 'true', '1'):
-                            parts.append(f"--{arg.name}")
-                    else:
-                        parts.append(f"--{arg.name} {value}")
+                        flag_value = value.lower()
+                        flag = arg.flag or f"--{arg.name}"
+                        if flag_value in yes_values:
+                            parts.append(flag)
+                        elif flag_value in no_values:
+                            if arg.negated_flag:
+                                parts.append(arg.negated_flag)
+                        elif value.startswith("-"):
+                            parts.append(value)
+                        continue
+
+                    flag = arg.flag or f"--{arg.name}"
+                    parts.append(f"{flag} {value}")
 
         return " ".join(parts)
