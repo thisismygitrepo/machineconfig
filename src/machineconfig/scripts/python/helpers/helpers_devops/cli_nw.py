@@ -136,13 +136,26 @@ sudo rm /etc/cloudflared/config.yml || true
 sudo $cloudflared_path --config $home_dir/.cloudflared/config.yml service install
 """
     print(code)
-def add_ip_exclusion_to_warp(ip: Annotated[str, typer.Option(..., "--ip", help="IP address to exclude from WARP")]):
+    print("NOTE: Please run the above commands in your terminal to apply the changes.")
+
+def add_ip_exclusion_to_warp(ip: Annotated[str, typer.Option(..., "--ip", help="IP address(es) to exclude from WARP (Comma separated)")]):
+    ips = ip.split(",")
+    res = ""
+    for an_ip in ips:
+        res += f'sudo warp-cli tunnel ip add {an_ip}\n'
+        print(f"Adding IP exclusion to WARP for: {an_ip}")
     code = f"""
-sudo warp-cli tunnel ip add {ip}
+{res}
+echo "Restarting WARP connection..."
 sudo warp-cli disconnect
+echo "Waiting for 2 seconds..."
+sleep 2
+echo "Reconnecting WARP..."
 sudo warp-cli connect
 """
     print(code)
+    print("NOTE: Please run the above commands in your terminal to apply the changes.")
+
 
 def get_app():
     nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
