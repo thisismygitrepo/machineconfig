@@ -52,10 +52,10 @@ def _infer_extension_from_key(key: Optional[str]) -> str | None:
     return _normalize_extension(suffix)
 
 
-def main(options_to_preview_mapping: dict[str, Any], extension: str | None = None) -> str | None:
+def main(options_to_preview_mapping: dict[str, Any], extension: str | None = None, multi: bool = False) -> str | list[str] | None:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
-        return None
+        return [] if multi else None
     normalized_extension = _normalize_extension(extension)
     preview_panel_size = 50
     terminal_width = shutil.get_terminal_size(fallback=(120, 40)).columns
@@ -177,23 +177,31 @@ size = {preview_panel_size}
         if result.returncode not in (0, 130):
             raise SystemExit(result.returncode)
         if result.returncode == 130:
-            return None
+            return [] if multi else None
         if not output_file.exists():
-            return None
-        selected = output_file.read_text().strip()
-        if not selected:
-            return None
-        try:
-            index = int(selected)
-        except ValueError:
-            return None
-        return index_map.get(index)
+            return [] if multi else None
+        selected_lines = [line.strip() for line in output_file.read_text().splitlines() if line.strip()]
+        if not selected_lines:
+            return [] if multi else None
+        selected_keys: list[str] = []
+        for line in selected_lines:
+            try:
+                index = int(line)
+                key = index_map.get(index)
+                if key is not None:
+                    selected_keys.append(key)
+            except ValueError:
+                continue
+        if multi:
+            return selected_keys
+        return selected_keys[0] if selected_keys else None
 
 
 if __name__ == "__main__":
-    demo_mapping = {
+    demo_mapping: dict[str, str] = {
         "Option 1": "# Option 1\nThis is the preview for option 1.",
         "Option 2": "# Option 2\nThis is the preview for option 2.",
         "Option 3": "# Option 3\nThis is the preview for option 3."
     }
-    main(demo_mapping)
+    result = main(demo_mapping, multi=True)
+    print(f"Selected: {result}")
