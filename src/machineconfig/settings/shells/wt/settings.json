@@ -9,16 +9,16 @@
     "keybindings": 
     [
         {
-            "id": "Terminal.TogglePaneZoom",
-            "keys": "ctrl+shift+z"
+            "id": "Terminal.FindText",
+            "keys": "ctrl+shift+f"
         },
         {
             "id": "Terminal.PasteFromClipboard",
             "keys": "ctrl+v"
         },
         {
-            "id": "Terminal.FindText",
-            "keys": "ctrl+shift+f"
+            "id": "Terminal.TogglePaneZoom",
+            "keys": "ctrl+shift+z"
         },
         {
             "id": "Terminal.DuplicatePaneAuto",
@@ -158,6 +158,12 @@
             },
             {
                 "guid": "{cbea17b6-52dc-59c9-9e41-3b451bbf1ea5}",
+                "hidden": false,
+                "name": "Ubuntu-24.04",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{8f066081-a8fb-5509-8e0e-9ec98d4a21b3}",
                 "hidden": false,
                 "name": "Ubuntu-24.04",
                 "source": "Microsoft.WSL"
