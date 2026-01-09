@@ -138,14 +138,16 @@ def register_dotfile(
             try:
                 copy_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
             except Exception as e:
-                typer.echo(f"[red]Error:[/] {e}")
+                msg = typer.style("Error: ", fg=typer.colors.RED) + str(e)
+                typer.echo(msg)
                 typer.Exit(code=1)
                 return
         case "symlink" | "s":
             try:
                 symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
             except Exception as e:
-                typer.echo(f"[red]Error:[/] {e}")
+                msg = typer.style("Error: ", fg=typer.colors.RED) + str(e)
+                typer.echo(msg)
                 typer.Exit(code=1)
                 return
         case _:

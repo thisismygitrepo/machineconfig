@@ -48,7 +48,8 @@ def register_data(
             os=os,
         )
     except ValueError as exc:
-        typer.echo(f"[red]Error:[/] {exc}")
+        msg = typer.style("Error: ", fg=typer.colors.RED) + str(exc)
+        typer.echo(msg)
         raise typer.Exit(code=1)
     action = "Updated" if replaced else "Added"
     typer.echo(f"{action} backup entry '{entry_name}' in {backup_path}")

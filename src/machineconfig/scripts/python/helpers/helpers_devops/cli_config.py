@@ -17,7 +17,8 @@ def configure_shell_profile(which: Annotated[Literal["default", "d", "nushell", 
         case "default" | "d":
             create_default_shell_profile()
             return
-    typer.echo(f"[red]Error:[/] Unknown shell profile type: {which}")
+    msg = typer.style("Error: ", fg=typer.colors.RED) + f"Unknown shell profile type: {which}"
+    typer.echo(msg)
 
 
 
@@ -66,7 +67,8 @@ def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both"
         case "settings" | "t":
             create_helper.copy_assets_to_machine(which="settings")
             return
-    typer.echo(f"[red]Error:[/] Unknown asset type: {which}")
+    msg = typer.style("Error: ", fg=typer.colors.RED) + f"Unknown asset type: {which}"
+    typer.echo(msg)
 
 
 def get_app():

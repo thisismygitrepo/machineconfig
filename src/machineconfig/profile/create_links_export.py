@@ -12,7 +12,7 @@ ON_CONFLICT_LOOSE: TypeAlias = Literal[
     ]
 ON_CONFLICT_STRICT: TypeAlias = Literal["throw-error", "overwrite-self-managed", "backup-self-managed", "overwrite-default-path", "backup-default-path"]
 SENSITIVITY_LOOSE: TypeAlias = Literal["private", "p", "public", "b", "all", "a"]
-REPO_LOOSE: TypeAlias = Literal["library", "l", "user", "u"]
+REPO_LOOSE: TypeAlias = Literal["library", "l", "user", "u", "all", "a"]
 ON_CONFLICT_MAPPER: dict[str, ON_CONFLICT_STRICT] = {
     "t": "throw-error",
     "os": "overwrite-self-managed",
@@ -32,7 +32,7 @@ def main_from_parser(
     method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
     repo: Annotated[REPO_LOOSE, typer.Option(..., "--repo", "-r", help="Mapper source to use for config files.")] = "library",
     on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-    which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process")] = None,
+    which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process (default is None, selecting is interactive)")] = None,
 ):
     """Terminology:
     SOURCE = Self-Managed-Config-File-Path
@@ -69,7 +69,8 @@ def main_from_parser(
             items_chosen = which.split(",")
     items_objections: dict[str, list[ConfigMapper]] = {item: mapper_full[item] for item in items_chosen if item in mapper_full}
     if len(items_objections) == 0:
-        typer.echo("[red]Error:[/] No valid items selected.")
+        msg = typer.style("Error: ", fg=typer.colors.RED) + "No valid items selected."
+        typer.echo(msg)
         typer.Exit(code=1)
         return
 

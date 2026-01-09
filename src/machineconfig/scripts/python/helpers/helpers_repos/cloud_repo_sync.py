@@ -77,7 +77,8 @@ def main(
     try:
         repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     except git.InvalidGitRepositoryError:
-        typer.echo(f"[red]Error:[/] The specified path '{repo_local_root}' is not a valid git repository.")
+        msg = typer.style("Error: ", fg=typer.colors.RED) + f"The specified path '{repo_local_root}' is not a valid git repository."
+        typer.echo(msg)
         typer.Exit(code=1)
         return ""
     repo_local_root = PathExtended(repo_local_obj.working_dir)  # cwd might have been in a sub directory of repo_root, so its better to redefine it.

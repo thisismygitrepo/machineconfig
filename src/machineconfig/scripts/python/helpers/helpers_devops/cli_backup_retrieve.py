@@ -324,7 +324,7 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
             console.print(Panel(f"🔍 SELECT {direction} ITEMS\n📋 Choose which configuration entries to process", title="[bold blue]Select Items[/bold blue]", border_style="blue"))
             choices = choose_from_options(multi=True, msg=f"WHICH FILE of the following do you want to {direction}?", options=["all"] + list(bu_file.keys()), tv=True)
         else:
-            from machineconfig.utils.options_tv import main
+            from machineconfig.utils.options_utils.options_tv_linux import main
             choice = main(
                 options_to_preview_mapping=bu_file, extension="toml",
             )
