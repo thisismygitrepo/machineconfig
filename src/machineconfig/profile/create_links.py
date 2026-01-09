@@ -101,8 +101,8 @@ def read_mapper(repo: RepoLoose) -> MapperFileData:
             if not USER_MAPPER_PATH.exists():
                 user_mapper = {"public": {}, "private": {}}
             else:
-                user_mapper = read_mapper("user")
-            library_mapper = read_mapper("library")
+                user_mapper = read_mapper(repo="user")
+            library_mapper = read_mapper(repo="library")
             merged_public: dict[str, list[ConfigMapper]] = {**library_mapper["public"], **user_mapper["public"]}
             merged_private: dict[str, list[ConfigMapper]] = {**library_mapper["private"], **user_mapper["private"]}
             return {"public": merged_public, "private": merged_private}
