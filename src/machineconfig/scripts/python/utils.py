@@ -45,7 +45,7 @@ def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", 
 def type_hint(path: Annotated[str, typer.Argument(..., help="Path to file/project dir to type hint.")] = ".",
               dependency: Annotated[Literal["self-contained", "import"], typer.Option(..., "--dependency", "-d", help="Generated file is self contained or performs imports")] = "self-contained"
               ) -> None:
-    from machineconfig.type_hinting.generators import generate_names_file
+    from machineconfig.type_hinting.typedict.generators import generate_names_file
     from pathlib import Path
     path_resolved = Path(path).resolve()
     if not path_resolved.exists():
