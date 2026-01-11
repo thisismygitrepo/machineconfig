@@ -67,6 +67,9 @@ def clean_cpu_name(cpu_name: str) -> str:
     # Example: AMD Ryzen 7 8745HS w/ Radeon 780M Graphics -> AMD Ryzen 7 8745HS
     cleaned = re.split(r"\s+(w/|with)\s+", cpu_name, flags=re.IGNORECASE)[0]
 
+    # Remove (R) and (TM) symbols which confuse regex search and are often noisy
+    cleaned = re.sub(r"\([RT]M?\)", "", cleaned, flags=re.IGNORECASE)
+
     # Remove clock speed like " @ 3.00GHz", " 3.00GHz", " 3.2GHz"
     cleaned = re.sub(r"\s+@?\s*\d+(\.\d+)?\s*GHz", "", cleaned, flags=re.IGNORECASE)
 
@@ -75,6 +78,9 @@ def clean_cpu_name(cpu_name: str) -> str:
 
     # Remove trailing "Processor" word if it's there
     cleaned = re.sub(r"\s+Processor", "", cleaned, flags=re.IGNORECASE)
+
+    # Collapse multiple spaces
+    cleaned = re.sub(r"\s+", " ", cleaned)
 
     return cleaned.strip()
 
@@ -148,7 +154,9 @@ def main() -> None:
     full_search_term = clean_cpu_name(cpu_name)
     
     # Retry logic: remove last word until we find something or run out of words
-    words = full_search_term.split()
+    # We escape each word to ensure regex special characters (like +, (), etc) in the name
+    # are treated as literals, while preserving our ability to use regex wildcards later.
+    words = [re.escape(w) for w in full_search_term.split()]
     
     while words:
         current_term = " ".join(words)
