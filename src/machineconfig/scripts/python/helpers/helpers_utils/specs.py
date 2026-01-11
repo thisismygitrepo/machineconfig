@@ -110,27 +110,35 @@ def run_geekbench_lookup(search_term: str) -> bool:
     print(f"Running: {printable_cmd}")
     try:
         # Capture output to check for results
-        # We need text=True to get string, and capture stdout/stderr to inspect/hide it.
+        # We enforce utf-8 encoding because 'geekbench-browser-python' likely outputs
+        # Unicode characters (Rich tables, box drawing) which can fail to decode or
+        # appear as garbage on Windows (default cp1252) if not handled.
         result = subprocess.run(
             cmd,
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         output = result.stdout
 
         # Check if we have data rows.
-        # Rich tables typically use box drawing characters.
-        # A row with data usually starts with '│' (U+2502), distinguishing it from
-        # headers which often use '┃' (U+2503) or '┏' top borders.
-        # The geekbench-browser-python output format observed shows data rows starting with │.
-        if "│" in output:
+        # Rich tables typically use box drawing characters like '│' (U+2502).
+        # We also check for 'single' and 'multi' headers as a fallback if table
+        # detection based on box characters is unreliable or if style changes.
+        if "│" in output or ("single" in output.lower() and "multi" in output.lower()):
             print(output)
             return True
         else:
-            # Maybe print stderr if useful, but usually it's just logging info
-            # print(result.stderr)
+            # If verbose debugging is needed, we could print output here.
+            # But normally if no table is found, the tool might have just printed log info to stderr.
+            # If it did print something to stdout that isn't a table, we probably shouldn't show it
+            # as a "result", but it might be helpful for debugging why it failed.
+            if output.strip():
+                 print(f"Debug output from tool:\n{output}")
+            
             print(f"No results found for '{search_term}'.")
             return False
 
