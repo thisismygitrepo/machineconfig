@@ -11,44 +11,40 @@ import typer
 from machineconfig.scripts.python.helpers.helpers_repos.cloud_repo_sync import main as secure_repo_main
 
 
-DirectoryArgument = Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]
-RecursiveOption = Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")]
-UVsyncOption = Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")]
-
-
-def push(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
+def push(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """🚀 Push changes across repositories."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
     git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def pull(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
+def pull(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """⬇️ Pull changes across repositories."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
 
     git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def commit(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
+def commit(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """💾 Commit changes across repositories."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
     git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def sync(directory: DirectoryArgument = None, recursive: RecursiveOption = False, auto_uv_sync: UVsyncOption = False) -> None:
+def sync(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
     from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
     git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
-def capture(directory: DirectoryArgument = None) -> None:
+def capture(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
     """📝 Record repositories into a repos.json specification."""
     from machineconfig.scripts.python.helpers.helpers_repos.record import main_record as record_repos
     save_path = record_repos(repos_root_str=directory)
     print(f"\n✅ Saved repository specification to {save_path}")
 
 
-def clone(directory: DirectoryArgument = None,
+def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containing repo(s).")] = ".",
+          specs_path: Annotated[Optional[str], typer.Option("--specs-path", "-s", help="Path to repos.json specification file.")] = None,
           interactive: Annotated[bool, typer.Option("--interactive/--no-interactive", "-i/-ni", help="Select interactively.")]=False
             ) -> None:
     """📥 Clone repositories described by a repos.json specification."""
@@ -62,25 +58,56 @@ def clone(directory: DirectoryArgument = None,
         from machineconfig.utils.options import choose_from_options
         chosen_files = choose_from_options(options=[str(p) for p in results_public + results_private], msg="Select a repos.json specification to clone from:", multi=True, tv=True)
         for file in chosen_files:
-            from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs
             if str(file).startswith(str(backup_root_private)):
                 original_path = get_original_path_from_backup_path(Path(file), sensitivity="private", destination=None, shared=False)
             else:
                 original_path = get_original_path_from_backup_path(Path(file), sensitivity="public", destination=None, shared=False)
-            clone_from_specs(str(original_path), checkout_branch_flag=False, checkout_commit_flag=False)
+            from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
+            typer.echo("\n📥 Cloning or checking out repositories...")
+            dir_obj = resolve_directory(str(original_path))
+            spec_path_default = dir_obj.joinpath("repos.json")
+            from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+            spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
+            from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
+            clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=False, checkout_commit_flag=False)
         return
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs
-    clone_from_specs(directory, checkout_branch_flag=False, checkout_commit_flag=False)
+    if specs_path is not None:
+        spec_path_self_managed = Path(specs_path).expanduser().absolute()
+    else:
+        from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
+        dir_obj = resolve_directory(directory)
+        spec_path_default = dir_obj.joinpath("repos.json")
+        from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+        spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
+        if not spec_path_self_managed.exists():
+            print(f"❌ Specification file not found: {spec_path_self_managed}. Ensure this file exists or provide it explicitly using --specs-path.")
+            return
+    from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
+    clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=False, checkout_commit_flag=False)
 
 
-def checkout_command(directory: DirectoryArgument = None) -> None:
+def checkout_command(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs    
-    clone_from_specs(directory, checkout_branch_flag=False, checkout_commit_flag=True)
-def checkout_to_branch_command(directory: DirectoryArgument = None) -> None:
+    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
+    typer.echo("\n📥 Cloning or checking out repositories...")
+    dir_obj = resolve_directory(directory)
+    spec_path_default = dir_obj.joinpath("repos.json")
+    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+    spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
+    from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
+    clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=False, checkout_commit_flag=True)
+
+
+def checkout_to_branch_command(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import clone_from_specs
-    clone_from_specs(directory, checkout_branch_flag=True, checkout_commit_flag=False)
+    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
+    typer.echo("\n📥 Cloning or checking out repositories...")
+    dir_obj = resolve_directory(directory)
+    spec_path_default = dir_obj.joinpath("repos.json")
+    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+    spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
+    from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
+    clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=True, checkout_commit_flag=False)
 
 
 def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
@@ -88,7 +115,7 @@ def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path
         from machineconfig.scripts.python.helpers.helpers_repos import repo_analyzer_1
         repo_analyzer_1.count_historical_line_edits(repo_path=repo_path)
     from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=8.43"])
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=8.44"])
 
 
 def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
@@ -96,7 +123,7 @@ def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., hel
         from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
         print_python_files_by_size_impl(repo_path=repo_path)
     from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.43"])
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.44"])
 
 
 def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
@@ -104,7 +131,7 @@ def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help=
         from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import analyze_over_time
         analyze_over_time(repo_path=repo_path)
     from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.43"])
+    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.44"])
 
 
 def gource_viz(
@@ -147,7 +174,7 @@ def gource_viz(
               font_size=font_size, camera_mode=camera_mode)
 
 
-def cleanup(repo: DirectoryArgument = None, recursive: RecursiveOption = False) -> None:
+def cleanup(repo: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False) -> None:
     """🧹 Clean repository directories from cache files."""
     if repo is None:
         repo = Path.cwd().as_posix()

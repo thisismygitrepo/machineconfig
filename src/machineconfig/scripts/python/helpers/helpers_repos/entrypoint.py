@@ -10,7 +10,7 @@ def resolve_directory(directory: Optional[str]) -> Path:
     if directory is None:
         directory = Path.cwd().as_posix()
         typer.echo(f"📁 Using directory: {directory}")
-    return Path(directory).expanduser().absolute()
+    return Path(directory).expanduser().absolute().resolve()
 
 
 def git_operations(
@@ -42,23 +42,21 @@ def clone_from_specs(
     checkout_branch_flag: bool,
     checkout_commit_flag: bool,
 ) -> None:
-    
-    typer.echo("\n📥 Cloning or checking out repositories...")
-    # spec_path = resolve_spec_path(directory, cloud)
-    # /home/alex/code/machineconfig/src/machineconfig/scripts/python/helpers/helpers_devops/cli_config_dotfile.py
-    dir_obj = resolve_directory(directory)
-    spec_path_default = dir_obj.joinpath("repos.json")
-    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
-    spec_path_self_managed = get_backup_path(
-        orig_path=spec_path_default,
-        sensitivity="private",
-        destination=None,
-        shared=False,
-    )
-    from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
-    clone_repos(
-        spec_path=spec_path_self_managed,
-        preferred_remote=None,
-        checkout_branch_flag=checkout_branch_flag,
-        checkout_commit_flag=checkout_commit_flag,
-    )
+    _ = directory, checkout_branch_flag, checkout_commit_flag
+    # typer.echo("\n📥 Cloning or checking out repositories...")
+    # dir_obj = resolve_directory(directory)
+    # spec_path_default = dir_obj.joinpath("repos.json")
+    # from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
+    # spec_path_self_managed = get_backup_path(
+    #     orig_path=spec_path_default,
+    #     sensitivity="private",
+    #     destination=None,
+    #     shared=False,
+    # )
+    # from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
+    # clone_repos(
+    #     spec_path=spec_path_self_managed,
+    #     preferred_remote=None,
+    #     checkout_branch_flag=checkout_branch_flag,
+    #     checkout_commit_flag=checkout_commit_flag,
+    # )
