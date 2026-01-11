@@ -125,10 +125,26 @@ def run_geekbench_lookup(search_term: str) -> bool:
         output = result.stdout
 
         # Check if we have data rows.
-        # Rich tables typically use box drawing characters like '│' (U+2502).
-        # We also check for 'single' and 'multi' headers as a fallback if table
-        # detection based on box characters is unreliable or if style changes.
-        if "│" in output or ("single" in output.lower() and "multi" in output.lower()):
+        # Check iteratively for lines that look like data rows (Unicode or ASCII).
+        lines = output.splitlines()
+        has_data = False
+        for line in lines:
+            line_stripped = line.strip()
+            # Unicode table data row start (Light Vertical)
+            if "│" in line:
+                has_data = True
+                break
+            # ASCII table data row start (Pipe)
+            # Must exclude headers and separators which also start with pipe in ASCII mode.
+            if line_stripped.startswith("|"):
+                lower_line = line.lower()
+                # Skip header/separator lines
+                if "description" in lower_line or "single" in lower_line or "---" in line:
+                    continue
+                has_data = True
+                break
+        
+        if has_data:
             print(output)
             return True
         else:
@@ -137,7 +153,9 @@ def run_geekbench_lookup(search_term: str) -> bool:
             # If it did print something to stdout that isn't a table, we probably shouldn't show it
             # as a "result", but it might be helpful for debugging why it failed.
             if output.strip():
-                 print(f"Debug output from tool:\n{output}")
+                 # Only print debug info if it's NOT just an empty table structure to avoid noise
+                 if not ("description" in output.lower() and ("---" in output or "│" in output)):
+                     print(f"Debug output from tool:\n{output}")
             
             print(f"No results found for '{search_term}'.")
             return False
