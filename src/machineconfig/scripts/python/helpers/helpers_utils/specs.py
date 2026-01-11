@@ -1,392 +1,212 @@
-"""System Compute Analyzer - Hardware specification scanner and metrics calculator.
+"""
+CPU Specification Helper.
 
-A visual system profiler that scans CPU, memory and calculates compute indices.
+This module provides utilities to detect the CPU model and fetch Geekbench scores
+using the geekbench-browser-python tool.
 """
 
-
-
 import platform
-import time
-from dataclasses import dataclass, field
-
-import psutil
-from rich import box
-from rich.align import Align
-from rich.console import Console
-from rich.layout import Layout
-from rich.panel import Panel
-from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
-from rich.rule import Rule
-from rich.table import Table
-from rich.text import Text
+import re
+import subprocess
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Constants & Configuration
-# ══════════════════════════════════════════════════════════════════════════════
+def get_cpu_name() -> str:
+    """
+    Detect the CPU model name across different operating systems.
 
-DEFAULT_FREQ_MHZ: float = 2500.0
-OPS_PER_CYCLE_AVX2: int = 16  # AVX2: ~16 double-precision FLOPs/cycle
-BYTES_PER_GB: int = 1024**3
+    Returns:
+        str: The detected CPU model name or 'Unknown CPU'.
+    """
+    system = platform.system()
 
-# Visual theme
-THEME = {
-    "primary": "cyan",
-    "secondary": "magenta",
-    "accent": "yellow",
-    "success": "green",
-    "header_bg": "blue",
-}
-
-console = Console()
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# Data Structures
-# ══════════════════════════════════════════════════════════════════════════════
-
-
-@dataclass
-class HardwareSpecs:
-    """Container for hardware specifications."""
-
-    physical_cores: int = 0
-    logical_cores: int = 0
-    max_freq_mhz: float = 0.0
-    current_freq_mhz: float = 0.0
-    total_ram_bytes: int = 0
-    available_ram_bytes: int = 0
-    ram_percent_used: float = 0.0
-    architecture: str = ""
-    cpu_model: str = ""
-
-
-@dataclass
-class ComputeMetrics:
-    """Calculated compute performance metrics."""
-
-    theoretical_gflops: float = 0.0
-    physical_cores: int = 0
-    peak_ghz: float = 0.0
-    ops_per_cycle: int = 0
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# System Scanner
-# ══════════════════════════════════════════════════════════════════════════════
-
-
-@dataclass
-class SystemScanner:
-    """Scans and analyzes system hardware for compute capability metrics."""
-
-    specs: HardwareSpecs = field(default_factory=HardwareSpecs)
-    metrics: ComputeMetrics = field(default_factory=ComputeMetrics)
-
-    @staticmethod
-    def format_bytes(num_bytes: int | float, suffix: str = "B") -> str:
-        """Scale bytes to human-readable format with proper unit prefix."""
-        factor = 1024.0
-        value = float(num_bytes)
-        for unit in ("", "K", "M", "G", "T", "P", "E"):
-            if abs(value) < factor:
-                return f"{value:.2f} {unit}{suffix}"
-            value /= factor
-        return f"{value:.2f} Z{suffix}"
-
-    def scan_hardware(self) -> None:
-        """Gather hardware specs using psutil."""
-        # CPU cores - prefer physical, fallback to logical
-        physical = psutil.cpu_count(logical=False)
-        logical = psutil.cpu_count(logical=True)
-        p_cores = physical if physical else (logical if logical else 1)
-        l_cores = logical if logical else p_cores
-
-        # CPU frequency with fallback
-        max_freq = DEFAULT_FREQ_MHZ
-        current_freq = DEFAULT_FREQ_MHZ
+    if system == "Linux":
         try:
-            freq = psutil.cpu_freq()
-            if freq:  # Can be None on some systems
-                max_freq = freq.max if freq.max > 0 else freq.current
-                current_freq = freq.current
-        except (AttributeError, FileNotFoundError, PermissionError, RuntimeError):
-            pass  # Use defaults
+            with open("/proc/cpuinfo") as f:
+                for line in f:
+                    if "model name" in line:
+                        return line.split(":", 1)[1].strip()
+        except FileNotFoundError:
+            pass
 
-        # Memory info
-        vmem = psutil.virtual_memory()
-
-        # CPU model detection
-        cpu_model = self._detect_cpu_model()
-
-        self.specs = HardwareSpecs(
-            physical_cores=p_cores,
-            logical_cores=l_cores,
-            max_freq_mhz=max_freq,
-            current_freq_mhz=current_freq,
-            total_ram_bytes=vmem.total,
-            available_ram_bytes=vmem.available,
-            ram_percent_used=vmem.percent,
-            architecture=platform.machine() or "Unknown",
-            cpu_model=cpu_model,
-        )
-
-    @staticmethod
-    def _detect_cpu_model() -> str:
-        """Detect CPU model string from platform info."""
+    elif system == "Windows":
         try:
-            return platform.processor() or "Unknown Processor"
-        except (OSError, AttributeError):
-            return "Unknown Processor"
+            # shell=True might be needed for wmic depending on environment,
+            # but usually check_output with string list is safer if executable is in path.
+            # User provided: wmic cpu get name
+            output = subprocess.check_output("wmic cpu get name", shell=True).decode()
+            lines = output.strip().split("\n")
+            if len(lines) > 1:
+                return lines[1].strip()
+        except (subprocess.CalledProcessError, IndexError):
+            pass
 
-    def calculate_metrics(self) -> None:
-        """Calculate theoretical GFLOPS."""
-        s = self.specs
+    elif system == "Darwin":
+        try:
+            return subprocess.check_output(
+                ["sysctl", "-n", "machdep.cpu.brand_string"]
+            ).decode().strip()
+        except subprocess.CalledProcessError:
+            pass
 
-        # Theoretical GFLOPS (Rpeak) = cores × Peak GHz × FLOPs/cycle
-        # We use peak frequency here as per standard Rpeak definition
-        ghz_peak = s.max_freq_mhz / 1000.0
-        theoretical_gflops = s.physical_cores * ghz_peak * OPS_PER_CYCLE_AVX2
+    return "Unknown CPU"
 
-        self.metrics = ComputeMetrics(
-            theoretical_gflops=theoretical_gflops,
-            physical_cores=s.physical_cores,
-            peak_ghz=ghz_peak,
-            ops_per_cycle=OPS_PER_CYCLE_AVX2,
+
+def clean_cpu_name(cpu_name: str) -> str:
+    """
+    Clean the CPU name to improve Geekbench search results.
+
+    Removes extra details like 'w/ Radeon Graphics', frequency, etc.
+
+    Args:
+        cpu_name (str): The raw CPU name string.
+
+    Returns:
+        str: A cleaned CPU name suitable for searching.
+    """
+    # Remove "w/ ..." or "with ..."
+    # Example: AMD Ryzen 7 8745HS w/ Radeon 780M Graphics -> AMD Ryzen 7 8745HS
+    cleaned = re.split(r"\s+(w/|with)\s+", cpu_name, flags=re.IGNORECASE)[0]
+
+    # Remove clock speed like " @ 3.00GHz", " 3.00GHz", " 3.2GHz"
+    cleaned = re.sub(r"\s+@?\s*\d+(\.\d+)?\s*GHz", "", cleaned, flags=re.IGNORECASE)
+
+    # Remove "12-Core Processor" etc if present (some linux distros add this)
+    cleaned = re.sub(r"\s+\d+-Core\s+Processor", "", cleaned, flags=re.IGNORECASE)
+
+    # Remove trailing "Processor" word if it's there
+    cleaned = re.sub(r"\s+Processor", "", cleaned, flags=re.IGNORECASE)
+
+    return cleaned.strip()
+
+
+def run_geekbench_lookup(search_term: str) -> bool:
+    """
+    Run the geekbench search using uvx.
+
+    Args:
+        search_term (str): The CPU name to search for (supports Regex).
+
+    Returns:
+        bool: True if results were found, False otherwise.
+    """
+    # Note: uvx caches the tool so subsequent runs are fast.
+    # The 'gbr' tool uses pandas.str.contains(regex=True), so we can use regex patterns.
+    # We quote the search term to ensure it's treated as a single pattern containing spaces.
+    cmd = [
+        "uvx",
+        "--from",
+        "geekbench-browser-python",
+        "gbr",
+        search_term,
+        "--verbose",
+    ]
+    printable_cmd = " ".join(f'"{x}"' if " " in x else x for x in cmd)
+    print(f"Running: {printable_cmd}")
+    try:
+        # Capture output to check for results
+        # We need text=True to get string, and capture stdout/stderr to inspect/hide it.
+        result = subprocess.run(
+            cmd,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
         )
+        output = result.stdout
 
-    def _build_header(self) -> Panel:
-        """Build the header panel."""
-        title = Text()
-        title.append("╔══════════════════════════════════════╗\n", style="bold cyan")
-        title.append("║  ", style="bold cyan")
-        title.append("SYSTEM COMPUTE ANALYZER", style="bold white")
-        title.append("  ║\n", style="bold cyan")
-        title.append("╚══════════════════════════════════════╝", style="bold cyan")
+        # Check if we have data rows.
+        # Rich tables typically use box drawing characters.
+        # A row with data usually starts with '│' (U+2502), distinguishing it from
+        # headers which often use '┃' (U+2503) or '┏' top borders.
+        # The geekbench-browser-python output format observed shows data rows starting with │.
+        if "│" in output:
+            print(output)
+            return True
+        else:
+            # Maybe print stderr if useful, but usually it's just logging info
+            # print(result.stderr)
+            print(f"No results found for '{search_term}'.")
+            return False
 
-        return Panel(
-            Align.center(title),
-            box=box.DOUBLE,
-            style=THEME["header_bg"],
-            padding=(0, 2),
-        )
-
-    def _build_cpu_panel(self) -> Panel:
-        """Build the CPU information panel."""
-        s = self.specs
-        table = Table(
-            show_header=True,
-            header_style=f"bold {THEME['primary']}",
-            expand=True,
-            box=box.ROUNDED,
-            border_style="dim cyan",
-            row_styles=["", "dim"],
-        )
-        table.add_column("⚡ Attribute", style="cyan", no_wrap=True)
-        table.add_column("Value", style="bold white", justify="right")
-
-        # Cores with visual indicator
-        cores_bar = "█" * min(s.physical_cores, 16) + "░" * max(0, 16 - s.physical_cores)
-        table.add_row("Physical Cores", f"{s.physical_cores}  [{THEME['primary']}]{cores_bar}[/]")
-        table.add_row("Logical Threads", str(s.logical_cores))
-        table.add_row("──────────────", "────────────")
-        table.add_row("Max Frequency", f"[bold yellow]{s.max_freq_mhz:,.0f}[/] MHz")
-        table.add_row("Current Freq", f"{s.current_freq_mhz:,.0f} MHz")
-        table.add_row("Architecture", f"[bold]{s.architecture}[/]")
-
-        return Panel(
-            table,
-            title=f"[bold {THEME['primary']}]◆ CPU COMPUTE UNIT ◆[/]",
-            border_style=THEME["primary"],
-            box=box.HEAVY,
-            padding=(1, 1),
-        )
-
-    def _build_memory_panel(self) -> Panel:
-        """Build the memory information panel."""
-        s = self.specs
-        table = Table(
-            show_header=True,
-            header_style=f"bold {THEME['secondary']}",
-            expand=True,
-            box=box.ROUNDED,
-            border_style="dim magenta",
-            row_styles=["", "dim"],
-        )
-        table.add_column("💾 Attribute", style="magenta", no_wrap=True)
-        table.add_column("Value", style="bold white", justify="right")
-
-        # Memory usage bar
-        used_blocks = int(s.ram_percent_used / 10)
-        free_blocks = 10 - used_blocks
-        mem_bar = f"[green]{'█' * free_blocks}[/][red]{'█' * used_blocks}[/]"
-
-        table.add_row("Total Memory", f"[bold yellow]{self.format_bytes(s.total_ram_bytes)}[/]")
-        table.add_row("Available", self.format_bytes(s.available_ram_bytes))
-        table.add_row("──────────────", "────────────")
-        table.add_row("Usage", f"{s.ram_percent_used:.1f}%  {mem_bar}")
-
-        return Panel(
-            table,
-            title=f"[bold {THEME['secondary']}]◆ MEMORY MATRIX ◆[/]",
-            border_style=THEME["secondary"],
-            box=box.HEAVY,
-            padding=(1, 1),
-        )
-
-    def _build_metrics_panel(self) -> Panel:
-        """Build the performance metrics panel."""
-        m = self.metrics
-
-        # Build score display with visual flair
-        content = Table.grid(padding=(0, 1), expand=True)
-        content.add_column(justify="center")
-
-        # Theoretical GFLOPS
-        gflops_text = Text()
-        gflops_text.append("THEORETICAL PEAK PERFORMANCE (Rpeak)", style="bold yellow")
-        content.add_row(Align.center(gflops_text))
-
-        val_text = Text()
-        val_text.append(f"{m.theoretical_gflops:.2f} GFLOPS", style="bold red underline")
-        content.add_row(Align.center(val_text))
-
-        content.add_row("")  # Spacer
-
-        # Explanation
-        expl_table = Table(
-            show_header=True, box=box.SIMPLE, padding=(0, 2), collapse_padding=True
-        )
-        expl_table.add_column("Component", style="cyan", justify="right")
-        expl_table.add_column("Value", style="bold white", justify="left")
-        expl_table.add_column("Description", style="dim", justify="left")
-
-        expl_table.add_row(
-            "Physical Cores", str(m.physical_cores), "Number of physical processing units"
-        )
-        expl_table.add_row(
-            "Peak Frequency", f"{m.peak_ghz:.2f} GHz", "Maximum clock speed"
-        )
-        expl_table.add_row(
-            "FLOPs/Cycle",
-            str(m.ops_per_cycle),
-            "Double-precision operations per cycle (AVX2)",
-        )
-
-        content.add_row(Align.center(expl_table))
-
-        content.add_row("")  # Spacer
-
-        formula_text = Text(
-            "Calculation: Cores × Frequency × Ops/Cycle", style="dim italic"
-        )
-        content.add_row(Align.center(formula_text))
-
-        return Panel(
-            content,
-            title=f"[bold {THEME['accent']}]★ PERFORMANCE METRICS ★[/]",
-            border_style=THEME["accent"],
-            box=box.DOUBLE,
-            padding=(1, 2),
-        )
-
-    def render_dashboard(self) -> Layout:
-        """Generate the complete dashboard layout."""
-        layout = Layout()
-
-        layout.split_column(
-            Layout(self._build_header(), name="header", size=5),
-            Layout(name="body", ratio=2),
-            Layout(Rule("─", style="dim"), name="divider", size=1),
-            Layout(self._build_metrics_panel(), name="metrics", size=16),
-        )
-
-        layout["body"].split_row(
-            Layout(self._build_cpu_panel(), name="cpu"),
-            Layout(self._build_memory_panel(), name="memory"),
-        )
-
-        return layout
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# Progress Animation
-# ══════════════════════════════════════════════════════════════════════════════
-
-
-def run_scan_animation(scanner: SystemScanner) -> None:
-    """Run the scanning progress animation."""
-    scan_complete = False
-
-    with Progress(
-        SpinnerColumn("dots12", style="bold cyan"),
-        TextColumn("[bold]{task.description}"),
-        BarColumn(bar_width=40, complete_style="green", finished_style="bold green"),
-        TextColumn("[bold cyan]{task.percentage:>3.0f}%"),
-        console=console,
-        expand=True,
-    ) as progress:
-        task1 = progress.add_task(f"[{THEME['primary']}]⚙ Probing CPU Architecture...", total=100)
-        task2 = progress.add_task(
-            f"[{THEME['secondary']}]💾 Analyzing Memory Banks...",
-            total=100,
-            start=False,
-        )
-        task3 = progress.add_task(
-            f"[{THEME['accent']}]📊 Calculating Vector Potential...",
-            total=100,
-            start=False,
-        )
-
-        while not progress.finished:
-            # Task 1: CPU probe
-            if progress.tasks[0].completed < 100:
-                progress.update(task1, advance=2.5)
-                if progress.tasks[0].completed >= 50 and not scan_complete:
-                    scanner.scan_hardware()
-                    scan_complete = True
-            elif not progress.tasks[1].started:
-                progress.start_task(task2)
-
-            # Task 2: Memory analysis
-            if progress.tasks[1].started and progress.tasks[1].completed < 100:
-                progress.update(task2, advance=3.5)
-            elif progress.tasks[1].completed >= 100 and not progress.tasks[2].started:
-                progress.start_task(task3)
-
-            # Task 3: Calculation
-            if progress.tasks[2].started:
-                progress.update(task3, advance=4.5)
-
-            time.sleep(0.025)
-
-
-# ══════════════════════════════════════════════════════════════════════════════
-# Entry Point
-# ══════════════════════════════════════════════════════════════════════════════
+    except subprocess.CalledProcessError:
+        print("Failed to retrieve Geekbench scores (command failed).")
+        return False
+    except FileNotFoundError:
+        print("Error: 'uvx' command not found. Please ensure 'uv' is installed.")
+        return False
 
 
 def main() -> None:
-    """Main entry point for the system compute analyzer."""
-    scanner = SystemScanner()
+    """Main entry point."""
+    cpu_name = get_cpu_name()
+    print(f"Detected CPU: {cpu_name}")
 
-    console.clear()
-    console.print()
+    if cpu_name == "Unknown CPU":
+        print("Could not detect CPU name. Exiting.")
+        return
 
-    # Phase 1: Animated scanning
-    run_scan_animation(scanner)
+    full_search_term = clean_cpu_name(cpu_name)
+    
+    # Retry logic: remove last word until we find something or run out of words
+    words = full_search_term.split()
+    
+    while words:
+        current_term = " ".join(words)
+        
+        # Heuristic: Don't search for extremely short generic terms if possible,
+        # but "AMD" or "Intel" might be what we end up with if nothing else works.
+        # Let's try at least length 2 words unless it's just 1 word left.
+        if len(words) > 1 and len(current_term) < 4:
+             words.pop()
+             continue
 
-    # Phase 2: Calculate metrics
-    scanner.calculate_metrics()
+        print(f"Search Term: {current_term}")
+        if run_geekbench_lookup(current_term):
+            return
+        
+        last_word = words[-1]
+        numeric_part = None
 
-    # Phase 3: Display results
-    console.print()
-    console.print(scanner.render_dashboard())
-    console.print()
+        # Check if the last word starts with digits (e.g. 8745HS or 8745)
+        # We want to both strip suffix AND try wildcards.
+        match_digits = re.match(r"^(\d+)([a-zA-Z].*)?$", last_word)
+        
+        if match_digits:
+            numeric_part = match_digits.group(1)
+            suffix_part = match_digits.group(2) # May be None
+
+            # Intermediate Try 1: Strip suffix (e.g. 8745HS -> 8745)
+            if suffix_part and len(numeric_part) >= 3:
+                 intermediate_term = " ".join(words[:-1] + [numeric_part])
+                 if intermediate_term != current_term:
+                     print(f"Search Term: {intermediate_term} (stripped suffix)")
+                     if run_geekbench_lookup(intermediate_term):
+                        return
+            
+            # Intermediate Try 2: Wildcard/Regex search (e.g. 8745 -> 87..)
+            # The tool uses Regex, so we use dots '.' to match any character instead of '?'
+            if numeric_part and len(numeric_part) >= 3:
+                # If 4+ digits (e.g. 8745), replace last 2 with .. -> 87..
+                # If 3 digits (e.g. 780), replace last 1 with . -> 78.
+                if len(numeric_part) >= 4:
+                    wildcard_model = numeric_part[:-2] + ".."
+                else:
+                    wildcard_model = numeric_part[:-1] + "."
+                
+                wildcard_term = " ".join(words[:-1] + [wildcard_model])
+                
+                # Check duplication against current_term and the stripped version
+                stripped_term = " ".join(words[:-1] + [numeric_part])
+                if wildcard_term != current_term and wildcard_term != stripped_term:
+                     print(f"Search Term: {wildcard_term} (regex wildcard)")
+                     if run_geekbench_lookup(wildcard_term):
+                        return
+
+        # Remove last word for next iteration
+        words.pop()
+
+    print("Could not find any matching Geekbench scores.")
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        console.print("\n[bold red]✖ Analysis Aborted by User[/bold red]\n")
+    main()
