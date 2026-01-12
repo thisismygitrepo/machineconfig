@@ -11,11 +11,10 @@ def sync(
     repo: Annotated[
         Literal["library", "l", "user", "u", "all", "a"],
         typer.Option("--repo", "-r", help="📁 Which backup configuration to use: 'library' or 'user'"),
-    ] = "library",
+    ] = "all",
     # interactive: Annotated[bool, typer.Option("--interactive", "-i", help="🤔 Prompt the selection of which items to process")] = False,
 ):
     from machineconfig.scripts.python.helpers.helpers_devops.cli_backup_retrieve import main_backup_retrieve
-
     match direction:
         case "up" | "u":
             direction_resolved = "BACKUP"
@@ -29,8 +28,8 @@ def register_data(
     group: Annotated[str, typer.Option("--group", "-g", help="Group section name in backup.toml.")] = "default",
     name: Annotated[Optional[str], typer.Option("--name", "-n", help="Entry name inside the group in backup.toml.")] = None,
     path_cloud: Annotated[Optional[str], typer.Option("--path-cloud", "-C", help="Cloud path override (optional).")] = None,
-    zip_: Annotated[bool, typer.Option("--zip/--no-zip", "-z/-nz", help="Zip before uploading.")] = True,
-    encrypt: Annotated[bool, typer.Option("--encrypt/--no-encrypt", "-e/-ne", help="Encrypt before uploading.")] = True,
+    zip_: Annotated[bool, typer.Option("--zip/--no-zip", "-z/-nz", help="Zip before uploading.")] = False,
+    encrypt: Annotated[bool, typer.Option("--encrypt/--no-encrypt", "-e/-ne", help="Encrypt before uploading.")] = False,
     rel2home: Annotated[Optional[bool], typer.Option("--rel2home/--no-rel2home", "-r/-nr", help="Treat the local path as relative to home.")] = None,
     os: Annotated[str, typer.Option("--os", "-o", help="OS filter for this backup entry (comma-separated, or 'any').")] = "any",
 ) -> None:
