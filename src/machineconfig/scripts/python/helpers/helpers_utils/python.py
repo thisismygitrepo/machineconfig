@@ -17,7 +17,7 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=8.44")
+        uv_with.append("machineconfig>=8.45")
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(
