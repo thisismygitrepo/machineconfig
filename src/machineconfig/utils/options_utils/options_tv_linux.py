@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import tempfile
 import os
-from typing import Any, overload, Union
+from typing import Any, overload, Literal, Union
 
 from git import Optional
 
@@ -52,10 +52,10 @@ def _infer_extension_from_key(key: Optional[str]) -> str | None:
     return _normalize_extension(suffix)
 
 @overload
-def main(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool = False) -> Union[str, None]: ...
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[True]) -> list[str]: ...
 @overload
-def main(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool = True) -> list[str]: ...
-def main(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool) -> Union[Union[str, None], list[str]]:
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[False]) -> Union[str, None]: ...
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool) -> Union[Union[str, None], list[str]]:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
         return [] if multi else None
@@ -206,5 +206,5 @@ if __name__ == "__main__":
         "Option 2": "# Option 2\nThis is the preview for option 2.",
         "Option 3": "# Option 3\nThis is the preview for option 3."
     }
-    result = main(demo_mapping, multi=True, extension="md")
+    result = select_from_options(demo_mapping, multi=True, extension="md")
     print(f"Selected: {result}")

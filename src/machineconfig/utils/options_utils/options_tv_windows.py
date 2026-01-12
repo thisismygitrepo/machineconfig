@@ -2,7 +2,7 @@
 import pathlib
 import pprint
 import shutil
-from typing import Any
+from typing import Any, Literal, Union, overload
 
 
 def _format_preview_value(value: Any) -> str:
@@ -21,8 +21,11 @@ def _normalize_extension(extension: str | None) -> str | None:
         return None
     return trimmed
 
-
-def main(options_to_preview_mapping: dict[str, Any], extension: str | None = None, multi: bool = False) -> str | list[str] | None:
+@overload
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[True]) -> list[str]: ...
+@overload
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[False] = ...) -> str | None: ...
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None = None, multi: bool = False) -> Union[list[str], Union[str, None]]:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
         return [] if multi else None
@@ -80,5 +83,5 @@ if __name__ == "__main__":
         "Option 2": "# Option 2\nThis is the preview for option 2.",
         "Option 3": "# Option 3\nThis is the preview for option 3."
     }
-    result = main(demo_mapping, multi=True)
+    result = select_from_options(demo_mapping, multi=True, extension="md")
     print(f"Selected: {result}")

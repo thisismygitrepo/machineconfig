@@ -17,11 +17,11 @@ def choose_from_dict_with_preview(options_to_preview_mapping: dict[str, Any], ex
         return [] if multi else None
     system = platform.system()
     if system == "Windows":
-        from machineconfig.utils.options_utils.options_tv_windows import main as _main_windows
-        return _main_windows(options_to_preview_mapping, extension=extension, multi=multi)
+        from machineconfig.utils.options_utils.options_tv_windows import select_from_options
+        return select_from_options(options_to_preview_mapping, extension=extension, multi=multi)
     else:
-        from machineconfig.utils.options_utils.options_tv_linux import main as _main_linux
-        return _main_linux(options_to_preview_mapping, extension=extension, multi=multi)
+        from machineconfig.utils.options_utils.options_tv_linux import select_from_options
+        return select_from_options(options_to_preview_mapping, extension=extension, multi=multi)
 
 
 if __name__ == "__main__":
