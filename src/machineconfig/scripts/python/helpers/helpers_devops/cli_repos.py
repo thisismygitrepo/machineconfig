@@ -11,29 +11,43 @@ import typer
 from machineconfig.scripts.python.helpers.helpers_repos.cloud_repo_sync import main as secure_repo_main
 
 
+def _resolve_directory(directory: Optional[str]) -> Path:
+    if directory is None:
+        directory = Path.cwd().as_posix()
+        typer.echo(f"📁 Using directory: {directory}")
+    return Path(directory).expanduser().absolute().resolve()
+
+
 def push(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """🚀 Push changes across repositories."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
-    git_operations(directory, pull=False, commit=False, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
+    repos_root = _resolve_directory(directory)
+    from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
+    from machineconfig.utils.path_extended import PathExtended
+    perform_git_operations(repos_root=PathExtended(repos_root), pull=False, commit=False, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
 def pull(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """⬇️ Pull changes across repositories."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
-
-    git_operations(directory, pull=True, commit=False, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
+    repos_root = _resolve_directory(directory)
+    from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
+    from machineconfig.utils.path_extended import PathExtended
+    perform_git_operations(repos_root=PathExtended(repos_root), pull=True, commit=False, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
 def commit(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """💾 Commit changes across repositories."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
-    git_operations(directory, pull=False, commit=True, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
+    repos_root = _resolve_directory(directory)
+    from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
+    from machineconfig.utils.path_extended import PathExtended
+    perform_git_operations(repos_root=PathExtended(repos_root), pull=False, commit=True, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
 def sync(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
     """🔄 Pull, commit, and push changes across repositories."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import git_operations
-    git_operations(directory, pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
+    repos_root = _resolve_directory(directory)
+    from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
+    from machineconfig.utils.path_extended import PathExtended
+    perform_git_operations(repos_root=PathExtended(repos_root), pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
 def capture(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
@@ -62,9 +76,8 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
                 original_path = get_original_path_from_backup_path(Path(file), sensitivity="private", destination=None, shared=False)
             else:
                 original_path = get_original_path_from_backup_path(Path(file), sensitivity="public", destination=None, shared=False)
-            from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
             typer.echo("\n📥 Cloning or checking out repositories...")
-            dir_obj = resolve_directory(str(original_path))
+            dir_obj = _resolve_directory(str(original_path))
             spec_path_default = dir_obj.joinpath("repos.json")
             from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
             spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
@@ -74,8 +87,7 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
     if specs_path is not None:
         spec_path_self_managed = Path(specs_path).expanduser().absolute()
     else:
-        from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
-        dir_obj = resolve_directory(directory)
+        dir_obj = _resolve_directory(directory)
         spec_path_default = dir_obj.joinpath("repos.json")
         from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
         spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
@@ -88,9 +100,8 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
 
 def checkout_command(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
     typer.echo("\n📥 Cloning or checking out repositories...")
-    dir_obj = resolve_directory(directory)
+    dir_obj = _resolve_directory(directory)
     spec_path_default = dir_obj.joinpath("repos.json")
     from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
     spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
@@ -100,9 +111,8 @@ def checkout_command(directory: Annotated[Optional[str], typer.Argument(help="�
 
 def checkout_to_branch_command(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
     typer.echo("\n📥 Cloning or checking out repositories...")
-    dir_obj = resolve_directory(directory)
+    dir_obj = _resolve_directory(directory)
     spec_path_default = dir_obj.joinpath("repos.json")
     from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
     spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)

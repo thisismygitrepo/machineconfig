@@ -185,11 +185,17 @@ def record_repos_recursively(repos_root: str, r: bool, progress: Progress | None
     return res
 
 
-def main_record(repos_root_str: Optional[str]):
-    print("\n📝 Recording repositories...")
+def _resolve_directory(directory: Optional[str]) -> Path:
+    import typer
+    if directory is None:
+        directory = Path.cwd().as_posix()
+        typer.echo(f"📁 Using directory: {directory}")
+    return Path(directory).expanduser().absolute().resolve()
 
-    from machineconfig.scripts.python.helpers.helpers_repos.entrypoint import resolve_directory
-    repos_root = resolve_directory(directory=repos_root_str)
+
+def main_record(repos_root_str: Optional[str]) -> Path:
+    print("\n📝 Recording repositories...")
+    repos_root = _resolve_directory(directory=repos_root_str)
     
     # Count total directories and repositories for accurate progress tracking
     print("🔍 Analyzing directory structure...")
