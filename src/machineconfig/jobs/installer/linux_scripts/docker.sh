@@ -109,15 +109,12 @@ echo """✅ INSTALLATION COMPLETE | Docker has been installed successfully
   For systemd systems: systemctl start dockerd
   For WSL without systemd: sudo service docker start
 - For more information, visit: https://docs.docker.com/engine/install/linux-postinstall/
+
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker alex
+logout
+
 """
 
 # Additional notes:
-# - In older WSL, after installation, 'docker run hello-world' may fail with connection error
-#   See: https://stackoverflow.com/questions/44678725/cannot-connect-to-the-docker-daemon-at-unix-var-run-docker-sock-is-the-docker
-# 
-# - No internet in WSL docker instance: add /etc/docker/daemon.json
-#   See: https://github.com/MicrosoftDocs/WSL/issues/422
-# 
-# - For Databricks environments only:
-#   sudo nala install fuse-overlayfs
-
