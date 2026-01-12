@@ -1,7 +1,7 @@
 
 
 # =================== PRIVATE ================================
-# os can be 'windows', 'linux', 'macos' or 'any'
+# os can be 'windows', 'linux,macos', 'macos' or 'any'
 
 [git]
 gitconfig = {original = '~/.gitconfig', self_managed = '~/dotfiles/creds/git/.gitconfig', os = 'any'}
@@ -17,14 +17,14 @@ keys = {original = '~/.gnupg', self_managed = '~/dotfiles/creds/.gnupg', content
 creds = {original = '~/.pypirc', self_managed = '~/dotfiles/creds/msc/.pypirc', os = 'any'}
 
 [rclone]
-config_xdg = {original = '~/.config/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf', os = 'linux'}
+config_xdg = {original = '~/.config/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf', os = 'linux,macos'}
 config_windows = {original = '~/AppData/Roaming/rclone/rclone.conf', self_managed = '~/dotfiles/creds/rclone/rclone.conf', os = 'windows'}
 
 [cloudflare]
 config = {original = '~/.cloudflared', self_managed = '~/dotfiles/creds/cloudflare/.cloudflared', os = 'any'}
 
 [ngrok]
-config_linux = {original = '~/.config/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml', os = 'linux'}
+config_linux = {original = '~/.config/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml', os = 'linux,macos'}
 config_windows = {original = '~/AppData/Local/ngrok/ngrok.yml', self_managed = '~/dotfiles/creds/tokens/ngrok.yml', os = 'windows'}
 
 [m365]
@@ -37,7 +37,7 @@ config3 = {original = '~/.cli-m365-connection.json',      self_managed = '~/dotf
 data = {original = '~/.var/app/org.remmina.Remmina/data/remmina', self_managed = '~/dotfiles/creds/RDP/remmina/data/remmina', os = 'any'}
 
 [webapp_linux]
-brave = {original = '~/.local/share/applications', self_managed = '~/dotfiles/config/webapps/linux/brave', contents = true, os = 'linux'}
+brave = {original = '~/.local/share/applications', self_managed = '~/dotfiles/config/webapps/linux/brave', contents = true, os = 'linux,macos'}
 
 # [startup_windows]
 # startup = {original = '~/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup', self_managed = '~/dotfiles/scripts/windows_startup', contents = true}
@@ -90,25 +90,26 @@ config = {original = '~/.procs.toml', self_managed = 'CONFIG_ROOT/settings/procs
 config_again = {original = '~/.config/procs/config.toml', self_managed = 'CONFIG_ROOT/settings/procs/.procs.toml', os = 'any'}
 
 [rofi_linux]
-config = {original = '~/.config/rofi/config.rasi', self_managed = 'CONFIG_ROOT/settings/rofi/config.rasi', os = 'linux'}
+config = {original = '~/.config/rofi/config.rasi', self_managed = 'CONFIG_ROOT/settings/rofi/config.rasi', os = 'linux,macos'}
 
 [yazi]
 yazi_windows = {original = '~/AppData/Roaming/yazi/config/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_windows.toml', os = 'windows'}
 keymap_windows = {original = '~/AppData/Roaming/yazi/config/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_windows.toml', os = 'windows'}
 theme_windows = {original = '~/AppData/Roaming/yazi/config/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml', os = 'windows'}
 init_windows = {original = '~/AppData/Roaming/yazi/config/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua', os = 'windows'}
-yazi_linux = {original = '~/.config/yazi/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml', os = 'linux'}
-keymap_linux = {original = '~/.config/yazi/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_linux.toml', os = 'linux'}
-theme_linux = {original = '~/.config/yazi/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml', os = 'linux'}
-init_linux = {original = '~/.config/yazi/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua', os = 'linux'}
+yazi_linux = {original = '~/.config/yazi/yazi.toml', self_managed = 'CONFIG_ROOT/settings/yazi/yazi_linux.toml', os = 'linux,macos'}
+keymap_linux = {original = '~/.config/yazi/keymap.toml', self_managed = 'CONFIG_ROOT/settings/yazi/keymap_linux.toml', os = 'linux,macos'}
+theme_linux = {original = '~/.config/yazi/theme.toml', self_managed = 'CONFIG_ROOT/settings/yazi/theme.toml', os = 'linux,macos'}
+init_linux = {original = '~/.config/yazi/init.lua', self_managed = 'CONFIG_ROOT/settings/yazi/init.lua', os = 'linux,macos'}
+yazi_picker_linux = { original = '~/.config/helix/yazi-picker.sh', self_managed = 'CONFIG_ROOT/settings/helix/yazi-picker.sh' , os = 'linux,macos'}
 
 [television]
-cable_linux = {original = '~/.config/television/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_unix', contents = true, os = 'linux'}
+cable_linux = {original = '~/.config/television/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_unix', contents = true, os = 'linux,macos'}
 cable_windows = {original = '~/AppData/Local/television/config/cable', self_managed = 'CONFIG_ROOT/settings/television/cable_windows', contents = true, os = 'windows'}
 
 [tv]
-config_linux = {original = '~/.config/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml', os = 'linux'}
-themes_linux = {original = '~/.config/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true, os = 'linux'}
+config_linux = {original = '~/.config/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml', os = 'linux,macos'}
+themes_linux = {original = '~/.config/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true, os = 'linux,macos'}
 config_windows = {original = '~/AppData/Local/television/config.toml', self_managed = 'CONFIG_ROOT/settings/tv/config.toml', os = 'windows'}
 themes_windows = {original = '~/AppData/Local/television/themes', self_managed = 'CONFIG_ROOT/settings/tv/themes', contents = true, os = 'windows'}
 
@@ -116,21 +117,21 @@ themes_windows = {original = '~/AppData/Local/television/themes', self_managed =
 config_windows = {original = '~/AppData/Local/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/windows/lfrc', os = 'windows'}
 colors_windows = {original = '~/AppData/Local/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/windows/colors', os = 'windows'}
 icons_windows = {original = '~/AppData/Local/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/windows/icons', os = 'windows'}
-config_linux = {original = '~/.config/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/linux/lfrc', os = 'linux'}
-colors_linux = {original = '~/.config/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/linux/colors', os = 'linux'}
-icons_linux = {original = '~/.config/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/linux/icons', os = 'linux'}
+config_linux = {original = '~/.config/lf/lfrc', self_managed = 'CONFIG_ROOT/settings/lf/linux/lfrc', os = 'linux,macos'}
+colors_linux = {original = '~/.config/lf/colors', self_managed = 'CONFIG_ROOT/settings/lf/linux/colors', os = 'linux,macos'}
+icons_linux = {original = '~/.config/lf/icons', self_managed = 'CONFIG_ROOT/settings/lf/linux/icons', os = 'linux,macos'}
 
 [broot]
 config = {original = '~/.config/broot/conf.toml', self_managed = 'CONFIG_ROOT/settings/broot/conf.toml', os = 'any'}
 
 [pistol_linux]
-config = {original = '~/.config/pistol/pistol.conf', self_managed = 'CONFIG_ROOT/settings/pistol/pistol.conf', os = 'linux'}
+config = {original = '~/.config/pistol/pistol.conf', self_managed = 'CONFIG_ROOT/settings/pistol/pistol.conf', os = 'linux,macos'}
 
 [glow]
 config = {original = '~/.config/glow/glow.yml', self_managed = 'CONFIG_ROOT/settings/glow/glow.yml', os = 'any'}
 
 [gromit_linux]
-config = {original = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', self_managed = 'CONFIG_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true, os = 'linux'}
+config = {original = '~/.var/app/net.christianbeier.Gromit-MPX/config/gromit-mpx.cfg', self_managed = 'CONFIG_ROOT/settings/gromit-mpx/gromit-mpx.cfg', copy = true, os = 'linux,macos'}
 
 
 #[broot_windows]
@@ -170,15 +171,15 @@ config = {original = '~/.config/pudb/pudb.cfg', self_managed = 'CONFIG_ROOT/sett
 [nushell]
 config_windows = {original = '~/AppData/Roaming/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu', os = 'windows'}
 env_windows = {original = '~/AppData/Roaming/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu', os = 'windows'}
-config_linux = {original = '~/.config/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu', os = 'linux'}
-env_linux = {original = '~/.config/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu', os = 'linux'}
+config_linux = {original = '~/.config/nushell/config.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/config.nu', os = 'linux,macos'}
+env_linux = {original = '~/.config/nushell/env.nu', self_managed = 'CONFIG_ROOT/settings/shells/nushell/env.nu', os = 'linux,macos'}
 
 [kitty_linux]
-config = {original = '~/.config/kitty/kitty.conf', self_managed = 'CONFIG_ROOT/settings/shells/kitty/kitty.conf', os = 'linux'}
+config = {original = '~/.config/kitty/kitty.conf', self_managed = 'CONFIG_ROOT/settings/shells/kitty/kitty.conf', os = 'linux,macos'}
 
 [alacritty]
-config_linux = {original = '~/.config/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml', os = 'linux'}
-config_yaml_linux = {original = '~/.config/alacritty/alacritty.yml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.yml', os = 'linux'}
+config_linux = {original = '~/.config/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml', os = 'linux,macos'}
+config_yaml_linux = {original = '~/.config/alacritty/alacritty.yml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.yml', os = 'linux,macos'}
 config_windows = {original = '~/AppData/Roaming/alacritty/alacritty.toml', self_managed = 'CONFIG_ROOT/settings/shells/alacritty/alacritty.toml', os = 'windows'}
 
 [hyper_terminal]
@@ -206,7 +207,7 @@ config = {original = '~/mprocs.yaml', self_managed = 'CONFIG_ROOT/settings/mproc
 
 
 [zellij_linux]
-config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/zellij' , os = 'linux'}
+config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/zellij' , os = 'linux,macos'}
 #themes = { original = '~/.config/zellij/themes', self_managed = 'CONFIG_ROOT/settings/zellij/themes' }
 #layouts = { original = '~/.config/zellij/layouts', self_managed = 'CONFIG_ROOT/settings/zellij/layouts' }
 
@@ -214,23 +215,22 @@ config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/z
 # ===================== IDEs ============================
 
 [zed_linux]
-settings = {original = '~/.config/zed/settings.json', self_managed = 'CONFIG_ROOT/settings/zed/settings.json', os = 'linux'}
+settings = {original = '~/.config/zed/settings.json', self_managed = 'CONFIG_ROOT/settings/zed/settings.json', os = 'linux,macos'}
 
 [helix]
 languages_windows = { original = '~/AppData/Roaming/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' , os = 'windows'}
 config_windows = { original = '~/AppData/Roaming/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' , os = 'windows'}
-languages_linux = { original = '~/.config/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' , os = 'linux'}
-config_linux = { original = '~/.config/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' , os = 'linux'}
-yazi_picker_linux = { original = '~/.config/helix/yazi-picker.sh', self_managed = 'CONFIG_ROOT/settings/helix/yazi-picker.sh' , os = 'linux'}
+languages_linux = { original = '~/.config/helix/languages.toml', self_managed = 'CONFIG_ROOT/settings/helix/languages.toml' , os = 'linux,macos'}
+config_linux = { original = '~/.config/helix/config.toml', self_managed = 'CONFIG_ROOT/settings/helix/config.toml' , os = 'linux,macos'}
 
 [lvim]
 config_windows = { original = '~/AppData/Local/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/windows/config.lua' , os = 'windows'}
-config_linux = { original = '~/.config/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/linux/config.lua' , os = 'linux'}
+config_linux = { original = '~/.config/lvim/config.lua', self_managed = 'CONFIG_ROOT/settings/lvim/linux/config.lua' , os = 'linux,macos'}
 
 
 [svim]
 init_windows = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/windows/init.toml' , os = 'windows'}
-init_linux = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/linux/init.toml' , os = 'linux'}
+init_linux = { original = '~/.SpaceVim.d/init.toml', self_managed = 'CONFIG_ROOT/settings/svim/linux/init.toml' , os = 'linux,macos'}
 
 [linters]
 flake8 = {original = '~/.flake8', self_managed = 'CONFIG_ROOT/settings/linters/.flake8', os = 'any'}
@@ -247,7 +247,7 @@ notepadpp = {original = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', s
 # tesseract = {original = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', self_managed = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
 [atuin]
-config_linux = {original = '~/.config/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'linux'}
-themes_linux = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'linux'}
+config_linux = {original = '~/.config/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'linux,macos'}
+themes_linux = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'linux,macos'}
 config_windows = {original = '~/AppData/Roaming/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'windows'}
 themes_windows = {original = '~/AppData/Roaming/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'windows'}

@@ -32,14 +32,14 @@ def main_from_parser(
     method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")],
     repo: Annotated[REPO_LOOSE, typer.Option(..., "--repo", "-r", help="Mapper source to use for config files.")] = "library",
     on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
-    which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process (default is None, selecting is interactive)")] = None,
+    which: Annotated[Optional[str], typer.Option(..., "--which", "-w", help="Specific items to process ('all' for all items) (default is None, selection is interactive)")] = None,
 ):
     """Terminology:
     SOURCE = Self-Managed-Config-File-Path
     TARGET = Config-File-Default-Path
     For public config files in the library repo, the source always exists."""
     from machineconfig.profile.create_links import ConfigMapper, read_mapper
-    repo_map: dict[str, Literal["library", "user", "all"]] = {
+    repo_map: dict[REPO_LOOSE, Literal["library", "user", "all"]] = {
         "library": "library",
         "l": "library",
         "user": "user",
