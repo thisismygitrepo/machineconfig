@@ -61,7 +61,7 @@ def main_from_parser(
         from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
         import pprint
         options_with_preview: dict[str, str] = {key: pprint.pformat(value, width=88, sort_dicts=True) for key, value in mapper_full.items()}
-        items_chosen = choose_from_dict_with_preview(options_with_preview, extension="toml", multi=True)
+        items_chosen = choose_from_dict_with_preview(options_with_preview, extension="toml", multi=True, preview_size_percent=75.0)
     else:
         if which == "all":
             items_chosen = list(mapper_full.keys())

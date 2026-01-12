@@ -51,16 +51,17 @@ def _infer_extension_from_key(key: Optional[str]) -> str | None:
         return None
     return _normalize_extension(suffix)
 
+
 @overload
-def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[True]) -> list[str]: ...
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[True], preview_size_percent: float) -> list[str]: ...
 @overload
-def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[False]) -> Union[str, None]: ...
-def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool) -> Union[Union[str, None], list[str]]:
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[False], preview_size_percent: float) -> Union[str, None]: ...
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool, preview_size_percent: float) -> Union[Union[str, None], list[str]]:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
         return [] if multi else None
     normalized_extension = _normalize_extension(extension)
-    preview_panel_size = 50
+    preview_panel_size = max(10, min(90, int(preview_size_percent)))
     terminal_width = shutil.get_terminal_size(fallback=(120, 40)).columns
     preview_width = max(20, int(terminal_width * preview_panel_size / 100) - 4)
     with tempfile.TemporaryDirectory(prefix="tv_channel_") as tmpdir:
@@ -206,5 +207,5 @@ if __name__ == "__main__":
         "Option 2": "# Option 2\nThis is the preview for option 2.",
         "Option 3": "# Option 3\nThis is the preview for option 3."
     }
-    result = select_from_options(demo_mapping, multi=True, extension="md")
+    result = select_from_options(demo_mapping, multi=True, extension="md", preview_size_percent=50)
     print(f"Selected: {result}")

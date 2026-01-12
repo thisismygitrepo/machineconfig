@@ -21,16 +21,17 @@ def _normalize_extension(extension: str | None) -> str | None:
         return None
     return trimmed
 
+
 @overload
-def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[True]) -> list[str]: ...
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[True], preview_size_percent: float) -> list[str]: ...
 @overload
-def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[False] = ...) -> str | None: ...
-def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None = None, multi: bool = False) -> Union[list[str], Union[str, None]]:
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: Literal[False], preview_size_percent: float) -> str | None: ...
+def select_from_options(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool, preview_size_percent: float) -> Union[list[str], Union[str, None]]:
     keys = list(options_to_preview_mapping.keys())
     if not keys:
         return [] if multi else None
     normalized_extension = _normalize_extension(extension)
-    preview_panel_size = 50
+    preview_panel_size = max(10, min(90, int(preview_size_percent)))
     from machineconfig.utils.accessories import randstr
     tempdir = pathlib.Path.home() / "tmp_results" / "tmp_files" / f"tv_channel_{randstr(6)}"
     tempdir.mkdir(parents=True, exist_ok=True)
@@ -83,5 +84,5 @@ if __name__ == "__main__":
         "Option 2": "# Option 2\nThis is the preview for option 2.",
         "Option 3": "# Option 3\nThis is the preview for option 3."
     }
-    result = select_from_options(demo_mapping, multi=True, extension="md")
+    result = select_from_options(demo_mapping, multi=True, extension="md", preview_size_percent=50)
     print(f"Selected: {result}")
