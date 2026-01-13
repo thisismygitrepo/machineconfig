@@ -165,7 +165,7 @@ exit $LASTEXITCODE
         uv_project_dir = f"""{str(Path.home().joinpath("code/machineconfig"))}"""
         uv_with = None
     else:
-        uv_with = ["machineconfig>=8.45"]
+        uv_with = ["machineconfig>=8.46"]
         uv_project_dir = None
 
     shell_path = get_tmp_file()
