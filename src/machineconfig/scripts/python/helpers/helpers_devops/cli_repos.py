@@ -63,16 +63,16 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
             ) -> None:
     """📥 Clone repositories described by a repos.json specification."""
     if interactive:
-        from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import backup_root_private, backup_root_public, get_original_path_from_backup_path
-        results_public = list(backup_root_public.rglob("repos.json"))
-        results_private = list(backup_root_private.rglob("repos.json"))
+        from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import BACKUP_ROOT_PRIVATE, BACKUP_ROOT_PUBLIC, get_original_path_from_backup_path
+        results_public = list(BACKUP_ROOT_PUBLIC.rglob("repos.json"))
+        results_private = list(BACKUP_ROOT_PRIVATE.rglob("repos.json"))
         if len(results_public) + len(results_private) == 0:
             print("❌ No repos.json specifications found in backup directories.")
             return
         from machineconfig.utils.options import choose_from_options
         chosen_files = choose_from_options(options=[str(p) for p in results_public + results_private], msg="Select a repos.json specification to clone from:", multi=True, tv=True)
         for file in chosen_files:
-            if str(file).startswith(str(backup_root_private)):
+            if str(file).startswith(str(BACKUP_ROOT_PRIVATE)):
                 original_path = get_original_path_from_backup_path(Path(file), sensitivity="private", destination=None, shared=False)
             else:
                 original_path = get_original_path_from_backup_path(Path(file), sensitivity="public", destination=None, shared=False)

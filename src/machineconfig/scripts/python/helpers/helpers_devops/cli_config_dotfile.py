@@ -2,10 +2,15 @@
 """Like yadm and dotter."""
 
 from git import Optional
-from machineconfig.profile.create_links_export import ON_CONFLICT_LOOSE, ON_CONFLICT_MAPPER
+from machineconfig.profile.create_links_export import ON_CONFLICT_LOOSE, ON_CONFLICT_MAPPER, METHOD_LOOSE, METHOD_MAP
 from typing import Annotated, Literal
 from pathlib import Path
 import typer
+
+from machineconfig.utils.source_of_truth import CONFIG_ROOT
+BACKUP_ROOT_PRIVATE = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
+BACKUP_ROOT_PUBLIC = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
+
 
 
 def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, self_managed_path: Path, method: Literal["symlink", "copy"], is_contents: bool, os_filter: str) -> Path:
@@ -51,9 +56,9 @@ def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, se
     mapper_path.write_text(content, encoding="utf-8")
     return mapper_path
 
-def record_mapping(orig_path: Path, new_path: Path, method: Literal["symlink", "s", "copy", "c"], section: str, os_filter: str) -> None:
+def record_mapping(orig_path: Path, new_path: Path, method: METHOD_LOOSE, section: str, os_filter: str) -> None:
     entry_name = orig_path.stem.replace(".", "_").replace("-", "_")
-    method_resolved: Literal["symlink", "copy"] = "symlink" if method in ("symlink", "s") else "copy"
+    method_resolved = METHOD_MAP[method]
     mapper_file = _write_to_user_mapper(section=section, entry_name=entry_name, original_path=orig_path, self_managed_path=new_path, method=method_resolved, is_contents=False, os_filter=os_filter)
     home = Path.home()
     orig_display = f"~/{orig_path.relative_to(home)}" if orig_path.is_relative_to(home) else orig_path.as_posix()
@@ -64,17 +69,12 @@ def record_mapping(orig_path: Path, new_path: Path, method: Literal["symlink", "
     console.print(Panel(f"📝 Mapping recorded in: [cyan]{mapper_file}[/cyan]\n[{section}]\n{entry_name} = {{ original = '{orig_display}', self_managed = '{new_display}', os = '{os_filter}' }}", title="Mapper Entry Saved", border_style="cyan", padding=(1, 2),))
 
 
-backup_root_private = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
-from machineconfig.utils.source_of_truth import CONFIG_ROOT
-backup_root_public = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
-
-
 def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "public", "b"], destination: Optional[str], shared: bool) -> Path:
     match sensitivity:
         case "private" | "v":
-            backup_root = backup_root_private
+            backup_root = BACKUP_ROOT_PRIVATE
         case "public" | "b":
-            backup_root = backup_root_public
+            backup_root = BACKUP_ROOT_PUBLIC
     if destination is None:
         if shared:
             new_path = backup_root.joinpath("shared").joinpath(orig_path.name)
@@ -93,9 +93,9 @@ def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "publi
 def get_original_path_from_backup_path(backup_path: Path, sensitivity: Literal["private", "v", "public", "b"], destination: Optional[str], shared: bool) -> Path:
     match sensitivity:
         case "private" | "v":
-            backup_root = backup_root_private
+            backup_root = BACKUP_ROOT_PRIVATE
         case "public" | "b":
-            backup_root = backup_root_public
+            backup_root = BACKUP_ROOT_PUBLIC
     if destination is None:
         if shared:
             relative_part = backup_path.relative_to(backup_root.joinpath("shared"))
@@ -114,7 +114,7 @@ def get_original_path_from_backup_path(backup_path: Path, sensitivity: Literal["
 
 def register_dotfile(
     file: Annotated[str, typer.Argument(help="file/folder path.")],
-    method: Annotated[Literal["symlink", "s", "copy", "c"], typer.Option(..., "--method", "-m", help="Method to use for linking files")] = "copy",
+    method: Annotated[METHOD_LOOSE, typer.Option(..., "--method", "-m", help="Method to use for linking files")] = "copy",
     on_conflict: Annotated[ON_CONFLICT_LOOSE, typer.Option(..., "--on-conflict", "-o", help="Action to take on conflict")] = "throw-error",
     sensitivity: Annotated[Literal["private", "v", "public", "b"], typer.Option(..., "--sensitivity", "-s", help="Sensitivity of the config file.")] = "private",
     destination: Annotated[Optional[str], typer.Option("--destination", "-d", help="destination folder (override the default, use at your own risk)")] = None,
