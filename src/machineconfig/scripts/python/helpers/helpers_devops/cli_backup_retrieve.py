@@ -11,13 +11,13 @@ from rich.panel import Panel
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 from machineconfig.utils.code import print_code
-from machineconfig.utils.options import choose_cloud_interactively, choose_from_options
+from machineconfig.utils.options import choose_cloud_interactively
 from machineconfig.scripts.python.helpers.helpers_cloud.helpers2 import ES
 from machineconfig.scripts.python.helpers.helpers_devops.backup_config import (
     BackupConfig, BackupGroup, VALID_OS, USER_BACKUP_PATH, DEFAULT_BACKUP_HEADER,
     normalize_os_name, os_applies, read_backup_config,
 )
-
+from machineconfig.profile.create_links_export import REPO_LOOSE
 
 DIRECTION = Literal["BACKUP", "RETRIEVE"]
 
@@ -146,7 +146,7 @@ def register_backup_entry(
     return USER_BACKUP_PATH, entry_name, replaced
 
 
-def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Optional[str], repo: Literal["library", "l", "user", "u", "all", "a"]) -> None:
+def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Optional[str], repo: REPO_LOOSE) -> None:
     console = Console()
     if cloud is None or not cloud.strip():
         try:

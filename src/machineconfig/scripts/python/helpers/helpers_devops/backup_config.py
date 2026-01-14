@@ -1,14 +1,14 @@
 """Backup configuration types, parsing, and reading utilities."""
 
 from collections.abc import Mapping
-from typing import Literal, TypedDict
+from typing import TypedDict
 from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 import tomllib
 
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
-
+from machineconfig.profile.create_links_export import REPO_LOOSE
 
 LIBRARY_BACKUP_PATH = LIBRARY_ROOT.joinpath("profile/mapper_data.toml")
 USER_BACKUP_PATH = Path.home().joinpath("dotfiles/machineconfig/mapper_data.toml")
@@ -125,7 +125,7 @@ def _parse_backup_config(raw: Mapping[str, object]) -> BackupConfig:
     return config
 
 
-def read_backup_config(repo: Literal["library", "l", "user", "u", "all", "a"]) -> BackupConfig:
+def read_backup_config(repo: REPO_LOOSE) -> BackupConfig:
     match repo:
         case "library" | "l":
             path = LIBRARY_BACKUP_PATH
