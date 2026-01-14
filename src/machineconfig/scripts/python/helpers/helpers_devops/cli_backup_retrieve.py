@@ -17,7 +17,7 @@ from machineconfig.scripts.python.helpers.helpers_devops.backup_config import (
     BackupConfig, BackupGroup, VALID_OS, USER_BACKUP_PATH, DEFAULT_BACKUP_HEADER,
     normalize_os_name, os_applies, read_backup_config,
 )
-
+from machineconfig.profile.create_links_export import REPO_LOOSE
 
 DIRECTION = Literal["BACKUP", "RETRIEVE"]
 
@@ -146,7 +146,7 @@ def register_backup_entry(
     return USER_BACKUP_PATH, entry_name, replaced
 
 
-def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Optional[str], repo: Literal["library", "l", "user", "u", "all", "a"]) -> None:
+def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Optional[str], repo: REPO_LOOSE) -> None:
     console = Console()
     if cloud is None or not cloud.strip():
         try:

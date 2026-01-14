@@ -88,32 +88,23 @@ eval "$(starship init zsh)"
 
 # LEVE THIS IN THE END TO AVOID EXECUTION FAILURE OF THE REST OF THE SCRIPT
 if command -v mcfly &> /dev/null; then
-    eval "$(mcfly init bash)"
+    eval "$(mcfly init zsh)"
 elif command -v atuin &> /dev/null; then
-    eval "$(atuin init bash)"
+    eval "$(atuin init zsh)"
 else
-    # eval "$(tv init bash)"
     tv_shell_history() {
-        # _disable_bracketed_paste
-        local current_prompt="${READLINE_LINE:0:$READLINE_POINT}"
+        local current_prompt="$LBUFFER"
         local output
-        # move to the next line so that the prompt is not overwritten
         printf "\n"
-        # Get history using tv with the same arguments as zsh version
-        output=$(tv bash-history --input "$current_prompt" --inline)
-
+        output=$(tv zsh-history --input "$current_prompt" --inline)
         if [[ -n "$output" ]]; then
-            # Clear the right side of cursor and set new line
-            READLINE_LINE="$output"
-            READLINE_POINT=${#READLINE_LINE}
-            # Uncomment this to automatically accept the line
-            # (i.e. run the command without having to press enter twice)
-            # accept-line() { echo; }; accept-line
+            BUFFER="$output"
+            CURSOR=${#BUFFER}
         fi
-        # move the cursor back to the previous line
         printf "\033[A"
-        # _enable_bracketed_paste
+        zle reset-prompt
     }
-    bind -x '"\C-r": tv_shell_history'
+    zle -N tv_shell_history
+    bindkey '^R' tv_shell_history
 fi
 
