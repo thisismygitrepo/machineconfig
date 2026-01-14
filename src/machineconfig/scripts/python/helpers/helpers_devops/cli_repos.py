@@ -121,27 +121,36 @@ def checkout_to_branch_command(directory: Annotated[Optional[str], typer.Argumen
 
 
 def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
-    def func(repo_path: str):
-        from machineconfig.scripts.python.helpers.helpers_repos import repo_analyzer_1
+    # def func(repo_path: str):
+        # from machineconfig.scripts.python.helpers.helpers_repos import repo_analyzer_1
+        # repo_analyzer_1.count_historical_line_edits(repo_path=repo_path)
+    # from machineconfig.utils.code import run_lambda_function
+    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=8.47"])
+    from machineconfig.scripts.python.helpers.helpers_repos import repo_analyzer_1
+    try:
         repo_analyzer_1.count_historical_line_edits(repo_path=repo_path)
-    from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=8.47"])
+    except Exception as e:
+        typer.echo(f"❌ Error counting lines in repo {repo_path}: {e}")
 
 
 def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
-    def func(repo_path: str):
-        from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
-        print_python_files_by_size_impl(repo_path=repo_path)
-    from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.47"])
+    # def func(repo_path: str):
+    #     from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
+    #     print_python_files_by_size_impl(repo_path=repo_path)
+    # from machineconfig.utils.code import run_lambda_function
+    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.47"])
+    from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
+    print_python_files_by_size_impl(repo_path=repo_path)
 
 
 def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
-    def func(repo_path: str):
-        from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import analyze_over_time
-        analyze_over_time(repo_path=repo_path)
-    from machineconfig.utils.code import run_lambda_function
-    run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.47"])
+    # def func(repo_path: str):
+    #     from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import analyze_over_time
+    #     analyze_over_time(repo_path=repo_path)
+    # from machineconfig.utils.code import run_lambda_function
+    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.47"])
+    from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import analyze_over_time
+    analyze_over_time(repo_path=repo_path)
 
 
 def gource_viz(
