@@ -40,7 +40,16 @@ def select_layout(layouts_json_file: str, selected_layouts_names: Optional[list[
         json_str = json_str.replace("""Command": "f """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg fire """)
         json_str = json_str.replace("""Command": "s """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg sessions """)
 
-    layout_file: LayoutsFile = json.loads(json_str)
+    try:
+        # src/machineconfig/utils/io.py
+        layout_file: LayoutsFile = json.loads(json_str)
+    except Exception:
+        print(f"Failed to parse the json file {layouts_json_file}, trying to clean the comments and giving it another shot ... ")
+        from machineconfig.utils.io import remove_c_style_comments
+        json_str = remove_c_style_comments(json_str)
+        # print(json_str)
+        layout_file: LayoutsFile = json.loads(json_str)
+
     if len(layout_file["layouts"]) == 0:
         raise ValueError(f"No layouts found in {layouts_json_file}")
     if selected_layouts_names is None:
