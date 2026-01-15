@@ -1,52 +1,26 @@
 # machineconfig Nushell environment setup
 
-def reduce_non_empty [segments: list<string>] -> list<string> {
-	segments
-	| reduce --fold [] { |segment, acc|
-		if (($segment | str length) > 0) {
-			$acc | append $segment
-		} else {
-			$acc
-		}
-	}
-}
+# Cross-platform home directory (works on Windows and Unix)
+let home = ($env.HOME? | default ($env.USERPROFILE? | default $nu.home-path))
 
-let default_root = ($env.HOME | path join ".config" "machineconfig")
-let config_root = (
-	$env.CONFIG_ROOT?
-	| default $default_root
-	| path expand
-)
+# Set up CONFIG_ROOT
+let default_root = ($home | path join ".config" "machineconfig")
+$env.CONFIG_ROOT = ($env.CONFIG_ROOT? | default $default_root | path expand)
 
-load-env { CONFIG_ROOT: $config_root }
+# Add directories to PATH (nushell uses $env.PATH as a list)
+use std/util "path add"
 
-let existing_segments = (
-	$env.PATH?
-	| default ""
-	| split row (char esep)
-	| reduce_non_empty
-)
-
-let desired_paths = [
-	($config_root | path join "scripts")
-	($env.HOME | path join "dotfiles" "scripts" "linux")
-	($env.HOME | path join ".local" "bin")
-	($env.HOME | path join ".cargo" "bin")
-	"/usr/games"
+# Add desired paths if they exist
+let paths_to_add = [
+    ($env.CONFIG_ROOT | path join "scripts")
+    ($home | path join "dotfiles" "scripts" "linux")
+    ($home | path join ".local" "bin")
+    ($home | path join ".cargo" "bin")
+    "/usr/games"
 ]
 
-let merged_segments = (
-	$desired_paths
-	| reduce --fold $existing_segments { |entry, acc|
-		if (($entry | path exists) and (not ($entry in $acc))) {
-			$acc | append $entry
-		} else {
-			$acc
-		}
-	}
-)
-
-let new_path = ($merged_segments | str join (char esep))
-load-env { PATH: $new_path }
-
-
+for p in $paths_to_add {
+    if ($p | path exists) {
+        path add $p
+    }
+}

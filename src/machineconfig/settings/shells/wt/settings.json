@@ -70,19 +70,6 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "powershell.exe -Command \"rr\"",
-                "guid": "{1e951406-6597-48c7-8137-b967bed19572}",
-                "name": "croshell",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "commandline": "wsl -d Ubuntu -- cd ~",
-                "guid": "{8fe5c33b-0346-4127-acde-0e2bd4c587ab}",
-                "hidden": false,
-                "name": "Ubuntu",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "font": 
                 {
