@@ -240,14 +240,10 @@ mypy2 = {original = '~/.config/mypy/config', self_managed = 'CONFIG_ROOT/setting
 ruff = {original = '~/.ruff.toml', self_managed = 'CONFIG_ROOT/settings/linters/.ruff.toml', os = 'any'}
 pylint = {original = '~/.pylintrc', self_managed = 'CONFIG_ROOT/settings/linters/.pylintrc', os = 'any'}
 
-# ======================= OS ===============================
-
-[apps_windows]
-notepadpp = {original = '~/AppData/Local/Microsoft/WindowsApps/notepad++.exe', self_managed = 'C:/Program Files/Notepad++/notepad++.exe', os = 'windows'}
-# tesseract = {original = '~/AppData/Local/Microsoft/WindowsApps/tesseract.exe', self_managed = '~/AppData/Local/Tesseract-OCR/tesseract.exe'}  # doesn't work without whole installation dir is on PATH.
 
 [atuin]
 config_linux = {original = '~/.config/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'linux,darwin'}
 themes_linux = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'linux,darwin'}
 config_windows = {original = '~/AppData/Roaming/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'windows'}
 themes_windows = {original = '~/AppData/Roaming/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'windows'}
+

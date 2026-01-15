@@ -4,6 +4,7 @@
 
 [thunderbird]
 windows_files = {path_local = '~/AppData/Roaming/Thunderbird/Profiles', path_cloud = '^', encrypt = true, zip = true, rel2home = true, os = 'windows'}
+windows_ini = {path_local = '~/AppData/Roaming/Thunderbird/profiles.ini', path_cloud = '^', encrypt = false, zip = false, rel2home = true, os = 'windows'}
 linux_files = {path_local = '~/.thunderbird', path_cloud = '^', encrypt = true, zip = true, rel2home = true, os = 'linux'}
 
 
@@ -12,8 +13,22 @@ windows_db = {path_local = '~/AppData/Local/zoxide/db.zo', path_cloud = '^', enc
 linux_db = {path_local = '~/.local/share/zoxide/db.zo', path_cloud = '^', encrypt = false, zip = false, rel2home = true, os = 'linux'}
 
 
+# Atuin shell history tool
+# Docs: https://docs.atuin.sh/cli/configuration/config/#db_path
+# Default db_path: ~/.local/share/atuin/history.db (same on all platforms, uses XDG_DATA_HOME if set)
 [atuin]
 history = {path_local = '~/.local/share/atuin/history.db', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'any'}
+
+
+# McFly shell history search tool
+# Docs: https://github.com/cantino/mcfly#database-location
+# macOS: ~/Library/Application Support/McFly/history.db
+# Linux: ~/.local/share/mcfly/history.db (via $XDG_DATA_DIR)
+# Windows: %LOCALAPPDATA%\McFly\data\history.db
+[mcfly]
+macos_history = {path_local = '~/Library/Application Support/McFly/history.db', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'darwin'}
+linux_history = {path_local = '~/.local/share/mcfly/history.db', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'linux'}
+windows_history = {path_local = '~/AppData/Local/McFly/data/history.db', path_cloud = '^', encrypt = true, zip = false, rel2home = true, os = 'windows'}
 
 
 [shell_history]

@@ -30,6 +30,20 @@ def get_shell_profile_path() -> Path:
     return profile_path
 
 
+def reload_shell_profile_and_exit() -> None:
+    import platform
+    if platform.system() == "Windows":
+        reload_init_script = "pwsh $PROFILE"
+    elif platform.system() == "Darwin":
+        reload_init_script = "source $HOME/.zshrc"
+    elif platform.system() == "Linux":
+        reload_init_script = "source $HOME/.bashrc"
+    else:
+        reload_init_script = ""
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(reload_init_script)
+
+
 def get_nu_shell_profile_path() -> Path:
     import platform
     from rich.console import Console

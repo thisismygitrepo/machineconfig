@@ -180,13 +180,8 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
     ))
 
     if which is None:
-        # import platform
-        # if platform.system() not in {"Linux", "Darwin"}:
-        #     console.print(Panel(f"🔍 SELECT {direction} ITEMS\n📋 Choose which configuration entries to process", title="[bold blue]Select Items[/bold blue]", border_style="blue"))
-        #     choices = choose_from_options(multi=True, msg=f"WHICH FILE of the following do you want to {direction}?", options=["all"] + list(bu_file.keys()), tv=True)
-        # else:
-        from machineconfig.utils.options_utils.options_tv_linux import select_from_options
-        choice = select_from_options(
+        from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
+        choice = choose_from_dict_with_preview(
             options_to_preview_mapping=bu_file, extension="toml", multi=False, preview_size_percent=75.0,
         )
         if choice is None:

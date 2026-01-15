@@ -83,6 +83,7 @@ def main(installer_data: InstallerData, version: Optional[str]):
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing("glow")
     install_if_missing("duckdb")
+
     if platform.system() == "Linux":
         script = r"""
 sudo nala install poppler-utils -y || true  # For PDF preview, needed by yazi.
@@ -96,8 +97,9 @@ brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
         from machineconfig.utils.code import run_shell_script
         run_shell_script(script)
     elif platform.system() == "Windows":
-        install_if_missing("git")
-        install_if_missing("7zip")
+        install_if_missing(which="git")
+        install_if_missing(which="7zip")
+        install_if_missing(which="file")
         popler_installer: InstallerData = {
             "appName": "poppler",
             "repoURL": "https://github.com/oschwartz10612/poppler-windows",

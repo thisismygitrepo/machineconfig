@@ -130,36 +130,40 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             devops config import-dotfiles --password pwd
             """
             console.print(Panel(f"📂 {header_text}\n{subtitle_text}\n\n{instructions}", border_style="yellow", padding=(1, 2)))
+            i_sorted_it_out = "I have sorted out dotfiles migration already and want to proceed."
+            exit_now = "Exit now and sort out dotfiles migration first."
+            fetch_over_lan = "I already exposed dotfiles over LAN, let's fetch them now."
+            fetch_over_ssh = "I wanted to bring them using SSH SCP now."
             options: list[str] = [
-                "I have sorted out dotfiles migration already and want to proceed.",
-                "Exit now and sort out dotfiles migration first.",
-                "I already exposed dotfiles over LAN, let's fetch them now.",
-                "I wanted to bring them using SSH SCP now.",
+                i_sorted_it_out,
+                exit_now,
+                fetch_over_lan,
+                fetch_over_ssh,
             ]
             answer = questionary.select("⚠️  DOTFILES NOT FOUND. How do you want to proceed?", choices=options).ask()
-            if answer == options[0]:
+            if answer == i_sorted_it_out:
                 console.print("✅ Proceeding as per user confirmation.", style="bold green")
-            elif answer == options[1]:
+            elif answer == exit_now:
                 console.print("❌ Exiting for dotfiles migration.", style="bold red")
                 sys.exit(0)
-            elif answer == options[2]:
+            elif answer == fetch_over_lan:
                 from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import import_dotfiles
                 import_dotfiles(use_ssh=False)
-            elif answer == options[3]:
+            elif answer == fetch_over_ssh:
                 from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import import_dotfiles
                 import_dotfiles(use_ssh=True)
             if not Path.home().joinpath("dotfiles").exists():
                 console.print("❌ Dotfiles directory still not found after attempted import. Exiting...", style="bold red")
                 sys.exit(1)
-            # devops config sync --sensitivity public --method symlink --on-conflict overwrite-default-path
-            # devops config sync --sensitivity private --method symlink --on-conflict overwrite-default-path
+            # devops config sync --sensitivity public --method symlink --on-conflict overwrite-default-path --which all
+            # devops config sync --sensitivity private --method symlink --on-conflict overwrite-default-path --which all
             from machineconfig.profile.create_links_export import main_from_parser
             main_from_parser(sensitivity="private", method="symlink", on_conflict="overwrite-default-path", which="all")
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
         from machineconfig.scripts.python.helpers.helpers_devops import cli_repos
-        cli_repos.clone(directory=str(Path.home() / "code"))
+        cli_repos.clone(interactive=True)
 
     if "retrieve_data" in selected_options:
         console.print(Panel("💾 [bold bright_cyan]DATA RETRIEVAL[/bold bright_cyan]\n[italic]Backup restoration[/italic]", border_style="bright_cyan"))
@@ -170,12 +174,6 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             console.print("✅ Backup data retrieved successfully", style="bold green")
         except Exception as e:
             console.print(f"❌ Error retrieving backup data: {e}", style="bold red")
-    # echo # 📧 Thunderbird Setup Note:
-    # Run after installing Thunderbird and starting it once:
-    # cd ~/AppData/Roaming/ThunderBird/Profiles
-    # $res = ls
-    # $name = $res[0].Name
-    # mv $backup_folder $name
 
 
 def main() -> None:
@@ -194,16 +192,8 @@ def main() -> None:
     subtitle_text = Text("System setup finished successfully", style="italic green")
     console.print(Panel(f"✨ {completion_text}\n{subtitle_text}\n\n🎉 Your system has been configured successfully!\n🔄 You may need to reboot to apply all changes.", border_style="green", padding=(1, 2)))
 
-    from machineconfig.utils.code import exit_then_run_shell_script
-    if platform.system() == "Windows":
-        reload_init_script = "pwsh $PROFILE"
-    elif platform.system() == "Darwin":
-        reload_init_script = "source $HOME/.zshrc"
-    elif platform.system() == "Linux":
-        reload_init_script = "source $HOME/.bashrc"
-    else:
-        reload_init_script = ""
-    exit_then_run_shell_script(reload_init_script)
+    from machineconfig.profile.create_shell_profile import reload_shell_profile_and_exit
+    reload_shell_profile_and_exit()
 
 
 
