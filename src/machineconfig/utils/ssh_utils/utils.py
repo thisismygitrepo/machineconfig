@@ -16,8 +16,15 @@ def _build_remote_path(self: "SSH", home_dir: str, rel_path: str) -> str:
     return str(PurePosixPath(home_dir) / PurePosixPath(rel_path.replace("\\", "/")))
 
 
+def _normalize_rel_path_for_remote(self: "SSH", rel_path: str) -> str:
+    if self.remote_specs["system"] == "Windows":
+        return str(PureWindowsPath(rel_path))
+    return rel_path.replace("\\", "/")
+
+
 def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_existing: bool) -> None:
     """Helper to create a directory on remote machine and return its path."""
+    path_rel2home_normalized = _normalize_rel_path_for_remote(self, path_rel2home)
 
     def create_target_dir(target_rel2home: str, overwrite: bool):
         from pathlib import Path
@@ -35,7 +42,7 @@ def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_ex
         print(f"Creating directory for path: {target_path_abs}")
         target_path_abs.parent.mkdir(parents=True, exist_ok=True)
     command = lambda_to_python_script(
-        lambda: create_target_dir(target_rel2home=path_rel2home, overwrite=overwrite_existing),
+        lambda: create_target_dir(target_rel2home=path_rel2home_normalized, overwrite=overwrite_existing),
         in_global=True, import_module=False
     )
     tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
