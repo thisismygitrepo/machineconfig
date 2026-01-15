@@ -654,12 +654,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --accept-package-agreements --accept-source-agreements",
           "macos": null
         },
         "arm64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Cloudflare WARP\" --Id \"Cloudflare.Warp\" --source winget --accept-package-agreements --accept-source-agreements",
           "macos": null
         }
       }
