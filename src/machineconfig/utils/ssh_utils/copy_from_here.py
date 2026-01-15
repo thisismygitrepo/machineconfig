@@ -1,11 +1,20 @@
 
 
-from typing import Optional
-from pathlib import Path
+from typing import Optional, TYPE_CHECKING
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
 from machineconfig.utils.ssh_utils.abc import DEFAULT_PICKLE_SUBDIR
 from machineconfig.utils.code import get_uv_command
+
+if TYPE_CHECKING:
+    from machineconfig.utils.ssh import SSH
+
+
+def _build_remote_path(self: "SSH", home_dir: str, rel_path: str) -> str:
+    if self.remote_specs["system"] == "Windows":
+        return str(PureWindowsPath(home_dir) / rel_path)
+    return str(PurePosixPath(home_dir) / PurePosixPath(rel_path.replace("\\", "/")))
 
 
 def copy_from_here(
@@ -54,15 +63,14 @@ def copy_from_here(
             target_rel2home = target_rel2home + ".zip"
     if Path(target_rel2home).parent.as_posix() not in {"", "."}:
         self.create_parent_dir_and_check_if_exists(path_rel2home=target_rel2home, overwrite_existing=overwrite_existing)
-    print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {target_rel2home}""")
+    remote_target_full = _build_remote_path(self, self.remote_specs["home_dir"], target_rel2home)
+    print(f"""📤 [SFTP UPLOAD] Sending file: {repr(source_obj)}  ==>  Remote Path: {remote_target_full}""")
     try:
         with self.tqdm_wrap(ascii=True, unit="b", unit_scale=True) as pbar:
             if self.sftp is None:  # type: ignore[unreachable]
                 raise RuntimeError(f"SFTP connection lost for {self.hostname}")
-            print(f"Uploading {source_obj} to\n{Path(self.remote_specs['home_dir']).joinpath(target_rel2home)}")
-            self.sftp.put(
-                localpath=str(source_obj), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), callback=pbar.view_bar
-            )
+            print(f"Uploading {source_obj} to\n{remote_target_full}")
+            self.sftp.put(localpath=str(source_obj), remotepath=remote_target_full, callback=pbar.view_bar)
     except Exception:
         if compress_with_zip and source_obj.exists() and str(source_obj).endswith("_archive.zip"):
             source_obj.unlink()
@@ -83,12 +91,9 @@ def copy_from_here(
                 archive_handle.extractall(extraction_directory)
             archive_path.unlink()
 
+        remote_zip_path = _build_remote_path(self, self.remote_specs["home_dir"], target_rel2home)
         command = lambda_to_python_script(
-            lambda: unzip_archive(
-                zip_file_path=str(Path(self.remote_specs["home_dir"]).joinpath(target_rel2home)), overwrite_flag=overwrite_existing
-            ),
-            in_global=True,
-            import_module=False,
+            lambda: unzip_archive(zip_file_path=remote_zip_path, overwrite_flag=overwrite_existing), in_global=True, import_module=False
         )
         tmp_py_file = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/create_target_dir_{randstr()}.py")
         tmp_py_file.parent.mkdir(parents=True, exist_ok=True)

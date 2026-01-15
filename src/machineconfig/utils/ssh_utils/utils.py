@@ -1,10 +1,19 @@
 
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from machineconfig.utils.accessories import randstr
 from machineconfig.utils.meta import lambda_to_python_script
 from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION, DEFAULT_PICKLE_SUBDIR
 from machineconfig.utils.code import get_uv_command
-from typing import Union
+from typing import Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from machineconfig.utils.ssh import SSH
+
+
+def _build_remote_path(self: "SSH", home_dir: str, rel_path: str) -> str:
+    if self.remote_specs["system"] == "Windows":
+        return str(PureWindowsPath(home_dir) / rel_path)
+    return str(PurePosixPath(home_dir) / PurePosixPath(rel_path.replace("\\", "/")))
 
 
 def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_existing: bool) -> None:
@@ -34,7 +43,8 @@ def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_ex
     tmp_py_file.write_text(command, encoding="utf-8")
     assert self.sftp is not None
     tmp_remote_path = ".tmp_pyfile.py"
-    self.sftp.put(localpath=str(tmp_py_file), remotepath=str(Path(self.remote_specs["home_dir"]).joinpath(tmp_remote_path)))
+    remote_tmp_full = _build_remote_path(self, self.remote_specs["home_dir"], tmp_remote_path)
+    self.sftp.put(localpath=str(tmp_py_file), remotepath=remote_tmp_full)
     resp = self.run_shell_cmd_on_remote(
         command=f"""{get_uv_command(platform=self.remote_specs['system'])} run python {tmp_remote_path}""",
         verbose_output=False,
