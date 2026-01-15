@@ -1,5 +1,6 @@
 import typer
 from typing import Optional, Annotated, Literal, TypedDict, cast
+from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
 
 
 def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(help="Which environment variable to display.")] = "ENV") -> None:
@@ -17,7 +18,7 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
     uv_with = ["textual"]
     uv_project_dir = None
     if not Path.home().joinpath("code/machineconfig").exists():
-        uv_with.append("machineconfig>=8.49")
+        uv_with.append(MACHINECONFIG_VERSION)
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(

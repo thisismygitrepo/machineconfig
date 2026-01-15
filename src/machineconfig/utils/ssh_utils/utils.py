@@ -25,7 +25,6 @@ def _normalize_rel_path_for_remote(self: "SSH", rel_path: str) -> str:
 def create_dir_and_check_if_exists(self: "SSH", path_rel2home: str, overwrite_existing: bool) -> None:
     """Helper to create a directory on remote machine and return its path."""
     path_rel2home_normalized = _normalize_rel_path_for_remote(self, path_rel2home)
-
     def create_target_dir(target_rel2home: str, overwrite: bool):
         from pathlib import Path
         import shutil

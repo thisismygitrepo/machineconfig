@@ -1,6 +1,7 @@
 
 import typer
 from typing import Annotated, Literal
+from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
 
 
 def copy_both_assets():
@@ -129,7 +130,7 @@ cd {str(mcfg_path)}
 """)
     else:
         exit_then_run_shell_script(rf"""
-{uv_command} tool install --upgrade "machineconfig>=8.49"
+{uv_command} tool install --upgrade "{MACHINECONFIG_VERSION}"
 {uv_command2}
 """)
 
@@ -153,7 +154,7 @@ def navigate():
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import exit_then_run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = """--with "machineconfig>=8.49,textual" """
+    else: executable = f"""--with "{MACHINECONFIG_VERSION},textual" """
     exit_then_run_shell_script(f"""uv run {executable} {path}""")
 
 def readme():

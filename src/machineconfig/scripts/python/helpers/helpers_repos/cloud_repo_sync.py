@@ -2,6 +2,7 @@
 
 from typing import Optional, Literal, Annotated
 import typer
+from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
 
 
 def get_tmp_file():
@@ -165,7 +166,7 @@ exit $LASTEXITCODE
         uv_project_dir = f"""{str(Path.home().joinpath("code/machineconfig"))}"""
         uv_with = None
     else:
-        uv_with = ["machineconfig>=8.49"]
+        uv_with = [MACHINECONFIG_VERSION]
         uv_project_dir = None
 
     shell_path = get_tmp_file()
