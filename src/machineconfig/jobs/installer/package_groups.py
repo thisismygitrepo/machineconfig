@@ -225,7 +225,7 @@ PACKAGES_FILE = [
 PACKAGES_TERMINAL_SHELL = [
     "zellij",
     "mprocs",
-    # "mcfly",
+    "mcfly",
     "atuin",
     "starship",
     "gotty",

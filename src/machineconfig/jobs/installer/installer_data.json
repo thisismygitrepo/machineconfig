@@ -1454,12 +1454,12 @@
         "amd64": {
           "linux": "atuin-x86_64-unknown-linux-gnu.tar.gz",
           "macos": null,
-          "windows": null
+          "windows": "atuin-x86_64-pc-windows-msvc.zip"
         },
         "arm64": {
           "linux": "atuin-aarch64-unknown-linux-gnu.tar.gz",
-          "macos": null,
-          "windows": null
+          "macos": "atuin-aarch64-apple-darwin.tar.gz",
+          "windows": "atuin-aarch64-pc-windows-msvc.zip"
         }
       }
     },
