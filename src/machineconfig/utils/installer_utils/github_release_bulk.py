@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Set, TypedDict
 from urllib.parse import urlparse
 
+from machineconfig.utils.installer_utils.github_release_scraper import scrape_github_release_page
+
 
 class AssetInfo(TypedDict):
     """Type definition for GitHub release asset information."""
@@ -74,7 +76,7 @@ def fetch_github_release_data(
     repo_name: str,
     version: Optional[str] = None,
 ) -> Optional[Dict[str, Any]]:
-    """Fetch GitHub release data for the latest or a specific tag."""
+    """Fetch GitHub release data for the latest or a specific tag. Falls back to HTML scraping if API fails."""
 
     try:
         requested_version = (version or "").strip()
@@ -85,25 +87,24 @@ def fetch_github_release_data(
 
         response = requests.get(url, timeout=30)
         if response.status_code != 200:
-            print(f"❌ Failed to fetch data for {username}/{repo_name}: HTTP {response.status_code}")
-            print(f"   URL: {url}")
-            return None
+            print(f"⚠️ API failed for {username}/{repo_name}: HTTP {response.status_code}, trying HTML scraper...")
+            return scrape_github_release_page(username, repo_name, version)
 
         response_data = response.json()
         message = response_data.get("message")
         if isinstance(message, str):
             if "API rate limit exceeded" in message:
-                print(f"🚫 Rate limit exceeded for {username}/{repo_name}")
-                return None
+                print(f"🚫 Rate limit exceeded for {username}/{repo_name}, trying HTML scraper...")
+                return scrape_github_release_page(username, repo_name, version)
             if "Not Found" in message:
-                print(f"🔍 No releases found for {username}/{repo_name}")
-                return None
+                print(f"🔍 No releases found via API for {username}/{repo_name}, trying HTML scraper...")
+                return scrape_github_release_page(username, repo_name, version)
 
         return response_data
 
     except (requests.RequestException, requests.Timeout, json.JSONDecodeError) as error:
-        print(f"❌ Error fetching {username}/{repo_name}: {error}")
-        return None
+        print(f"⚠️ API error for {username}/{repo_name}: {error}, trying HTML scraper...")
+        return scrape_github_release_page(username, repo_name, version)
 
 
 def get_release_info(
@@ -142,85 +143,3 @@ def extract_release_info(release_data: Dict[str, Any]) -> Optional[ReleaseInfo]:
         "assets_count": len(assets)
     }
 
-
-# def main() -> None:
-#     """Main function to process installer JSON files and fetch GitHub release data."""
-#     # Define paths
-#     current_dir = Path(__file__).parent
-#     installer_dir = current_dir.parent.parent / "jobs" / "installer"
-    
-#     standard_json = installer_dir / "installer_data.json"
-#     output_json = current_dir / "github_releases.json"
-    
-#     print("🔍 Starting GitHub release data extraction...")
-#     print(f"📁 Processing files from: {installer_dir}")
-    
-#     # Extract GitHub repositories from both files
-#     all_github_repos: Set[str] = set()
-    
-#     if standard_json.exists():
-#         print(f"📄 Reading {standard_json.name}...")
-#         repos = extract_github_repos_from_json(standard_json)
-#         all_github_repos.update(repos)
-#         print(f"   Found {len(repos)} GitHub repos")
-#     else:
-#         print(f"⚠️  File not found: {standard_json}")    
-#     print(f"🎯 Total unique GitHub repositories found: {len(all_github_repos)}")
-    
-#     if not all_github_repos:
-#         print("❌ No GitHub repositories found. Exiting.")
-#         return
-    
-#     # Fetch release data with rate limiting
-#     release_mapping: Dict[str, Optional[ReleaseInfo]] = {}
-#     total_repos = len(all_github_repos)
-    
-#     print(f"\n🚀 Fetching release data for {total_repos} repositories...")
-#     print("⏰ Rate limiting: 5 seconds between requests")
-#     print("-" * 60)
-    
-#     for i, repo_url in enumerate(sorted(all_github_repos), 1):
-#         repo_info = get_repo_name_from_url(repo_url)
-        
-#         if not repo_info:
-#             print(f"⚠️  [{i:3d}/{total_repos}] Invalid repo URL: {repo_url}")
-#             continue
-        
-#         username, repo_name = repo_info
-#         repo_full_name = f"{username}/{repo_name}"
-            
-#         print(f"📡 [{i:3d}/{total_repos}] Fetching: {repo_full_name}", end=" ... ")
-        
-#         release_info = get_release_info(username, repo_name)
-
-#         if release_info:
-#             release_mapping[repo_url] = release_info
-#             assets_count = release_info["assets_count"]
-#             tag = release_info["tag_name"]
-#             print(f"✅ {tag} ({assets_count} assets)")
-#         else:
-#             release_mapping[repo_url] = None
-#             print("❌ No data")
-        
-#         # Rate limiting - wait 5 seconds between requests (except for the last one)
-#         if i < total_repos:
-#             time.sleep(5)
-    
-#     # Save results
-#     output_data: OutputData = {
-#         "generated_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()),
-#         "total_repositories": len(all_github_repos),
-#         "successful_fetches": len([v for v in release_mapping.values() if v]),
-#         "releases": release_mapping
-#     }
-    
-#     with open(output_json, 'w', encoding='utf-8') as f:
-#         json.dump(output_data, f, indent=2, ensure_ascii=False)
-    
-#     successful = len([v for v in release_mapping.values() if v])
-#     print("\n📊 Summary:")
-#     print(f"   Total repositories processed: {len(all_github_repos)}")
-#     print(f"   Successful fetches: {successful}")
-#     print(f"   Failed fetches: {len(all_github_repos) - successful}")
-#     print(f"   Output saved to: {output_json}")
-#     print("✅ Done!")
