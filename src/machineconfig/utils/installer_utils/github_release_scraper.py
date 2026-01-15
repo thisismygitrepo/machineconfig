@@ -54,22 +54,18 @@ def fetch_expanded_assets(username: str, repo_name: str, tag_name: str, headers:
             print(f"⚠️ [Scraper] Could not fetch expanded assets for {username}/{repo_name}: HTTP {response.status_code}")
             return assets
         html = response.text
-        patterns = [
-            r'href="([^"]*?/releases/download/[^"]+)"[^>]*>\s*([^<]+?)\s*</a>',
-            r'href="([^"]*?/releases/download/[^"]+)"[^>]*>([^<]+)</a>',
-        ]
+        pattern = r'href="([^"]*?/releases/download/[^"]+)"[^>]*>.*?<span[^>]*class="[^"]*Truncate-text[^"]*text-bold[^"]*"[^>]*>([^<]+)</span>'
         seen_urls: set[str] = set()
-        for pattern in patterns:
-            matches = re.findall(pattern, html, re.DOTALL)
-            for href, name in matches:
-                asset_name = name.strip()
-                if not asset_name or asset_name.isspace():
-                    continue
-                download_url = f"https://github.com{href}" if href.startswith("/") else href
-                if download_url in seen_urls:
-                    continue
-                seen_urls.add(download_url)
-                assets.append({"name": asset_name, "size": 0, "download_count": 0, "content_type": "", "created_at": "", "updated_at": "", "browser_download_url": download_url})
+        matches = re.findall(pattern, html, re.DOTALL)
+        for href, name in matches:
+            asset_name = name.strip()
+            if not asset_name or asset_name.isspace():
+                continue
+            download_url = f"https://github.com{href}" if href.startswith("/") else href
+            if download_url in seen_urls:
+                continue
+            seen_urls.add(download_url)
+            assets.append({"name": asset_name, "size": 0, "download_count": 0, "content_type": "", "created_at": "", "updated_at": "", "browser_download_url": download_url})
     except requests.RequestException as error:
         print(f"⚠️ [Scraper] Error fetching expanded assets for {username}/{repo_name}: {error}")
     return assets
