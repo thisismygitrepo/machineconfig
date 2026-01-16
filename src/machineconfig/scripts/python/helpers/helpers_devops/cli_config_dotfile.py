@@ -170,7 +170,7 @@ def export_dotfiles(
         remote_address = typer.prompt("Enter the remote machine address (user@host) to copy dotfiles to ")
         code_concrete = f"fptx ~/dotfiles {remote_address}:^ -z"
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(code_concrete)
+        run_shell_script(code_concrete, display_script=True, clean_env=False)
     dotfiles_dir = Path.home().joinpath("dotfiles")
     if not dotfiles_dir.exists() or not dotfiles_dir.is_dir():
         print(f"❌ Dotfiles directory does not exist: {dotfiles_dir}")
@@ -231,7 +231,7 @@ def import_dotfiles(
         url = typer.prompt("Enter the remote machine address (user@host) to copy dotfiles from ")
         code_concrete = f"fptx {url}:^ ~/dotfiles -z"
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(code_concrete)
+        run_shell_script(code_concrete, display_script=True, clean_env=False)
         print("✅ Dotfiles copied via SSH.")
         return
     if url is None:

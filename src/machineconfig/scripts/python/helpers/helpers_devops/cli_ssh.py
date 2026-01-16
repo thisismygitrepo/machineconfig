@@ -18,7 +18,7 @@ echo "✅ FINISHED installing openssh-server."
         print(f"❌ Error: Platform {platform.system()} is not supported.")
         raise typer.Exit(code=1)
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(script=script)
+    run_shell_script(script=script, display_script=True, clean_env=False)
 
 
 def change_ssh_port(port: Annotated[int, typer.Option(..., "--port", "-p", help="SSH port to use")] = 2222) -> None:

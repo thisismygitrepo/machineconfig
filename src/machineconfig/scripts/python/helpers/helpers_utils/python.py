@@ -22,7 +22,9 @@ def tui_env(which: Annotated[Literal["PATH", "p", "ENV", "e"], typer.Argument(he
     else:
         uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     run_shell_script(
-        get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0]
+        get_uv_command_executing_python_script(python_script=path.read_text(encoding="utf-8"), uv_with=uv_with, uv_project_dir=uv_project_dir)[0],
+        display_script=True,
+        clean_env=False,
     )
 
 

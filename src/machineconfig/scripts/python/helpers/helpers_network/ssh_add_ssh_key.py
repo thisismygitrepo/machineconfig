@@ -160,7 +160,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
 
     if program.strip():
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(script=program)
+        run_shell_script(script=program, display_script=True, clean_env=False)
 
     import machineconfig.scripts.python.helpers.helpers_network.address as helper
     res = helper.select_lan_ipv4(prefer_vpn=False)

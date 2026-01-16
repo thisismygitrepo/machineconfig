@@ -142,4 +142,4 @@ def main(installer_data: InstallerData, version: Optional[str]) -> None:
         raise NotImplementedError(error_msg)
     from machineconfig.utils.code import print_code, run_shell_script
     print_code(code=program, lexer="shell", desc="Installation Script Preview")
-    run_shell_script(program)
+    run_shell_script(program, display_script=True, clean_env=False)

@@ -81,7 +81,7 @@ def execute_installations(selected_options: list[str]) -> None:
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
             if platform.system() != "Windows":
-                run_shell_script(". $HOME/.bashrc")
+                run_shell_script(". $HOME/.bashrc", display_script=True, clean_env=False)
 
     if "install_machineconfig" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))
@@ -95,9 +95,9 @@ def execute_installations(selected_options: list[str]) -> None:
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Start-Service sshd
 Set-Service -Name sshd -StartupType 'Automatic'"""
-            run_shell_script(f'powershell -Command "{powershell_script}"')
+            run_shell_script(f'powershell -Command "{powershell_script}"', display_script=True, clean_env=False)
         else:
-            run_shell_script("sudo nala install openssh-server -y")
+            run_shell_script("sudo nala install openssh-server -y", display_script=True, clean_env=False)
 
     if "install_shell_profile" in selected_options:
         console.print(Panel("🐚 [bold green]SHELL PROFILE[/bold green]\n[italic]Shell configuration setup[/italic]", border_style="green"))

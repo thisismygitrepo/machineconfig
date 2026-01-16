@@ -89,13 +89,13 @@ def main(installer_data: InstallerData, version: Optional[str]):
 sudo nala install poppler-utils -y || true  # For PDF preview, needed by yazi.
 """
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(script)
+        run_shell_script(script, display_script=True, clean_env=False)
     elif platform.system() == "Darwin":
         script = r"""
 brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
 """
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(script)
+        run_shell_script(script, display_script=True, clean_env=False)
     elif platform.system() == "Windows":
         install_if_missing(which="git")
         install_if_missing(which="7zip")
@@ -132,7 +132,7 @@ ya pkg add 'wylie102/duckdb'
 
 """
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(script)
+    run_shell_script(script, display_script=True, clean_env=False)
 
 
 if __name__ == "__main__":

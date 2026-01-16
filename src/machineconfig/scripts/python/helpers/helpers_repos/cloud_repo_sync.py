@@ -297,6 +297,6 @@ git commit -am "finished merging"
             case _:
                 raise ValueError(f"Unknown action: {on_conflict}")
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(script=program_content)
+        run_shell_script(script=program_content, display_script=True, clean_env=False)
     return program_content
 

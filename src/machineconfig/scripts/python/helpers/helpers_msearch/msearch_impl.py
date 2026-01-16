@@ -146,7 +146,7 @@ def _run_symantic_search(extension: str) -> None:
         script = script + f"""\nparse *.{an_ex} """
     from machineconfig.utils.code import run_shell_script
 
-    run_shell_script(script=script)
+    run_shell_script(script=script, display_script=True, clean_env=False)
 
 
 def _run_ast_search(directory: str) -> None:
@@ -177,7 +177,7 @@ def _run_file_search(no_dotfiles: bool, edit: bool) -> None:
             script = "fd | " + script
         from machineconfig.utils.code import run_shell_script
 
-        run_shell_script(script=script)
+        run_shell_script(script=script, display_script=True, clean_env=False)
         return
 
     if platform.system() == "Linux" or platform.system() == "Darwin":
@@ -226,7 +226,7 @@ if ($selected) {
 
     from machineconfig.utils.code import run_shell_script
 
-    run_shell_script(script=script)
+    run_shell_script(script=script, display_script=True, clean_env=False)
 
 
 def _run_text_search(rga: bool, directory: Optional[str]) -> None:

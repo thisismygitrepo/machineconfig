@@ -77,5 +77,5 @@ def main(
     # import subprocess
     # subprocess.run(txt, shell=True, check=True)
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(txt)
+    run_shell_script(txt, display_script=True, clean_env=False)
 

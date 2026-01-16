@@ -81,7 +81,7 @@ def get_shell_script_running_lambda_function(lmb: Callable[[], Any], uv_with: Op
     return uv_command, py_file
 def run_lambda_function(lmb: Callable[[], Any], uv_with: Optional[list[str]], uv_project_dir: Optional[str]) -> None:
     uv_command, _py_file = get_shell_script_running_lambda_function(lmb=lmb, uv_with=uv_with, uv_project_dir=uv_project_dir)
-    run_shell_script(uv_command)
+    run_shell_script(uv_command, display_script=True, clean_env=False)
 
 
 def run_python_script_in_marimo(py_script: str, uv_project_with: Optional[str]):
@@ -115,7 +115,7 @@ def run_shell_file(script_path: str, clean_env: bool):
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     return proc
-def run_shell_script(script: str, display_script: bool = True, clean_env: bool = False):
+def run_shell_script(script: str, display_script: bool, clean_env: bool):
     import platform
     if platform.system() == "Windows":
         suffix = ".ps1"
@@ -189,7 +189,7 @@ def exit_then_run_shell_script(script: str, strict: bool = False):
             console.print(f"[yellow]⚠️  OP_PROGRAM_PATH @ {str(op_program_path)} already exists.[/yellow] [cyan]Falling back to direct execution.[/cyan]")
         elif op_program_path is None:
             console.print("[cyan]ℹ️  OP_PROGRAM_PATH is not set.[/cyan] [yellow]Falling back to direct execution.[/yellow]")
-        run_shell_script(script)
+        run_shell_script(script, display_script=True, clean_env=False)
     import sys
     sys.exit(0)
 def exit_then_run_shell_file(script_path: str, strict: bool):

@@ -87,7 +87,7 @@ uv tool install --no-cache --upgrade machineconfig
         exit_then_run_shell_script(shell_script + "\n" + uv_command, strict=True)
     else:
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(shell_script)
+        run_shell_script(shell_script, display_script=True, clean_env=False)
         if copy_assets:
             copy_both_assets()
         if link_public_configs:

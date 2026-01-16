@@ -174,7 +174,8 @@ class PathExtended(type(Path()), Path):  # type: ignore # pylint: disable=E0241
             appended_name = f"""{name}_{len(self.parent.search(f"*{self.name.split('.')[0]}*"))}"""
             return self.append(name=appended_name, index=False, verbose=verbose, suffix=suffix, **kwargs)
         full_name = name or ("_" + str(timestamp()))
-        full_suffix = suffix or "".join(("bruh" + self).suffixes)
+        whatever = ("bruh" + self)
+        full_suffix = suffix or "".join(whatever.suffixes)
         subpath = self.name.split(".")[0] + full_name + full_suffix
         dest = self.parent.joinpath(subpath)
         res = PathExtended(dest)

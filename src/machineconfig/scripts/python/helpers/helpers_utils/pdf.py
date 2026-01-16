@@ -40,7 +40,7 @@ def merge_pdfs(
                                    in_global=True, import_module=False)
     from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=["pypdf"], uv_project_dir=None)
-    run_shell_script(uv_command)
+    run_shell_script(uv_command, display_script=True, clean_env=False)
 
 
 def compress_pdf(
@@ -92,5 +92,5 @@ def compress_pdf(
     )
     from machineconfig.utils.code import run_shell_script, get_uv_command_executing_python_script
     uv_command, _py_file = get_uv_command_executing_python_script(python_script=code, uv_with=["pymupdf"], uv_project_dir=None)
-    run_shell_script(uv_command)
+    run_shell_script(uv_command, display_script=True, clean_env=False)
 

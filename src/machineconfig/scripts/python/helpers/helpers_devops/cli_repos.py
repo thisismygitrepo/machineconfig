@@ -125,7 +125,7 @@ def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path
         # from machineconfig.scripts.python.helpers.helpers_repos import repo_analyzer_1
         # repo_analyzer_1.count_historical_line_edits(repo_path=repo_path)
     # from machineconfig.utils.code import run_lambda_function
-    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=8.50"])
+    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig>=8.51"])
     from machineconfig.scripts.python.helpers.helpers_repos import repo_analyzer_1
     try:
         repo_analyzer_1.count_historical_line_edits(repo_path=repo_path)
@@ -138,7 +138,7 @@ def print_python_files_by_size(repo_path: Annotated[str, typer.Argument(..., hel
     #     from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
     #     print_python_files_by_size_impl(repo_path=repo_path)
     # from machineconfig.utils.code import run_lambda_function
-    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.50"])
+    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.51"])
     from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import print_python_files_by_size_impl
     print_python_files_by_size_impl(repo_path=repo_path)
 
@@ -148,7 +148,7 @@ def analyze_repo_development(repo_path: Annotated[str, typer.Argument(..., help=
     #     from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import analyze_over_time
     #     analyze_over_time(repo_path=repo_path)
     # from machineconfig.utils.code import run_lambda_function
-    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.50"])
+    # run_lambda_function(lambda: func(repo_path=repo_path), uv_project_dir=None, uv_with=["machineconfig[plot]>=8.51"])
     from machineconfig.scripts.python.helpers.helpers_repos.repo_analyzer_2 import analyze_over_time
     analyze_over_time(repo_path=repo_path)
 
@@ -226,7 +226,7 @@ uv run --with cleanpy cleanpy .
 # find "." -type f \( -name "*.py" -o -name "*.md" -o -name "*.json" \) -not -path "*/\.*" -not -path "*/__pycache__/*" -print0 | xargs -0 sed -i 's/[[:space:]]*$//'
 """
         from machineconfig.utils.code import run_shell_script
-        run_shell_script(script)
+        run_shell_script(script, display_script=True, clean_env=False)
 
 
 def get_app():

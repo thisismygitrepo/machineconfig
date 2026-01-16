@@ -1,5 +1,6 @@
 import typer
 from typing import Annotated, Optional, Literal
+from machineconfig.profile.create_links_export import REPO_LOOSE
 
 
 def sync(
@@ -8,10 +9,7 @@ def sync(
     which: Annotated[
         Optional[str], typer.Option("--which", "-w", help="📝 Comma-separated list of items to BACKUP (from backup.toml), or 'all' for all items")
     ] = None,
-    repo: Annotated[
-        Literal["library", "l", "user", "u", "all", "a"],
-        typer.Option("--repo", "-r", help="📁 Which backup configuration to use: 'library' or 'user'"),
-    ] = "all",
+    repo: Annotated[REPO_LOOSE, typer.Option("--repo", "-r", help="📁 Which backup configuration to use: 'library' or 'user'")] = "all",
     # interactive: Annotated[bool, typer.Option("--interactive", "-i", help="🤔 Prompt the selection of which items to process")] = False,
 ):
     from machineconfig.scripts.python.helpers.helpers_devops.cli_backup_retrieve import main_backup_retrieve
@@ -37,14 +35,7 @@ def register_data(
 
     try:
         backup_path, entry_name, replaced = register_backup_entry(
-            path_local=path_local,
-            group=group,
-            entry_name=name,
-            path_cloud=path_cloud,
-            zip=zip_,
-            encrypt=encrypt,
-            rel2home=rel2home,
-            os=os,
+            path_local=path_local, group=group, entry_name=name, path_cloud=path_cloud, zip=zip_, encrypt=encrypt, rel2home=rel2home, os=os
         )
     except ValueError as exc:
         msg = typer.style("Error: ", fg=typer.colors.RED) + str(exc)

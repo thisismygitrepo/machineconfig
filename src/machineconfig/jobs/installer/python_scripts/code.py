@@ -58,7 +58,7 @@ winget install --no-upgrade --name "Microsoft Visual Studio Code" --Id "Microsof
     #     console.print(f"❌ Installation failed with exit code {e.returncode}", style="bold red")
     #     raise
     from machineconfig.utils.code import run_shell_script
-    run_shell_script(install_script,)
+    run_shell_script(install_script, display_script=True, clean_env=False)
 
 
 if __name__ == "__main__":

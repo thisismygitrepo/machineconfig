@@ -73,7 +73,7 @@ winget install --no-upgrade --name "Brave"                        --Id "Brave.Br
     from machineconfig.utils.code import print_code, run_shell_script
     try:
         print_code(code=program, lexer="shell", desc="Installation Script Preview")
-        run_shell_script(program)
+        run_shell_script(program, display_script=True, clean_env=False)
         console.print("✅ Installation completed successfully!", style="bold green")
     except subprocess.CalledProcessError as e:
         console.print(f"❌ Installation failed with exit code {e.returncode}", style="bold red")

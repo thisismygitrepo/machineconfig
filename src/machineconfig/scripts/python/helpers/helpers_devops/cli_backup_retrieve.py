@@ -181,13 +181,12 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
 
     if which is None:
         from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
-        choice = choose_from_dict_with_preview(
-            options_to_preview_mapping=bu_file, extension="toml", multi=False, preview_size_percent=75.0,
+        choices = choose_from_dict_with_preview(
+            options_to_preview_mapping=bu_file, extension="toml", multi=True, preview_size_percent=75.0,
         )
-        if choice is None:
+        if len(choices) == 0:
             console.print(Panel("❌ NO ITEMS SELECTED\n⚠️  Exiting without processing any items", title="[bold red]No Items Selected[/bold red]", border_style="red"))
             return
-        choices = [choice]
     else:
         choices = [token.strip() for token in which.split(",")] if which else []
         console.print(Panel(f"🔖 PRE-SELECTED ITEMS\n📝 Using: {', '.join(choices)}", title="[bold blue]Pre-selected Items[/bold blue]", border_style="blue"))
@@ -251,11 +250,12 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
             if group_name == "dotfiles" and system_raw == "Linux":
                 program += """\nchmod 700 ~/.ssh/*\n"""
                 console.print(Panel("🔒 SPECIAL HANDLING: SSH PERMISSIONS\n🛠️  Setting secure permissions for SSH files\n📝 Command: chmod 700 ~/.ssh/*", title="[bold blue]Special Handling: SSH Permissions[/bold blue]", border_style="blue"))
-    print_code(program, lexer="shell", desc=f"{direction} script")
+    print_code(code=program, lexer="shell", desc=f"{direction} script")
     console.print(Panel(f"✅ {direction} SCRIPT GENERATION COMPLETE\n🚀 Ready to execute the operations", title="[bold green]Script Generation Complete[/bold green]", border_style="green"))
-    import subprocess
-
-    subprocess.run(program, shell=True, check=True)
+    # import subprocess
+    # subprocess.run(program, shell=True, check=True)
+    from machineconfig.utils.code import run_shell_script
+    run_shell_script(program, display_script=True, clean_env=False)
 
 
 if __name__ == "__main__":

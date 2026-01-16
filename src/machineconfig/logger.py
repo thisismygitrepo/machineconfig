@@ -46,4 +46,4 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
 
 
 # Convenience alias for simple imports: `from machineconfig.logger import logger`
-logger: logging.Logger = get_logger()
+# logger: logging.Logger = get_logger()
