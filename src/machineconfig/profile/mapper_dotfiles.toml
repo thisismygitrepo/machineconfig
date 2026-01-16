@@ -207,9 +207,9 @@ config = {original = '~/mprocs.yaml', self_managed = 'CONFIG_ROOT/settings/mproc
 
 
 [zellij_linux]
-config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/zellij' , os = 'linux,darwin'}
-#themes = { original = '~/.config/zellij/themes', self_managed = 'CONFIG_ROOT/settings/zellij/themes' }
-#layouts = { original = '~/.config/zellij/layouts', self_managed = 'CONFIG_ROOT/settings/zellij/layouts' }
+config = { original = '~/.config/zellij', self_managed = 'CONFIG_ROOT/settings/zellij', os = 'linux,darwin'}
+themes = { original = '~/.config/zellij/themes', self_managed = 'CONFIG_ROOT/settings/zellij/themes', os = 'linux,darwin' }
+layouts = { original = '~/.config/zellij/layouts', self_managed = 'CONFIG_ROOT/settings/zellij/layouts', os = 'linux,darwin' }
 
 
 # ===================== IDEs ============================

@@ -1,23 +1,29 @@
-import re
+
 import subprocess
 from pathlib import Path
+from machineconfig.settings.zellij import layouts
 
-
-_ANSI_ESCAPE_RE = re.compile(
-    r"(?:\x1B|\u001B|\033)\[[0-?]*[ -/]*[@-~]|\[[0-9;?]+[ -/]*[@-~]|\[m"
-)
-
+root = layouts.__path__[0]
+STANDARD = Path(root).joinpath("st2.kdl")
+# STANDARD = "st2.kdl"
+# a = 1 + "sd"
 
 def strip_ansi_codes(text: str) -> str:
+    import re
+    _ANSI_ESCAPE_RE = re.compile(
+        r"(?:\x1B|\u001B|\033)\[[0-?]*[ -/]*[@-~]|\[[0-9;?]+[ -/]*[@-~]|\[m"
+    )
     return _ANSI_ESCAPE_RE.sub("", text)
 
 
 def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -> tuple[str, str | None]:
     """Choose a Zellij session. Returns tuple of (action, script_to_run) where action is 'run_script', 'exit', or 'error'."""
+    # from machineoncif
+
     if name is not None:
         return ("run_script", f"zellij attach {name}")
     if new_session:
-        cmd = "zellij --layout st2"
+        cmd = f"zellij --layout {STANDARD}"
         if kill_all:
             cmd = f"zellij kill-all-sessions --yes\n{cmd}"
         return ("run_script", cmd)
@@ -32,7 +38,7 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
     if "current" in sessions:
         return ("error", "Already in a Zellij session, avoiding nesting and exiting.")
     if len(sessions) == 0:
-        return ("run_script", "zellij --layout st2")
+        return ("run_script", f"zellij --layout {STANDARD}")
     if len(sessions) == 1:
         sn = strip_ansi_codes(sessions[0])
         session_name = sn.split(" [Created")[0]
@@ -46,12 +52,12 @@ def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -
     except Exception as e:
         return ("error", f"Error choosing Zellij session: {e}")
     if session_name == NEW_SESSION_LABEL:
-        cmd = "zellij --layout st2"
+        cmd = f"zellij --layout {STANDARD}"
         if kill_all:
             cmd = f"zellij kill-all-sessions --yes\n{cmd}"
         return ("run_script", cmd)
     if session_name == KILL_ALL_AND_NEW_LABEL:
-        return ("run_script", "zellij kill-all-sessions --yes\nzellij --layout st2")
+        return ("run_script", f"zellij kill-all-sessions --yes\nzellij --layout {STANDARD}")
     session_name_clean = strip_ansi_codes(session_name)
     session_name_clean = session_name_clean.split(" [Created")[0]
     return ("run_script", f"zellij attach {session_name_clean}")
