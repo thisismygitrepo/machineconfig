@@ -50,6 +50,10 @@ def start_wt(layouts_names: Annotated[Optional[str], typer.Option(..., "--layout
             copyfile(example_path, current_pwd / "example_layout.json")
             typer.echo(f"Example layout file dumped to: {current_pwd / "example_layout.json"}")
             raise typer.Exit()
+    import platform
+    if platform.system().lower() != "windows":
+        typer.echo("Error: Windows Terminal layouts can only be started on Windows systems.", err=True)
+        raise typer.Exit(code=1)
     from machineconfig.scripts.python.helpers.helpers_terminal.terminal_impl import start_wt as impl
     if layouts_names is None:
         layouts_names_resolved = None
