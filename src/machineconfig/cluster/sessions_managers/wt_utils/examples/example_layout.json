@@ -6,9 +6,9 @@
             "layoutName": "g1",
             "layoutTabs": [
                 {
-                    "command": "ssh p51sipe",
+                    "command": "yazi",
                     "startDir": "$HOME",
-                    "tabName": "p51s",
+                    "tabName": "fileManager",
                     "tabWeight": 0
                 },
                 {
