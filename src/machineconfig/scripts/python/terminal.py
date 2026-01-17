@@ -1,5 +1,6 @@
+
 import typer
-from typing import Annotated
+from typing import Annotated, Optional
 
 
 def choose_zellij_session(
@@ -29,12 +30,34 @@ def get_session_tabs() -> list[tuple[str, str]]:
     return result
 
 
-def start_wt(layout_name: Annotated[str, typer.Argument(help="Layout name to start.")]) -> None:
+def start_wt(layouts_names: Annotated[Optional[str], typer.Option(..., "--layout", "-l", help="Layout names (comma separated) to start.")] = None,
+             layout_file: Annotated[Optional[str], typer.Option(..., "--layout-file", "-f", help="Path to the layouts file.")] = None,
+             dump_example: Annotated[bool, typer.Option("--dump-example", "-d", help="Dump an example layout file to the current directory.", show_default=True)] = False
+             ) -> None:
     """Start a Windows Terminal layout by name."""
+    if dump_example:
+        import machineconfig.cluster.sessions_managers.wt_utils.examples as module
+        from pathlib import Path
+        raw_path = module.__file__
+        if raw_path is None:
+            typer.echo("Error: Could not find the example layout file.", err=True)
+            raise typer.Exit(code=1)
+        else:
+            example_path = Path(raw_path).parent / "example_layout.json"
+            current_pwd = Path.cwd()
+            # copy the example file to the current directory with name example_layout.json
+            from shutil import copyfile
+            copyfile(example_path, current_pwd / "example_layout.json")
+            typer.echo(f"Example layout file dumped to: {current_pwd / "example_layout.json"}")
+            raise typer.Exit()
     from machineconfig.scripts.python.helpers.helpers_terminal.terminal_impl import start_wt as impl
-    status, message = impl(layout_name=layout_name)
+    if layouts_names is None:
+        layouts_names_resolved = None
+    else:
+        layouts_names_resolved = [name.strip() for name in layouts_names.split(",") if name.strip()]
+    status, message = impl(layouts_names=layouts_names_resolved, layout_file_str=layout_file)
     if status == "error":
-        typer.echo(message)
+        typer.echo(message= message)
         raise typer.Exit(code=1)
     # cmd = f'powershell -ExecutionPolicy Bypass -File "./{layout_name}_layout.ps1"'
     # from machineconfig.utils.code import exit_then_run_shell_script
