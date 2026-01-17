@@ -25,7 +25,11 @@ def configure_shell_profile(which: Annotated[Literal["default", "d", "nushell", 
 def pwsh_theme():
     """🔗 Select powershell prompt theme."""
     import machineconfig.scripts.python.helpers.helpers_devops.themes as themes
-    file = Path(themes.__file__).parent / "choose_pwsh_theme.ps1"
+    file_path = themes.__file__
+    if file_path is None:
+        typer.echo("❌ ERROR: Could not locate themes module file.", err=True)
+        raise typer.Exit(code=1)
+    file = Path(file_path).parent / "choose_pwsh_theme.ps1"
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])
 

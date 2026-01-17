@@ -3,6 +3,7 @@ import machineconfig.scripts.python.helpers.helpers_devops.cli_share_file
 import machineconfig.scripts.python.helpers.helpers_devops.cli_share_terminal as cli_share_terminal
 import machineconfig.scripts.python.helpers.helpers_devops.cli_share_server as cli_share_server
 import machineconfig.scripts.python.helpers.helpers_devops.cli_ssh as cli_ssh
+import machineconfig.scripts.python.helpers.helpers_devops.cli_share_temp as cli_share_temp
 import typer
 from typing import Annotated
 
@@ -173,6 +174,9 @@ def get_app():
     nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
     nw_apps.command(name="rx", no_args_is_help=True, hidden=True, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
 
+    nw_apps.command(name="share-temp-file", help="🌡️ [T] Share a file via temp.sh")(cli_share_temp.upload_file)
+    nw_apps.command(name="T", help="Share a file via temp.sh", hidden=True)(cli_share_temp.upload_file)
+
     nw_apps.add_typer(cli_ssh.get_app(), name="ssh", help="🔐 [S] SSH subcommands")
     nw_apps.add_typer(cli_ssh.get_app(), name="S", help="SSH subcommands", hidden=True)
 
@@ -193,7 +197,7 @@ def get_app():
     nw_apps.command(name="l", no_args_is_help=False, help="Link WSL home and Windows home directories.", hidden=True)(link_wsl_and_windows_home)
 
 
-    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️  [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
+    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️ [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
     nw_apps.command(name="r", help="Reset Cloudflare tunnel service", hidden=True)(reset_cloudflare_tunnel)
     nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫 [p] Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
     nw_apps.command(name="p", help="Add IP exclusion to WARP", hidden=True)(add_ip_exclusion_to_warp)
