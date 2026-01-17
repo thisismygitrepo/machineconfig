@@ -26,9 +26,9 @@ def pwsh_theme():
     """🔗 Select powershell prompt theme."""
     import machineconfig.scripts.python.helpers.helpers_devops.themes as themes
     file_path = themes.__file__
-    if file_path is None:
-        typer.echo("❌ ERROR: Could not locate themes module file.", err=True)
-        raise typer.Exit(code=1)
+    # if file_path is None:
+    #     typer.echo("❌ ERROR: Could not locate themes module file.", err=True)
+    #     raise typer.Exit(code=1)
     file = Path(file_path).parent / "choose_pwsh_theme.ps1"
     import subprocess
     subprocess.run(["pwsh", "-File", str(file)])
@@ -75,6 +75,29 @@ def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both"
     typer.echo(msg)
 
 
+def list_devices() -> None:
+    """🔗 List available mountable devices."""
+    import machineconfig.scripts.python.helpers.helpers_devops.cli_config_mount as mount_module
+    mount_module.list_devices()
+
+
+def mount_device(
+    device_query: Annotated[str | None, typer.Option("--device", "-d", help="Device query (path, key, or label).")] = None,
+    mount_point: Annotated[str | None, typer.Option("--mount-point", "-p", help="Mount point (use '-' for default on macOS).")] = None,
+    interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Pick device and mount point interactively.")] = False,
+) -> None:
+    """🔗 Mount a device to a mount point."""
+    import machineconfig.scripts.python.helpers.helpers_devops.cli_config_mount as mount_module
+    if interactive:
+        mount_module.mount_interactive()
+        return
+    if device_query is None or mount_point is None:
+        msg = typer.style("Error: ", fg=typer.colors.RED) + "--device and --mount-point are required unless --interactive is set"
+        typer.echo(msg)
+        raise typer.Exit(2)
+    mount_module.mount_device(device_query=device_query, mount_point=mount_point)
+
+
 def get_app():
     config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     config_apps.command("sync", no_args_is_help=True, help="🔗 [s] Sync dotfiles.")(create_links_export.main_from_parser)
@@ -97,6 +120,11 @@ def get_app():
 
     config_apps.command("copy-assets", no_args_is_help=True, help="🔗 [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
+
+    config_apps.command("list-devices", no_args_is_help=False, help="🔗 [l] List available devices for mounting.")(list_devices)
+    config_apps.command("l", no_args_is_help=False, help="List available devices for mounting.", hidden=True)(list_devices)
+    config_apps.command("mount", no_args_is_help=True, help="🔗 [m] Mount a device to a mount point.")(mount_device)
+    config_apps.command("m", no_args_is_help=True, help="Mount a device to a mount point.", hidden=True)(mount_device)
 
 
     return config_apps

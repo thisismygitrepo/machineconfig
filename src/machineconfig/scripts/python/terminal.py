@@ -39,17 +39,17 @@ def start_wt(layouts_names: Annotated[Optional[str], typer.Option(..., "--layout
         import machineconfig.cluster.sessions_managers.wt_utils.examples as module
         from pathlib import Path
         raw_path = module.__file__
-        if raw_path is None:
-            typer.echo("Error: Could not find the example layout file.", err=True)
-            raise typer.Exit(code=1)
-        else:
-            example_path = Path(raw_path).parent / "example_layout.json"
-            current_pwd = Path.cwd()
-            # copy the example file to the current directory with name example_layout.json
-            from shutil import copyfile
-            copyfile(example_path, current_pwd / "example_layout.json")
-            typer.echo(f"Example layout file dumped to: {current_pwd / "example_layout.json"}")
-            raise typer.Exit()
+        # if raw_path is None:
+        #     typer.echo("Error: Could not find the example layout file.", err=True)
+        #     raise typer.Exit(code=1)
+        # else:
+        example_path = Path(raw_path).parent / "example_layout.json"
+        current_pwd = Path.cwd()
+        # copy the example file to the current directory with name example_layout.json
+        from shutil import copyfile
+        copyfile(example_path, current_pwd / "example_layout.json")
+        typer.echo(f"Example layout file dumped to: {current_pwd / "example_layout.json"}")
+        raise typer.Exit()
     import platform
     if platform.system().lower() != "windows":
         typer.echo("Error: Windows Terminal layouts can only be started on Windows systems.", err=True)
