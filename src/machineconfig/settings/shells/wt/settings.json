@@ -6,8 +6,7 @@
     "copyOnSelect": true,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "focusFollowMouse": true,
-    "keybindings": 
-    [
+    "keybindings": [
         {
             "id": "Terminal.FindText",
             "keys": "ctrl+shift+f"
@@ -38,28 +37,26 @@
         }
     ],
     "launchMode": "fullscreen",
-    "newTabMenu": 
-    [
+    "newTabMenu": [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles": 
-    {
-        "defaults": 
-        {
+    "profiles": {
+        "defaults": {
             "colorScheme": "Campbell (modified)",
             "padding": "0",
-            "useAcrylic": false
+            "useAcrylic": false,
+            "font": {
+                "face": "CaskaydiaCove Nerd Font"
+            }
         },
-        "list": 
-        [
+        "list": [
             {
                 "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
                 "cursorColor": "#D4D8E1",
                 "cursorShape": "filledBox",
-                "font": 
-                {
+                "font": {
                     "face": "CaskaydiaCove Nerd Font"
                 },
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
@@ -71,8 +68,7 @@
             },
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-                "font": 
-                {
+                "font": {
                     "face": "CaskaydiaCove Nerd Font"
                 },
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
@@ -93,8 +89,7 @@
             },
             {
                 "commandline": "nu.exe",
-                "font": 
-                {
+                "font": {
                     "face": "CaskaydiaCove Nerd Font"
                 },
                 "guid": "{4b9d9cef-cb7d-4a8c-8b08-0de52621c3ff}",
@@ -157,8 +152,7 @@
             }
         ]
     },
-    "schemes": 
-    [
+    "schemes": [
         {
             "background": "#000000",
             "black": "#000000",

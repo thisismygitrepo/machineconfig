@@ -7,6 +7,10 @@ def choose_zellij_session(
         new_session: Annotated[bool, typer.Option("--new-session", "-n", help="Create a new Zellij session instead of attaching to an existing one.", show_default=True)] = False,
         kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing Zellij sessions before creating a new one.", show_default=True)] = False) -> None:
     """Choose a Zellij session to attach to."""
+    import platform
+    if platform.system().lower() == "windows":
+        typer.echo("Error: Zellij is not supported on Windows.", err=True, color=True)
+        raise typer.Exit()
     from machineconfig.scripts.python.helpers.helpers_terminal.terminal_impl import choose_zellij_session as impl
     action, payload = impl(name=name, new_session=new_session, kill_all=kill_all)
     if action == "error":
@@ -14,7 +18,7 @@ def choose_zellij_session(
         raise typer.Exit()
     if action == "run_script" and payload:
         from machineconfig.utils.code import exit_then_run_shell_script
-        exit_then_run_shell_script(payload, strict=True)
+        exit_then_run_shell_script(script= payload, strict=True)
 
 
 def get_session_tabs() -> list[tuple[str, str]]:

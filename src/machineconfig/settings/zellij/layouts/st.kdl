@@ -7,7 +7,6 @@ layout {
         }
         children
     }
-
     tab name="📂" focus=false {
         pane name="yPane" {
             command "y"

@@ -1,3 +1,4 @@
+
 import typer
 from typing import Annotated, Optional, Literal
 from machineconfig.profile.create_links_export import REPO_LOOSE
@@ -18,6 +19,9 @@ def sync(
             direction_resolved = "BACKUP"
         case "down" | "d":
             direction_resolved = "RETRIEVE"
+        case _:
+            typer.echo("Error: Invalid direction. Use 'up' or 'down'.")
+            raise typer.Exit(code=1)
     main_backup_retrieve(direction=direction_resolved, which=which, cloud=cloud, repo=repo)
 
 
