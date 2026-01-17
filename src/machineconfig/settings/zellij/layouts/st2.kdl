@@ -43,11 +43,11 @@ layout {
             }
             pane name="bottomMiddle" size="70%" {
                 pane name="bottomMiddle1" size="30%" {
-                    command "y"
+                    command "yazi"
                 }
             pane name="bottomMiddle2" size="70%" {
                     command "timeout"
-                    args "3s" "cmatrix"
+                    args "3s" "rusty-rain"
                     close_on_exit true
                 }
             }
