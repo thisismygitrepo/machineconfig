@@ -24,7 +24,7 @@ def run(
 
     sleep_inbetween: Annotated[float, typer.Option(..., "--sleep-inbetween", "-si", help="Sleep time in seconds between launching layouts")] = 1.0,
     monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion")] = False,
-    parallel: Annotated[bool, typer.Option(..., "--parallel", "-p", help="Launch multiple layouts in parallel")] = False,
+    sequential: Annotated[bool, typer.Option(..., "--sequential", "-s", help="Launch layouts sequentially")] = False,
     kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if monitor flag is set)")] = False,
     subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-sh", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
     max_tabs: Annotated[int, typer.Option(..., "--max-tabs", "-mt", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
@@ -32,7 +32,7 @@ def run(
     backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "auto",
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
-    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import run_layouts, start_wt, find_layout_file
+    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import run_layouts, find_layout_file, select_layout
 
     from pathlib import Path
     if layouts_file is not None:
@@ -47,6 +47,9 @@ def run(
     if choose is None: layouts_names_resolved: list[str] = []
     else: layouts_names_resolved = [name.strip() for name in choose.split(",") if name.strip()]
 
+
+    layouts_selected = select_layout(layouts_json_file=str(layouts_file_resolved), selected_layouts_names=layouts_names_resolved,
+                    select_interactively=choose_interactively, subsitute_home=subsitute_home)
 
     import platform
     backend_resolved: Literal["zellij", "windows-terminal"]
@@ -69,18 +72,21 @@ def run(
         case _:
             typer.echo(f"Error: Unsupported backend '{backend}'.", err=True)
             raise typer.Exit(code=1)
-    match backend_resolved:
-        case "windows-terminal":
-            status, message = start_wt(layouts_names=layouts_names_resolved, layouts_file=layouts_file_resolved)
-            if status == "error":
-                typer.echo(message= message)
-                raise typer.Exit(code=1)
-        case "zellij":
-            try:
-                run_layouts(layout_path=str(layouts_file_resolved), max_tabs=max_tabs, max_layouts=max_layouts, sleep_inbetween=sleep_inbetween, monitor=monitor, parallel=parallel, kill_upon_completion=kill_upon_completion, choose=layouts_names_resolved, choose_interactively=choose_interactively, subsitute_home=subsitute_home)
-            except ValueError as e:
-                typer.echo(str(e))
-                raise typer.Exit(1) from e
+
+    if not sequential and len(layouts_selected) > max_layouts:
+        raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
+    for a_layout in layouts_selected:
+        if len(a_layout["layoutTabs"]) > max_tabs:
+            raise ValueError(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
+
+    try:
+        run_layouts(
+        sleep_inbetween=sleep_inbetween, monitor=monitor, sequential=sequential, kill_upon_completion=kill_upon_completion,
+        layouts_selected=layouts_selected,
+        backend=backend_resolved)
+    except ValueError as e:
+        typer.echo(str(e))
+        raise typer.Exit(1) from e
 
 
 def attach_to_session(
