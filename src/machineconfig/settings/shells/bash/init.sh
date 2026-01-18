@@ -56,7 +56,6 @@ alias fx='wrap_in_shell_script ftpx'
 alias f='wrap_in_shell_script fire'
 alias r='wrap_in_shell_script croshell'
 alias u='wrap_in_shell_script utils'
-alias t='wrap_in_shell_script terminal'
 alias ms='wrap_in_shell_script msearch'
 alias x='wrap_in_shell_script explore'
 

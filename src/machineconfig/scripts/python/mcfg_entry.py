@@ -100,11 +100,6 @@ def utils(ctx: typer.Context) -> None:
     get_app()(ctx.args, standalone_mode=not ctx.args)
 
 
-def terminal(ctx: typer.Context) -> None:
-    """[t] Terminal management commands."""
-    from machineconfig.scripts.python.terminal import get_app
-    get_app()(ctx.args, standalone_mode=not ctx.args)
-
 
 def get_app() -> typer.Typer:
     app = typer.Typer(help="MachineConfig CLI - Manage your machine configurations and workflows", no_args_is_help=True, add_help_option=True, add_completion=False)
@@ -121,8 +116,6 @@ def get_app() -> typer.Typer:
     app.command(name="a", hidden=True, context_settings=ctx_settings)(agents)
     app.command(name="utils", help="[u] Utility commands", context_settings=ctx_settings)(utils)
     app.command(name="u", hidden=True, context_settings=ctx_settings)(utils)
-    app.command(name="terminal", help="[t] Terminal management commands", context_settings=ctx_settings)(terminal)
-    app.command(name="t", hidden=True, context_settings=ctx_settings)(terminal)
 
     app.command(name="fire", help="[f] Fire and manage jobs", no_args_is_help=False, context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
     app.command(name="f", hidden=True, no_args_is_help=False, context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)

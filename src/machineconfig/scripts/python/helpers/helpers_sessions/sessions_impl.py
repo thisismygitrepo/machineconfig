@@ -1,58 +1,28 @@
 """Pure Python implementations for sessions commands - no typer dependencies."""
 
-from typing import Optional, Literal
+# from typing import Optional
 from pathlib import Path
 
 
-def balance_load(
-    layout_path: str,
-    max_thresh: int,
-    thresh_type: Literal["number", "n", "weight", "w"],
-    breaking_method: Literal["moreLayouts", "ml", "combineTabs", "ct"],
-    output_path: Optional[str],
-) -> None:
-    """Adjust layout file to limit max tabs per layout, etc."""
-    thresh_type_resolved: dict[str, Literal["number", "weight"]] = {"number": "number", "n": "number", "weight": "weight", "w": "weight"}
-    breaking_method_resolved: dict[str, Literal["moreLayouts", "combineTabs"]] = {"moreLayouts": "moreLayouts", "ml": "moreLayouts", "combineTabs": "combineTabs", "ct": "combineTabs"}
-
-    layout_path_obj = Path(layout_path).expanduser().absolute()
-
-    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
-    import json
-    layoutfile: LayoutsFile = json.loads(layout_path_obj.read_text())
-    layout_configs = layoutfile["layouts"]
-    from machineconfig.cluster.sessions_managers.utils.load_balancer import limit_tab_num
-    new_layouts = limit_tab_num(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=thresh_type_resolved[thresh_type], breaking_method=breaking_method_resolved[breaking_method])
-    layoutfile["layouts"] = new_layouts
-    target_file = Path(output_path) if output_path is not None else layout_path_obj.parent / f"{layout_path_obj.stem}_adjusted_{max_thresh}_{thresh_type}_{breaking_method}.json"
-    target_file.parent.mkdir(parents=True, exist_ok=True)
-    target_file.write_text(data=json.dumps(layoutfile, indent=4), encoding="utf-8")
-    print(f"Adjusted layout saved to {target_file}")
-
-
-def select_layout(layouts_json_file: str, selected_layouts_names: Optional[list[str]], select_interactively: bool, subsitute_home: bool) -> list["LayoutConfig"]:  # type: ignore[name-defined]
+def select_layout(layouts_json_file: str, selected_layouts_names: list[str], select_interactively: bool, subsitute_home: bool) -> list["LayoutConfig"]:
     """Select layout(s) from a layout file."""
     import json
-    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile, LayoutConfig
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
     json_str = Path(layouts_json_file).read_text(encoding="utf-8")
     if subsitute_home:
         json_str = json_str.replace("~", str(Path.home())).replace("$HOME", str(Path.home()))
         json_str = json_str.replace("""Command": "f """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg fire """)
         json_str = json_str.replace("""Command": "s """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg sessions """)
-
     try:
-        # src/machineconfig/utils/io.py
         layout_file: LayoutsFile = json.loads(json_str)
     except Exception:
         print(f"Failed to parse the json file {layouts_json_file}, trying to clean the comments and giving it another shot ... ")
         from machineconfig.utils.io import remove_c_style_comments
         json_str = remove_c_style_comments(json_str)
-        # print(json_str)
         layout_file: LayoutsFile = json.loads(json_str)
-
     if len(layout_file["layouts"]) == 0:
         raise ValueError(f"No layouts found in {layouts_json_file}")
-    if selected_layouts_names is None:
+    if len(selected_layouts_names) == 0:
         if not select_interactively:
             return layout_file["layouts"]
         options = [layout["layoutName"] for layout in layout_file["layouts"]]
@@ -69,7 +39,30 @@ def select_layout(layouts_json_file: str, selected_layouts_names: Optional[list[
             raise ValueError(f"Layout '{name}' not found. Available layouts: {available_layouts}")
         layouts_chosen.append(layout_chosen)
     return layouts_chosen
+def start_wt(layouts_names: list[str], layouts_file: Path) -> tuple[str, str | None]:
+    """Start a Windows Terminal layout by name. Returns tuple of (status, message) where status is 'success' or 'error'."""
+    import json
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
+    from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
+    layouts_data: LayoutsFile = json.loads(layouts_file.read_text(encoding="utf-8"))
+    if len(layouts_names) == 0:
+        from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
+        layouts_names = choose_from_dict_with_preview(
+            {layout["layoutName"]: json.dumps(layout, indent=4) for layout in layouts_data["layouts"]},
+            extension="json",
+            multi=True,
+            preview_size_percent=40,
+        )
+        if len(layouts_names) == 0:
+            return ("error", "❌ No layout selected.")
 
+    for a_layout_name in layouts_names:
+        chosen_layout = next((a_layout for a_layout in layouts_data["layouts"] if a_layout["layoutName"] == a_layout_name), None)
+        if not chosen_layout:
+            available_layouts = [a_layout["layoutName"] for a_layout in layouts_data["layouts"]]
+            return ("error", f"❌ Layout '{a_layout_name}' not found in layouts file.\nAvailable layouts: {', '.join(available_layouts)}")
+        run_wt_layout(layout_config=chosen_layout)
+    return ("success", None)
 
 def find_layout_file(layout_path: str) -> str:
     """Find layout file from a path."""
@@ -90,23 +83,19 @@ def find_layout_file(layout_path: str) -> str:
 
 
 def run_layouts(
-    layout_path: Optional[str],
+    layout_path: str,
     max_tabs: int,
     max_layouts: int,
     sleep_inbetween: float,
     monitor: bool,
     parallel: bool,
     kill_upon_completion: bool,
-    choose: Optional[str],
+    choose: list[str],
     choose_interactively: bool,
     subsitute_home: bool,
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
-    if layout_path is None:
-        raise ValueError("layout_path is required")
-
-    layout_path_resolved = find_layout_file(layout_path=layout_path)
-    layouts_selected = select_layout(layouts_json_file=layout_path_resolved, selected_layouts_names=choose.split(",") if choose else None, select_interactively=choose_interactively, subsitute_home=subsitute_home)
+    layouts_selected = select_layout(layouts_json_file=layout_path, selected_layouts_names=choose, select_interactively=choose_interactively, subsitute_home=subsitute_home)
 
     if parallel and len(layouts_selected) > max_layouts:
         raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
@@ -150,37 +139,7 @@ def run_layouts(
         print(f"❌ Unsupported platform: {platform.system()}")
 
 
-def create_template(name: Optional[str], num_tabs: int) -> None:
-    """Create a layout template file."""
-    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile, TabConfig, LayoutConfig
-    tabs: list[TabConfig] = []
-    for i in range(1, num_tabs + 1):
-        tab: TabConfig = {
-            "tabName": f"Tab{i}",
-            "startDir": "~/" + str(Path.cwd().relative_to(Path.home())),
-            "command": "bash",
-        }
-        tabs.append(tab)
-    layouts: list[LayoutConfig] = [
-        {
-            "layoutName": f"{Path.cwd().name}Layout",
-            "layoutTabs": tabs,
-        }
-    ]
-    file: LayoutsFile = {
-        "$schema": "https://bit.ly/cfglayout",  # type: ignore
-        "version": "0.1",
-        "layouts": layouts,
-    }
-    import json
-    json_string = json.dumps(file, indent=4)
-    if name is None:
-        layout_path = Path.cwd() / "layout.json"
-    else:
-        layout_path = Path.cwd() / (name.replace(".json", "") + ".json")
-    layout_path.parent.mkdir(parents=True, exist_ok=True)
-    if layout_path.exists():
-        print(f"❌ File {layout_path} already exists. Aborting to avoid overwriting.")
-        return
-    layout_path.write_text(json_string, encoding="utf-8")
-    print(f"✅ Created layout template at {layout_path}")
+
+
+if __name__ == "__main__":
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
