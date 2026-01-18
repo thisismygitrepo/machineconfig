@@ -1,5 +1,4 @@
 #!/usr/bin/env pwsh
-[CmdletBinding()]
 param(
     [Parameter(ValueFromRemainingArguments = $true)]
     [string[]]$QueryTokens
