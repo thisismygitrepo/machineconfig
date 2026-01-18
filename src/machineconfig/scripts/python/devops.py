@@ -60,7 +60,7 @@ def get_app() -> typer.Typer:
     cli_app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=True, add_completion=False)
     ctx_settings: dict[str, object] = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True, "help_option_names": []}
 
-    cli_app.command("install", no_args_is_help=True, help=install.__doc__, short_help="🛠️ [i] Install essential packages")(install)
+    cli_app.command("install", no_args_is_help=True, help=install.__doc__, short_help="🛠️  [i] Install essential packages")(install)
     cli_app.command("i", no_args_is_help=True, help=install.__doc__, hidden=True)(install)
 
     cli_app.command("repos", help="📁 [r] Manage development repositories", context_settings=ctx_settings)(repos)

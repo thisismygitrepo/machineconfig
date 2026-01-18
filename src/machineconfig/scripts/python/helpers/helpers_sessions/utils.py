@@ -32,11 +32,16 @@ def create_template(name: Optional[str], num_tabs: int) -> None:
     """Create a layout template file."""
     from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile, TabConfig, LayoutConfig
     tabs: list[TabConfig] = []
+    import platform
+    if platform.system().lower() == "windows":
+        default_command = "powershell"
+    else:
+        default_command = "bash"
     for i in range(1, num_tabs + 1):
         tab: TabConfig = {
             "tabName": f"Tab{i}",
             "startDir": "~/" + str(Path.cwd().relative_to(Path.home())),
-            "command": "bash",
+            "command": default_command,
         }
         tabs.append(tab)
     layouts: list[LayoutConfig] = [

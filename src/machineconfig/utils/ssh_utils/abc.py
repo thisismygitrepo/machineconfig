@@ -1,5 +1,5 @@
 
 
-MACHINECONFIG_VERSION = "machineconfig>=8.54"
+MACHINECONFIG_VERSION = "machineconfig>=8.55"
 DEFAULT_PICKLE_SUBDIR = "tmp_results/tmp_scripts/ssh"
 
