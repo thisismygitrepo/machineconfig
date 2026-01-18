@@ -56,7 +56,6 @@ alias fx='wrap_in_shell_script ftpx'
 alias f='wrap_in_shell_script fire'
 alias r='wrap_in_shell_script croshell'
 alias u='wrap_in_shell_script utils'
-alias t='wrap_in_shell_script terminal'
 alias ms='wrap_in_shell_script msearch'
 alias x='wrap_in_shell_script explore'
 
@@ -72,12 +71,6 @@ alias x='wrap_in_shell_script explore'
 #   y=$(eval "$x" 2>&1)
 #   gh copilot explain "Input command is: $x The output is this: $y"
 # }
-
-# 📦 Node Version Manager
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
 
 # https://github.com/atuinsh/atuin
 # eval "$(atuin init bash)"

@@ -177,21 +177,47 @@ def readme():
     console.print(md)
 
 
+def buid_docker(
+    variant: Annotated[Literal["slim", "ai"], typer.Argument(..., help="Variant to build: 'slim' or 'ai'")] = "slim",
+) -> None:
+    """🧱 `buid_docker` — wrapper for `jobs/shell/docker_build_and_publish.sh`"""
+    from pathlib import Path
+    import machineconfig
+    script_path = Path(machineconfig.__file__).resolve().parent.parent.parent.joinpath("jobs", "shell", "docker_build_and_publish.sh")
+    if not script_path.exists():
+        typer.echo(f"❌ Script not found: {str(script_path)}")
+        raise typer.Exit(code=1)
+
+    # shell_cmd = f'VARIANT="{variant}" && bash "{str(script_path)}"'\
+    from machineconfig.utils.source_of_truth import REPO_ROOT
+    shell_cmd = f"""
+export VARIANT="{variant}"
+cd "{str(REPO_ROOT)}"
+bash "{str(script_path)}"
+"""
+    # Use exit_then_run_shell_script for interactive runs (keeps tty), otherwise run shell script non-interactively
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(shell_cmd, strict=True)
+
+
 def get_app():
     cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
-    cli_app.command("update",      no_args_is_help=False, help="🔄 [u] UPDATE machineconfig")(update)
-    cli_app.command("u",           no_args_is_help=False, hidden=True)(update)
-    cli_app.command("interactive", no_args_is_help=False, help="🤖 [ia] INTERACTIVE configuration of machine.")(interactive)
-    cli_app.command("ia",           no_args_is_help=False, help="INTERACTIVE configuration of machine.", hidden=True)(interactive)
-    cli_app.command(name="init",         no_args_is_help=False, help="🦐 [t] Define and manage configurations")(init)
-    cli_app.command(name="t",            no_args_is_help=False, hidden=True)(init)
-    cli_app.command("status",      no_args_is_help=False, help="📊 [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
-    cli_app.command("s",           no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
-    cli_app.command("install",     no_args_is_help=False, help="📋 [i] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
-    cli_app.command("i",           no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
-    cli_app.command("navigate", no_args_is_help=False, help="📚 [n] NAVIGATE command structure with TUI")(navigate)
-    cli_app.command("n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
+    cli_app.command(name= "update",      no_args_is_help=False, help="🔄 [u] UPDATE machineconfig")(update)
+    cli_app.command(name= "u",           no_args_is_help=False, hidden=True)(update)
+    cli_app.command(name= "interactive", no_args_is_help=False, help="🤖 [ia] INTERACTIVE configuration of machine.")(interactive)
+    cli_app.command(name= "ia",           no_args_is_help=False, help="INTERACTIVE configuration of machine.", hidden=True)(interactive)
+    cli_app.command(name= "init",         no_args_is_help=False, help="🦐 [t] Define and manage configurations")(init)
+    cli_app.command(name= "t",            no_args_is_help=False, hidden=True)(init)
+    cli_app.command(name= "status",      no_args_is_help=False, help="📊 [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
+    cli_app.command(name= "s",           no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
+    cli_app.command(name= "install",     no_args_is_help=False, help="📋 [i] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
+    cli_app.command(name= "i",           no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
+    cli_app.command(name= "navigate", no_args_is_help=False, help="📚 [n] NAVIGATE command structure with TUI")(navigate)
+    cli_app.command(name= "n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
 
-    cli_app.command("readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
-    cli_app.command("r", no_args_is_help=False, hidden=True)(readme)
+    cli_app.command(name= "buid_docker", no_args_is_help=False, help="🧱 [d] Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
+    cli_app.command(name= "d", no_args_is_help=False, help="Build docker images (wraps jobs/shell/docker_build_and_publish.sh)", hidden=True)(buid_docker)
+
+    cli_app.command(name= "readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
+    cli_app.command(name= "r", no_args_is_help=False, hidden=True)(readme)
     return cli_app

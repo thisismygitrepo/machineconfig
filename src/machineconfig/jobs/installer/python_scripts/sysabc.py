@@ -56,52 +56,31 @@ echo "🔄 Updating Homebrew..."
 brew update || true
 
 curl -fsSL https://bun.com/install | bash
-
-# Note: git and nano are pre-installed on macOS, but we install via Homebrew to ensure latest versions
-# brew install git || true
-# brew install nano || true
-# brew install curl || true
-# nvm install node || true
-# brew install make
-# brew install ffmpeg
-# brew install openssl
-
-
+# brew install openssl ffmpeg make curl nano git
 echo "✅ Essential tools installation complete."
 """
 
 bash = r"""
+
 sudo apt update -y || true
 sudo apt install nala -y || true
-sudo nala install curl wget gpg lsb-release apt-transport-https -y || true
-sudo nala install git net-tools htop nano -y || true
-sudo nala install build-essential python3-dev -y || true  # C build toolchain: Where build-essential brings gcc, make, etc., and python3-dev ensures headers for your Python version.
-# sudo nala install libssl-dev -y
-# sudo nala install libaa-bin -y
+sudo nala install curl wget gpg lsb-release apt-transport-https \
+  samba fuse3 nfs-common \
+  git net-tools htop nano \
+  build-essential \  # Where it brings gcc, make, etc.,
+  python3-dev \  # ensures headers for your Python version.
+  unzip \
+  pkg-config \  
+  libssl-dev \  # essential for SSL/TLS support in many applications, compiling rust binaries will need them.
+    -y || true
 
-# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-# source ~/.bashrc || true
-# nvm install node || true
-
-sudo nala install unzip -y  # required by bun installer
 curl -fsSL https://bun.com/install | bash
 . ~/.bashrc || true
-# sudo ln -s $(which bun) /usr/local/bin/node  # trick programs that expect node to use bun runtime.
-sudo ln -s ~/.bun/bin/bun /usr/local/bin/node
-
-
-sudo nala install samba -y || true
-sudo nala install fuse3 -y || true
-sudo nala install nfs-common -y || true
+sudo ln -s ~/.bun/bin/bun /usr/local/bin/node  # trick programs that expect node to use bun runtime.
 
 # echo 'keyboard-configuration keyboard-configuration/layout select US English' | sudo debconf-set-selections
 # echo 'keyboard-configuration keyboard-configuration/layoutcode string us' | sudo debconf-set-selections
-# sudo DEBIAN_FRONTEND=noninteractive nala install -y cmatrix
-# sudo nala install hollywood -y || true
-
-# sudo nala install ffmpeg -y || true  # Required by some dev tools
-# sudo nala install make -y || true  # Required by LunarVim and SpaceVim
-# (curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh) || true
+# sudo DEBIAN_FRONTEND=noninteractive nala install cmatrix hollywood ffmpeg -y  make || true
 
 """
 

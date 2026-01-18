@@ -2,7 +2,6 @@
 import subprocess
 from pathlib import Path
 from machineconfig.settings.zellij import layouts
-from typing import Optional
 
 root = layouts.__path__[0]
 STANDARD = Path(root).joinpath("st2.kdl")
@@ -86,34 +85,3 @@ def get_session_tabs() -> list[tuple[str, str]]:
     return result
 
 
-def start_wt(layouts_names: Optional[list[str]], layout_file_str: Optional[str]) -> tuple[str, str | None]:
-    """Start a Windows Terminal layout by name. Returns tuple of (status, message) where status is 'success' or 'error'."""
-    import json
-    from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
-    from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
-    if layout_file_str is not None:
-        layouts_file = Path(layout_file_str)
-    else:
-        layouts_file = Path.home().joinpath("dotfiles/machineconfig/layouts.json")
-    if not layouts_file.exists():
-        return ("error", f"❌ Layouts file not found: {layouts_file}")
-    layouts_data: LayoutsFile = json.loads(layouts_file.read_text(encoding="utf-8"))
-
-    if layouts_names is None or len(layouts_names) == 0:
-        from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
-        layouts_names = choose_from_dict_with_preview(
-            {layout["layoutName"]: json.dumps(layout, indent=4) for layout in layouts_data["layouts"]},
-            extension="json",
-            multi=True,
-            preview_size_percent=40,
-        )
-        if len(layouts_names) == 0:
-            return ("error", "❌ No layout selected.")
-
-    for a_layout_name in layouts_names:
-        chosen_layout = next((a_layout for a_layout in layouts_data["layouts"] if a_layout["layoutName"] == a_layout_name), None)
-        if not chosen_layout:
-            available_layouts = [a_layout["layoutName"] for a_layout in layouts_data["layouts"]]
-            return ("error", f"❌ Layout '{a_layout_name}' not found in layouts file.\nAvailable layouts: {', '.join(available_layouts)}")
-        run_wt_layout(layout_config=chosen_layout)
-    return ("success", None)

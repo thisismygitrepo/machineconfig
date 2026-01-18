@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Force user to specify variant
-if [ $# -eq 0 ]; then
-    echo "❌ ERROR: Please specify a variant: 'slim' or 'ai'"
-    echo "Usage: $0 <variant>"
-    echo "Example: $0 slim"
-    exit 1
-fi
+# # Force user to specify variant
+# if [ $# -eq 0 ]; then
+#     echo "❌ ERROR: Please specify a variant: 'slim' or 'ai'"
+#     echo "Usage: $0 <variant>"
+#     echo "Example: $0 slim"
+#     exit 1
+# fi
 
-VARIANT=$1
+# VARIANT=$1
 
 # Validate variant
 if [ "$VARIANT" != "slim" ] && [ "$VARIANT" != "ai" ]; then
@@ -20,6 +20,20 @@ IMAGE_NAME="machineconfig-$VARIANT"
 DOCKERFILE_PATH="./jobs/dockers/Dockerfile_$VARIANT"
 DATE=$(date +%y-%m)
 
+# Ensure build uses repository root as Docker build context and fail early with useful messages.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR"/../.. && pwd)"
+if [ ! -d "$REPO_ROOT" ]; then
+    echo "❌ ERROR: Could not determine repository root (expected $REPO_ROOT)"
+    exit 1
+fi
+
+if [ ! -f "$DOCKERFILE_PATH" ]; then
+    echo "❌ ERROR: Dockerfile not found at $DOCKERFILE_PATH (script was run from $(pwd))."
+    echo "           Try running the script from the repository root or run this script via its path."
+    exit 1
+fi
+
 # curl -s -I https://api.github.com/repos/jqlang/jq/releases/latest | grep -E "(status|x-ratelimit)"
 #
 
@@ -29,7 +43,7 @@ docker rmi "statistician/$IMAGE_NAME:latest" --force
 docker rmi "statistician/$IMAGE_NAME:$DATE" --force
 
 echo """🏗️ BUILD | Creating new docker image"""
-docker build --no-cache --file "$DOCKERFILE_PATH" --progress=plain -t "statistician/$IMAGE_NAME:latest" .
+docker build --no-cache --file "$DOCKERFILE_PATH" --progress=plain -t "statistician/$IMAGE_NAME:latest" "$REPO_ROOT"
 # building with no cache since docker is unaware of changes in code due to dynamic code like curl URL | bash etc.
 
 
@@ -64,4 +78,4 @@ case "$answer" in
     """
         ;;
 esac
-
+echo """✅ ALL DONE | Docker build and publish script complete."""

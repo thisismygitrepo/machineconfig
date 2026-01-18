@@ -45,7 +45,6 @@ if (Test-Path "$CONFIG_ROOT\scripts\wrap_mcfg.ps1") {
     function f { wrap_in_shell_script fire $args }
     function rr { wrap_in_shell_script croshell $args }
     function u { wrap_in_shell_script utils $args }
-    function t { wrap_in_shell_script terminal $args }
     function ms { wrap_in_shell_script msearch $args }
 
 }
@@ -61,7 +60,6 @@ else {
     function f { fire $args }
     function rr { croshell $args }
     function u { utils $args }
-    function t { terminal $args }
     function ms { msearch $args }
 }
 

@@ -20,8 +20,8 @@ def get_tmp_file():
 
 
 def main(
+    repo: Annotated[str, typer.Argument(..., help="Path to the local repository. Defaults to current working directory.")],
     cloud: Annotated[Optional[str], typer.Option(..., "--cloud", "-c", help="Cloud storage profile name. If not provided, uses default from config.")] = None,
-    repo: Annotated[Optional[str], typer.Option(..., "--repo", "-r", help="Path to the local repository. Defaults to current working directory.")] = None,
     message: Annotated[Optional[str], typer.Option(..., "--message", "-m", help="Commit message for local changes.")] = None,
     on_conflict: Annotated[Literal["ask", "a",
                                    "push-local-merge", "p",
@@ -66,7 +66,6 @@ def main(
     if cloud is None:
         try:
             from machineconfig.utils.io import read_ini
-
             cloud_resolved = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
             console.print(Panel(f"⚠️  Using default cloud: `{cloud_resolved}` from {DEFAULTS_PATH}", title="Default Cloud", border_style="yellow"))
         except FileNotFoundError:
@@ -74,7 +73,7 @@ def main(
             return ""
     else:
         cloud_resolved = cloud
-    repo_local_root = PathExtended.cwd() if repo is None else PathExtended(repo).expanduser().absolute()
+    repo_local_root = PathExtended.cwd() if repo == "." else PathExtended(repo).expanduser().absolute()
     try:
         repo_local_obj = git.Repo(repo_local_root, search_parent_directories=True)
     except git.InvalidGitRepositoryError:
