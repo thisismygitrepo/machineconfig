@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# Force user to specify variant
-if [ $# -eq 0 ]; then
-    echo "❌ ERROR: Please specify a variant: 'slim' or 'ai'"
-    echo "Usage: $0 <variant>"
-    echo "Example: $0 slim"
-    exit 1
-fi
+# # Force user to specify variant
+# if [ $# -eq 0 ]; then
+#     echo "❌ ERROR: Please specify a variant: 'slim' or 'ai'"
+#     echo "Usage: $0 <variant>"
+#     echo "Example: $0 slim"
+#     exit 1
+# fi
 
-VARIANT=$1
+# VARIANT=$1
 
 # Validate variant
 if [ "$VARIANT" != "slim" ] && [ "$VARIANT" != "ai" ]; then
     echo "❌ ERROR: Invalid variant '$VARIANT'. Must be 'slim' or 'ai'"
     exit 1
-fi
+fiP
 
 IMAGE_NAME="machineconfig-$VARIANT"
 DOCKERFILE_PATH="./jobs/dockers/Dockerfile_$VARIANT"

@@ -177,6 +177,24 @@ def readme():
     console.print(md)
 
 
+def buid_docker(
+    variant: Annotated[Literal["slim", "ai"], typer.Argument(..., help="Variant to build: 'slim' or 'ai'")] = "slim",
+) -> None:
+    """🧱 `buid_docker` — wrapper for `jobs/shell/docker_build_and_publish.sh`"""
+    from pathlib import Path
+    import machineconfig
+    script_path = Path(machineconfig.__file__).resolve().parent.parent.parent.joinpath("jobs", "shell", "docker_build_and_publish.sh")
+    if not script_path.exists():
+        typer.echo(f"❌ Script not found: {str(script_path)}")
+        raise typer.Exit(code=1)
+
+    shell_cmd = f'VARIANT="{variant}" "{str(script_path)}"'
+
+    # Use exit_then_run_shell_script for interactive runs (keeps tty), otherwise run shell script non-interactively
+    from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(shell_cmd, strict=True)
+
+
 def get_app():
     cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     cli_app.command("update",      no_args_is_help=False, help="🔄 [u] UPDATE machineconfig")(update)
@@ -192,6 +210,7 @@ def get_app():
     cli_app.command("navigate", no_args_is_help=False, help="📚 [n] NAVIGATE command structure with TUI")(navigate)
     cli_app.command("n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
 
+    cli_app.command("buid_docker", no_args_is_help=False, help="🧱 Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
     cli_app.command("readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
     cli_app.command("r", no_args_is_help=False, hidden=True)(readme)
     return cli_app
