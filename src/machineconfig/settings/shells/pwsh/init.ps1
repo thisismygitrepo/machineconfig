@@ -40,7 +40,6 @@ if (Test-Path "$CONFIG_ROOT\scripts\wrap_mcfg.ps1") {
     function d { wrap_in_shell_script devops $args }
     function c { wrap_in_shell_script cloud $args }
     function a { wrap_in_shell_script agents $args }
-    function sx { wrap_in_shell_script sessions $args }
     function fx { wrap_in_shell_script ftpx $args }
     function s { wrap_in_shell_script sessions $args }
     function f { wrap_in_shell_script fire $args }
@@ -56,9 +55,8 @@ else {
     function d { devops $args }
     function c { cloud $args }
     function a { agents $args }
-    function sx { sessions $args }
-    function fx { ftpx $args }
     function s { sessions $args }
+    function fx { ftpx $args }
     function f { fire $args }
     function rr { croshell $args }
     function u { utils $args }
