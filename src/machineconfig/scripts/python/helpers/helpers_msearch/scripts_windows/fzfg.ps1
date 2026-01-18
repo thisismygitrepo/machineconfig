@@ -1,9 +1,5 @@
 #!/usr/bin/env pwsh
-param(
-    [Parameter(ValueFromRemainingArguments = $true)]
-    [string[]]$QueryTokens
-)
-
+$QueryTokens = $args
 if ($null -eq $QueryTokens) {
     $QueryTokens = @()
 }

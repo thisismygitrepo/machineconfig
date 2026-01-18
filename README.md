@@ -18,7 +18,7 @@ Entering,  **Machineconfig**, a cli-based cross-platform **Stack Manager** — I
 What is your stack? Say you have a new computer/ VM, how do you go about setting it up with your stack?
 Surely, you have:
 * A bunch of CLI tools.
-* [Optional] A bunch of softwares (GUIs for desktop environment)
+* [Optional] A bunch of softwares (GUIs for desktop environment).
 * [Public] A bunch of configuration files for your tools.
 * [Private] A bunch of secrets, passowords, tokens, credentials etc, etc.
 * Data (Both highly sensitive and encrypted less serious unencrypted data)
