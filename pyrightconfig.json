@@ -12,14 +12,5 @@
   "reportUnknownParameterType": "none",
   "reportUnknownLambdaType": "none",
 
-  "diagnosticSeverityOverrides": {
-      "reportUnknownMemberType": "none",
-      "reportUnknownVariableType": "none",
-      "reportUnknownArgumentType": "none",
-      "reportUnknownParameterType": "none",
-      "reportMissingTypeStubs": "none",
-      "reportUnknownLambdaType": "none",
-      "reportIncompatibleMethodOverride": "none",
-  }
 }
 
