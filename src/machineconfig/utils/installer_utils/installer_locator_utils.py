@@ -144,20 +144,10 @@ def check_tool_exists(tool_name: str) -> bool:
         standard_checks = [
             Path("/usr/local/bin").joinpath(tool_name).is_file(),
             Path("/usr/bin").joinpath(tool_name).is_file(),
-            root_path.joinpath(tool_name).is_file()
+            root_path.joinpath(tool_name).is_file(),
+            (Path.home() / ".bun" / "bin" / tool_name ).is_file(),
         ]
-        if any(standard_checks):
-            return True
-        # Check for npm packages via nvm
-        npm_check = False
-        try:
-            result = subprocess.run(["node", "--version"], capture_output=True, text=True, check=True)
-            version = result.stdout.strip().lstrip('v')
-            nvm_bin_path = Path.home() / ".nvm" / "versions" / "node" / f"v{version}" / "bin" / tool_name
-            npm_check = nvm_bin_path.is_file()
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            pass
-        return npm_check
+        return any(standard_checks)
     else:
         raise NotImplementedError(f"platform {platform.system()} not implemented")
 

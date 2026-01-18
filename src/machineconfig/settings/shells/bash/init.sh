@@ -72,12 +72,6 @@ alias x='wrap_in_shell_script explore'
 #   gh copilot explain "Input command is: $x The output is this: $y"
 # }
 
-# 📦 Node Version Manager
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
 # https://github.com/atuinsh/atuin
 # eval "$(atuin init bash)"
 
