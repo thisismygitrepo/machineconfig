@@ -129,7 +129,22 @@ def reset_cloudflare_tunnel():
     code = """
 # cloudflared tunnel route dns glenn  # creates CNAMES in Cloudflare dashboard
 # sudo systemctl stop cloudflared
-# test: cloudflared tunnel run glenn
+# test: cloudflared tunnel run glenn, This is running like a normal command
+# This verion runs like a deamon, but its not peristent across reboots
+sudo systemd-run \
+  --unit=cloudflared-tunnel \
+  --description="Cloudflared Tunnel (transient)" \
+  --property=Restart=on-failure \
+  --property=RestartSec=5 \
+  --property=User=alex \
+  --property=Group=alex \
+  --property=Environment=HOME=/home/alex \
+  --property=WorkingDirectory=/home/alex \
+  /home/alex/.local/bin/cloudflared \
+    --config /home/alex/.cloudflared/config.yml \
+    tunnel run MY-TUNNEL-NAME
+
+# 
 home_dir=$HOME
 cloudflared_path="$home_dir/.local/bin/cloudflared"
 sudo $cloudflared_path service uninstall
@@ -138,6 +153,14 @@ sudo $cloudflared_path --config $home_dir/.cloudflared/config.yml service instal
 """
     print(code)
     print("NOTE: Please run the above commands in your terminal to apply the changes.")
+
+
+def vscode_share():
+    start_tunnel = f"code tunnel --name a8Tunnel --accept-server-license-terms"
+    make_tunnel_service = "code tunnel service install --accept-server-license-terms --name a8tunnel"
+    share_local = ""
+    
+
 
 def add_ip_exclusion_to_warp(ip: Annotated[str, typer.Option(..., "--ip", help="IP address(es) to exclude from WARP (Comma separated)")]):
     ips = ip.split(",")
