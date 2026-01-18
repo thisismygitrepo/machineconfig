@@ -60,3 +60,13 @@ def serialize_layouts_to_file(layouts: list[LayoutConfig], version: Literal["0.1
             existing_content_layout["layouts"].append(a_new_layout)
     p.write_text(json.dumps(existing_content_layout, indent=4), encoding="utf-8")
     return None
+
+
+def substitute_home(tabs: list[TabConfig]) -> list["TabConfig"]:
+    import json
+    from pathlib import Path
+    json_str = json.dumps(tabs)
+    json_str = json_str.replace("~", str(Path.home())).replace("$HOME", str(Path.home()))
+    json_str = json_str.replace("""Command": "f """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg fire """)
+    json_str = json_str.replace("""Command": "s """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg sessions """)
+    return json.loads(json_str)

@@ -46,10 +46,15 @@ def run(
 
     if choose is None: layouts_names_resolved: list[str] = []
     else: layouts_names_resolved = [name.strip() for name in choose.split(",") if name.strip()]
-
-
     layouts_selected = select_layout(layouts_json_file=str(layouts_file_resolved), selected_layouts_names=layouts_names_resolved,
-                    select_interactively=choose_interactively, subsitute_home=subsitute_home)
+                    select_interactively=choose_interactively,)
+    if subsitute_home:
+        from machineconfig.utils.schemas.layouts.layout_types import substitute_home, LayoutConfig
+        layouts_modified: list["LayoutConfig"] = []
+        for a_layout in layouts_selected:
+            a_layout["layoutTabs"] = substitute_home(tabs=a_layout["layoutTabs"])
+            layouts_modified.append(a_layout)
+        layouts_selected = layouts_modified
 
     import platform
     backend_resolved: Literal["zellij", "windows-terminal"]

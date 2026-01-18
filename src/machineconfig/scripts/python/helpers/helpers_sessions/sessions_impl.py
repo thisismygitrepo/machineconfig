@@ -5,15 +5,11 @@ from pygments.token import Literal
 from pathlib import Path
 
 
-def select_layout(layouts_json_file: str, selected_layouts_names: list[str], select_interactively: bool, subsitute_home: bool) -> list["LayoutConfig"]:
+def select_layout(layouts_json_file: str, selected_layouts_names: list[str], select_interactively: bool) -> list["LayoutConfig"]:
     """Select layout(s) from a layout file."""
     import json
     from machineconfig.utils.schemas.layouts.layout_types import LayoutsFile
     json_str = Path(layouts_json_file).read_text(encoding="utf-8")
-    if subsitute_home:
-        json_str = json_str.replace("~", str(Path.home())).replace("$HOME", str(Path.home()))
-        json_str = json_str.replace("""Command": "f """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg fire """)
-        json_str = json_str.replace("""Command": "s """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg sessions """)
     try:
         layout_file: LayoutsFile = json.loads(json_str)
     except Exception:
@@ -72,8 +68,8 @@ def run_layouts(
     monitor: bool,
     sequential: bool,
     kill_upon_completion: bool,
+    backend: Literal["zellij", "windows-terminal"],
     layouts_selected: list["LayoutConfig"],
-    backend: Literal["zellij", "windows-terminal"]
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
     import time
