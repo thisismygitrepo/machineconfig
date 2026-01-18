@@ -96,13 +96,11 @@ def run_layouts(
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
     layouts_selected = select_layout(layouts_json_file=layout_path, selected_layouts_names=choose, select_interactively=choose_interactively, subsitute_home=subsitute_home)
-
     if parallel and len(layouts_selected) > max_layouts:
         raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
     for a_layout in layouts_selected:
         if len(a_layout["layoutTabs"]) > max_tabs:
             raise ValueError(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
-
     import time
     import platform
     if platform.system() == "Linux" or platform.system() == "Darwin":
