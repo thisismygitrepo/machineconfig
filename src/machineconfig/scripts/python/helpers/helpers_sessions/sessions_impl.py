@@ -1,7 +1,6 @@
 """Pure Python implementations for sessions commands - no typer dependencies."""
 
-# from typing import Optional
-from pygments.token import Literal
+from typing import Literal
 from pathlib import Path
 
 

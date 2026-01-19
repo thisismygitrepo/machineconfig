@@ -128,13 +128,13 @@ def add_ssh_key(
     github: Annotated[Optional[str], typer.Option(..., "--github", "-g", help="Fetch public keys from a GitHub username")] = None,
 ) -> None:
     """🔑 Add SSH public key to this machine so its accessible by owner of corresponding private key."""
-    import machineconfig.scripts.python.helpers.helpers_network.ssh_add_ssh_key as helper
+    import machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_add_ssh_key as helper
     helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github)
 
 
 def add_ssh_identity() -> None:
     """🗝️ Add SSH identity (private key) to this machine"""
-    import machineconfig.scripts.python.helpers.helpers_network.ssh_add_identity as helper
+    import machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_add_identity as helper
     helper.main()
 
 
@@ -142,10 +142,10 @@ def debug_ssh() -> None:
     """🐛 Debug SSH connection"""
     from platform import system
     if system() == "Linux" or system() == "Darwin":
-        import machineconfig.scripts.python.helpers.helpers_network.ssh_debug_linux as helper
+        import machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_debug_linux as helper
         helper.ssh_debug_linux()
     elif system() == "Windows":
-        import machineconfig.scripts.python.helpers.helpers_network.ssh_debug_windows as helper
+        import machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_debug_windows as helper
         helper.ssh_debug_windows()
     else:
         print(f"❌ Error: Platform {system()} is not supported.")
