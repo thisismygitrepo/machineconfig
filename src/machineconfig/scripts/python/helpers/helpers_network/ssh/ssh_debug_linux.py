@@ -151,6 +151,34 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
             sshd_config = p
             break
 
+    sshd_config_d = Path("/etc/ssh/sshd_config.d")
+    cloud_init_overrides: dict[str, Path] = {}
+    cloud_init_files: list[Path] = []
+    if sshd_config_d.exists():
+        for conf_file in sorted(sshd_config_d.glob("*.conf")):
+            cloud_init_files.append(conf_file)
+            try:
+                conf_text = conf_file.read_text(encoding="utf-8")
+                for line in conf_text.split("\n"):
+                    line_stripped = line.strip()
+                    if line_stripped and not line_stripped.startswith("#"):
+                        key = line_stripped.split()[0] if line_stripped.split() else ""
+                        if key:
+                            cloud_init_overrides[key] = conf_file
+            except Exception:
+                pass
+
+    if cloud_init_files:
+        cloud_info: list[str] = []
+        cloud_info.append(f"⚠️  Found [yellow]{len(cloud_init_files)}[/yellow] override file(s) in /etc/ssh/sshd_config.d/")
+        cloud_info.append("   [dim]These files can override settings in the main sshd_config![/dim]")
+        for cf in cloud_init_files:
+            cloud_info.append(f"   \u2022 [cyan]{cf.name}[/cyan]")
+        if cloud_init_overrides:
+            overridden_keys = list(cloud_init_overrides.keys())[:5]
+            cloud_info.append(f"   Overriding: {', '.join(overridden_keys)}{'...' if len(cloud_init_overrides) > 5 else ''}")
+        console.print(Panel("\n".join(cloud_info), title="[bold yellow]Cloud-Init SSH Overrides[/bold yellow]", border_style="yellow"))
+
     if sshd_config:
         try:
             config_text = sshd_config.read_text(encoding="utf-8")
@@ -160,22 +188,45 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
             net_info.append(f"🔌 Port: [cyan]{ssh_port}[/cyan]")
 
             pubkey_lines = [line for line in config_text.split("\n") if "PubkeyAuthentication" in line and not line.strip().startswith("#")]
+            pubkey_override_file: Path | None = cloud_init_overrides.get("PubkeyAuthentication")
+            if pubkey_override_file:
+                try:
+                    override_text = pubkey_override_file.read_text(encoding="utf-8")
+                    override_pubkey_lines = [line for line in override_text.split("\n") if "PubkeyAuthentication" in line and not line.strip().startswith("#")]
+                    if override_pubkey_lines:
+                        pubkey_lines = override_pubkey_lines
+                except Exception:
+                    pass
             if pubkey_lines and "no" in pubkey_lines[-1].lower():
                 results["pubkey_auth"] = {"status": "error", "message": "PubkeyAuthentication disabled"}
-                issues.append(("PubkeyAuthentication disabled", "Key-based login won't work", f"Edit {sshd_config}: set PubkeyAuthentication yes, then sudo systemctl restart ssh"))
-                net_info.append("❌ PubkeyAuthentication: [red]disabled[/red]")
+                fix_target = pubkey_override_file if pubkey_override_file else sshd_config
+                issues.append(("PubkeyAuthentication disabled", "Key-based login won't work", f"Edit {fix_target}: set PubkeyAuthentication yes, then sudo systemctl restart ssh"))
+                override_note = f" (overridden in {pubkey_override_file.name})" if pubkey_override_file else ""
+                net_info.append(f"❌ PubkeyAuthentication: [red]disabled[/red]{override_note}")
             else:
                 net_info.append("✅ PubkeyAuthentication: enabled")
 
             password_lines = [line for line in config_text.split("\n") if "PasswordAuthentication" in line and not line.strip().startswith("#")]
+            password_override_file: Path | None = cloud_init_overrides.get("PasswordAuthentication")
+            if password_override_file:
+                try:
+                    override_text = password_override_file.read_text(encoding="utf-8")
+                    override_password_lines = [line for line in override_text.split("\n") if "PasswordAuthentication" in line and not line.strip().startswith("#")]
+                    if override_password_lines:
+                        password_lines = override_password_lines
+                except Exception:
+                    pass
             if password_lines:
                 password_enabled = "yes" in password_lines[-1].lower()
+                override_note = f" (from {password_override_file.name})" if password_override_file else ""
                 if password_enabled:
                     results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled"}
-                    net_info.append("✅ PasswordAuthentication: [green]enabled[/green]")
+                    net_info.append(f"✅ PasswordAuthentication: [green]enabled[/green]{override_note}")
                 else:
                     results["password_auth"] = {"status": "info", "message": "PasswordAuthentication disabled"}
-                    net_info.append("ℹ️  PasswordAuthentication: [yellow]disabled[/yellow] (key-only)")
+                    net_info.append(f"ℹ️  PasswordAuthentication: [yellow]disabled[/yellow] (key-only){override_note}")
+                    if password_override_file:
+                        issues.append((f"PasswordAuth disabled by {password_override_file.name}", "Password login blocked by cloud-init config", f"Edit {password_override_file}: set PasswordAuthentication yes, then sudo systemctl restart ssh"))
             else:
                 results["password_auth"] = {"status": "ok", "message": "PasswordAuthentication enabled (default)"}
                 net_info.append("✅ PasswordAuthentication: [green]enabled[/green] (default)")

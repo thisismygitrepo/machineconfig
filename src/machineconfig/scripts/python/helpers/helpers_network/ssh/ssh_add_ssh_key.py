@@ -37,6 +37,41 @@ def _add_ssh_key_windows(path_to_key: Path) -> None:
     subprocess.run("Restart-Service sshd -Force", shell=True, check=True)
 
 
+def _check_cloud_init_overrides() -> tuple[list[Path], dict[str, tuple[Path, str]]]:
+    """Check for cloud-init sshd_config.d override files that might affect SSH authentication.
+    Returns (list of override files, dict of key -> (file, value) for auth-related settings)."""
+    sshd_config_d = Path("/etc/ssh/sshd_config.d")
+    override_files: list[Path] = []
+    auth_overrides: dict[str, tuple[Path, str]] = {}
+    if not sshd_config_d.exists():
+        return override_files, auth_overrides
+    for conf_file in sorted(sshd_config_d.glob("*.conf")):
+        override_files.append(conf_file)
+        try:
+            conf_text = conf_file.read_text(encoding="utf-8")
+            for line in conf_text.split("\n"):
+                line_stripped = line.strip()
+                if line_stripped and not line_stripped.startswith("#"):
+                    parts = line_stripped.split(None, 1)
+                    if len(parts) >= 2:
+                        key, value = parts[0], parts[1]
+                        if key in ("PasswordAuthentication", "PubkeyAuthentication", "PermitRootLogin", "ChallengeResponseAuthentication", "KbdInteractiveAuthentication"):
+                            auth_overrides[key] = (conf_file, value.lower())
+        except Exception:
+            pass
+    return override_files, auth_overrides
+
+
+def _generate_cloud_init_fix_script(auth_overrides: dict[str, tuple[Path, str]]) -> str:
+    """Generate shell commands to fix cloud-init override files that block authentication."""
+    fix_commands: list[str] = []
+    for key, (file_path, value) in auth_overrides.items():
+        if key in ("PasswordAuthentication", "PubkeyAuthentication") and value == "no":
+            fix_commands.append(f"# Fix {key} in {file_path.name}")
+            fix_commands.append(f"sudo sed -i 's/^{key}.*no/{key} yes/' {file_path}")
+    return "\n".join(fix_commands)
+
+
 def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str, str]:
     """Returns (program_script, status_message) tuple. For Windows, program_script is empty because we handle it in Python."""
     os_name = system()
@@ -74,6 +109,22 @@ def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str
             _add_ssh_key_windows(path_to_key)
 
     if os_name == "Linux" or os_name == "Darwin":
+        override_files, auth_overrides = _check_cloud_init_overrides()
+        if override_files:
+            status_lines.append(f"\n⚠️  [yellow]Cloud-init override files detected:[/yellow]")
+            for of in override_files:
+                status_lines.append(f"   • {of.name}")
+        blocking_overrides: list[str] = []
+        for key, (file_path, value) in auth_overrides.items():
+            if key == "PubkeyAuthentication" and value == "no":
+                blocking_overrides.append(f"   ❌ {key}={value} in {file_path.name} - [red]blocks key auth![/red]")
+            elif key == "PasswordAuthentication" and value == "no":
+                blocking_overrides.append(f"   ⚠️  {key}={value} in {file_path.name}")
+        if blocking_overrides:
+            status_lines.extend(blocking_overrides)
+        cloud_init_fix = _generate_cloud_init_fix_script(auth_overrides)
+        if cloud_init_fix:
+            program += f"\n# === Fix cloud-init SSH overrides ===\n{cloud_init_fix}\n"
         program += """
 sudo chmod 700 ~/.ssh
 sudo chmod 644 ~/.ssh/authorized_keys
