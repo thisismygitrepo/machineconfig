@@ -6,45 +6,13 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich import box
-import subprocess
 import os
 import re
 
+from machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_debug_linux_utils import check_sshd_installed, detect_package_manager, run_cmd
+
 
 console = Console()
-
-
-def _run(cmd: list[str]) -> tuple[bool, str]:
-    try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
-        return result.returncode == 0, result.stdout.strip()
-    except FileNotFoundError:
-        return False, ""
-
-
-def _check_sshd_installed() -> tuple[bool, str]:
-    sshd_paths = ["/usr/sbin/sshd", "/usr/bin/sshd", "/sbin/sshd"]
-    for path in sshd_paths:
-        if Path(path).exists():
-            return True, path
-    ok, which_out = _run(["which", "sshd"])
-    if ok and which_out:
-        return True, which_out
-    return False, ""
-
-
-def _detect_package_manager() -> tuple[str, str]:
-    if Path("/usr/bin/apt").exists() or Path("/usr/bin/apt-get").exists():
-        return "apt", "sudo apt update && sudo apt install -y openssh-server"
-    if Path("/usr/bin/dnf").exists():
-        return "dnf", "sudo dnf install -y openssh-server"
-    if Path("/usr/bin/yum").exists():
-        return "yum", "sudo yum install -y openssh-server"
-    if Path("/usr/bin/pacman").exists():
-        return "pacman", "sudo pacman -S --noconfirm openssh"
-    if Path("/usr/bin/zypper").exists():
-        return "zypper", "sudo zypper install -y openssh"
-    return "unknown", "# Install openssh-server using your package manager"
 
 
 def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
@@ -57,12 +25,12 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     ssh_port = "22"
     ip_addresses: list[str] = []
 
-    ok, hostname = _run(["hostname"])
+    ok, hostname = run_cmd(["hostname"])
     hostname = hostname if ok else "unknown"
 
     install_info: list[str] = []
-    sshd_installed, sshd_path = _check_sshd_installed()
-    _pkg_manager, install_cmd = _detect_package_manager()
+    sshd_installed, sshd_path = check_sshd_installed()
+    _pkg_manager, install_cmd = detect_package_manager()
     if not sshd_installed:
         results["installation"] = {"status": "error", "message": "OpenSSH Server not installed"}
         issues.append(("sshd not installed", "Cannot accept incoming SSH connections", install_cmd))
@@ -124,8 +92,8 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     console.print(Panel("\n".join(perm_info), title="[bold]Permissions[/bold]", border_style="blue"))
 
     svc_info: list[str] = []
-    ssh_ok, _ = _run(["systemctl", "is-active", "ssh"])
-    sshd_ok, _ = _run(["systemctl", "is-active", "sshd"])
+    ssh_ok, _ = run_cmd(["systemctl", "is-active", "ssh"])
+    sshd_ok, _ = run_cmd(["systemctl", "is-active", "sshd"])
     if ssh_ok or sshd_ok:
         svc_name = "ssh" if ssh_ok else "sshd"
         results["ssh_service"] = {"status": "ok", "message": f"{svc_name} running"}
@@ -138,7 +106,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     console.print(Panel("\n".join(svc_info), title="[bold]Service[/bold]", border_style="blue"))
 
     net_info: list[str] = []
-    ok, ip_out = _run(["ip", "addr", "show"])
+    ok, ip_out = run_cmd(["ip", "addr", "show"])
     if ok:
         ip_addresses = re.findall(r'inet\s+(\d+\.\d+\.\d+\.\d+)/\d+.*scope\s+global', ip_out)
         if ip_addresses:
@@ -238,7 +206,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         except Exception:
             pass
 
-    ok, ss_out = _run(["ss", "-tlnp"])
+    ok, ss_out = run_cmd(["ss", "-tlnp"])
     if ok:
         listening = [line for line in ss_out.split("\n") if f":{ssh_port}" in line]
         if not listening:
@@ -254,7 +222,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
             net_info.append(f"✅ Listening: 0.0.0.0:{ssh_port}")
 
     fw_checked = False
-    ok, ufw_out = _run(["ufw", "status"])
+    ok, ufw_out = run_cmd(["ufw", "status"])
     if ok and "Status: active" in ufw_out:
         fw_checked = True
         if f"{ssh_port}/tcp" in ufw_out.lower() or "ssh" in ufw_out.lower() or f" {ssh_port} " in ufw_out:
@@ -267,10 +235,10 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
             net_info.append("   [dim]Active firewall without SSH rule = blocked[/dim]")
 
     if not fw_checked:
-        ok, fwd_out = _run(["firewall-cmd", "--state"])
+        ok, fwd_out = run_cmd(["firewall-cmd", "--state"])
         if ok and "running" in fwd_out.lower():
             fw_checked = True
-            ok2, svc_out = _run(["firewall-cmd", "--list-services"])
+            ok2, svc_out = run_cmd(["firewall-cmd", "--list-services"])
             if ok2 and "ssh" in svc_out.lower():
                 results["firewall"] = {"status": "ok", "message": "firewalld allows SSH"}
                 net_info.append("✅ Firewall (firewalld): allows SSH")
@@ -280,7 +248,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
                 net_info.append("❌ Firewall (firewalld): [red]blocking SSH[/red]")
 
     if not fw_checked:
-        ok, ipt_out = _run(["iptables", "-L", "INPUT", "-n"])
+        ok, ipt_out = run_cmd(["iptables", "-L", "INPUT", "-n"])
         if ok and ipt_out:
             has_drop_policy = "policy DROP" in ipt_out or "policy REJECT" in ipt_out
             has_ssh_allow = f"dpt:{ssh_port}" in ipt_out or "dpt:ssh" in ipt_out
@@ -315,7 +283,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
         except Exception:
             pass
 
-    ok, se_out = _run(["getenforce"])
+    ok, se_out = run_cmd(["getenforce"])
     if ok and se_out:
         if se_out == "Enforcing":
             other_info.append("ℹ️  SELinux: Enforcing (run [cyan]restorecon -Rv ~/.ssh[/cyan] if issues)")
@@ -325,7 +293,7 @@ def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
     log_files = [Path("/var/log/auth.log"), Path("/var/log/secure")]
     for lf in log_files:
         if lf.exists():
-            ok, tail = _run(["tail", "-n", "20", str(lf)])
+            ok, tail = run_cmd(["tail", "-n", "20", str(lf)])
             if ok:
                 errors = [line for line in tail.split("\n") if any(k in line.lower() for k in ["error", "failed", "refused", "denied"]) and "ssh" in line.lower()]
                 if errors:

@@ -9,40 +9,10 @@ from rich import box
 import subprocess
 import os
 
+from machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_debug_windows_utils import check_sshd_binary_exists, detect_openssh, run_powershell
+
 
 console = Console()
-
-
-def _run_ps(cmd: str) -> tuple[bool, str]:
-    result = subprocess.run(["powershell", "-Command", cmd], capture_output=True, text=True, check=False)
-    return result.returncode == 0, result.stdout.strip()
-
-
-def _check_sshd_binary_exists() -> tuple[bool, str]:
-    sshd_locations = [
-        Path("C:/Windows/System32/OpenSSH/sshd.exe"),
-        Path("C:/Program Files/OpenSSH/sshd.exe"),
-        Path("C:/Program Files (x86)/OpenSSH/sshd.exe"),
-    ]
-    for loc in sshd_locations:
-        if loc.exists():
-            return True, str(loc)
-    ok, which_out = _run_ps("Get-Command sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source")
-    if ok and which_out:
-        return True, which_out
-    return False, ""
-
-
-def _detect_openssh() -> tuple[str, Path | None, Path | None]:
-    capability_sshd = Path("C:/Windows/System32/OpenSSH/sshd.exe")
-    winget_sshd = Path("C:/Program Files/OpenSSH/sshd.exe")
-    programdata_config = Path("C:/ProgramData/ssh")
-    capability_config = Path("C:/ProgramData/ssh")
-    if capability_sshd.exists():
-        return ("capability", capability_sshd, capability_config)
-    if winget_sshd.exists():
-        return ("winget", winget_sshd, programdata_config)
-    return ("not_found", None, None)
 
 
 def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
@@ -55,9 +25,9 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
     ssh_port = "22"
     ip_addresses: list[str] = []
 
-    sshd_exists, sshd_path = _check_sshd_binary_exists()
-    install_type, _sshd_exe, config_dir = _detect_openssh()
-    ok, hostname = _run_ps("hostname")
+    sshd_exists, sshd_path = check_sshd_binary_exists()
+    install_type, _sshd_exe, config_dir = detect_openssh()
+    ok, hostname = run_powershell("hostname")
     hostname = hostname if ok else "unknown"
 
     install_info: list[str] = []
@@ -76,7 +46,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
         install_info.append(f"   Binary: {sshd_path}")
         install_info.append(f"   Config: {config_dir}")
 
-    ok, status = _run_ps("Get-Service -Name sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status")
+    ok, status = run_powershell("Get-Service -Name sshd -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status")
     if not ok or not status:
         results["ssh_service"] = {"status": "error", "message": "sshd service not found"}
         issues.append(("sshd service missing", "SSH daemon not installed", "Install OpenSSH Server first"))
@@ -87,7 +57,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
         install_info.append(f"❌ sshd service: [yellow]{status}[/yellow]")
     else:
         results["ssh_service"] = {"status": "ok", "message": "sshd running"}
-        ok, startup = _run_ps("Get-Service -Name sshd | Select-Object -ExpandProperty StartType")
+        ok, startup = run_powershell("Get-Service -Name sshd | Select-Object -ExpandProperty StartType")
         startup_note = f" (startup: {startup})" if ok else ""
         install_info.append(f"✅ sshd service: [green]Running[/green]{startup_note}")
 
@@ -98,7 +68,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
     admin_auth_keys = Path("C:/ProgramData/ssh/administrators_authorized_keys")
     perm_info: list[str] = []
 
-    ok, is_admin_str = _run_ps("([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)")
+    ok, is_admin_str = run_powershell("([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)")
     is_admin = "True" in is_admin_str
 
     if is_admin:
@@ -124,7 +94,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
             perm_info.append(f"\n⚠️  Could not read {target_auth_keys.name}: {e}")
 
     if is_admin and admin_auth_keys.exists():
-        ok, icacls_out = _run_ps(f'icacls "{admin_auth_keys}"')
+        ok, icacls_out = run_powershell(f'icacls "{admin_auth_keys}"')
         if ok:
             needs_fix = "BUILTIN\\Users" in icacls_out or "Everyone" in icacls_out
             if needs_fix:
@@ -137,7 +107,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
     console.print(Panel("\n".join(perm_info), title="[bold]Keys & Permissions[/bold]", border_style="blue"))
 
     net_info: list[str] = []
-    ok, ip_out = _run_ps("Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp,Manual | Where-Object {$_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*'} | Select-Object -ExpandProperty IPAddress")
+    ok, ip_out = run_powershell("Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp,Manual | Where-Object {$_.IPAddress -notlike '127.*' -and $_.IPAddress -notlike '169.254.*'} | Select-Object -ExpandProperty IPAddress")
     if ok and ip_out:
         ip_addresses = [ip.strip() for ip in ip_out.split("\n") if ip.strip()]
         net_info.append(f"🌐 IP addresses: [cyan]{', '.join(ip_addresses)}[/cyan]")
@@ -148,7 +118,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
         try:
             config_text = sshd_config.read_text(encoding="utf-8")
         except PermissionError:
-            ok, config_text_ps = _run_ps(f'Get-Content "{sshd_config}" -Raw')
+            ok, config_text_ps = run_powershell(f'Get-Content "{sshd_config}" -Raw')
             config_text = config_text_ps if ok and config_text_ps else None
         except Exception:
             config_text = None
@@ -219,7 +189,7 @@ def ssh_debug_windows() -> dict[str, dict[str, str | bool]]:
             $rules | Select-Object Name, DisplayName, Enabled, Action | Format-List
         }}
     """
-    ok, fw_out = _run_ps(fw_cmd)
+    ok, fw_out = run_powershell(fw_cmd)
     if ok and fw_out.strip():
         has_allow = "Enabled : True" in fw_out and "Action : Allow" in fw_out
         if has_allow:
