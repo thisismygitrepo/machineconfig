@@ -14,12 +14,9 @@ def get_group_name_to_repr() -> dict[str, str]:
     return category_display_to_name
 
 
-def handle_installer_not_found(search_term: str, app_apps: list[InstallerData]) -> None:  # type: ignore
+def handle_installer_not_found(search_term: str, app_apps: list[InstallerData]) -> list[str]:
     """Handle installer not found with friendly suggestions using fuzzy matching."""
     from difflib import get_close_matches
-    from rich.console import Console
-    from rich.panel import Panel
-    from rich.table import Table
     all_names = sorted([inst["appName"] for inst in app_apps])
     name_to_doc = {inst["appName"]: inst["doc"] for inst in app_apps}
     all_descriptions = {f"{inst['appName']}: {inst['doc']}": inst["appName"] for inst in app_apps}
@@ -41,38 +38,57 @@ def handle_installer_not_found(search_term: str, app_apps: list[InstallerData]) 
             + substring_matches
         )
     )
-    top_matches = ordered_matches[:10]
-    console = Console()
 
-    console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
-    if top_matches:
-        console.print("🤔 Did you mean one of these?", style="yellow")
-        table = Table(show_header=True, header_style="bold", box=None, pad_edge=False)
-        table.add_column("#", justify="right", width=3)
-        table.add_column("Installer", style="green")
-        table.add_column("Description", style="dim", overflow="fold")
-        for i, match in enumerate(top_matches, 1):
-            table.add_row(f"[cyan]{i}[/cyan]", match, name_to_doc.get(match, ""))
-        console.print(table)
-    else:
-        console.print("📋 Here are some available options:", style="blue")
-        # Show first 10 installers as examples
-        if len(all_names) > 10:
-            sample_names = all_names[:10]
-        else:
-            sample_names = all_names
-        table = Table(show_header=True, header_style="bold", box=None, pad_edge=False)
-        table.add_column("#", justify="right", width=3)
-        table.add_column("Installer", style="green")
-        table.add_column("Description", style="dim", overflow="fold")
-        for i, name in enumerate(sample_names, 1):
-            table.add_row(f"[cyan]{i}[/cyan]", name, name_to_doc.get(name, ""))
-        console.print(table)
-        if len(all_names) > 10:
-            console.print(f"   [dim]... and {len(all_names) - 10} more[/dim]")
+    order_matches_with_docs = [f"{app_name:<20} : " + name_to_doc.get(app_name, "") for app_name in ordered_matches]
+    from machineconfig.utils.options import choose_from_options
 
-    panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(PACKAGE_GROUP2NAMES.keys())}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
-    console.print(panel)
+    try:
+        chosen = choose_from_options(
+            options=order_matches_with_docs,
+            msg=f"🔍 No installer found for '[red]{search_term}[/red]'. Did you mean one of these?",
+            multi=True,
+            tv=True
+        )
+    except KeyboardInterrupt:
+        print("\n❌ Selection cancelled by user.")
+        return []
+    apps_chosen = [app.split(" : ")[0].strip() for app in chosen]
+    print(f"➡️  You selected: {apps_chosen}")
+    return apps_chosen
+    # top_matches = ordered_matches[:10] if len(ordered_matches) > 10 else ordered_matches
+    # from rich.console import Console
+    # from rich.panel import Panel
+    # from rich.table import Table
+    # console = Console()
+    # console.print(f"\n❌ '[red]{search_term}[/red]' was not found.", style="bold")
+    # if top_matches:
+    #     console.print("🤔 Did you mean one of these?", style="yellow")
+    #     table = Table(show_header=True, header_style="bold", box=None, pad_edge=False)
+    #     table.add_column("#", justify="right", width=3)
+    #     table.add_column("Installer", style="green")
+    #     table.add_column("Description", style="dim", overflow="fold")
+    #     for i, match in enumerate(top_matches, 1):
+    #         table.add_row(f"[cyan]{i}[/cyan]", match, name_to_doc.get(match, ""))
+    #     console.print(table)
+    # else:
+    #     console.print("📋 Here are some available options:", style="blue")
+    #     # Show first 10 installers as examples
+    #     if len(all_names) > 10:
+    #         sample_names = all_names[:10]
+    #     else:
+    #         sample_names = all_names
+    #     table = Table(show_header=True, header_style="bold", box=None, pad_edge=False)
+    #     table.add_column("#", justify="right", width=3)
+    #     table.add_column("Installer", style="green")
+    #     table.add_column("Description", style="dim", overflow="fold")
+    #     for i, name in enumerate(sample_names, 1):
+    #         table.add_row(f"[cyan]{i}[/cyan]", name, name_to_doc.get(name, ""))
+    #     console.print(table)
+    #     if len(all_names) > 10:
+    #         console.print(f"   [dim]... and {len(all_names) - 10} more[/dim]")
+
+    # panel = Panel(f"[bold blue]💡 Use 'ia' to interactively browse all available installers.[/bold blue]\n[bold blue]💡 Use one of the categories: {list(PACKAGE_GROUP2NAMES.keys())}[/bold blue]", title="[yellow]Helpful Tips[/yellow]", border_style="yellow")
+    # console.print(panel)
 
 
 def install_deb_package(downloaded: Path) -> None:

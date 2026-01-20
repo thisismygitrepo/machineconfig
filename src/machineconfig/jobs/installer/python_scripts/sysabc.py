@@ -69,7 +69,7 @@ sudo nala install curl wget gpg lsb-release apt-transport-https \
   git net-tools htop nano \
   build-essential \  # Where it brings gcc, make, etc.,
   python3-dev \  # ensures headers for your Python version.
-  unzip \
+  unzip \   # bun installer needs this to unzip files.
   pkg-config \  
   libssl-dev \  # essential for SSL/TLS support in many applications, compiling rust binaries will need them.
     -y || true

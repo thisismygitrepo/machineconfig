@@ -121,6 +121,7 @@ def install_clis(clis_names: list[str]):
             from machineconfig.utils.installer_utils.install_from_url import install_from_binary_url
             install_from_binary_url(binary_url=a_cli_name)
             continue
+
         selected_installer = None
         for installer in all_installers_data:
             app_name = installer["appName"]
@@ -129,8 +130,11 @@ def install_clis(clis_names: list[str]):
                 break
         if selected_installer is None:
             from machineconfig.utils.installer_utils.installer_helper import handle_installer_not_found
-            handle_installer_not_found(a_cli_name, all_installers_data)
-            return None
+            clis_names_chosen_interactively = handle_installer_not_found(a_cli_name, all_installers_data)
+            if len(clis_names_chosen_interactively)  == 0:
+                continue
+            _ = install_clis(clis_names=clis_names_chosen_interactively)
+            continue
         message = Installer(selected_installer).install_robust(version=None)  # finish the task
         total_messages.append(message)
     if total_messages:
