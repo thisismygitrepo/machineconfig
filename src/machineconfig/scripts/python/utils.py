@@ -6,9 +6,10 @@ from typing import Annotated, Optional, Literal
 
 def kill_process(interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactively choose the process to kill")] = True) -> None:
     """⚔️ Choose a process to kill."""
-    from machineconfig.utils.procs import main, ProcessManager
+    from machineconfig.utils.procs import ProcessManager
     if interactive:
-        main()
+        proc = ProcessManager()
+        proc.choose_and_kill()
         return
     _ = ProcessManager
 

@@ -2,8 +2,7 @@
 
 import psutil
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from machineconfig.utils.options import choose_from_options
-from typing import Optional, TypedDict, List, Dict
+from typing import Optional, TypedDict, List
 from rich.console import Console
 from rich.panel import Panel
 from datetime import datetime
@@ -36,7 +35,7 @@ def get_processes_accessing_file(path: str) -> List[FileAccessInfo]:
     # header for searching processes
     title = "🔍  SEARCHING FOR PROCESSES ACCESSING FILE"
     console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
-    res: Dict[int, List[str]] = {}
+    res: list[FileAccessInfo] = []
 
     with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}")) as progress:
         progress.add_task("🔎 Scanning processes...", total=None)
@@ -48,10 +47,10 @@ def get_processes_accessing_file(path: str) -> List[FileAccessInfo]:
                 continue
             tmp = [file.path for file in files if path in file.path]
             if len(tmp) > 0:
-                res[proc.pid] = tmp
+                res.append({"pid": proc.pid, "files": tmp})
 
     # Convert to list of dictionaries for consistent data structure
-    result_data: List[FileAccessInfo] = [{"pid": pid, "files": files} for pid, files in res.items()]
+    result_data: List[FileAccessInfo] = res
     console.print(Panel(f"✅ Found {len(res)} processes accessing the specified file", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
     return result_data
 
@@ -99,7 +98,7 @@ class ProcessManager:
 
         # Sort by memory usage (descending)
         process_info.sort(key=lambda x: x["memory_usage_mb"], reverse=True)
-        self.data = process_info
+        self.data: list[ProcessInfo] = process_info
         console.print(Panel(f"✅ Process Manager initialized with {len(process_info)} processes", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
 
     def _format_process_table(self) -> str:
@@ -121,22 +120,36 @@ class ProcessManager:
         return "\n".join(lines)
 
     def choose_and_kill(self):
-        # header for interactive process selection
-        title = "🎯  INTERACTIVE PROCESS SELECTION AND TERMINATION"
-        console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
-        # Format data as table for display
-        formatted_data = self._format_process_table()
-        all_lines = formatted_data.split("\n")
-        header_and_separator = all_lines[:2]  # First two lines: header and separator
-        options = all_lines[2:]  # Skip header and separator, only process lines
-        res = choose_from_options(options=all_lines, msg="📋 Select processes to manage:", tv=True, multi=True)
-        # Filter out header and separator if they were selected
-        selected_lines = [line for line in res if line not in header_and_separator]
-        indices = [options.index(val) for val in selected_lines]
-        selected_processes = [self.data[i] for i in indices]
-        print("\n📊 All Processes:")
-        print(formatted_data)
-        print("\n🎯 Selected Processes:")
+        # # header for interactive process selection
+        # title = "🎯  INTERACTIVE PROCESS SELECTION AND TERMINATION"
+        # console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
+        # # Format data as table for display
+        # formatted_data = self._format_process_table()
+        # all_lines = formatted_data.split("\n")
+        # header_and_separator = all_lines[:2]  # First two lines: header and separator
+        # options = all_lines[2:]  # Skip header and separator, only process lines
+        # from machineconfig.utils.options import choose_from_options
+        # res = choose_from_options(options=all_lines, msg="📋 Select processes to manage:", tv=True, multi=True)
+        # # Filter out header and separator if they were selected
+        # selected_lines = [line for line in res if line not in header_and_separator]
+        # indices = [options.index(val) for val in selected_lines]
+        # selected_processes = [self.data[i] for i in indices]
+        # print("\n📊 All Processes:")
+        # print(formatted_data)
+        # print("\n🎯 Selected Processes:")
+
+        from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
+        # def choose_from_dict_with_preview(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool, preview_size_percent: float) -> str | list[str] | None:
+
+        import json
+        commands = choose_from_dict_with_preview(
+            options_to_preview_mapping={str(proc["command"]): json.dumps({k: str(v) for k, v in proc.items()}, indent=2) for proc in self.data},
+            multi=True,
+            extension="json",
+            preview_size_percent=70,
+        )
+        selected_processes = [proc for proc in self.data if str(proc["command"]) in commands]
+
         for process in selected_processes:
             print(f"PID: {process['pid']}, Name: {process['name']}, Memory: {process['memory_usage_mb']:.2f}MB")
         for idx, process in enumerate(selected_processes):
@@ -214,11 +227,6 @@ def get_age(create_time: datetime) -> str:
     dtm_now = datetime.now()
     delta = dtm_now - create_time
     return str(delta).split(".")[0]  # remove microseconds
-
-
-def main():
-    from machineconfig.utils.procs import ProcessManager
-    ProcessManager().choose_and_kill()
 
 
 if __name__ == "__main__":
