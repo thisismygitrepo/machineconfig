@@ -67,6 +67,6 @@ def substitute_home(tabs: list[TabConfig]) -> list["TabConfig"]:
     from pathlib import Path
     json_str = json.dumps(tabs)
     json_str = json_str.replace("~", str(Path.home())).replace("$HOME", str(Path.home()))
-    json_str = json_str.replace("""Command": "f """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg fire """)
-    json_str = json_str.replace("""Command": "s """, """Command": "~/.config/machineconfig/scripts/wrap_mcfg sessions """)
+    json_str = json_str.replace("""command": "f """, """command": "~/.config/machineconfig/scripts/wrap_mcfg fire """)
+    json_str = json_str.replace("""command": "s """, """command": "~/.config/machineconfig/scripts/wrap_mcfg sessions """)
     return json.loads(json_str)
