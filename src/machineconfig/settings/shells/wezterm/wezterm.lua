@@ -157,6 +157,7 @@ config.inactive_pane_hsb = {
   }
 
 -- config.ime_preedit_rendering = 'System'
+config.enable_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
 config.show_tabs_in_tab_bar = true
