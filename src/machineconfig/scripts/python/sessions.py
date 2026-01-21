@@ -29,7 +29,7 @@ def run(
     subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-sh", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
     max_tabs: Annotated[int, typer.Option(..., "--max-tabs", "-mt", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
     max_layouts: Annotated[int, typer.Option(..., "--max-layouts", "-ml", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 25,
-    backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "auto",
+    backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "auto",
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
     from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import run_layouts, find_layout_file, select_layout
@@ -57,13 +57,18 @@ def run(
         layouts_selected = layouts_modified
 
     import platform
-    backend_resolved: Literal["zellij", "windows-terminal"]
+    backend_resolved: Literal["zellij", "windows-terminal", "tmux"]
     match backend:
         case "windows-terminal" | "wt":
             if platform.system().lower() != "windows":
                 typer.echo("Error: Windows Terminal layouts can only be started on Windows systems.", err=True)
                 raise typer.Exit(code=1)
             backend_resolved = "windows-terminal"
+        case "tmux" | "t":
+            if platform.system().lower() == "windows":
+                typer.echo("Error: tmux is not supported on Windows.", err=True)
+                raise typer.Exit(code=1)
+            backend_resolved = "tmux"
         case "zellij" | "z":
             if platform.system().lower() == "windows":
                 typer.echo("Error: Zellij is not supported on Windows.", err=True)
@@ -103,7 +108,7 @@ def attach_to_session(
     if platform.system().lower() == "windows":
         typer.echo("Error: Zellij is not supported on Windows.", err=True, color=True)
         raise typer.Exit()
-    from machineconfig.scripts.python.helpers.helpers_sessions.attach_impl import choose_zellij_session as impl
+    from machineconfig.scripts.python.helpers.helpers_sessions.attach_impl import choose_session as impl
     action, payload = impl(name=name, new_session=new_session, kill_all=kill_all)
     if action == "error":
         typer.echo(payload, err=True, color=True)

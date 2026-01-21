@@ -16,7 +16,7 @@ def strip_ansi_codes(text: str) -> str:
     return _ANSI_ESCAPE_RE.sub("", text)
 
 
-def choose_zellij_session(name: str | None, new_session: bool, kill_all: bool) -> tuple[str, str | None]:
+def choose_session(name: str | None, new_session: bool, kill_all: bool) -> tuple[str, str | None]:
     """Choose a Zellij session. Returns tuple of (action, script_to_run) where action is 'run_script', 'exit', or 'error'."""
     # from machineoncif
 
