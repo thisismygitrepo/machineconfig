@@ -110,48 +110,23 @@ def check_remote_is_dir(self: "SSH", source_path: Union[str, Path]) -> bool:
 def expand_remote_path(self: "SSH", source_path: Union[str, Path]) -> str:
     """Helper to expand a path on the remote machine."""
 
-    def expand_source(path_to_expand: str, json_output_path: str) -> str:
-        from pathlib import Path
-        import json
+    source_text = str(source_path)
+    if source_text.startswith("~"):
+        rel_path = source_text[1:].lstrip("/\\")
+        return _build_remote_path(self, self.remote_specs["home_dir"], rel_path)
 
-        expanded_path_posix = Path(path_to_expand).expanduser().absolute().as_posix()
-        json_result_path = Path(json_output_path)
-        json_result_path.parent.mkdir(parents=True, exist_ok=True)
-        json_result_path.write_text(json.dumps(expanded_path_posix, indent=2), encoding="utf-8")
-        print(json_result_path.as_posix())
-        return expanded_path_posix
+    if self.remote_specs["system"] == "Windows":
+        windows_path = PureWindowsPath(source_text)
+        if windows_path.is_absolute():
+            return str(windows_path)
+        return _build_remote_path(self, self.remote_specs["home_dir"], source_text)
 
-    remote_json_output = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/return_{randstr()}.json").as_posix()
-    command = lambda_to_python_script(
-        lambda: expand_source(path_to_expand=str(source_path), json_output_path=remote_json_output),
-        in_global=True, import_module=False
-    )
-    response = self.run_py_remotely(
-        python_code=command,
-        uv_with=[MACHINECONFIG_VERSION],
-        uv_project_dir=None,
-        description="Resolving source path by expanding user",
-        verbose_output=False,
-        strict_stderr=False,
-        strict_return_code=False,
-    )
-    remote_json_path = response.op.strip()
-    if not remote_json_path:
-        raise RuntimeError(f"Could not resolve source path {source_path} - no response from remote")
+    posix_path = source_text.replace("\\", "/")
+    if posix_path.startswith("/"):
+        return posix_path
+    return _build_remote_path(self, self.remote_specs["home_dir"], posix_path)
 
-    local_json = Path.home().joinpath(f"{DEFAULT_PICKLE_SUBDIR}/local_{randstr()}.json")
-    self.simple_sftp_get(remote_path=remote_json_path, local_path=local_json)
-    import json
-
-    try:
-        result = json.loads(local_json.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, FileNotFoundError) as err:
-        raise RuntimeError(f"Could not resolve source path {source_path} - invalid JSON response: {err}") from err
-    finally:
-        if local_json.exists():
-            local_json.unlink()
-    assert isinstance(result, str), f"Could not resolve source path {source_path}"
-    return result
+    
 
 
 if __name__ == "__main__":
