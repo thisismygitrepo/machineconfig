@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 import subprocess
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional, Any, TypedDict, cast
 # from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.windows_terminal.wt_local import WTLayoutGenerator
@@ -23,11 +23,17 @@ from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.status_re
 TMP_SERIALIZATION_DIR = Path.home() / "tmp_results" / "wt_sessions" / "serialized"
 
 
+class _LoadedManagerData(TypedDict):
+    session_name: str
+    layout_config: LayoutConfig
+    script_path: str | None
+
+
 
 class WTLocalManager:
     """Manages multiple local Windows Terminal sessions and monitors their tabs and processes."""
 
-    def __init__(self, session_layouts: list[LayoutConfig], session_name_prefix: str = "LocalWTMgr"):
+    def __init__(self, session_layouts: list[LayoutConfig], session_name_prefix: Optional[str]):
         """
         Initialize the local Windows Terminal manager.
 
@@ -36,7 +42,7 @@ class WTLocalManager:
                 Format: {session_name: LayoutConfig, ...}
             session_name_prefix: Prefix for session names
         """
-        self.session_name_prefix = session_name_prefix
+        self.session_name_prefix: str | None = session_name_prefix
         self.session_layouts = session_layouts  # Store the original config
         self.managers: list[WTLayoutGenerator] = []
 
@@ -243,7 +249,7 @@ class WTLocalManager:
         session_layouts = loaded_data if isinstance(loaded_data, list) else []
         metadata_data = load_json_file(session_dir / "metadata.json", "Metadata file") if (session_dir / "metadata.json").exists() else {}
         metadata = metadata_data if isinstance(metadata_data, dict) else {}
-        session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")
+        session_name_prefix = metadata.get("session_name_prefix", None)
         instance = WTLocalManager(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
         managers_dir = session_dir / "managers"
         if managers_dir.exists():
@@ -251,9 +257,11 @@ class WTLocalManager:
             for manager_file in sorted(managers_dir.glob("manager_*.json")):
                 try:
                     loaded_manager_data = load_json_file(manager_file, "Manager data")
-                    manager_data = loaded_manager_data if isinstance(loaded_manager_data, dict) else {}
-                    manager = WTLayoutGenerator(layout_config=manager_data["layout_config"], session_name=manager_data["session_name"])  # type: ignore
-                    manager.script_path = manager_data["script_path"]  # type: ignore
+                    manager_data = cast(_LoadedManagerData, loaded_manager_data) if isinstance(loaded_manager_data, dict) else None
+                    if manager_data is None:
+                        raise ValueError("Invalid manager data format")
+                    manager = WTLayoutGenerator(layout_config=manager_data["layout_config"], session_name=manager_data["session_name"])
+                    manager.script_path = manager_data["script_path"]
                     instance.managers.append(manager)
                 except Exception as e:
                     instance.logger.warning(f"Failed to load manager from {manager_file}: {e}")

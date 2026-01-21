@@ -112,7 +112,7 @@ def run_layouts(
             else:
                 iterable = [layouts_selected]
             for i, a_layouts in enumerate(iterable):
-                manager = TmuxLocalManager(session_layouts=a_layouts, session_name_prefix="LocalTmuxMgr")
+                manager = TmuxLocalManager(session_layouts=a_layouts, session_name_prefix=None)
                 manager.start_all_sessions()
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)

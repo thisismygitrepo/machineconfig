@@ -26,15 +26,23 @@ TMP_SERIALIZATION_DIR = Path.home() / "tmp_results" / "wt_sessions" / "serialize
 
 
 class WTSessionManager:
-    def __init__(self, machine2wt_tabs: dict[str, dict[str, tuple[str, str]]], session_name_prefix: str = "WTJobMgr"):
-        self.session_name_prefix = session_name_prefix
+    def __init__(self, machine2wt_tabs: dict[str, dict[str, tuple[str, str]]], session_name_prefix: Optional[str] = "WTJobMgr"):
+        self.session_name_prefix: Optional[str] = session_name_prefix
         self.machine2wt_tabs = machine2wt_tabs  # Store the original config
         self.managers: list[WTRemoteLayoutGenerator] = []
         for machine, tab_config in machine2wt_tabs.items():
             # Convert legacy dict[str, tuple[str,str]] to LayoutConfig
-            tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd} for name, (cwd, cmd) in tab_config.items()]
-            layout_config: LayoutConfig = {"layoutName": f"{session_name_prefix}_{machine}", "layoutTabs": tabs}
-            session_name = f"{session_name_prefix}_{generate_random_suffix(8)}"
+            # tabs: list[TabConfig] = [{"tabName": name, "startDir": cwd, "command": cmd, "tabWeight": 1} for name, (cwd, cmd) in tab_config.items()]
+            tabs: list[TabConfig] = []
+            for name, (cwd, cmd) in tab_config.items():
+                tab: TabConfig = {"tabName": name, "startDir": cwd, "command": cmd, "tabWeight": 1}
+                tabs.append(tab)
+            if self.session_name_prefix is not None:
+                layout_config: LayoutConfig = {"layoutName": f"{session_name_prefix}_{machine}", "layoutTabs": tabs}
+                session_name = f"{session_name_prefix}_{generate_random_suffix(8)}"
+            else:
+                layout_config: LayoutConfig = {"layoutName": f"{machine}", "layoutTabs": tabs}
+                session_name = machine
             an_m = WTRemoteLayoutGenerator(layout_config=layout_config, remote_name=machine, session_name=session_name)
             an_m.create_layout_file()
             self.managers.append(an_m)
@@ -141,7 +149,7 @@ class WTSessionManager:
                 results[f"{manager.remote_name}:{manager.session_name}"] = {"success": False, "error": str(e),
                 }
                 logger.error(f"❌ Exception starting session on {manager.remote_name}: {e}")
-
+    
         return results
 
     def check_all_sessions_status(self) -> dict[str, dict[str, Any]]:

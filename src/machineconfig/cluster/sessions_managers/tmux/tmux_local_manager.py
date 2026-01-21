@@ -22,13 +22,16 @@ class TmuxSessionReport(TypedDict):
 
 
 class TmuxLocalManager:
-    def __init__(self, session_layouts: list[LayoutConfig], session_name_prefix: str) -> None:
-        self.session_name_prefix = session_name_prefix
+    def __init__(self, session_layouts: list[LayoutConfig], session_name_prefix: Optional[str]) -> None:
+        self.session_name_prefix: Optional[str] = session_name_prefix
         self.session_layouts = session_layouts
         self.managers: list[TmuxLayoutGenerator] = []
         for layout_config in session_layouts:
             session_name = layout_config["layoutName"].replace(" ", "_")
-            full_session_name = f"{self.session_name_prefix}_{session_name}"
+            if self.session_name_prefix is not None:
+                full_session_name = f"{self.session_name_prefix}_{session_name}"
+            else:
+                full_session_name = session_name
             manager = TmuxLayoutGenerator(layout_config=layout_config, session_name=full_session_name)
             manager.create_layout_file()
             self.managers.append(manager)
