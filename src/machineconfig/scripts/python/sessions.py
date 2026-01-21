@@ -100,16 +100,35 @@ def run(
 
 
 def attach_to_session(
-        name: Annotated[str | None, typer.Argument(help="Name of the Zellij session to attach to. If not provided, a list will be shown to choose from.")] = None,
-        new_session: Annotated[bool, typer.Option("--new-session", "-n", help="Create a new Zellij session instead of attaching to an existing one.", show_default=True)] = False,
-        kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing Zellij sessions before creating a new one.", show_default=True)] = False) -> None:
-    """Choose a Zellij session to attach to."""
+        name: Annotated[str | None, typer.Argument(help="Name of the session to attach to. If not provided, a list will be shown to choose from.")] = None,
+        new_session: Annotated[bool, typer.Option("--new-session", "-n", help="Create a new session instead of attaching to an existing one.", show_default=True)] = False,
+        kill_all: Annotated[bool, typer.Option("--kill-all", "-k", help="Kill all existing sessions before creating a new one.", show_default=True)] = False,
+        backend: Annotated[Literal["zellij", "z", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend multiplexer to use")] = "auto",
+        ) -> None:
+    """Choose a session to attach to."""
     import platform
-    if platform.system().lower() == "windows":
-        typer.echo("Error: Zellij is not supported on Windows.", err=True, color=True)
-        raise typer.Exit()
+    backend_resolved: Literal["zellij", "tmux"]
+    match backend:
+        case "zellij" | "z":
+            if platform.system().lower() == "windows":
+                typer.echo("Error: Zellij is not supported on Windows.", err=True, color=True)
+                raise typer.Exit()
+            backend_resolved = "zellij"
+        case "tmux" | "t":
+            if platform.system().lower() == "windows":
+                typer.echo("Error: tmux is not supported on Windows.", err=True, color=True)
+                raise typer.Exit()
+            backend_resolved = "tmux"
+        case "auto" | "a":
+            if platform.system().lower() == "windows":
+                typer.echo("Error: tmux/zellij are not supported on Windows.", err=True, color=True)
+                raise typer.Exit()
+            backend_resolved = "zellij"
+        case _:
+            typer.echo(f"Error: Unsupported backend '{backend}'.", err=True, color=True)
+            raise typer.Exit()
     from machineconfig.scripts.python.helpers.helpers_sessions.attach_impl import choose_session as impl
-    action, payload = impl(name=name, new_session=new_session, kill_all=kill_all)
+    action, payload = impl(backend=backend_resolved, name=name, new_session=new_session, kill_all=kill_all)
     if action == "error":
         typer.echo(payload, err=True, color=True)
         raise typer.Exit()
