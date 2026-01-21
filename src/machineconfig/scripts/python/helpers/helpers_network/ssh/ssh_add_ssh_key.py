@@ -54,7 +54,7 @@ def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str
     if os_name == "Linux" or os_name == "Darwin":
         override_files, auth_overrides = check_cloud_init_overrides()
         if override_files:
-            status_lines.append(f"\n⚠️  [yellow]Cloud-init override files detected:[/yellow]")
+            status_lines.append("\n⚠️  [yellow]Cloud-init override files detected:[/yellow]")
             for of in override_files:
                 status_lines.append(f"   • {of.name}")
         blocking_overrides: list[str] = []

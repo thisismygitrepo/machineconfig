@@ -11,13 +11,13 @@ class COMMAND_SPLITTER(Protocol):
 def limit_tab_num(layout_configs: list[LayoutConfig], max_thresh: int, threshold_type: Literal["number", "weight"], breaking_method: Literal["moreLayouts", "combineTabs"]) -> list[LayoutConfig]:
     match threshold_type, breaking_method:
         case "number", "moreLayouts":
-            return restrict_num_tabs_helper1(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+            return restrict_num_tabs_helper1(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type="number", breaking_method="moreLayouts")
         case "number", "combineTabs":
-            return restrict_num_tabs_helper2(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+            return restrict_num_tabs_helper2(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type="number", breaking_method="combineTabs")
         case "weight", "moreLayouts":
-            return restrict_num_tabs_helper3(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+            return restrict_num_tabs_helper3(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type="weight", breaking_method="moreLayouts")
         case "weight", "combineTabs":
-            return restrict_num_tabs_helper4(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type=threshold_type, breaking_method=breaking_method)
+            return restrict_num_tabs_helper4(layout_configs=layout_configs, max_thresh=max_thresh, threshold_type="weight", breaking_method="combineTabs")
         case _:
             raise NotImplementedError(f"The combination {threshold_type}, {breaking_method} is not implemented")
 def limit_tab_weight(layout_configs: list[LayoutConfig], max_weight: int, command_splitter: COMMAND_SPLITTER) -> list[LayoutConfig]:
@@ -46,7 +46,7 @@ def limit_tab_weight(layout_configs: list[LayoutConfig], max_weight: int, comman
 
 
 def run(layouts: list[LayoutConfig]):
-    from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+    from machineconfig.cluster.sessions_managers.zellij.zellij_local_manager import ZellijLocalManager
     manager = ZellijLocalManager(session_layouts=layouts)
     manager.start_all_sessions(poll_interval=2, poll_seconds=2)
     manager.run_monitoring_routine(wait_ms=2000)

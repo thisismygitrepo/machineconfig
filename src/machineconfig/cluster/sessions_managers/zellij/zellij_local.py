@@ -6,9 +6,9 @@ import logging
 from rich.console import Console
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import ComprehensiveStatus, CommandStatus
-from machineconfig.cluster.sessions_managers.zellij_utils.zellij_local_helper import validate_layout_config, create_tab_section, check_command_status, check_zellij_session_status
-from machineconfig.cluster.sessions_managers.zellij_utils.zellij_local_helper_restart import restart_tab_process
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import ComprehensiveStatus, CommandStatus
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.zellij_local_helper import validate_layout_config, create_tab_section, check_command_status, check_zellij_session_status
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.zellij_local_helper_restart import restart_tab_process
 
 
 logging.basicConfig(level=logging.INFO)

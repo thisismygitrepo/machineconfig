@@ -1,13 +1,13 @@
 
 """Like yadm and dotter."""
 
-from git import Optional
+from typing import Annotated, Literal, Optional
 from machineconfig.profile.create_links_export import ON_CONFLICT_LOOSE, ON_CONFLICT_MAPPER, METHOD_LOOSE, METHOD_MAP
-from typing import Annotated, Literal
 from pathlib import Path
 import typer
 
 from machineconfig.utils.source_of_truth import CONFIG_ROOT
+from machineconfig.utils.path_extended import PathExtended
 BACKUP_ROOT_PRIVATE = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
 BACKUP_ROOT_PUBLIC = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
 
@@ -75,6 +75,8 @@ def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "publi
             backup_root = BACKUP_ROOT_PRIVATE
         case "public" | "b":
             backup_root = BACKUP_ROOT_PUBLIC
+        case _:
+            raise ValueError(f"Unknown sensitivity: {sensitivity}")
     if destination is None:
         if shared:
             new_path = backup_root.joinpath("shared").joinpath(orig_path.name)
@@ -96,6 +98,8 @@ def get_original_path_from_backup_path(backup_path: Path, sensitivity: Literal["
             backup_root = BACKUP_ROOT_PRIVATE
         case "public" | "b":
             backup_root = BACKUP_ROOT_PUBLIC
+        case _:
+            raise ValueError(f"Unknown sensitivity: {sensitivity}")
     if destination is None:
         if shared:
             relative_part = backup_path.relative_to(backup_root.joinpath("shared"))
@@ -129,6 +133,8 @@ def register_dotfile(
     console = Console()
     orig_path = Path(file).expanduser().absolute()
     new_path = get_backup_path(orig_path=orig_path, sensitivity=sensitivity, destination=destination, shared=shared)
+    orig_path_extended = PathExtended(orig_path)
+    new_path_extended = PathExtended(new_path)
     if not orig_path.exists() and not new_path.exists():
         console.print(f"[red]Error:[/] Neither original file nor self-managed file exists:\n  Original: {orig_path}\n  Self-managed: {new_path}")
         raise typer.Exit(code=1)
@@ -136,7 +142,7 @@ def register_dotfile(
     match method:
         case "copy" | "c":
             try:
-                copy_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
+                copy_map(config_file_default_path=orig_path_extended, self_managed_config_file_path=new_path_extended, on_conflict=ON_CONFLICT_MAPPER[on_conflict])
             except Exception as e:
                 msg = typer.style("Error: ", fg=typer.colors.RED) + str(e)
                 typer.echo(msg)
@@ -144,7 +150,7 @@ def register_dotfile(
                 return
         case "symlink" | "s":
             try:
-                symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
+                symlink_map(config_file_default_path=orig_path_extended, self_managed_config_file_path=new_path_extended, on_conflict=ON_CONFLICT_MAPPER[on_conflict])
             except Exception as e:
                 msg = typer.style("Error: ", fg=typer.colors.RED) + str(e)
                 typer.echo(msg)

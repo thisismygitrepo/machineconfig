@@ -35,6 +35,7 @@ class SSH:
         self.port: int = port
         self.proxycommand: Optional[str] = None
         import paramiko
+        import paramiko
         import getpass
         if isinstance(host, str):
             try:

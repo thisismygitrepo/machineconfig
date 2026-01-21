@@ -6,8 +6,8 @@ Status reporting utilities for Zellij remote layouts.
 import logging
 from typing import Dict, Any
 from rich.console import Console
-from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
-from machineconfig.cluster.sessions_managers.zellij_utils.session_manager import SessionManager
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.process_monitor import ProcessMonitor
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.session_manager import SessionManager
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logger = logging.getLogger(__name__)

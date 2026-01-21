@@ -6,11 +6,11 @@ import json
 import uuid
 from datetime import datetime
 
-from machineconfig.cluster.sessions_managers.wt_utils.remote_executor import WTRemoteExecutor
-from machineconfig.cluster.sessions_managers.wt_utils.layout_generator import WTLayoutGenerator
-from machineconfig.cluster.sessions_managers.wt_utils.process_monitor import WTProcessMonitor
-from machineconfig.cluster.sessions_managers.wt_utils.session_manager import WTSessionManager
-from machineconfig.cluster.sessions_managers.wt_utils.status_reporter import WTStatusReporter
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.remote_executor import WTRemoteExecutor
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.layout_generator import WTLayoutGenerator
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.process_monitor import WTProcessMonitor
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.session_manager import WTSessionManager
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.status_reporter import WTStatusReporter
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
 
 logging.basicConfig(level=logging.INFO)

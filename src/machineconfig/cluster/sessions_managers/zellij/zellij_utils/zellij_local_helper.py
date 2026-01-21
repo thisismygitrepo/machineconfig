@@ -8,7 +8,7 @@ import logging
 from typing import List
 from pathlib import Path
 
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatus, ZellijSessionStatus
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import CommandStatus, ZellijSessionStatus
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
 
 

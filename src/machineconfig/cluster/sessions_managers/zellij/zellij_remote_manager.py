@@ -4,8 +4,8 @@ import uuid
 from pathlib import Path
 from typing import Optional
 from machineconfig.utils.scheduler import Scheduler
-from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
-from machineconfig.cluster.sessions_managers.zellij_remote import ZellijRemoteLayoutGenerator
+from machineconfig.cluster.sessions_managers.zellij.zellij_local import run_command_in_zellij_tab
+from machineconfig.cluster.sessions_managers.zellij.zellij_remote import ZellijRemoteLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 from machineconfig.logger import get_logger
 
@@ -20,7 +20,7 @@ class ZellijSessionManager:
         self.machine_layouts = machine_layouts  # Store the original config
         self.managers: list[ZellijRemoteLayoutGenerator] = []
         for machine, layout_config in machine_layouts.items():
-            from machineconfig.cluster.sessions_managers.zellij_utils.layout_generator import LayoutGenerator
+            from machineconfig.cluster.sessions_managers.zellij.zellij_utils.layout_generator import LayoutGenerator
             session_name = f"{self.session_name_prefix}_{LayoutGenerator.generate_random_suffix(8)}"
             an_m = ZellijRemoteLayoutGenerator(
                 layout_config=layout_config,

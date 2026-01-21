@@ -18,7 +18,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-from machineconfig.cluster.sessions_managers.wt_utils.wt_helpers import (
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.wt_helpers import (
     generate_random_suffix,
     # escape_for_wt,
     validate_layout_config,

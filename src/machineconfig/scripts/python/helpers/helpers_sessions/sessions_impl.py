@@ -67,14 +67,14 @@ def run_layouts(
     monitor: bool,
     sequential: bool,
     kill_upon_completion: bool,
-    backend: Literal["zellij", "windows-terminal"],
+    backend: Literal["zellij", "windows-terminal", "tmux"],
     layouts_selected: list["LayoutConfig"],
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
     import time
     match backend:
         case "zellij":
-            from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+            from machineconfig.cluster.sessions_managers.zellij.zellij_local_manager import ZellijLocalManager
             if sequential:
                 iterable: list[list[LayoutConfig]] = [[item] for item in layouts_selected]
             else:
@@ -90,14 +90,29 @@ def run_layouts(
                     time.sleep(sleep_inbetween)
         case "windows-terminal":
             if sequential:
-                from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
+                from machineconfig.cluster.sessions_managers.windows_terminal.wt_local import run_wt_layout
                 for a_layout in layouts_selected:
                     run_wt_layout(layout_config=a_layout)
                 return
             iterable = [layouts_selected]
-            from machineconfig.cluster.sessions_managers.wt_local_manager import WTLocalManager
+            from machineconfig.cluster.sessions_managers.windows_terminal.wt_local_manager import WTLocalManager
             for i, a_layouts in enumerate(iterable):
                 manager = WTLocalManager(session_layouts=a_layouts)
+                manager.start_all_sessions()
+                if monitor:
+                    manager.run_monitoring_routine(wait_ms=2000)
+                    if kill_upon_completion:
+                        manager.kill_all_sessions()
+                if i < len(layouts_selected) - 1:
+                    time.sleep(sleep_inbetween)
+        case "tmux":
+            from machineconfig.cluster.sessions_managers.tmux.tmux_local_manager import TmuxLocalManager
+            if sequential:
+                iterable = [[item] for item in layouts_selected]
+            else:
+                iterable = [layouts_selected]
+            for i, a_layouts in enumerate(iterable):
+                manager = TmuxLocalManager(session_layouts=a_layouts, session_name_prefix=None)
                 manager.start_all_sessions()
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)

@@ -9,7 +9,7 @@ from pathlib import Path
 
 from rich.console import Console
 
-from machineconfig.cluster.sessions_managers.zellij_utils.remote_executor import RemoteExecutor
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.remote_executor import RemoteExecutor
 
 logger = logging.getLogger(__name__)
 console = Console()

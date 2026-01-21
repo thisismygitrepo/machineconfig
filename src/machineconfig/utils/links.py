@@ -1,4 +1,5 @@
 from machineconfig.utils.path_extended import PathExtended, PLike
+from pathlib import Path
 from machineconfig.profile.create_links_export import ON_CONFLICT_STRICT
 from machineconfig.utils.accessories import randstr
 from rich.console import Console
@@ -96,7 +97,7 @@ def build_links(target_paths: list[tuple[PLike, str]], repo_root: PLike):
             console.print(Panel(f"❌ Failed to create symlink {links_path} -> {a_target_path}: {ex}", title="Symlink Error", expand=False))
 
 
-def symlink_map(config_file_default_path: PathExtended, self_managed_config_file_path: PathExtended,
+def symlink_map(config_file_default_path: Path, self_managed_config_file_path: Path,
                  on_conflict: ON_CONFLICT_STRICT
                  ) -> OperationResult:
     """helper function. creates a symlink from `config_file_default_path` to `self_managed_config_file_path`.
