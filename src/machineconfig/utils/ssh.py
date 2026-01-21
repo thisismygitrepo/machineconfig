@@ -1,5 +1,5 @@
 from typing import Callable, Optional, Any, cast, Union, Literal
-import os
+import subprocess
 from pathlib import Path
 import platform
 from machineconfig.scripts.python.helpers.helpers_utils.python import MachineSpecs
@@ -34,9 +34,8 @@ class SSH:
         self.username: str
         self.port: int = port
         self.proxycommand: Optional[str] = None
-        import paramiko  # type: ignore
+        import paramiko
         import getpass
-
         if isinstance(host, str):
             try:
                 import paramiko.config as pconfig
@@ -279,7 +278,7 @@ print("SSH key added successfully")
     def run_shell_cmd_on_local(self, command: str) -> Response:
         print(f"""💻 [LOCAL EXECUTION] Running command on node: {self.local_specs["system"]} Command: {command}""")
         res = Response(cmd=command)
-        res.output.returncode = os.system(command)
+        res.output.returncode = subprocess.run(command, shell=True, check=False).returncode
         return res
 
     def run_shell_cmd_on_remote(
@@ -312,11 +311,13 @@ print("SSH key added successfully")
         match on:
             case "local":
                 uv_cmd = get_uv_command(platform=self.local_specs["system"])
+                py_rel_path = str(py_path.relative_to(Path.home()))
             case "remote":
                 uv_cmd = get_uv_command(platform=self.remote_specs["system"])
+                py_rel_path = py_path.relative_to(Path.home()).as_posix()
             case _:
                 raise ValueError(f"Invalid value for 'on': {on}. Must be 'local' or 'remote'")
-        uv_cmd = f"""{uv_cmd} run {with_clause} python {py_path.relative_to(Path.home())}"""
+        uv_cmd = f"""{uv_cmd} run {with_clause} python {py_rel_path}"""
         return uv_cmd
 
     def run_py_remotely(
