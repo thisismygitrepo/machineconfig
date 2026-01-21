@@ -5,12 +5,16 @@ import sqlalchemy as sa
 from sqlalchemy import BigInteger, Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, Interval, JSON, LargeBinary, MetaData, Numeric, SmallInteger, String, Table, Text, Time
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 
+from typing import Literal, TypeAlias
 
 class ColorEnum(enum.Enum):
     RED = "red"
     GREEN = "green"
     BLUE = "blue"
 
+
+T1: TypeAlias = Literal["t1", "t3"]
+T1_ENUM: sa.Enum = sa.Enum("t1", "t3", name="t1_enum")
 
 metadata: MetaData = MetaData()
 
@@ -43,6 +47,7 @@ all_types_example: Table = Table(
     Column("json_data", JSON, comment="Generic JSON type (engine specific)"),
     Column("jsonb_data", JSONB, comment="PostgreSQL JSONB (binary JSON)"),
     Column("color", sa.Enum(ColorEnum), nullable=False, comment="ENUM type"),
+    Column("t1_value", T1_ENUM, nullable=False, comment="Enum literal values: t1 | t3"),
     Column("uuid_field", UUID(as_uuid=True), default=uuid4, comment="GUID/UUID (128-bit unique identifier)"),
     Column("int_array", ARRAY(Integer), comment="ARRAY of INTEGER (~list[int32])"),
     Column("str_array", ARRAY(String), comment="ARRAY of VARCHAR strings"),
@@ -51,13 +56,6 @@ all_types_example: Table = Table(
     Column("related_id", Integer, ForeignKey("other_table.id"), comment="Foreign key reference"),
 )
 
-
-__all__: tuple[str, ...] = (
-    "ColorEnum",
-    "all_types_example",
-    "metadata",
-    "other_table",
-)
 
 if __name__ == "__main__":
     q = all_types_example

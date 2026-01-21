@@ -1,9 +1,5 @@
 #!/usr/bin/bash
 
-echo """🌐 WEB BROWSERS | Installing browser applications"""
-echo "📥 Installing Google Chrome..."
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo dpkg -i google-chrome-stable_current_amd64.deb
 
 echo """📧 EMAIL CLIENT | Installing Thunderbird"""
 echo "📥 Installing Thunderbird via Flatpak..."
@@ -68,3 +64,31 @@ ln -s /home/$USER/.nix-profile/share/applications/* /home/$USER/.local/share/app
 
 echo """✅ INSTALLATION COMPLETE | Desktop applications have been installed
 """
+#!/bin/bash
+# 🖥️ GUI APPLICATIONS AND DESKTOP ENVIRONMENT SETUP SCRIPT
+# This script installs graphical user interfaces and desktop environments
+
+echo """📦 INSTALLING GUI COMPONENTS | Setting up desktop environment
+"""
+
+# echo "📥 Installing Nautilus file manager..."
+# sudo nala install nautilus -y  # 📂 graphical file manager
+# sudo nala install x11-apps  # 🎨 few graphical test apps like xeyes
+
+echo "📥 Installing XRDP - Remote Desktop Protocol server..."
+sudo nala install xrdp -y  # 🔌 remote desktop protocol
+
+# echo "📥 Installing X.Org server and components..."
+# sudo nala install xorg -y  # 🎯 xorg server
+# sudo nala install xinit -y  # 🚀 xorg init
+# sudo nala install xserver-xorg -y  # 🖼️ xorg server
+
+echo "📥 Installing XFCE4 desktop environment..."
+sudo nala install xfce4 -y  # 🏠 xfce4 desktop environment
+
+echo "📥 Installing XFCE4 additional components..."
+sudo nala install xfce4-goodies -y  # ✨ xfce4 desktop environment extras
+
+echo """🔧 CONFIGURING XRDP | Setting up Remote Desktop service
+"""
+
