@@ -135,7 +135,7 @@ manager.start_sessions()
 Track processes running in session tabs:
 
 ```python
-from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.process_monitor import ProcessMonitor
 
 monitor = ProcessMonitor(session_name="my-session")
 status = monitor.get_tab_status("editor")
@@ -146,7 +146,7 @@ status = monitor.get_tab_status("editor")
 Generate status reports for running sessions:
 
 ```python
-from machineconfig.cluster.sessions_managers.zellij_utils.status_reporter import StatusReporter
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.status_reporter import StatusReporter
 
 reporter = StatusReporter()
 report = reporter.generate_report(session_names=["session1", "session2"])

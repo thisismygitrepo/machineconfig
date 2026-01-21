@@ -7,11 +7,11 @@ from typing import Optional
 
 from rich.console import Console
 
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo, StatusRow
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo, StatusRow
 from machineconfig.utils.scheduler import Scheduler
-from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
+from machineconfig.cluster.sessions_managers.zellij.zellij_local import ZellijLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-from machineconfig.cluster.sessions_managers.zellij_utils import zellij_local_manager_helper as helper
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils import zellij_local_manager_helper as helper
 
 
 logging.basicConfig(level=logging.INFO)
@@ -133,7 +133,7 @@ class ZellijLocalManager:
             session_name = manager.session_name
 
             # Get session status using the helper function
-            from machineconfig.cluster.sessions_managers.zellij_utils.zellij_local_helper import check_zellij_session_status
+            from machineconfig.cluster.sessions_managers.zellij.zellij_utils.zellij_local_helper import check_zellij_session_status
             session_status = check_zellij_session_status(session_name)
 
             # Get commands status for this session

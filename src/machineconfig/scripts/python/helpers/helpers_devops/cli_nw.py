@@ -164,6 +164,7 @@ sudo rm /etc/cloudflared/config.yml || true
 sudo $cloudflared_path --config $home_dir/.cloudflared/config.yml service install
 """
 
+
     from machineconfig.utils.code import exit_then_run_shell_script, print_code
     print_code(code, lexer="bash", desc="code to achieve the goal")
     yes = typer.confirm("Do you want to run the above commands now?", default=False)

@@ -6,14 +6,14 @@ from pathlib import Path
 from typing import Optional, Any
 # from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
-from machineconfig.cluster.sessions_managers.wt_local import WTLayoutGenerator
-from machineconfig.cluster.sessions_managers.wt_utils.wt_helpers import check_wt_session_status
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_local import WTLayoutGenerator
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.wt_helpers import check_wt_session_status
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import StartResult, ActiveSessionInfo
-from machineconfig.cluster.sessions_managers.wt_utils.manager_persistence import (
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import StartResult, ActiveSessionInfo
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.manager_persistence import (
     generate_session_id, save_json_file, load_json_file, list_saved_sessions_in_dir, delete_session_dir, ensure_session_dir_exists
 )
-from machineconfig.cluster.sessions_managers.wt_utils.status_reporting import (
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.status_reporting import (
     print_global_summary, print_session_health_status, print_commands_status, calculate_session_summary, calculate_global_summary_from_status
 )
 
@@ -59,7 +59,7 @@ class WTLocalManager:
 
     def start_all_sessions(self) -> dict[str, StartResult]:
         """Start all Windows Terminal sessions with their layouts."""
-        results = {}
+        results: dict[str, StartResult] = {}
         for manager in self.managers:
             session_name = manager.session_name or "unknown"
             try:
@@ -90,7 +90,7 @@ class WTLocalManager:
 
     def kill_all_sessions(self) -> dict[str, StartResult]:
         """Kill all managed Windows Terminal sessions."""
-        results = {}
+        results: dict[str, StartResult] = {}
         for manager in self.managers:
             session_name = manager.session_name or "unknown"
             try:
@@ -240,10 +240,10 @@ class WTLocalManager:
         if not session_dir.exists():
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
         loaded_data = load_json_file(session_dir / "session_layouts.json", "Configuration file")
-        session_layouts = loaded_data if isinstance(loaded_data, list) else []  # type: ignore[arg-type]
+        session_layouts = loaded_data if isinstance(loaded_data, list) else []
         metadata_data = load_json_file(session_dir / "metadata.json", "Metadata file") if (session_dir / "metadata.json").exists() else {}
-        metadata = metadata_data if isinstance(metadata_data, dict) else {}  # type: ignore[arg-type]
-        session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")  # type: ignore[union-attr]
+        metadata = metadata_data if isinstance(metadata_data, dict) else {}
+        session_name_prefix = metadata.get("session_name_prefix", "LocalWTMgr")
         instance = WTLocalManager(session_layouts=session_layouts, session_name_prefix=session_name_prefix)
         managers_dir = session_dir / "managers"
         if managers_dir.exists():
@@ -251,9 +251,9 @@ class WTLocalManager:
             for manager_file in sorted(managers_dir.glob("manager_*.json")):
                 try:
                     loaded_manager_data = load_json_file(manager_file, "Manager data")
-                    manager_data = loaded_manager_data if isinstance(loaded_manager_data, dict) else {}  # type: ignore[arg-type]
-                    manager = WTLayoutGenerator(layout_config=manager_data["layout_config"], session_name=manager_data["session_name"])  # type: ignore[typeddict-item]
-                    manager.script_path = manager_data["script_path"]  # type: ignore[typeddict-item]
+                    manager_data = loaded_manager_data if isinstance(loaded_manager_data, dict) else {}
+                    manager = WTLayoutGenerator(layout_config=manager_data["layout_config"], session_name=manager_data["session_name"])  # type: ignore
+                    manager.script_path = manager_data["script_path"]  # type: ignore
                     instance.managers.append(manager)
                 except Exception as e:
                     instance.logger.warning(f"Failed to load manager from {manager_file}: {e}")

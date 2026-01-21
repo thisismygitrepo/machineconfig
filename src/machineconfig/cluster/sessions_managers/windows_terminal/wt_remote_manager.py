@@ -4,17 +4,17 @@ from pathlib import Path
 from typing import Optional, Any
 from rich.console import Console
 from machineconfig.utils.scheduler import Scheduler
-from machineconfig.cluster.sessions_managers.wt_local import run_command_in_wt_tab
-from machineconfig.cluster.sessions_managers.wt_remote import WTRemoteLayoutGenerator
-from machineconfig.cluster.sessions_managers.wt_utils.wt_helpers import generate_random_suffix
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_local import run_command_in_wt_tab
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_remote import WTRemoteLayoutGenerator
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.wt_helpers import generate_random_suffix
 from machineconfig.utils.schemas.layouts.layout_types import TabConfig, LayoutConfig
-from machineconfig.cluster.sessions_managers.wt_utils.manager_persistence import (
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.manager_persistence import (
     generate_session_id, save_json_file, load_json_file, list_saved_sessions_in_dir, delete_session_dir, ensure_session_dir_exists
 )
-from machineconfig.cluster.sessions_managers.wt_utils.status_reporting import (
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.status_reporting import (
     print_global_summary, print_session_health_status, print_commands_status, calculate_session_summary, calculate_global_summary_from_status
 )
-from machineconfig.cluster.sessions_managers.wt_utils.monitoring_helpers import (
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.monitoring_helpers import (
     collect_status_data_from_managers, flatten_status_data, check_if_all_stopped, print_status_table, collect_session_statuses, print_session_statuses
 )
 
@@ -94,10 +94,10 @@ class WTSessionManager:
         if not session_dir.exists():
             raise FileNotFoundError(f"Session directory not found: {session_dir}")
         loaded_data = load_json_file(session_dir / "machine2wt_tabs.json", "Configuration file")
-        machine2wt_tabs = loaded_data if isinstance(loaded_data, dict) else {}  # type: ignore[arg-type]
+        machine2wt_tabs = loaded_data if isinstance(loaded_data, dict) else {}
         metadata_data = load_json_file(session_dir / "metadata.json", "Metadata file") if (session_dir / "metadata.json").exists() else {}
-        metadata = metadata_data if isinstance(metadata_data, dict) else {}  # type: ignore[arg-type]
-        session_name_prefix = metadata.get("session_name_prefix", "WTJobMgr")  # type: ignore[union-attr]
+        metadata = metadata_data if isinstance(metadata_data, dict) else {}
+        session_name_prefix = metadata.get("session_name_prefix", "WTJobMgr")
         instance = cls(machine2wt_tabs=machine2wt_tabs, session_name_prefix=session_name_prefix)
         managers_dir = session_dir / "managers"
         if managers_dir.exists():
@@ -138,7 +138,8 @@ class WTSessionManager:
                     logger.error(f"❌ Failed to start session '{session_name}' on {remote_name}: {start_result.get('error')}")
 
             except Exception as e:
-                results[f"{manager.remote_name}:{manager.session_name}"] = {"success": False, "error": str(e)}
+                results[f"{manager.remote_name}:{manager.session_name}"] = {"success": False, "error": str(e),
+                }
                 logger.error(f"❌ Exception starting session on {manager.remote_name}: {e}")
 
         return results

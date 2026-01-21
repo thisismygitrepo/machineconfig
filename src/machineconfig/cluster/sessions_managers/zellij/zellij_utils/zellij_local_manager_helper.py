@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import ActiveSessionInfo, StartResult
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import ActiveSessionInfo, StartResult
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 if TYPE_CHECKING:

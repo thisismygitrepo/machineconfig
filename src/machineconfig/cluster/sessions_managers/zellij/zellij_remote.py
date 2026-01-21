@@ -8,11 +8,11 @@ from datetime import datetime
 
 from rich.console import Console
 
-from machineconfig.cluster.sessions_managers.zellij_utils.remote_executor import RemoteExecutor
-from machineconfig.cluster.sessions_managers.zellij_utils.layout_generator import LayoutGenerator
-from machineconfig.cluster.sessions_managers.zellij_utils.process_monitor import ProcessMonitor
-from machineconfig.cluster.sessions_managers.zellij_utils.session_manager import SessionManager
-from machineconfig.cluster.sessions_managers.zellij_utils.status_reporter import StatusReporter
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.remote_executor import RemoteExecutor
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.layout_generator import LayoutGenerator
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.process_monitor import ProcessMonitor
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.session_manager import SessionManager
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.status_reporter import StatusReporter
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 logging.basicConfig(level=logging.INFO)

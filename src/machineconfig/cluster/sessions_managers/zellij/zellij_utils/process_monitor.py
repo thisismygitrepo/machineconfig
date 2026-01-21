@@ -7,9 +7,9 @@ import json
 import shlex
 import logging
 from typing import Dict
-from machineconfig.cluster.sessions_managers.zellij_utils.remote_executor import RemoteExecutor
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.remote_executor import RemoteExecutor
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
-from machineconfig.cluster.sessions_managers.zellij_utils.monitoring_types import CommandStatus, ProcessInfo
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import CommandStatus, ProcessInfo
 
 logger = logging.getLogger(__name__)
 

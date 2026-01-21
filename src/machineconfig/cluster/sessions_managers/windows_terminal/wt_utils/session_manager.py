@@ -7,7 +7,7 @@ import logging
 import subprocess
 from typing import Optional, TypedDict, NotRequired
 from pathlib import Path
-from machineconfig.cluster.sessions_managers.wt_utils.remote_executor import WTRemoteExecutor
+from machineconfig.cluster.sessions_managers.windows_terminal.wt_utils.remote_executor import WTRemoteExecutor
 
 logger = logging.getLogger(__name__)
 

@@ -75,6 +75,8 @@ def get_backup_path(orig_path: Path, sensitivity: Literal["private", "v", "publi
             backup_root = BACKUP_ROOT_PRIVATE
         case "public" | "b":
             backup_root = BACKUP_ROOT_PUBLIC
+        case _:
+            raise ValueError(f"Unknown sensitivity: {sensitivity}")
     if destination is None:
         if shared:
             new_path = backup_root.joinpath("shared").joinpath(orig_path.name)
@@ -96,6 +98,8 @@ def get_original_path_from_backup_path(backup_path: Path, sensitivity: Literal["
             backup_root = BACKUP_ROOT_PRIVATE
         case "public" | "b":
             backup_root = BACKUP_ROOT_PUBLIC
+        case _:
+            raise ValueError(f"Unknown sensitivity: {sensitivity}")
     if destination is None:
         if shared:
             relative_part = backup_path.relative_to(backup_root.joinpath("shared"))
@@ -136,7 +140,7 @@ def register_dotfile(
     match method:
         case "copy" | "c":
             try:
-                copy_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
+                copy_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])
             except Exception as e:
                 msg = typer.style("Error: ", fg=typer.colors.RED) + str(e)
                 typer.echo(msg)
@@ -144,7 +148,7 @@ def register_dotfile(
                 return
         case "symlink" | "s":
             try:
-                symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])  # type: ignore[arg-type]
+                symlink_map(config_file_default_path=orig_path, self_managed_config_file_path=new_path, on_conflict=ON_CONFLICT_MAPPER[on_conflict])
             except Exception as e:
                 msg = typer.style("Error: ", fg=typer.colors.RED) + str(e)
                 typer.echo(msg)
