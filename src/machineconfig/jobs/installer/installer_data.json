@@ -85,7 +85,7 @@
           "macos": "fx_darwin_arm64"
         }
       }
-    },    
+    },
     {
       "appName": "git",
       "repoURL": "CMD",
@@ -678,8 +678,8 @@
           "linux": "cloudflare_warp_cli.py",
           "windows": "cloudflare_warp_cli.py",
           "macos": "cloudflare_warp_cli.py"
+        }
       }
-    }
     },
     {
       "appName": "cpufetch",
@@ -1307,7 +1307,7 @@
           "linux": "https://yt-dl.org/downloads/latest/youtube-dl",
           "macos": "https://yt-dl.org/downloads/latest/youtube-dl",
           "windows": "https://yt-dl.org/latest/youtube-dl.exe"
-          }
+        }
       }
     },
     {
@@ -1678,7 +1678,7 @@
           "windows": "duckdb_cli-windows-amd64.zip"
         },
         "arm64": {
-          "linux": "duckdb_cli-linux-arm64.zip",  
+          "linux": "duckdb_cli-linux-arm64.zip",
           "macos": "duckdb_cli-osx-universal.zip",
           "windows": "duckdb_cli-windows-arm64.zip"
         }
@@ -2482,11 +2482,11 @@
           "windows": "trippy-{version}-aarch64-pc-windows-msvc.zip"
         }
       }
-    },    
+    },
     {
       "appName": "oryx",
       "repoURL": "https://github.com/pythops/oryx",
-      "doc": "🕵️‍♂️ TUI for sniffing network traffic using eBPF on Linux",  
+      "doc": "🕵️‍♂️ TUI for sniffing network traffic using eBPF on Linux",
       "fileNamePattern": {
         "amd64": {
           "linux": "oryx-x86_64-unknown-linux-gnu.tar.gz",
@@ -2503,7 +2503,7 @@
     {
       "appName": "tufw",
       "repoURL": "https://github.com/peltho/tufw",
-      "doc": "📋 Terminal UI for UFW (Uncomplicated Firewall) on Linux",  
+      "doc": "📋 Terminal UI for UFW (Uncomplicated Firewall) on Linux",
       "fileNamePattern": {
         "amd64": {
           "linux": "tufw_{version}_linux_amd64.tar.gz",
@@ -2520,7 +2520,7 @@
     {
       "appName": "netscanner",
       "repoURL": "https://github.com/Chleba/netscanner",
-      "doc": "📡 Terminal network scanner & diagnostic tool with TUI (v0.6.3)",  
+      "doc": "📡 Terminal network scanner & diagnostic tool with TUI (v0.6.3)",
       "fileNamePattern": {
         "amd64": {
           "linux": "netscanner-{version}-x86_64-unknown-linux-gnu.tar.gz",
@@ -2686,7 +2686,6 @@
           "macos": "brew install ngrok"
         }
       }
-
     },
     {
       "appName": "code",
@@ -3518,6 +3517,23 @@
           "linux": null,
           "windows": "winget install --no-upgrade --name \"Zoom\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
+        }
+      }
+    },
+    {
+      "appName": "poppler",
+      "repoURL": "https://github.com/oschwartz10612/poppler-windows",
+      "doc": "PDF rendering library - Windows builds.",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "poppler.py",
+          "linux": "sudo nala install poppler-utils -y",
+          "macos": "brew install --upgrade poppler"
+        },
+        "arm64": {
+          "windows": "poppler.py",
+          "linux": "sudo nala install poppler-utils -y",
+          "macos": "brew install --upgrade poppler"
         }
       }
     },

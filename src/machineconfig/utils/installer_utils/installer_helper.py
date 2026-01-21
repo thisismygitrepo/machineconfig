@@ -119,7 +119,6 @@ def install_deb_package(downloaded: Path) -> None:
 
 
 def download_and_prepare(download_url: str) -> PathExtended:
-    # archive_path = PathExtended(download_url).download(folder=INSTALL_TMP_DIR)
     from machineconfig.scripts.python.helpers.helpers_utils.download import download
     downloaded_object = download(download_url, output_dir=str(INSTALL_TMP_DIR))
     if downloaded_object is None:
@@ -128,7 +127,6 @@ def download_and_prepare(download_url: str) -> PathExtended:
     extracted_path = archive_path
     if extracted_path.is_file() and any(ext in archive_path.suffixes for ext in DECOMPRESS_SUPPORTED_FORMATS):
         extracted_path = archive_path.decompress()
-        # print(f"Decompressed {archive_path} to {extracted_path}")
         archive_path.delete(sure=True)
         if extracted_path.is_dir():
             nested_items = list(extracted_path.glob("*"))

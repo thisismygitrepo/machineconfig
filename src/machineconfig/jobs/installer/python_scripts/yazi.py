@@ -68,60 +68,25 @@ def main(installer_data: InstallerData, version: Optional[str]):
                 if path.exists():
                     time.sleep(0.1)
                     shutil.rmtree(path, ignore_errors=True)
-
     force_remove(yazi_plugins_path)
     yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
+    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    if platform.system() == "Windows":
+        install_if_missing(which="git")
     import git
     git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
-
     force_remove(yazi_flavours_path)
     yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
     import git
     git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
-
     # previewers:
-    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
     install_if_missing("glow")
     install_if_missing("duckdb")
-
-    if platform.system() == "Linux":
-        script = r"""
-sudo nala install poppler-utils -y || true  # For PDF preview, needed by yazi.
-"""
-        from machineconfig.utils.code import run_shell_script
-        run_shell_script(script, display_script=True, clean_env=False)
-    elif platform.system() == "Darwin":
-        script = r"""
-brew install --upgrade poppler || true  # For PDF preview, needed by yazi.
-"""
-        from machineconfig.utils.code import run_shell_script
-        run_shell_script(script, display_script=True, clean_env=False)
-    elif platform.system() == "Windows":
-        install_if_missing(which="git")
+    install_if_missing(which="poppler")
+    if platform.system() == "Windows":
         install_if_missing(which="7zip")
         install_if_missing(which="file")
-        popler_installer: InstallerData = {
-            "appName": "poppler",
-            "repoURL": "https://github.com/oschwartz10612/poppler-windows",
-            "doc": "PDF rendering library - Windows builds.",
-            "fileNamePattern": {
-                "amd64": {
-                    "windows": "Release-{version}.zip",
-                    "linux": None,
-                    "macos": None,
-                },
-                "arm64": {
-                    "windows": None,
-                    "linux": None,
-                    "macos": None,
-                }
-            }
-        }  # OR: winget install oschwartz10612.Poppler
-        inst_poppler = Installer(installer_data=popler_installer)
-        inst_poppler.install(version=None)
-    # assuming ouch is already installed
     script = """
-
 ya pkg add 'ndtoan96/ouch'  # make ouch default previewer in yazi for compressed files
 ya pkg add 'AnirudhG07/rich-preview'  # rich-cli based previewer for yazi
 ya pkg add 'stelcodes/bunny'
