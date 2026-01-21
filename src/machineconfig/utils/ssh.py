@@ -1,5 +1,4 @@
 from typing import Callable, Optional, Any, cast, Union, Literal
-import os
 from pathlib import Path
 import platform
 from machineconfig.scripts.python.helpers.helpers_utils.python import MachineSpecs
@@ -34,7 +33,7 @@ class SSH:
         self.username: str
         self.port: int = port
         self.proxycommand: Optional[str] = None
-        import paramiko  # type: ignore
+        import paramiko
         import getpass
 
         if isinstance(host, str):
@@ -279,7 +278,9 @@ print("SSH key added successfully")
     def run_shell_cmd_on_local(self, command: str) -> Response:
         print(f"""💻 [LOCAL EXECUTION] Running command on node: {self.local_specs["system"]} Command: {command}""")
         res = Response(cmd=command)
-        res.output.returncode = os.system(command)
+        import subprocess
+
+        res.output.returncode = subprocess.run(command, shell=True, check=False).returncode
         return res
 
     def run_shell_cmd_on_remote(

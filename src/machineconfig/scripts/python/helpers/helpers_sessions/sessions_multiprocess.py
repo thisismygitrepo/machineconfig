@@ -50,7 +50,7 @@ def create_from_function(
     else:
         choice_function = function
 
-    from machineconfig.cluster.sessions_managers.zellij_local import run_zellij_layout
+    from machineconfig.cluster.sessions_managers.zellij.zellij_local import run_zellij_layout
     from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
     layout: LayoutConfig = {"layoutName": "fireNprocess", "layoutTabs": []}
     for an_arg in range(num_process):

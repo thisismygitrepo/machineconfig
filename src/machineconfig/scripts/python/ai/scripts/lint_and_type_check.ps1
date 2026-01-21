@@ -36,7 +36,7 @@ function Draw-Progress {
     Write-Host "${CYAN}└────────────────────────────────────────────────────────────┘${NC}"
 }
 
-$TOTAL_STEPS = 7
+$TOTAL_STEPS = 8
 $CURRENT_STEP = 0
 
 Draw-Box "🚀 LINTING & TYPE CHECKING SUITE 🚀" "${BOLD}${CYAN}"
@@ -103,6 +103,13 @@ Write-Host "${BLUE}📋 Analyzing types with Pyrefly...${NC}"
 Remove-Item ./.ai/linters/issues_pyrefly.md -ErrorAction SilentlyContinue
 uv run pyrefly check . | Out-File -FilePath ./.ai/linters/issues_pyrefly.md
 Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyrefly.md${NC}"
+
+$CURRENT_STEP++
+Draw-Progress $CURRENT_STEP $TOTAL_STEPS "Ty Type Checker"
+Write-Host "${BLUE}📋 Analyzing types with ty...${NC}"
+Remove-Item ./.ai/linters/issues_ty.md -ErrorAction SilentlyContinue
+uv run ty check . | Out-File -FilePath ./.ai/linters/issues_ty.md
+Write-Host "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ty.md${NC}"
 
 $CURRENT_STEP++
 Draw-Progress $CURRENT_STEP $TOTAL_STEPS "Ruff Linter"

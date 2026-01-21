@@ -5,6 +5,8 @@ if [ ! -f "./pyproject.toml" ]; then
     exit 1
 fi
 
+mkdir -p .ai/linters || true
+
 # Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -40,7 +42,7 @@ draw_progress() {
     echo -e "${CYAN}└────────────────────────────────────────────────────────────┘${NC}"
 }
 
-TOTAL_STEPS=7
+TOTAL_STEPS=8
 CURRENT_STEP=0
 
 draw_box "🚀 LINTING & TYPE CHECKING SUITE 🚀" "${BOLD}${CYAN}"
@@ -107,6 +109,13 @@ echo -e "${BLUE}📋 Analyzing types with Pyrefly...${NC}"
 rm -f ./.ai/linters/issues_pyrefly.md || true
 uv run pyrefly check . > ./.ai/linters/issues_pyrefly.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyrefly.md${NC}"
+
+((CURRENT_STEP++))
+draw_progress $CURRENT_STEP $TOTAL_STEPS "Ty Type Checker"
+echo -e "${BLUE}📋 Analyzing types with ty...${NC}"
+rm -f ./.ai/linters/issues_ty.md || true
+uv run ty check . > ./.ai/linters/issues_ty.md
+echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ty.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Ruff Linter"

@@ -206,7 +206,7 @@ def _apply_command_modifiers(args: FireJobArgs, command: str, choice_file: Path,
         if args.zellij_tab in existing_tab_names:
             print(f"⚠️ Tab name `{args.zellij_tab}` already exists. Please choose a different name.")
             args.zellij_tab += f"_{randstr_func(3)}"
-        from machineconfig.cluster.sessions_managers.zellij_local import run_command_in_zellij_tab
+        from machineconfig.cluster.sessions_managers.zellij.zellij_local import run_command_in_zellij_tab
 
         command = run_command_in_zellij_tab(command=str(comman_path__), tab_name=args.zellij_tab, cwd=None)
 

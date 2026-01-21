@@ -46,7 +46,7 @@ def limit_tab_weight(layout_configs: list[LayoutConfig], max_weight: int, comman
 
 
 def run(layouts: list[LayoutConfig]):
-    from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+    from machineconfig.cluster.sessions_managers.zellij.zellij_local_manager import ZellijLocalManager
     manager = ZellijLocalManager(session_layouts=layouts)
     manager.start_all_sessions(poll_interval=2, poll_seconds=2)
     manager.run_monitoring_routine(wait_ms=2000)

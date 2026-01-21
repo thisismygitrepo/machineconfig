@@ -11,7 +11,7 @@ from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_type
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
 
 if TYPE_CHECKING:
-    from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
+    from machineconfig.cluster.sessions_managers.zellij.zellij_local import ZellijLayoutGenerator
 
 
 logger = logging.getLogger(__name__)
@@ -122,7 +122,7 @@ def save_manager(session_layouts: list[LayoutConfig], managers: list["ZellijLayo
 
 def load_manager(session_id: str):
     """Load a saved manager state from disk and return the data needed to reconstruct ZellijLocalManager."""
-    from machineconfig.cluster.sessions_managers.zellij_local import ZellijLayoutGenerator
+    from machineconfig.cluster.sessions_managers.zellij.zellij_local import ZellijLayoutGenerator
     
     session_dir = TMP_SERIALIZATION_DIR / session_id
     if not session_dir.exists():

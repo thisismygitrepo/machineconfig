@@ -87,7 +87,7 @@ def font_box_color(logo: str):
     box_style = random.choice(['whirly', 'xes', 'columns', 'parchment', 'scroll', 'scroll-akn', 'diamonds', 'headline', 'nuke', 'spring', 'stark1'])
     _cmd = f'figlet -f "{font}" "{logo}" | boxes -d "{box_style}" | lolcatjs'
     # print(_cmd)
-    os.system(_cmd)  # | lolcatjs
+    subprocess.run(_cmd, shell=True, check=False)  # | lolcatjs
     # print("after")
 
 
@@ -96,7 +96,7 @@ def character_color(logo: str):
     with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
         f.write(ArtLib.cowsay(logo))
         _new_art = f.name
-    os.system(f'type {_new_art} | lolcatjs')  # | lolcatjs
+    subprocess.run(f'type {_new_art} | lolcatjs', shell=True, check=False)  # | lolcatjs
 
 
 def character_or_box_color(logo: str):
@@ -107,7 +107,7 @@ def character_or_box_color(logo: str):
     # Prefer bat on mac if available, fallback to cat
     pager = "bat" if (platform.system() == "Darwin" and any((Path(p).joinpath("bat").exists() for p in os.environ.get("PATH", "").split(os.pathsep)))) else "cat"
     command = f"{pager} {_new_art} | lolcatjs"
-    os.system(command)
+    subprocess.run(command, shell=True, check=False)
 
 
 if __name__ == '__main__':

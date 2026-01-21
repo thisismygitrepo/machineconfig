@@ -49,7 +49,7 @@ Categories=Development;IDE;
     # Step 3: Make the .desktop file executable
     os.chmod(desktop_file, 0o755)
     # Step 4: Update desktop database (optional, usually not needed)
-    os.system(f"update-desktop-database {home}/.local/share/applications")
+    subprocess.run(["update-desktop-database", f"{home}/.local/share/applications"], check=False)
     print("Cursor is now available from the start menu.")
 
 

@@ -74,7 +74,7 @@ def run_layouts(
     import time
     match backend:
         case "zellij":
-            from machineconfig.cluster.sessions_managers.zellij_local_manager import ZellijLocalManager
+            from machineconfig.cluster.sessions_managers.zellij.zellij_local_manager import ZellijLocalManager
             if sequential:
                 iterable: list[list[LayoutConfig]] = [[item] for item in layouts_selected]
             else:
@@ -90,12 +90,12 @@ def run_layouts(
                     time.sleep(sleep_inbetween)
         case "windows-terminal":
             if sequential:
-                from machineconfig.cluster.sessions_managers.wt_local import run_wt_layout
+                from machineconfig.cluster.sessions_managers.windows_terminal.wt_local import run_wt_layout
                 for a_layout in layouts_selected:
                     run_wt_layout(layout_config=a_layout)
                 return
             iterable = [layouts_selected]
-            from machineconfig.cluster.sessions_managers.wt_local_manager import WTLocalManager
+            from machineconfig.cluster.sessions_managers.windows_terminal.wt_local_manager import WTLocalManager
             for i, a_layouts in enumerate(iterable):
                 manager = WTLocalManager(session_layouts=a_layouts)
                 manager.start_all_sessions()
