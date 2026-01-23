@@ -31,9 +31,10 @@ all_types_example: Table = Table(
     Column("id", Integer, primary_key=True, comment="INTEGER (~int32, Postgres int4)"),
     Column("big_num", BigInteger, comment="BIGINT (~int64, Postgres int8)"),
     Column("int128_num", Numeric(precision=38, scale=0), comment="NUMERIC(38,0) for ~int128 range (DBs lack a standard int128 type)"),
+
     Column("float_num", Float, comment="FLOAT (precision-dependent; SQL has no standard float16 type)"),
-    Column("float32_num", Float(precision=24), comment="FLOAT(24) ~float32 (Postgres float4)"),
-    Column("float64_num", Float(precision=53), comment="FLOAT(53) ~float64 (Postgres float8)"),
+    Column("float32_num", Float(precision=24), comment="FLOAT(24) ~float32 (Postgres float4)"),  # AKA REAL
+    Column("float64_num", Float(precision=53), comment="FLOAT(53) ~float64 (Postgres float8)"),  # AKA DOUBLE PRECISION
     Column(
         "decimal_value",
         Numeric(precision=12, scale=4),
