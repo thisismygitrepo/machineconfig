@@ -188,6 +188,10 @@ config = {original = '~/.hyper.js', self_managed = 'CONFIG_ROOT/settings/shells/
 [wezterminal]
 config = {original = '~/.config/wezterm/wezterm.lua', self_managed = 'CONFIG_ROOT/settings/shells/wezterm/wezterm.lua', os = 'any'}
 
+[ghostty]
+config_linux = {original = '~/.config/ghostty/config', self_managed = 'CONFIG_ROOT/settings/shells/ghostty/config', os = 'linux,darwin'}
+config_windows = {original = '~/AppData/Roaming/ghostty/config', self_managed = 'CONFIG_ROOT/settings/shells/ghostty/config', os = 'windows'}
+
 [vtm_windows]
 settings = {original = '~/.config/vtm/settings.xml', self_managed = 'CONFIG_ROOT/settings/shells/vtm/settings.xml', os = 'windows'}
 
