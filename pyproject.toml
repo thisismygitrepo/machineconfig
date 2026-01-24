@@ -22,6 +22,7 @@ requires-python = ">=3.13"
 dependencies = [
     "cryptography>=46.0.3",
     "fire>=0.7.1",
+    "github-copilot-sdk>=0.1.18",
     "gitpython>=3.1.45",
     "joblib>=1.5.2",
     "paramiko>=4.0.0",
@@ -91,6 +92,7 @@ dev = [
     "cowsay>=6.1",
     "duckdb>=1.4.3",
     "gdown>=5.2.0",
+    "github-copilot-sdk>=0.1.18",
     "ipdb>=0.13.13",
     "ipykernel>=7.1.0",
     "ipython>=9.7.0",
