@@ -53,7 +53,7 @@ def parse_cloud_source_target(args: Args, source: str, target: str) -> tuple[str
     os_specific = args.os_specific
 
     if source.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in source
-        # At the moment, this cloud.json defaults overrides the args and is activated only when source or target are just ":"
+        # At the moment, this .ve.ini defaults overrides the args and is activated only when source or target are just ":"
         # consider activating it by a flag, and also not not overriding explicitly passed args options.
         assert ES not in target, "Not Implemented here yet."
         path = absolute(target)

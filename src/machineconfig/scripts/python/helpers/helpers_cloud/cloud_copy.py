@@ -73,7 +73,7 @@ def main(
     encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = False,
     zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = False,
     os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = False,
-    config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to cloud.json file.")] = None,
+    config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to .ve.ini file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc."""
     from rich.console import Console

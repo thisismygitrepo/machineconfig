@@ -1,34 +1,45 @@
 
-from typing import Optional
+from typing import Optional, TypedDict, cast, NotRequired
+
+
+class VE_SPECS(TypedDict):
+    ve_path: str
+    ipy_profile: NotRequired[str]
+class CLOUD(TypedDict):
+    cloud: str
+    root: str
+    rel2home: bool
+class VE_INI(TypedDict):
+    specs: NotRequired[VE_SPECS]
+    cloud: NotRequired[CLOUD]
 
 
 def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], Optional[str]]:
-    """Works with .ve.ini .venv and .ve_path"""
+    """Works with .ve.ini .venv"""
     ve_path: Optional[str] = None
     ipy_profile: Optional[str] = None
     tmp = init_path
-
     from machineconfig.utils.io import read_ini
-
     for _ in init_path.parents:
         if tmp.joinpath(".ve.ini").exists():
-            ini = read_ini(tmp.joinpath(".ve.ini"))
+            print(f"🔍 Found .ve.ini @ {tmp}/.ve.ini")
+            ini = cast(VE_INI, read_ini(tmp.joinpath(".ve.ini")))
             if ve_path is None:
-                
-                try:
-                    ve_path = ini["specs"]["ve_path"]
-                except KeyError:
-                    raise KeyError(f".ve.ini file at {tmp.joinpath('.ve.ini')} is missing the 've_path' key in the 'specs' section.")
-                print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.ini')}")
+                if "specs" in ini:
+                    specs = ini["specs"]
+                    if "ve_path" in specs:
+                        ve_path = specs["ve_path"]
+                        print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.ini')}")
+                    else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini [specs] has no ve_path key.")
+                else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini has no [specs] section.")
             if ipy_profile is None:
-                ipy_profile = ini["specs"]["ipy_profile"]
-                print(f"✨ Using IPython profile: {ipy_profile}")
-        if ipy_profile is None and tmp.joinpath(".ipy_profile").exists():
-            ipy_profile = tmp.joinpath(".ipy_profile").read_text(encoding="utf-8").rstrip()
-            print(f"✨ Using IPython profile: {ipy_profile}. This is based on this file {tmp.joinpath('.ipy_profile')}")
-        if ve_path is None and tmp.joinpath(".ve_path").exists():
-            ve_path = tmp.joinpath(".ve_path").read_text(encoding="utf-8").rstrip().replace("\n", "")
-            print(f"🔮 Using Virtual Environment found @ {tmp}/.ve_path: {ve_path}")
+                if "specs" in ini:
+                    specs = ini["specs"]
+                    if "ipy_profile" in specs:
+                        ipy_profile = specs["ipy_profile"]
+                        print(f"✨ Using IPython profile: {ipy_profile}")
+                    else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini [specs] has no ipy_profile key.")
+                else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini has no [specs] section.")
         if ve_path is None and tmp.joinpath(".venv").exists():
             print(f"🔮 Using Virtual Environment found @ {tmp}/.venv")
             ve_path = tmp.joinpath(".venv").resolve().__str__()

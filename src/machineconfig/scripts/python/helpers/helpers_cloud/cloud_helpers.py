@@ -1,7 +1,7 @@
 from pathlib import Path
-from machineconfig.utils.io import read_ini, read_json
+from machineconfig.utils.io import read_ini
 from machineconfig.utils.accessories import pprint
-from typing import Optional
+from typing import Optional, cast
 import os
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 from rich.console import Console
@@ -44,22 +44,19 @@ class Args:
 
     config: Optional[str] = None
 
-    @staticmethod
-    def from_config(config_path: Path):
-        return Args(**read_json(config_path))
-
 
 def find_cloud_config(path: Path):
-    display_header(f"Searching for cloud configuration file @ {path}")
-
+    display_header(f"Searching for .ve.ini configuration file @ {path}")
     for _i in range(len(path.parts)):
-        if path.joinpath("cloud.json").exists():
-            res = Args.from_config(path.joinpath("cloud.json"))
-            display_success(f"Found cloud config at: {path.joinpath('cloud.json')}")
-            pprint(res.__dict__, "Cloud Config")
+        if path.joinpath(".ve.ini").exists():
+            from machineconfig.utils.ve import VE_INI
+            res = cast(VE_INI, read_ini(path.joinpath(".ve.ini")))
+            if "sdfg" in res:
+                pass
+            display_success(f"Found cloud config at: {path.joinpath('.ve.ini')}")
+            pprint(res, "Cloud Config")
             return res
         path = path.parent
-
     display_error("No cloud configuration file found")
     return None
 

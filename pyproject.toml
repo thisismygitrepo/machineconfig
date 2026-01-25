@@ -110,6 +110,7 @@ dev = [
     "polars>=1.35.2",
     "pre-commit>=4.5.0",
     "pudb>=2025.1.5",
+    "pydantic>=2.12.5",
     "pylint>=4.0.4",
     "pylsp-mypy>=0.7.0",
     "pymupdf>=1.26.6",
