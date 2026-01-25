@@ -1,4 +1,4 @@
-
+# Yazi configuration file for Linux
 [mgr]
 show_hidden = true
 ratio = [1, 3, 5]
@@ -42,10 +42,10 @@ dir = "~/.config/yazi/plugins"
 
 prepend_previewers = [
   # Markdown previewer
-  { url = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
+  { name = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
   # JSON previewer - explicitly use built-in json previewer
   { mime = "application/json", run = "json" },
-  { url = "*.json", run = "json" },
+  { name = "*.json", run = "json" },
   # Archive previewer
   { mime = "application/*zip",            run = "ouch" },
   { mime = "application/x-tar",           run = "ouch" },
@@ -59,20 +59,20 @@ prepend_previewers = [
   { mime = "application/zstd",            run = "ouch" },
   { mime = "application/java-archive",    run = "ouch" },
 
-  { url = "*.tsv", run = "duckdb" },  
-  { url = "*.parquet", run = "duckdb" },  
-  { url = "*.xlsx", run = "duckdb" },  
-  { url = "*.db", run = "duckdb" },
-  { url = "*.duckdb", run = "duckdb" }
+  { name = "*.tsv", run = "duckdb" },  
+  { name = "*.parquet", run = "duckdb" },  
+  { name = "*.xlsx", run = "duckdb" },  
+  { name = "*.db", run = "duckdb" },
+  { name = "*.duckdb", run = "duckdb" }
 ]
 
 prepend_preloaders = [  
-  # { url = "*.csv", run = "duckdb", multi = false },  
-  { url = "*.tsv", run = "duckdb", multi = false },  
-  # { url = "*.json", run = "duckdb", multi = false },  
-  { url = "*.parquet", run = "duckdb", multi = false },
-  # { url = "*.txt", run = "duckdb", multi = false },  
-  { url = "*.xlsx", run = "duckdb", multi = false }
+  # { name = "*.csv", run = "duckdb", multi = false },  
+  { name = "*.tsv", run = "duckdb", multi = false },  
+  # { name = "*.json", run = "duckdb", multi = false },  
+  { name = "*.parquet", run = "duckdb", multi = false },
+  # { name = "*.txt", run = "duckdb", multi = false },  
+  { name = "*.xlsx", run = "duckdb", multi = false }
 ]
 
 # prepend_preloaders = [   { url = "*.csv", run = "duckdb", multi = false },  
