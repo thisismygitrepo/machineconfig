@@ -193,13 +193,12 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
         self.cache: T
         self.source_func = source_func  # function which when called returns a fresh object to be frozen.
         self.path: Path = path
-        _ = self.path.parent.mkdir(parents=True, exist_ok=True)
         self.time_produced = datetime.now()  # if path is None else
         self.save = saver
         self.reader = reader
         self.logger = logger
         self.expire = expire
-        self.name = name if isinstance(name, str) else self.source_func.__name__
+        self.name = name if isinstance(name, str) else str(self.source_func.__name__)
     def __call__(self, fresh: bool, tolerance_seconds: float | int) -> T:
         if not hasattr(self, "cache"):  # populate cache for the first time: we have two options, populate from disk or from source func.
             if self.path.exists():  # prefer to read from disk over source func as a default source of cache.
@@ -213,6 +212,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                     self.cache = self.source_func()  # fresh data.
                     self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                     self.time_produced = datetime.now()
+                    self.path.parent.mkdir(parents=True, exist_ok=True)
                     self.save(self.cache, self.path)
                     return self.cache
                 msg1 = f"""📦 CACHE OPERATION 🔄 {self.name} cache: Reading cached values from `{self.path}` ⏱️  Lag = {age}"""
@@ -225,6 +225,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                     self.cache = self.source_func()
                     self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                     self.time_produced = datetime.now()
+                    self.path.parent.mkdir(parents=True, exist_ok=True)
                     self.save(self.cache, self.path)
                     return self.cache
             else:  # disk cache does not exist, populate from source func.
@@ -233,6 +234,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                 self.cache = self.source_func()  # fresh data.
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.time_produced = datetime.now()
+                self.path.parent.mkdir(parents=True, exist_ok=True)
                 self.save(self.cache, self.path)
         else:  # memory cache exists
             age = datetime.now() - self.time_produced
@@ -242,6 +244,7 @@ class Cache[T]():  # This class helps to accelrate access to latest data coming 
                 self.cache = self.source_func()
                 self.logger.warning(f"⏱️  Cache population took {time.time() - t0:.2f} seconds.")
                 self.time_produced = datetime.now()
+                self.path.parent.mkdir(parents=True, exist_ok=True)
                 self.save(self.cache, self.path)
             else:
                 self.logger.warning(f"""✅ USING CACHE 📦 {self.name} cache: Using cached values ⏱️  Lag = {age} < {self.expire} < {tolerance_seconds} seconds.""")
