@@ -1,9 +1,8 @@
-[manager]
 # from https://github.com/Tyarel8/goto-drives.yazi
-prepend_keymap = [
-  { on = [ "g", ":" ], run  = "plugin goto-drives", desc = "Go to drives" },
-]
-
+[[mgr.prepend_keymap]]
+on = [ "g", ":" ]
+run = "plugin goto-drives"
+desc = "Go to drives"
 
 [[mgr.prepend_keymap]]
 on   = "v"
@@ -92,3 +91,24 @@ desc = "Read with code"
 [[mgr.prepend_keymap]]
 on  = "y"
 run = [ 'shell -- echo "$@" | cb cp0', "yank" ]
+
+# DuckDB plugin keymaps for column scrolling
+[[mgr.prepend_keymap]]
+on = "H"
+run = "plugin duckdb -1"
+desc = "Scroll one column to the left"
+
+[[mgr.prepend_keymap]]
+on = "L"
+run = "plugin duckdb +1"
+desc = "Scroll one column to the right"
+
+[[mgr.prepend_keymap]]
+on = ["g", "o"]
+run = "plugin duckdb -open"
+desc = "open with duckdb"
+
+[[mgr.prepend_keymap]]
+on = ["g", "u"]
+run = "plugin duckdb -ui"
+desc = "open with duckdb ui"
