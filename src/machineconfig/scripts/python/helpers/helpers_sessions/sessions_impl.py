@@ -97,7 +97,7 @@ def run_layouts(
             iterable = [layouts_selected]
             from machineconfig.cluster.sessions_managers.windows_terminal.wt_local_manager import WTLocalManager
             for i, a_layouts in enumerate(iterable):
-                manager = WTLocalManager(session_layouts=a_layouts)
+                manager = WTLocalManager(session_layouts=a_layouts, session_name_prefix=None)
                 manager.start_all_sessions()
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)

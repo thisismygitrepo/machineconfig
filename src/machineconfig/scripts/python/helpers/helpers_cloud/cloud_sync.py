@@ -1,28 +1,22 @@
-"""CS
-TODO: use typer or typed-argument-parser to parse args
-"""
-
-
-from typing import Annotated, Optional
-import typer
+from typing import Optional
 from machineconfig.utils.ve import CLOUD, read_default_cloud_config
 
 
 defaults = read_default_cloud_config()
 
 def main(
-    source: Annotated[str, typer.Argument(help="source")],
-    target: Annotated[str, typer.Argument(help="target")],
-    config: Annotated[Optional[str], typer.Option("--config", "-c", help="Cloud config name or path to .ve.ini")] = None,
-    transfers: Annotated[int, typer.Option("--transfers", "-t", help="Number of threads in syncing.")] = 10,
-    root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = defaults["root"],
-    key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = defaults["key"],
-    pwd: Annotated[Optional[str], typer.Option("--pwd", "-P", help="Password for encryption")] = defaults["pwd"],
-    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="Decrypt after receiving.")] = defaults["encrypt"],
-    zip_: Annotated[bool, typer.Option("--zip", "-z", help="unzip after receiving.")] = defaults["zip"],
-    bisync: Annotated[bool, typer.Option("--bisync", "-b", help="Bidirectional sync.")] = False,
-    delete: Annotated[bool, typer.Option("--delete", "-D", help="Delete files in remote that are not in local.")] = False,
-    verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.")] = False,
+    source: str,
+    target: str,
+    config: Optional[str],
+    transfers: int,
+    root: str,
+    key: Optional[str],
+    pwd: Optional[str],
+    encrypt: bool,
+    zip_: bool,
+    bisync: bool,
+    delete: bool,
+    verbose: bool,
 ) -> None:
     from machineconfig.scripts.python.helpers.helpers_cloud.helpers2 import parse_cloud_source_target
     from machineconfig.scripts.python.helpers.helpers_cloud.cloud_mount import get_mprocs_mount_txt

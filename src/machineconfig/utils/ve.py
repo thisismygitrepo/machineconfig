@@ -1,4 +1,7 @@
-from typing import Optional, TypedDict, cast, NotRequired
+from typing import Optional, TypedDict, cast, NotRequired, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 class CLOUD(TypedDict):
     cloud: str
@@ -74,6 +77,7 @@ def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], O
 
 def get_ve_activate_line(ve_root: str):
     import platform
+    from pathlib import Path
     if platform.system() == "Windows":
         q = Path(ve_root).expanduser().relative_to(Path.home()).as_posix()
         activate_ve_line = f". $HOME/{q}/Scripts/activate.ps1"
@@ -83,6 +87,3 @@ def get_ve_activate_line(ve_root: str):
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     return activate_ve_line
 
-
-if __name__ == "__main__":
-    from pathlib import Path

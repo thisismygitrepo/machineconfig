@@ -11,6 +11,7 @@ defaults = read_default_cloud_config()
 def sync(
     source: Annotated[str, typer.Argument(help="source")],
     target: Annotated[str, typer.Argument(help="target")],
+    config: Annotated[Optional[str], typer.Option("--config", "-c", help="path to .ve.ini file.")] = None,
     transfers: Annotated[int, typer.Option("--transfers", "-t", help="Number of threads in syncing.")] = 10,
     root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = defaults["root"],
     key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = defaults["key"],
@@ -23,7 +24,7 @@ def sync(
 ) -> None:
     """🔄 Synchronize files/folders between local and cloud storage."""
     from machineconfig.scripts.python.helpers.helpers_cloud.cloud_sync import main as sync_main
-    sync_main(source=source, target=target, transfers=transfers, root=root, key=key, pwd=pwd, encrypt=encrypt, zip_=zip_, bisync=bisync, delete=delete, verbose=verbose)
+    sync_main(source=source, target=target, config=config, transfers=transfers, root=root, key=key, pwd=pwd, encrypt=encrypt, zip_=zip_, bisync=bisync, delete=delete, verbose=verbose)
 
 
 def copy(

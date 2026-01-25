@@ -2,8 +2,7 @@
 CC
 """
 
-from typing import Optional, Annotated
-import typer
+from typing import Optional
 from machineconfig.utils.ve import CLOUD, read_default_cloud_config
 
 from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
@@ -13,7 +12,7 @@ defaults = read_default_cloud_config()
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_chain(wait_fixed(1), wait_fixed(4), wait_fixed(9)))
-def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = None) -> None:
+def get_securely_shared_file(url: Optional[str], folder: Optional[str]) -> None:
     from rich.console import Console
     from rich.panel import Panel
     from rich.progress import Progress
@@ -65,18 +64,18 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 
 
 def main(
-    source: Annotated[str, typer.Argument(help="📂 file/folder path to be taken from here.")],
-    target: Annotated[str, typer.Argument(help="🎯 file/folder path to be be sent to here.")],
-    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = defaults["overwrite"],
-    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = defaults["share"],
-    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = defaults["rel2home"],
-    root: Annotated[str, typer.Option("--root", "-R", help="🌳 Remote root.")] = defaults["root"],
-    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = defaults["key"],
-    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = defaults["pwd"],
-    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = defaults["encrypt"],
-    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = defaults["zip"],
-    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = defaults["os_specific"],
-    config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to .ve.ini file.")] = None,
+    source: str,
+    target: str,
+    overwrite: bool,
+    share: bool,
+    rel2home: bool,
+    root: str,
+    key: Optional[str],
+    pwd: Optional[str],
+    encrypt: bool,
+    zip_: bool,
+    os_specific: bool,
+    config: Optional[str],
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc."""
     from rich.console import Console
@@ -109,7 +108,7 @@ def main(
                 print("🔄 Converting Google Drive link to direct download URL")
             else:
                 console.print(Panel("❌ Invalid Google Drive link format", title="[bold red]Error[/bold red]", border_style="red"))
-                raise typer.Exit(code=1)
+                raise SystemExit(1)
         return get_securely_shared_file(url=source, folder=target)
 
     console.print(Panel("🔍 Parsing source and target paths...", title="[bold blue]Info[/bold blue]", border_style="blue"))
@@ -126,7 +125,7 @@ def main(
 
     if cloud_config_explicit["key"] is not None:
         console.print(Panel("❌ Key-based encryption is not supported yet", title="[bold red]Error[/bold red]", border_style="red"))
-        raise typer.Exit(code=1)
+        raise SystemExit(1)
 
     if cloud in source:
         console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source.replace(cloud + ':', '')}\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
@@ -172,12 +171,4 @@ def main(
             console.print(Panel(f"🔗 SHARE URL GENERATED\n📝 URL file: {share_url_path}\n🌍 {res.as_url_str()}", title="[bold blue]Share[/bold blue]", border_style="blue", width=152))
     else:
         console.print(Panel(f"❌ ERROR: Cloud '{cloud}' not found in source or target", title="[bold red]Error[/bold red]", border_style="red", width=152))
-        raise typer.Exit(code=1)
-
-
-def arg_parser() -> None:
-    typer.run(main)
-
-
-if __name__ == "__main__":
-    arg_parser()
+        raise SystemExit(1)

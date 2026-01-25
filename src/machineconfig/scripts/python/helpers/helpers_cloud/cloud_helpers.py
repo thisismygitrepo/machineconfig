@@ -72,7 +72,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> CL
         pwd = ""
         default_message = "no default password found"
     pwd = input(f"🔑 Enter encryption password ({default_message}): ") or pwd
-    res = CLOUD(cloud=cloud, pwd=pwd, encrypt=True, zip=True, overwrite=True, share=True, rel2home=True, root="myshare", os_specific=False)
+    res = CLOUD(cloud=cloud, pwd=pwd, encrypt=True, zip=True, overwrite=True, share=True, rel2home=True, root="myshare", os_specific=False, key=None)
     display_success("Using SecureShare cloud config")
     pprint(dict(res), "SecureShare Config")
     return res
