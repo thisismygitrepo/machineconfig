@@ -71,6 +71,11 @@ def main(installer_data: InstallerData, version: Optional[str]):
     force_remove(yazi_plugins_path)
     yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+    # previewers:
+    install_if_missing(which= "glow")
+    install_if_missing(which="duckdb")
+    install_if_missing(which="poppler")
+    install_if_missing(which="jq")
     if platform.system() == "Windows":
         install_if_missing(which="git")
     import git
@@ -79,10 +84,6 @@ def main(installer_data: InstallerData, version: Optional[str]):
     yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
     import git
     git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
-    # previewers:
-    install_if_missing("glow")
-    install_if_missing("duckdb")
-    install_if_missing(which="poppler")
     if platform.system() == "Windows":
         install_if_missing(which="7zip")
         install_if_missing(which="file")

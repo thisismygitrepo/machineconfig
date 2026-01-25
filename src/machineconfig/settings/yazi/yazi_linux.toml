@@ -23,9 +23,9 @@ open = [
 [open]
 prepend_rules = [
   # Text/Code files - open with Helix by default
-  { name = "*.py", use = ["edit", "vscode"] },
-  { name = "*.{rs,toml,yaml,yml,json,js,ts,tsx,jsx,html,css,md,txt,sh,bash,zsh,ps1}", use = ["edit", "vscode"] },
-  { mime = "text/*", use = ["edit", "vscode"] },
+  { name = "*.py", use = ["edit", "hx"] },
+  { name = "*.{rs,toml,yaml,yml,json,js,ts,tsx,jsx,html,css,md,txt,sh,bash,zsh,ps1}", use = ["edit", "hx"] },
+  { mime = "text/*", use = ["edit", "hx"] },
 ]
 rules = [
   { mime = "application/pdf", use = ["system_default"] },
@@ -41,40 +41,41 @@ dir = "~/.config/yazi/plugins"
 
 
 prepend_previewers = [
-	# Markdown previewer
-	{ name = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
-	# Archive previewer
-	{ mime = "application/*zip",            run = "ouch" },
-	{ mime = "application/x-tar",           run = "ouch" },
-	{ mime = "application/x-bzip2",         run = "ouch" },
-	{ mime = "application/x-7z-compressed", run = "ouch" },
-	{ mime = "application/x-rar",           run = "ouch" },
-	{ mime = "application/vnd.rar",         run = "ouch" },
-	{ mime = "application/x-xz",            run = "ouch" },
-	{ mime = "application/xz",              run = "ouch" },
-	{ mime = "application/x-zstd",          run = "ouch" },
-	{ mime = "application/zstd",            run = "ouch" },
-	{ mime = "application/java-archive",    run = "ouch" },
+  # Markdown previewer
+  { url = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
+  # JSON previewer - explicitly use built-in json previewer
+  { mime = "application/json", run = "json" },
+  { url = "*.json", run = "json" },
+  # Archive previewer
+  { mime = "application/*zip",            run = "ouch" },
+  { mime = "application/x-tar",           run = "ouch" },
+  { mime = "application/x-bzip2",         run = "ouch" },
+  { mime = "application/x-7z-compressed", run = "ouch" },
+  { mime = "application/x-rar",           run = "ouch" },
+  { mime = "application/vnd.rar",         run = "ouch" },
+  { mime = "application/x-xz",            run = "ouch" },
+  { mime = "application/xz",              run = "ouch" },
+  { mime = "application/x-zstd",          run = "ouch" },
+  { mime = "application/zstd",            run = "ouch" },
+  { mime = "application/java-archive",    run = "ouch" },
 
-  { name = "*.tsv", run = "duckdb" },  
-  { name = "*.json", run = "duckdb" },  
-  { name = "*.parquet", run = "duckdb" },  
-  { name = "*.txt", run = "duckdb" },  
-  { name = "*.xlsx", run = "duckdb" },  
-  { name = "*.db", run = "duckdb" },
-  { name = "*.duckdb", run = "duckdb" }
+  { url = "*.tsv", run = "duckdb" },  
+  { url = "*.parquet", run = "duckdb" },  
+  { url = "*.xlsx", run = "duckdb" },  
+  { url = "*.db", run = "duckdb" },
+  { url = "*.duckdb", run = "duckdb" }
 ]
 
 prepend_preloaders = [  
-  # { name = "*.csv", run = "duckdb", multi = false },  
-  { name = "*.tsv", run = "duckdb", multi = false },  
-  # { name = "*.json", run = "duckdb", multi = false },  
-  { name = "*.parquet", run = "duckdb", multi = false },
-  # { name = "*.txt", run = "duckdb", multi = false },  
-  { name = "*.xlsx", run = "duckdb", multi = false }
+  # { url = "*.csv", run = "duckdb", multi = false },  
+  { url = "*.tsv", run = "duckdb", multi = false },  
+  # { url = "*.json", run = "duckdb", multi = false },  
+  { url = "*.parquet", run = "duckdb", multi = false },
+  # { url = "*.txt", run = "duckdb", multi = false },  
+  { url = "*.xlsx", run = "duckdb", multi = false }
 ]
 
-# prepend_preloaders = [   { name = "*.csv", run = "duckdb", multi = false },  
+# prepend_preloaders = [   { url = "*.csv", run = "duckdb", multi = false },  
 
 
 [[plugin.load]]
@@ -86,9 +87,4 @@ path = "toggle-pane.yazi"
 # Change them to your desired values
 max_width  = 1000
 max_height = 1000
-
-previewers = [
-   # PDF
-   { mime = "application/pdf", run = "pdf" },
-]
 
