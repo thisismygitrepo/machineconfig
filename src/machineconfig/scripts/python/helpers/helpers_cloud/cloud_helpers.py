@@ -1,61 +1,32 @@
-from pathlib import Path
+
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.accessories import pprint
+from machineconfig.utils.source_of_truth import DEFAULTS_PATH
+from machineconfig.utils.ve import VE_INI, CLOUD
+
+
 from typing import Optional, cast
 import os
-from machineconfig.utils.source_of_truth import DEFAULTS_PATH
+from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 from rich import box  # Import box
-from dataclasses import dataclass
 
 console = Console()
 
 
-
-class ArgsDefaults:
-    # source: str=None
-    # target: str=None
-    encrypt: bool = False
-    zip_: bool = False
-    overwrite: bool = False
-    share: bool = False
-    rel2home = False
-    root = None
-    os_specific = False
-    key = None
-    pwd = None
-
-@dataclass
-class Args:
-    cloud: Optional[str] = None
-
-    zip: bool = ArgsDefaults.zip_
-    overwrite: bool = ArgsDefaults.overwrite
-    share: bool = ArgsDefaults.share
-
-    root: Optional[str] = ArgsDefaults.root
-    os_specific: bool = ArgsDefaults.os_specific
-    rel2home: bool = ArgsDefaults.rel2home
-
-    encrypt: bool = ArgsDefaults.encrypt
-    key: Optional[str] = ArgsDefaults.key
-    pwd: Optional[str] = ArgsDefaults.pwd
-
-    config: Optional[str] = None
-
-
-def find_cloud_config(path: Path):
+def find_cloud_config(path: Path) -> CLOUD | None:
     display_header(f"Searching for .ve.ini configuration file @ {path}")
     for _i in range(len(path.parts)):
         if path.joinpath(".ve.ini").exists():
-            from machineconfig.utils.ve import VE_INI
             res = cast(VE_INI, read_ini(path.joinpath(".ve.ini")))
-            if "sdfg" in res:
-                pass
+            cloud_section = "cloud"
             display_success(f"Found cloud config at: {path.joinpath('.ve.ini')}")
-            pprint(res, "Cloud Config")
-            return res
+            if cloud_section in res:
+                res = res["cloud"]
+                pprint(dict(res), "Cloud Config")
+                return res
+            display_error(f".ve.ini @ {path}/.ve.ini has no [cloud] section.")
         path = path.parent
     display_error("No cloud configuration file found")
     return None
@@ -73,10 +44,8 @@ def absolute(path: str) -> Path:
     return obj.absolute()
 
 
-def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Args:
-    console = Console()
+def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> CLOUD:
     console.print(Panel("🔐 Secure Share Cloud Configuration", expand=False))
-
     if cloud is None:
         if os.environ.get("CLOUD_CONFIG_NAME") is not None:
             default_cloud = os.environ.get("CLOUD_CONFIG_NAME")
@@ -103,36 +72,23 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> Ar
         pwd = ""
         default_message = "no default password found"
     pwd = input(f"🔑 Enter encryption password ({default_message}): ") or pwd
-    res = Args(cloud=cloud, pwd=pwd, encrypt=True, zip=True, overwrite=True, share=True, rel2home=True, root="myshare", os_specific=False)
-
+    res = CLOUD(cloud=cloud, pwd=pwd, encrypt=True, zip=True, overwrite=True, share=True, rel2home=True, root="myshare", os_specific=False)
     display_success("Using SecureShare cloud config")
-    pprint(res.__dict__, "SecureShare Config")
+    pprint(dict(res), "SecureShare Config")
     return res
 
 
 def display_header(title: str):
     console.print(Panel(title, box=box.DOUBLE_EDGE, title_align="left"))  # Replace print with Panel
-
-
 def display_subheader(title: str):
     console.print(Panel(title, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
-
-
 def display_content(content: str):
     console.print(Panel(content, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
-
-
 def display_status(status: str):
     console.print(Panel(status, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
-
-
 def display_success(message: str):
     console.print(Panel(message, box=box.ROUNDED, border_style="green", title_align="left"))  # Replace print with Panel
-
-
 def display_warning(message: str):
     console.print(Panel(message, box=box.ROUNDED, border_style="yellow", title_align="left"))  # Replace print with Panel
-
-
 def display_error(message: str):
     console.print(Panel(message, box=box.ROUNDED, border_style="red", title_align="left"))  # Replace print with Panel

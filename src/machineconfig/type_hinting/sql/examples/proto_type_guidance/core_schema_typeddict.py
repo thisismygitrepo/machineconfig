@@ -1,4 +1,3 @@
-from rich.abc import t
 
 from typing import Any, Literal, TypedDict, TypeAlias
 import polars as pl

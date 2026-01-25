@@ -5,25 +5,28 @@ TODO: use typer or typed-argument-parser to parse args
 
 from typing import Annotated, Optional
 import typer
+from machineconfig.utils.ve import CLOUD, read_default_cloud_config
 
+
+defaults = read_default_cloud_config()
 
 def main(
     source: Annotated[str, typer.Argument(help="source")],
     target: Annotated[str, typer.Argument(help="target")],
+    config: Annotated[Optional[str], typer.Option("--config", "-c", help="Cloud config name or path to .ve.ini")] = None,
     transfers: Annotated[int, typer.Option("--transfers", "-t", help="Number of threads in syncing.")] = 10,
-    root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = "myhome",
-    key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = None,
-    pwd: Annotated[Optional[str], typer.Option("--pwd", "-P", help="Password for encryption")] = None,
-    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="Decrypt after receiving.")] = False,
-    zip_: Annotated[bool, typer.Option("--zip", "-z", help="unzip after receiving.")] = False,
+    root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = defaults["root"],
+    key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = defaults["key"],
+    pwd: Annotated[Optional[str], typer.Option("--pwd", "-P", help="Password for encryption")] = defaults["pwd"],
+    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="Decrypt after receiving.")] = defaults["encrypt"],
+    zip_: Annotated[bool, typer.Option("--zip", "-z", help="unzip after receiving.")] = defaults["zip"],
     bisync: Annotated[bool, typer.Option("--bisync", "-b", help="Bidirectional sync.")] = False,
     delete: Annotated[bool, typer.Option("--delete", "-D", help="Delete files in remote that are not in local.")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.")] = False,
 ) -> None:
-
     from machineconfig.scripts.python.helpers.helpers_cloud.helpers2 import parse_cloud_source_target
-    from machineconfig.scripts.python.helpers.helpers_cloud.cloud_helpers import Args
     from machineconfig.scripts.python.helpers.helpers_cloud.cloud_mount import get_mprocs_mount_txt
+
     from rich.console import Console
     from rich.panel import Panel
     console = Console()
@@ -31,7 +34,8 @@ def main(
     title = "☁️  Cloud Sync Utility"
     console.print(Panel(title, title_align="left", border_style="blue"))
 
-    args_obj = Args(
+    cloud_config_explicit = CLOUD(
+        cloud="",
         root=root,
         key=key,
         pwd=pwd,
@@ -39,9 +43,14 @@ def main(
         zip=zip_,
         rel2home=True,
         os_specific=False,
+        overwrite=False,
+        share=False,
     )
 
-    cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
+    cloud, source, target = parse_cloud_source_target(cloud_config_explicit=cloud_config_explicit,
+        cloud_config_defaults=defaults,
+            cloud_config_name=config,
+            source=source, target=target)
     # map short flags to long flags (-u -> --upload), for easier use in the script
     if bisync:
         title = "🔄 BI-DIRECTIONAL SYNC"

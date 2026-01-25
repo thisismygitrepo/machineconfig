@@ -1,14 +1,35 @@
-
 from typing import Optional, TypedDict, cast, NotRequired
 
-
-class VE_SPECS(TypedDict):
-    ve_path: str
-    ipy_profile: NotRequired[str]
 class CLOUD(TypedDict):
     cloud: str
     root: str
     rel2home: bool
+
+    pwd: Optional[str]
+    key: Optional[str]
+    encrypt: bool
+
+    os_specific: bool
+    zip: bool
+    share: bool
+    overwrite: bool
+def read_default_cloud_config() -> CLOUD:
+    return {
+        "cloud": "mycloud101",
+        "root": "myhome",
+        "rel2home": False,
+        "pwd": None,
+        "key": None,
+        "encrypt": False,
+        "os_specific": False,
+        "zip": False,
+        "share": False,
+        "overwrite": False,
+    }
+
+class VE_SPECS(TypedDict):
+    ve_path: str
+    ipy_profile: NotRequired[str]
 class VE_INI(TypedDict):
     specs: NotRequired[VE_SPECS]
     cloud: NotRequired[CLOUD]
@@ -25,7 +46,7 @@ def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], O
             print(f"🔍 Found .ve.ini @ {tmp}/.ve.ini")
             ini = cast(VE_INI, read_ini(tmp.joinpath(".ve.ini")))
             if ve_path is None:
-                if "specs" in ini:
+                if "spdecs" in ini:
                     specs = ini["specs"]
                     if "ve_path" in specs:
                         ve_path = specs["ve_path"]
@@ -53,7 +74,6 @@ def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], O
 
 def get_ve_activate_line(ve_root: str):
     import platform
-    from pathlib import Path
     if platform.system() == "Windows":
         q = Path(ve_root).expanduser().relative_to(Path.home()).as_posix()
         activate_ve_line = f". $HOME/{q}/Scripts/activate.ps1"

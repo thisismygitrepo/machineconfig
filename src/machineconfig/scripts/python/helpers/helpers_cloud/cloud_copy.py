@@ -4,9 +4,12 @@ CC
 
 from typing import Optional, Annotated
 import typer
+from machineconfig.utils.ve import CLOUD, read_default_cloud_config
 
 from tenacity import retry, stop_after_attempt, wait_chain, wait_fixed
 
+
+defaults = read_default_cloud_config()
 
 
 @retry(stop=stop_after_attempt(3), wait=wait_chain(wait_fixed(1), wait_fixed(4), wait_fixed(9)))
@@ -80,12 +83,11 @@ def main(
     from rich.panel import Panel
     from machineconfig.utils.path_extended import PathExtended
     from machineconfig.scripts.python.helpers.helpers_cloud.helpers2 import parse_cloud_source_target
-    from machineconfig.scripts.python.helpers.helpers_cloud.cloud_helpers import Args
     from machineconfig.utils.accessories import pprint
 
     console = Console()
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
-    args_obj = Args(
+    args_obj = CLOUD(
         overwrite=overwrite,
         share=share,
         rel2home=rel2home,
