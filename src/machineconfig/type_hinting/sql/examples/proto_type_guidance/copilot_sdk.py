@@ -69,7 +69,6 @@ async def main() -> None:
     await client.start()
 
     done = asyncio.Event()
-    delta_events: list[str] = []
     sess_config = SessionConfig(model="claude-haiku-4.5", streaming=True)
     session = await client.create_session(config=sess_config)
 
@@ -80,13 +79,13 @@ async def main() -> None:
             print(delta, end="", flush=True)
             if config["show_event_data"] and config["show_delta_data"]:
                 formatted = format_event_data(getattr(event, "data", None), config["pretty_event_data"])
-                delta_events.append(f"""[assistant.message_delta]\n{formatted}""")
+                print(f"""\n[assistant.message_delta]\n{formatted}""")
         elif event_type == "assistant.reasoning_delta":
             delta = getattr(getattr(event, "data", None), "delta_content", "") or ""
             print(delta, end="", flush=True)
             if config["show_event_data"] and config["show_delta_data"]:
                 formatted = format_event_data(getattr(event, "data", None), config["pretty_event_data"])
-                delta_events.append(f"""[assistant.reasoning_delta]\n{formatted}""")
+                print(f"""\n[assistant.reasoning_delta]\n{formatted}""")
         elif event_type == "assistant.message":
             content = getattr(getattr(event, "data", None), "content", "") or ""
             if content:
@@ -102,9 +101,6 @@ async def main() -> None:
                 formatted = format_event_data(getattr(event, "data", None), config["pretty_event_data"])
                 print(f"""\n[assistant.reasoning]\n{formatted}""")
         elif event_type == "session.idle":
-            if delta_events:
-                print("\n\n--- Delta event data ---")
-                print("\n\n".join(delta_events))
             done.set()
         else:
             print(f"""\n[{event_type}]""")
