@@ -67,15 +67,15 @@ def get_securely_shared_file(url: Optional[str] = None, folder: Optional[str] = 
 def main(
     source: Annotated[str, typer.Argument(help="📂 file/folder path to be taken from here.")],
     target: Annotated[str, typer.Argument(help="🎯 file/folder path to be be sent to here.")],
-    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = False,
-    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = False,
-    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = False,
-    root: Annotated[Optional[str], typer.Option("--root", "-R", help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.")] = None,
-    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = None,
-    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = None,
-    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = False,
-    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = False,
-    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = False,
+    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = defaults["overwrite"],
+    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = defaults["share"],
+    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = defaults["rel2home"],
+    root: Annotated[str, typer.Option("--root", "-R", help="🌳 Remote root.")] = defaults["root"],
+    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = defaults["key"],
+    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = defaults["pwd"],
+    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = defaults["encrypt"],
+    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = defaults["zip"],
+    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = defaults["os_specific"],
     config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to .ve.ini file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services like Google Drive, Dropbox, OneDrive, etc."""
@@ -87,7 +87,8 @@ def main(
 
     console = Console()
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
-    args_obj = CLOUD(
+    cloud_config_explicit = CLOUD(
+        cloud="",
         overwrite=overwrite,
         share=share,
         rel2home=rel2home,
@@ -97,10 +98,9 @@ def main(
         encrypt=encrypt,
         zip=zip_,
         os_specific=os_specific,
-        config=config,
     )
 
-    if args_obj.config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
+    if config == "ss" and (source.startswith("http") or source.startswith("bit.ly")):
         console.print(Panel("🔒 Detected secure share link", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
         if source.startswith("https://drive.google.com/open?id="):
             file_id = source.split("https://drive.google.com/open?id=")[1]
@@ -112,17 +112,19 @@ def main(
                 raise typer.Exit(code=1)
         return get_securely_shared_file(url=source, folder=target)
 
-    if args_obj.rel2home is True and args_obj.root is None:
-        args_obj.root = "myhome"
-        print("🏠 Using 'myhome' as root directory")
-
     console.print(Panel("🔍 Parsing source and target paths...", title="[bold blue]Info[/bold blue]", border_style="blue"))
-    cloud, source, target = parse_cloud_source_target(args=args_obj, source=source, target=target)
+    cloud, source, target = parse_cloud_source_target(
+        cloud_config_explicit=cloud_config_explicit,
+        cloud_config_defaults=defaults,
+        cloud_config_name=config,
+        source=source,
+        target=target,
+    )
 
     console.print(Panel("⚙️  Configuration:", title="[bold blue]Config[/bold blue]", border_style="blue"))
-    pprint(args_obj.__dict__, "CLI config")
+    pprint(dict(cloud_config_explicit), "CLI config")
 
-    if args_obj.key is not None:
+    if cloud_config_explicit["key"] is not None:
         console.print(Panel("❌ Key-based encryption is not supported yet", title="[bold red]Error[/bold red]", border_style="red"))
         raise typer.Exit(code=1)
 
@@ -132,13 +134,13 @@ def main(
         PathExtended(target).from_cloud(
             cloud=cloud,
             remotepath=source.replace(cloud + ":", ""),
-            unzip=args_obj.zip,
-            decrypt=args_obj.encrypt,
-            pwd=args_obj.pwd,
-            overwrite=args_obj.overwrite,
-            rel2home=args_obj.rel2home,
-            os_specific=args_obj.os_specific,
-            root=args_obj.root,
+            unzip=cloud_config_explicit["zip"],
+            decrypt=cloud_config_explicit["encrypt"],
+            pwd=cloud_config_explicit["pwd"],
+            overwrite=cloud_config_explicit["overwrite"],
+            rel2home=cloud_config_explicit["rel2home"],
+            os_specific=cloud_config_explicit["os_specific"],
+            root=cloud_config_explicit["root"],
             strict=False,
         )
         console.print(Panel("✅ Download completed successfully", title="[bold green]Success[/bold green]", border_style="green", width=152))
@@ -147,11 +149,20 @@ def main(
         console.print(Panel(f"📤 UPLOADING TO CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source}\n🎯 Target: {target.replace(cloud + ':', '')}", title="[bold blue]Upload[/bold blue]", border_style="blue", width=152))
 
         res = PathExtended(source).to_cloud(
-            cloud=cloud, remotepath=target.replace(cloud + ":", ""), zip=args_obj.zip, encrypt=args_obj.encrypt, pwd=args_obj.pwd, rel2home=args_obj.rel2home, root=args_obj.root, os_specific=args_obj.os_specific, strict=False, share=args_obj.share
+            cloud=cloud,
+            remotepath=target.replace(cloud + ":", ""),
+            zip=cloud_config_explicit["zip"],
+            encrypt=cloud_config_explicit["encrypt"],
+            pwd=cloud_config_explicit["pwd"],
+            rel2home=cloud_config_explicit["rel2home"],
+            root=cloud_config_explicit["root"],
+            os_specific=cloud_config_explicit["os_specific"],
+            strict=False,
+            share=cloud_config_explicit["share"],
         )
         console.print(Panel("✅ Upload completed successfully", title="[bold green]Success[/bold green]", border_style="green", width=152))
 
-        if args_obj.share:
+        if cloud_config_explicit["share"]:
             fname = f".share_url_{cloud}"
             if PathExtended(source).is_dir():
                 share_url_path = PathExtended(source).joinpath(fname)

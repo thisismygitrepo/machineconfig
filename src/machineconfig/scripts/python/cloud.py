@@ -2,17 +2,21 @@
 
 import typer
 from typing import Optional, Annotated
+from machineconfig.utils.ve import read_default_cloud_config
+
+
+defaults = read_default_cloud_config()
 
 
 def sync(
     source: Annotated[str, typer.Argument(help="source")],
     target: Annotated[str, typer.Argument(help="target")],
     transfers: Annotated[int, typer.Option("--transfers", "-t", help="Number of threads in syncing.")] = 10,
-    root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = "myhome",
-    key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = None,
-    pwd: Annotated[Optional[str], typer.Option("--pwd", "-P", help="Password for encryption")] = None,
-    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="Decrypt after receiving.")] = False,
-    zip_: Annotated[bool, typer.Option("--zip", "-z", help="unzip after receiving.")] = False,
+    root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = defaults["root"],
+    key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = defaults["key"],
+    pwd: Annotated[Optional[str], typer.Option("--pwd", "-P", help="Password for encryption")] = defaults["pwd"],
+    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="Decrypt after receiving.")] = defaults["encrypt"],
+    zip_: Annotated[bool, typer.Option("--zip", "-z", help="unzip after receiving.")] = defaults["zip"],
     bisync: Annotated[bool, typer.Option("--bisync", "-b", help="Bidirectional sync.")] = False,
     delete: Annotated[bool, typer.Option("--delete", "-D", help="Delete files in remote that are not in local.")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Verbosity of mprocs to show details of syncing.")] = False,
@@ -25,15 +29,15 @@ def sync(
 def copy(
     source: Annotated[str, typer.Argument(help="📂 file/folder path to be taken from here.")],
     target: Annotated[str, typer.Argument(help="🎯 file/folder path to be be sent to here.")],
-    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = False,
-    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = False,
-    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = False,
-    root: Annotated[Optional[str], typer.Option("--root", "-R", help="🌳 Remote root. None is the default, unless rel2home is raied, making the default `myhome`.")] = None,
-    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = None,
-    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = None,
-    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = False,
-    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = False,
-    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = False,
+    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = defaults["overwrite"],
+    share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = defaults["share"],
+    rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = defaults["rel2home"],
+    root: Annotated[str, typer.Option("--root", "-R", help="🌳 Remote root.")] = defaults["root"],
+    key: Annotated[Optional[str], typer.Option("--key", "-k", help="🔑 Key for encryption")] = defaults["key"],
+    pwd: Annotated[Optional[str], typer.Option("--password", "-p", help="🔒 Password for encryption")] = defaults["pwd"],
+    encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = defaults["encrypt"],
+    zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = defaults["zip"],
+    os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = defaults["os_specific"],
     config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to .ve.ini file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services."""
