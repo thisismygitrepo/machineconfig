@@ -45,6 +45,41 @@ rules = [
 [plugin]
 # dir = "~/AppData/Roaming/yazi/config/plugins"
 
+prepend_previewers = [
+  # Markdown previewer
+  { name = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
+  # JSON previewer - explicitly use built-in json previewer
+  { mime = "application/json", run = "json" },
+  { name = "*.json", run = "json" },
+  # Archive previewer
+  { mime = "application/*zip",            run = "ouch" },
+  { mime = "application/x-tar",           run = "ouch" },
+  { mime = "application/x-bzip2",         run = "ouch" },
+  { mime = "application/x-7z-compressed", run = "ouch" },
+  { mime = "application/x-rar",           run = "ouch" },
+  { mime = "application/vnd.rar",         run = "ouch" },
+  { mime = "application/x-xz",            run = "ouch" },
+  { mime = "application/xz",              run = "ouch" },
+  { mime = "application/x-zstd",          run = "ouch" },
+  { mime = "application/zstd",            run = "ouch" },
+  { mime = "application/java-archive",    run = "ouch" },
+
+  { name = "*.tsv", run = "duckdb" },  
+  { name = "*.parquet", run = "duckdb" },  
+  { name = "*.xlsx", run = "duckdb" },  
+  { name = "*.db", run = "duckdb" },
+  { name = "*.duckdb", run = "duckdb" }
+]
+
+prepend_preloaders = [  
+  # { name = "*.csv", run = "duckdb", multi = false },  
+  { name = "*.tsv", run = "duckdb", multi = false },  
+  # { name = "*.json", run = "duckdb", multi = false },  
+  { name = "*.parquet", run = "duckdb", multi = false },
+  # { name = "*.txt", run = "duckdb", multi = false },  
+  { name = "*.xlsx", run = "duckdb", multi = false }
+]
+
 [[plugin.load]]
 name = "toggle-pane"
 path = "toggle-pane.yazi"
