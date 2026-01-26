@@ -2,7 +2,7 @@
 import typer
 from typing import Annotated, Literal
 from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
-
+from pathlib import Path
 
 def copy_both_assets():
     import machineconfig.profile.create_helper as create_helper
@@ -14,6 +14,7 @@ def init(which: Annotated[Literal["init", "ia", "live", "wrap"], typer.Argument(
          run: Annotated[bool, typer.Option("--run/--no-run", "-r/-nr", help="Run the script after displaying it.")] = False,
                         ) -> None:
     import platform
+    script = ""
     if platform.system() == "Linux" or platform.system() == "Darwin":
         match which:
             case "init":
@@ -49,6 +50,7 @@ def init(which: Annotated[Literal["init", "ia", "live", "wrap"], typer.Argument(
             case _:
                 typer.echo("Unsupported shell script for Windows.")
                 raise typer.Exit(code=1)
+                # return
     else:
         # raise NotImplementedError("Unsupported platform")
         typer.echo("Unsupported platform for init scripts.")
@@ -166,7 +168,7 @@ def readme():
     url_readme = "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/refs/heads/main/README.md"
 
     # Fetch the content
-    response = requests.get(url_readme)
+    response = requests.get(url_readme, timeout=10)
     response.raise_for_status()  # Raise an error for bad responses
 
     # Parse markdown
@@ -216,6 +218,7 @@ def get_app():
     cli_app.command(name= "i",           no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
     cli_app.command(name= "navigate", no_args_is_help=False, help="📚 [n] NAVIGATE command structure with TUI")(navigate)
     cli_app.command(name= "n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
+
 
     if Path.home().joinpath("code", "machineconfig").exists():
         cli_app.command(name= "buid_docker", no_args_is_help=False, help="🧱 [d] Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
