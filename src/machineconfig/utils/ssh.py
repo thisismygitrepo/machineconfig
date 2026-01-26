@@ -83,7 +83,7 @@ class SSH:
         self.ssh.load_system_host_keys()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         pprint(
-            dict(host=self.host, hostname=self.hostname, username=self.username, password="***", port=self.port, key_filename=self.ssh_key_path),
+            dict(host=self.host, hostname=self.hostname, username=self.username, password="***", port=self.port, key_filename=self.ssh_key_path, proxycommand=self.proxycommand),
             title="SSHing To",
         )
         sock = paramiko.ProxyCommand(self.proxycommand) if self.proxycommand is not None else None
@@ -109,6 +109,18 @@ class SSH:
             # Print exception without pager to avoid terminal mode issues
             console = rich.console.Console()
             console.print_exception(show_locals=False, max_frames=3, width=None, word_wrap=True, suppress=[])
+            
+            # Provide additional context for hostname resolution failures
+            if "getaddrinfo failed" in str(_err) or "Name or service not known" in str(_err):
+                console.print("\n[yellow]🔍 Hostname Resolution Failed[/yellow]")
+                console.print(f"   Target hostname: [cyan]{self.hostname}[/cyan]")
+                if self.host and self.host != self.hostname:
+                    console.print(f"   SSH config alias: [cyan]{self.host}[/cyan]")
+                console.print("\n[yellow]💡 Troubleshooting tips:[/yellow]")
+                console.print(f"   1. Check if hostname resolves: [green]ping {self.hostname}[/green]")
+                console.print(f"   2. Check SSH config: [green]cat ~/.ssh/config | grep -A5 '{self.host or self.hostname}'[/green]")
+                console.print(f"   3. Add to /etc/hosts: [green]echo '192.168.x.x {self.hostname}' | sudo tee -a /etc/hosts[/green]")
+                console.print(f"   4. Check if machine is online and accessible on network\n")
             
             import sys
             
