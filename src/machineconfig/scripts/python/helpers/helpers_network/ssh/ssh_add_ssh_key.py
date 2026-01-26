@@ -1,4 +1,37 @@
-"""SSH"""
+
+r"""
+
+On windows:
+
+$sshfile = "$env:USERPROFILE/.ssh/id_rsa"
+Set-Service ssh-agent -StartupType Manual  # allow the service to be started manually
+ssh-agent  # start the service
+ssh-add.exe $sshfile # add the key to the agent
+
+# copy ssh key:
+# This is the Windows equivalent of copy-ssh-id on Linux.
+# Just like the original function, it is a convenient way of doing two things in one go:
+# 1- copy a certain public key to the remote machine.
+#    scp ~/.ssh/id_rsa.pub $remote_user@$remote_host:~/.ssh/authorized_keys
+# 2- Store the value on the remote in a file called .ssh/authorized_keys
+#    ssh $remote_user@$remote_host "echo $public_key >> ~/.ssh/authorized_keys"
+# Idea from: https://www.chrisjhart.com/Windows-10-ssh-copy-id/
+
+Automatic order of identity (private key) files used by ssh:
+~/.ssh/id_ed25519
+~/.ssh/id_ecdsa
+~/.ssh/id_ecdsa_sk
+~/.ssh/id_rsa
+~/.ssh/id_dsa (deprecated, usually disabled)
+
+Common pitfalls: 
+🚫 Wrong line endings (LF/CRLF) in config files
+🌐 Network port conflicts (try 2222 -> 2223) between WSL and Windows
+sudo service ssh restart
+sudo service ssh status
+sudo nano /etc/ssh/sshd_config
+
+"""
 
 from platform import system
 from pathlib import Path
@@ -15,7 +48,7 @@ from machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_cloud_init imp
 console = Console()
 
 
-def get_add_ssh_key_script(path_to_key: Path, verbose: bool = True) -> tuple[str, str]:
+def get_add_ssh_key_script(path_to_key: Path) -> tuple[str, str]:
     """Returns (program_script, status_message) tuple. For Windows, program_script is empty because we handle it in Python."""
     os_name = system()
     if os_name == "Linux" or os_name == "Darwin":
@@ -78,25 +111,16 @@ sudo service ssh --full-restart
     return program, "\n".join(status_lines)
 
 
-"""
-Common pitfalls: 
-🚫 Wrong line endings (LF/CRLF) in config files
-🌐 Network port conflicts (try 2222 -> 2223) between WSL and Windows
-sudo service ssh restart
-sudo service ssh status
-sudo nano /etc/ssh/sshd_config
-"""
-
 
 def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the public key file")] = None,
          pub_choose: Annotated[bool, typer.Option("--choose", "-c", help="Choose from available public keys in ~/.ssh")] = False,
          pub_val: Annotated[bool, typer.Option("--paste", "-p", help="Paste the public key content manually")] = False,
-         from_github: Annotated[Optional[str], typer.Option("--from-github", "-g", help="Fetch public keys from a GitHub username")] = None
+         from_github: Annotated[Optional[str], typer.Option("--from-github", "-g", help="Fetch public keys from a GitHub username")] = None,
+         
          ) -> None:
     info_lines: list[str] = []
     program = ""
     status_msg = ""
-
     if pub_path:
         key_path = Path(pub_path).expanduser().absolute()
         key_path.parent.mkdir(parents=True, exist_ok=True)
@@ -107,11 +131,20 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
         program, status_msg = get_add_ssh_key_script(key_path)
 
     elif pub_choose:
-        pub_keys = list(Path.home().joinpath(".ssh").glob("*.pub"))
-        if not pub_keys:
+        pub_keys_all = list(Path.home().joinpath(".ssh").glob("*.pub"))
+        if not pub_keys_all:
             console.print(Panel("⚠️  No public keys found in ~/.ssh", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
             return
-        info_lines.append(f"📄 Source: Local ~/.ssh │ Found {len(pub_keys)} key(s)")
+
+        info_lines.append(f"📄 Source: Local ~/.ssh │ Found {len(pub_keys_all)} key(s)")
+        from machineconfig.utils.options import choose_from_options
+        options_str: list[str] = choose_from_options(
+            options=[str(x) for x in pub_keys_all],
+            msg="Select public key(s) to authorize",
+            multi=True,
+            tv=True,
+        )
+        pub_keys: list[Path] = [Path(x) for x in options_str]
         programs: list[str] = []
         statuses: list[str] = []
         for key in pub_keys:
@@ -131,7 +164,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
 
     elif from_github:
         import requests
-        response = requests.get(f"https://api.github.com/users/{from_github}/keys")
+        response = requests.get(f"https://api.github.com/users/{from_github}/keys", timeout=10)
         if response.status_code != 200:
             console.print(Panel(f"❌ GitHub API error for user '{from_github}' │ Status: {response.status_code}", title="[bold red]Error[/bold red]", border_style="red"))
             raise typer.Exit(code=1)

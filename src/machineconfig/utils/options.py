@@ -34,7 +34,8 @@ def choose_from_options[T](options: Iterable[T], msg: str, multi: bool, custom_i
             preview_line = ""
         elif preview == "bat":
             preview_line = r"""--preview-command "bat -n --color=always {}" --preview-size 70 """
-        
+        else:
+            raise ValueError(f"Unknown preview type: {preview}")        
         import platform
         if platform.system() == "Windows":
             # PowerShell + TUI apps can be finicky when stdin is a pipe. Avoid piping into `tv` and

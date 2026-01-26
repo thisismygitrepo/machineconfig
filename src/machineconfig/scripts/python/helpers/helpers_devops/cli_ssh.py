@@ -132,12 +132,6 @@ def add_ssh_key(
     helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github)
 
 
-def add_ssh_identity() -> None:
-    """🗝️ Add SSH identity (private key) to this machine"""
-    import machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_add_identity as helper
-    helper.main()
-
-
 def debug_ssh() -> None:
     """🐛 Debug SSH connection"""
     from platform import system
@@ -160,8 +154,7 @@ def get_app() -> typer.Typer:
     ssh_app.command(name="p", help="Change SSH port", hidden=True)(change_ssh_port)
     ssh_app.command(name="add-key", help="🔑 [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
     ssh_app.command(name="k", help="Add SSH public key to this machine", hidden=True, no_args_is_help=True)(add_ssh_key)
-    ssh_app.command(name="add-identity", help="🗝️ [A] Add SSH identity (private key) to this machine")(add_ssh_identity)
-    ssh_app.command(name="A", help="Add SSH identity (private key) to this machine", hidden=True)(add_ssh_identity)
+
     ssh_app.command(name="debug", help="🐛 [d] Debug SSH connection")(debug_ssh)
     ssh_app.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
     return ssh_app
