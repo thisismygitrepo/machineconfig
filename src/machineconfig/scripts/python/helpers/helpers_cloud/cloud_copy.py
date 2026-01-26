@@ -19,11 +19,8 @@ def get_securely_shared_file(url: Optional[str], folder: Optional[str]) -> None:
     import getpass
     import os
     from machineconfig.utils.path_extended import PathExtended
-
     console = Console()
-
     console.print(Panel("🚀 Secure File Downloader", title="[bold blue]Downloader[/bold blue]", border_style="blue"))
-
     folder_obj = PathExtended.cwd() if folder is None else PathExtended(folder)
     print(f"📂 Target folder: {folder_obj}")
 
@@ -61,8 +58,6 @@ def get_securely_shared_file(url: Optional[str], folder: Optional[str]) -> None:
             if tmp_folder.exists():
                 tmp_folder.delete()
 
-
-
 def main(
     source: str,
     target: str,
@@ -82,8 +77,6 @@ def main(
     from rich.panel import Panel
     from machineconfig.utils.path_extended import PathExtended
     from machineconfig.scripts.python.helpers.helpers_cloud.helpers2 import parse_cloud_source_target
-    from machineconfig.utils.accessories import pprint
-
     console = Console()
     console.print(Panel("☁️  Cloud Copy Utility", title="[bold blue]Cloud Copy[/bold blue]", border_style="blue", width=152))
     cloud_config_explicit = CLOUD(
@@ -119,17 +112,11 @@ def main(
         source=source,
         target=target,
     )
-
-    console.print(Panel("⚙️  Configuration:", title="[bold blue]Config[/bold blue]", border_style="blue"))
-    pprint(dict(cloud_config_explicit), "CLI config")
-
     if cloud_config_explicit["key"] is not None:
         console.print(Panel("❌ Key-based encryption is not supported yet", title="[bold red]Error[/bold red]", border_style="red"))
         raise SystemExit(1)
-
     if cloud in source:
         console.print(Panel(f"📥 DOWNLOADING FROM CLOUD\n☁️  Cloud: {cloud}\n📂 Source: {source.replace(cloud + ':', '')}\n🎯 Target: {target}", title="[bold blue]Download[/bold blue]", border_style="blue", width=152))
-
         PathExtended(target).from_cloud(
             cloud=cloud,
             remotepath=source.replace(cloud + ":", ""),

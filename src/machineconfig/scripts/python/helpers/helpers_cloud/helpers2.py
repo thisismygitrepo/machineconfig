@@ -1,4 +1,4 @@
-from machineconfig.scripts.python.helpers.helpers_cloud.cloud_helpers import absolute, find_cloud_config, get_secure_share_cloud_config
+from machineconfig.scripts.python.helpers.helpers_cloud.cloud_helpers import my_abs, find_cloud_config, get_secure_share_cloud_config
 from machineconfig.utils.ve import CLOUD
 from machineconfig.utils.io import read_ini
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
@@ -30,7 +30,7 @@ def parse_cloud_source_target(
             print("cloud_maybe:", cloud_maybe)
             cloud_config_from_name = get_secure_share_cloud_config(interactive=True, cloud=cloud_maybe)
         else:
-            config_path = absolute(cloud_config_name)
+            config_path = my_abs(cloud_config_name)
             console.print(Panel(f"📄 Loading configuration from: {cloud_config_name}", width=150, border_style="blue"))
             if config_path.exists():
                 cloud_config_from_name = find_cloud_config(config_path)
@@ -46,7 +46,7 @@ def parse_cloud_source_target(
     if source.startswith(":") and cloud_config_from_name is None:  # cloud name is omitted, needs to be inferred from config file.
         if ES in target:
             raise NotImplementedError("Not Implemented here yet.")
-        target_local_path = absolute(target)  # if source is remote, target must be local, against which we can search for .ve.yaml
+        target_local_path = my_abs(target)  # if source is remote, target must be local, against which we can search for .ve.yaml
         cloud_config_from_name = find_cloud_config(path=target_local_path)
         if cloud_config_from_name is None:  # last resort, use default cloud (user didn't pass cloud name, didn't pass config file)
             default_cloud: str = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
@@ -57,7 +57,7 @@ def parse_cloud_source_target(
     if target.startswith(":"):  # default cloud name is omitted cloud_name:  # or ES in target
         if ES in source:
             raise NotImplementedError("Not Implemented here yet.")
-        source_local_path = absolute(source)
+        source_local_path = my_abs(source)
         if cloud_config_from_name is None: cloud_config_from_name = find_cloud_config(source_local_path)
         if cloud_config_from_name is None:
             default_cloud = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
@@ -83,7 +83,7 @@ def parse_cloud_source_target(
         cloud = source_parts[0]
         if len(source_parts) > 1 and source_parts[1] == ES:  # the source path is to be inferred from target.
             assert ES not in target, f"You can't use expand symbol `{ES}` in both source and target. Cyclical inference dependency arised."
-            target_obj = absolute(target)
+            target_obj = my_abs(target)
             from machineconfig.utils.path_extended import PathExtended
             remote_path = PathExtended(target_obj).get_remote_path(os_specific=cloud_config_final["os_specific"], root=cloud_config_final["root"], rel2home=cloud_config_final["rel2home"], strict=False)
             source = f"{cloud}:{remote_path.as_posix()}"
@@ -91,7 +91,7 @@ def parse_cloud_source_target(
             if target == ES:  # target path is to be inferred from source.
                 raise NotImplementedError("There is no .get_local_path method yet")
             else:
-                target_obj = absolute(target)
+                target_obj = my_abs(target)
         if cloud_config_final["zip"] and ".zip" not in source:
             source += ".zip"
         if cloud_config_final["encrypt"] and ".enc" not in source:
@@ -101,7 +101,7 @@ def parse_cloud_source_target(
         cloud = target.split(":")[0]
         if len(target_parts) > 1 and target_parts[1] == ES:  # the target path is to be inferred from source.
             assert ES not in source, "You can't use $ in both source and target. Cyclical inference dependency arised."
-            source_obj = absolute(source)
+            source_obj = my_abs(source)
             from machineconfig.utils.path_extended import PathExtended
             remote_path = PathExtended(source_obj).get_remote_path(os_specific=cloud_config_final["os_specific"], root=cloud_config_final["root"], rel2home=cloud_config_final["rel2home"], strict=False)
             target = f"{cloud}:{remote_path.as_posix()}"
@@ -110,7 +110,7 @@ def parse_cloud_source_target(
             if source == ES:
                 raise NotImplementedError("There is no .get_local_path method yet")
             else:
-                source_obj = absolute(source)
+                source_obj = my_abs(source)
         if cloud_config_final["zip"] and ".zip" not in target:
             target += ".zip"
         if cloud_config_final["encrypt"] and ".enc" not in target:

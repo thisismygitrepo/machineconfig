@@ -31,14 +31,14 @@ def find_cloud_config(path: Path) -> CLOUD | None:
     return None
 
 
-def absolute(path: str) -> Path:
-    obj = Path(path).expanduser()
-    if not path.startswith(".") and obj.exists():
+def my_abs(path: str) -> Path:
+    obj = Path(path).expanduser().absolute()
+    if not path.startswith(".") and obj.absolute().exists():
         return obj
     try_absing = Path.cwd().joinpath(path)
     if try_absing.exists():
         return try_absing
-    display_warning(f"Path {path} could not be resolved to absolute path.")
+    display_warning(f"Path {path} resolved to {obj} could not be resolved to absolute path.")
     display_warning("Trying to resolve symlinks (this may result in unintended paths).")
     return obj.absolute()
 
