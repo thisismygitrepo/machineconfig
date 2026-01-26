@@ -46,7 +46,7 @@ def parse_cloud_source_target(
     if source.startswith(":") and cloud_config_from_name is None:  # cloud name is omitted, needs to be inferred from config file.
         if ES in target:
             raise NotImplementedError("Not Implemented here yet.")
-        target_local_path = absolute(target)  # if source is remote, target must be local, against which we can search for .ve.ini
+        target_local_path = absolute(target)  # if source is remote, target must be local, against which we can search for .ve.yaml
         cloud_config_from_name = find_cloud_config(path=target_local_path)
         if cloud_config_from_name is None:  # last resort, use default cloud (user didn't pass cloud name, didn't pass config file)
             default_cloud: str = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]

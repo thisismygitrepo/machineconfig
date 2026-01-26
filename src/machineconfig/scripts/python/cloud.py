@@ -11,7 +11,7 @@ defaults = read_default_cloud_config()
 def sync(
     source: Annotated[str, typer.Argument(help="source")],
     target: Annotated[str, typer.Argument(help="target")],
-    config: Annotated[Optional[str], typer.Option("--config", "-c", help="path to .ve.ini file.")] = None,
+    config: Annotated[Optional[str], typer.Option("--config", "-c", help="path to .ve.yaml file.")] = None,
     transfers: Annotated[int, typer.Option("--transfers", "-t", help="Number of threads in syncing.")] = 10,
     root: Annotated[str, typer.Option("--root", "-R", help="Remote root.")] = defaults["root"],
     key: Annotated[Optional[str], typer.Option("--key", "-k", help="Key for encryption")] = defaults["key"],
@@ -39,7 +39,7 @@ def copy(
     encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = defaults["encrypt"],
     zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = defaults["zip"],
     os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = defaults["os_specific"],
-    config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to .ve.ini file.")] = None,
+    config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to .ve.yaml file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services."""
     from machineconfig.scripts.python.helpers.helpers_cloud.cloud_copy import main as copy_main

@@ -19,54 +19,34 @@ def dump_config(which: Annotated[Literal["ve"], typer.Option(..., "--which", "-w
 
 
 def _dump_ve_config():
-    """Generate .ve.example.ini with all options, sections, comments and default values."""
+    """Generate .ve.example.yaml with all options, sections, comments and default values."""
     cloud_defaults = read_default_cloud_config()
-    q = cloud_defaults["pwd"]
-    
-    ini_content = f"""# Virtual Environment Configuration File
+    def to_yaml_value(value: str | bool | None) -> str:
+        """Convert Python values to YAML-compatible strings."""
+        if value is None:
+            return "null"
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        return f'"{value}"'
+    yaml_content = f"""# Virtual Environment Configuration File
 # This file configures the virtual environment and cloud sync settings for this project
-
-[specs]
-# Path to the virtual environment directory
-# Example: /home/user/projects/myproject/.venv or ~/venvs/myproject
-ve_path = .venv
-
-# IPython profile name to use when launching IPython
-# Example: myprofile (creates/uses ~/.ipython/profile_myprofile)
-ipy_profile = 
-
-[cloud]
-# Cloud storage identifier/name
-cloud = {cloud_defaults["cloud"]}
-
-# Root directory within the cloud storage
-root = {cloud_defaults["root"]}
-
-# Whether paths are relative to home directory
-rel2home = {cloud_defaults["rel2home"]}
-
-# Password for encryption (leave empty for no password)
-pwd = {cloud_defaults["pwd"]}
-
-# Encryption key path (leave empty for no key-based encryption)
-key = {cloud_defaults["key"]}
-# Enable encryption for cloud sync
-encrypt = {cloud_defaults["encrypt"]}
-
-# Use OS-specific paths/configuration
-os_specific = {cloud_defaults["os_specific"]}
-
-# Compress files before uploading
-zip = {cloud_defaults["zip"]}
-
-# Enable sharing/public access
-share = {cloud_defaults["share"]}
-
-# Overwrite existing files during sync
-overwrite = {cloud_defaults["overwrite"]}
+specs:
+  ve_path: ".venv"  # Path to the virtual environment directory (e.g., /home/user/projects/myproject/.venv or ~/venvs/myproject)
+  ipy_profile: null  # IPython profile name to use when launching IPython (e.g., myprofile creates/uses ~/.ipython/profile_myprofile)
+cloud:
+  cloud: {to_yaml_value(cloud_defaults["cloud"])}  # Cloud storage identifier/name
+  root: {to_yaml_value(cloud_defaults["root"])}  # Root directory within the cloud storage
+  rel2home: {to_yaml_value(cloud_defaults["rel2home"])}  # Whether paths are relative to home directory
+  pwd: {to_yaml_value(cloud_defaults["pwd"])}  # Password for encryption (leave empty for no password)
+  key: {to_yaml_value(cloud_defaults["key"])}  # Encryption key path (leave empty for no key-based encryption)
+  encrypt: {to_yaml_value(cloud_defaults["encrypt"])}  # Enable encryption for cloud sync
+  os_specific: {to_yaml_value(cloud_defaults["os_specific"])}  # Use OS-specific paths/configuration
+  zip: {to_yaml_value(cloud_defaults["zip"])}  # Compress files before uploading
+  share: {to_yaml_value(cloud_defaults["share"])}  # Enable sharing/public access
+  overwrite: {to_yaml_value(cloud_defaults["overwrite"])}  # Overwrite existing files during sync
 """ 
-    output_path = Path.cwd() / ".ve.example.ini"
-    output_path.write_text(ini_content, encoding="utf-8")
+    output_path = Path.cwd() / ".ve.example.yaml"
+    output_path.write_text(yaml_content, encoding="utf-8")   
     msg = typer.style("✅ Success: ", fg=typer.colors.GREEN) + f"Created {output_path}"
     typer.echo(msg)
 

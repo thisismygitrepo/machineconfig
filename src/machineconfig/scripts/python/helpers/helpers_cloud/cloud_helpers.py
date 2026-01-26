@@ -1,8 +1,8 @@
 
-from machineconfig.utils.io import read_ini
+# from machineconfig.utils.io import read_ini,
 from machineconfig.utils.accessories import pprint
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
-from machineconfig.utils.ve import VE_INI, CLOUD
+from machineconfig.utils.ve import VE_YAML, CLOUD
 
 
 from typing import Optional, cast
@@ -13,19 +13,19 @@ from rich.panel import Panel
 
 console = Console()
 
-
 def find_cloud_config(path: Path) -> CLOUD | None:
-    display_header(f"Searching for .ve.ini configuration file @ {path}")
+    display_header(f"Searching for .ve.yaml configuration file @ {path}")
     for _i in range(len(path.parts)):
-        if path.joinpath(".ve.ini").exists():
-            res = cast(VE_INI, read_ini(path.joinpath(".ve.ini")))
+        if path.joinpath(".ve.yaml").exists():
+            import yaml
+            res = cast(VE_YAML, yaml.load(path.joinpath(".ve.yaml").read_text(encoding="utf-8"), Loader=yaml.FullLoader))
             cloud_section = "cloud"
-            display_success(f"Found cloud config at: {path.joinpath('.ve.ini')}")
+            display_success(f"Found cloud config at: {path.joinpath('.ve.yaml')}")
             if cloud_section in res:
                 res = res["cloud"]
                 pprint(dict(res), "Cloud Config")
                 return res
-            display_error(f".ve.ini @ {path}/.ve.ini has no [cloud] section.")
+            display_error(f".ve.yaml @ {path}/.ve.yaml has no [cloud] section.")
         path = path.parent
     display_error("No cloud configuration file found")
     return None
@@ -53,6 +53,7 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> CL
             console.print(f"☁️  Using cloud from environment: {cloud}")
         else:
             try:
+                from machineconfig.utils.io import read_ini
                 default_cloud__ = read_ini(DEFAULTS_PATH)["general"]["rclone_config_name"]
             except Exception:
                 default_cloud__ = "No default cloud found."

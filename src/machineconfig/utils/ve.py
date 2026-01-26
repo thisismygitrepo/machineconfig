@@ -33,37 +33,38 @@ def read_default_cloud_config() -> CLOUD:
 class VE_SPECS(TypedDict):
     ve_path: str
     ipy_profile: Optional[str]
-class VE_INI(TypedDict):
+class VE_YAML(TypedDict):
     specs: NotRequired[VE_SPECS]
     cloud: NotRequired[CLOUD]
 
 
 def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], Optional[str]]:
-    """Works with .ve.ini .venv"""
+    """Works with .ve.yaml .venv"""
     ve_path: Optional[str] = None
     ipy_profile: Optional[str] = None
     tmp = init_path
-    from machineconfig.utils.io import read_ini
+    # from machineconfig.utils.io import read_ini
     for _ in init_path.parents:
-        if tmp.joinpath(".ve.ini").exists():
-            print(f"🔍 Found .ve.ini @ {tmp}/.ve.ini")
-            ini = cast(VE_INI, read_ini(tmp.joinpath(".ve.ini")))
+        if tmp.joinpath(".ve.yaml").exists():
+            print(f"🔍 Found .ve.yaml @ {tmp}/.ve.yaml")
+            import yaml
+            ini = cast(VE_YAML, yaml.load(tmp.joinpath(".ve.yaml").read_text(encoding="utf-8"), Loader=yaml.FullLoader))
             if ve_path is None:
                 if "spdecs" in ini:
                     specs = ini["specs"]
                     if "ve_path" in specs:
                         ve_path = specs["ve_path"]
-                        print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.ini')}")
-                    else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini [specs] has no ve_path key.")
-                else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini has no [specs] section.")
+                        print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.yaml')}")
+                    else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml [specs] has no ve_path key.")
+                else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml has no [specs] section.")
             if ipy_profile is None:
                 if "specs" in ini:
                     specs = ini["specs"]
                     if "ipy_profile" in specs:
                         ipy_profile = specs["ipy_profile"]
                         print(f"✨ Using IPython profile: {ipy_profile}")
-                    else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini [specs] has no ipy_profile key.")
-                else: print(f"⚠️ .ve.ini @ {tmp}/.ve.ini has no [specs] section.")
+                    else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml [specs] has no ipy_profile key.")
+                else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml has no [specs] section.")
         if ve_path is None and tmp.joinpath(".venv").exists():
             print(f"🔮 Using Virtual Environment found @ {tmp}/.venv")
             ve_path = tmp.joinpath(".venv").resolve().__str__()
@@ -86,4 +87,3 @@ def get_ve_activate_line(ve_root: str):
     else:
         raise NotImplementedError(f"Platform {platform.system()} not supported.")
     return activate_ve_line
-
