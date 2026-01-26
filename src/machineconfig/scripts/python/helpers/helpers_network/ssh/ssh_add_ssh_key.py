@@ -38,11 +38,12 @@ from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 from rich import box
-from typing import Optional, Annotated
-import typer
+from typing import Optional
+import sys
 
 from machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_add_key_windows import add_ssh_key_windows
 from machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_cloud_init import check_cloud_init_overrides, generate_cloud_init_fix_script
+from machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_deploy_key_remote import deploy_key_to_remote, deploy_multiple_keys_to_remote
 
 
 console = Console()
@@ -112,62 +113,46 @@ sudo service ssh --full-restart
 
 
 
-def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the public key file")] = None,
-         pub_choose: Annotated[bool, typer.Option("--choose", "-c", help="Choose from available public keys in ~/.ssh")] = False,
-         pub_val: Annotated[bool, typer.Option("--paste", "-p", help="Paste the public key content manually")] = False,
-         from_github: Annotated[Optional[str], typer.Option("--from-github", "-g", help="Fetch public keys from a GitHub username")] = None,
-         
-         ) -> None:
+def main(pub_path: Optional[str], pub_choose: bool, pub_val: bool, from_github: Optional[str], remote: Optional[str]) -> None:
     info_lines: list[str] = []
     program = ""
     status_msg = ""
+
+    key_paths: list[Path] = []
+
     if pub_path:
         key_path = Path(pub_path).expanduser().absolute()
         key_path.parent.mkdir(parents=True, exist_ok=True)
         if not key_path.exists():
             console.print(Panel(f"❌ Key path does not exist: {key_path}", title="[bold red]Error[/bold red]", border_style="red"))
-            raise typer.Exit(code=1)
+            sys.exit(1)
+        key_paths.append(key_path)
         info_lines.append(f"📄 Source: Local file │ {key_path}")
-        program, status_msg = get_add_ssh_key_script(key_path)
 
     elif pub_choose:
         pub_keys_all = list(Path.home().joinpath(".ssh").glob("*.pub"))
         if not pub_keys_all:
             console.print(Panel("⚠️  No public keys found in ~/.ssh", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
             return
-
         info_lines.append(f"📄 Source: Local ~/.ssh │ Found {len(pub_keys_all)} key(s)")
         from machineconfig.utils.options import choose_from_options
-        options_str: list[str] = choose_from_options(
-            options=[str(x) for x in pub_keys_all],
-            msg="Select public key(s) to authorize",
-            multi=True,
-            tv=True,
-        )
-        pub_keys: list[Path] = [Path(x) for x in options_str]
-        programs: list[str] = []
-        statuses: list[str] = []
-        for key in pub_keys:
-            p, s = get_add_ssh_key_script(key)
-            programs.append(p)
-            statuses.append(s)
-        program = "\n\n\n".join(programs)
-        status_msg = "\n".join(statuses)
+        options_str: list[str] = choose_from_options(options=[str(x) for x in pub_keys_all], msg="Select public key(s) to authorize", multi=True, tv=True)
+        key_paths = [Path(x) for x in options_str]
 
     elif pub_val:
         key_filename = input("📝 File name (default: my_pasted_key.pub): ") or "my_pasted_key.pub"
         key_path = Path.home().joinpath(f".ssh/{key_filename}")
         key_path.parent.mkdir(parents=True, exist_ok=True)
         key_path.write_text(input("🔑 Paste the public key here: "), encoding="utf-8")
+        key_paths.append(key_path)
         info_lines.append(f"📄 Source: Pasted │ Saved to {key_path}")
-        program, status_msg = get_add_ssh_key_script(key_path)
 
     elif from_github:
         import requests
         response = requests.get(f"https://api.github.com/users/{from_github}/keys", timeout=10)
         if response.status_code != 200:
             console.print(Panel(f"❌ GitHub API error for user '{from_github}' │ Status: {response.status_code}", title="[bold red]Error[/bold red]", border_style="red"))
-            raise typer.Exit(code=1)
+            sys.exit(1)
         keys = response.json()
         if not keys:
             console.print(Panel(f"⚠️  No public keys found for GitHub user: {from_github}", title="[bold yellow]Warning[/bold yellow]", border_style="yellow"))
@@ -175,12 +160,34 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
         key_path = Path.home().joinpath(f".ssh/{from_github}_github_keys.pub")
         key_path.parent.mkdir(parents=True, exist_ok=True)
         key_path.write_text("\n".join([key["key"] for key in keys]), encoding="utf-8")
+        key_paths.append(key_path)
         info_lines.append(f"📄 Source: GitHub @{from_github} │ {len(keys)} key(s) → {key_path}")
-        program, status_msg = get_add_ssh_key_script(key_path)
 
     else:
-        console.print(Panel("❌ No key source specified. Use --help for options.", title="[bold red]Error[/bold red]", border_style="red"))
-        raise typer.Exit(code=1)
+        console.print(Panel("❌ No key source specified.", title="[bold red]Error[/bold red]", border_style="red"))
+        sys.exit(1)
+
+    if not key_paths:
+        console.print(Panel("❌ No keys selected", title="[bold red]Error[/bold red]", border_style="red"))
+        sys.exit(1)
+
+    if remote is not None:
+        if len(key_paths) == 1:
+            success = deploy_key_to_remote(remote_target=remote, pubkey_path=key_paths[0], password=None)
+        else:
+            success = deploy_multiple_keys_to_remote(remote_target=remote, pubkey_paths=key_paths, password=None)
+        if not success:
+            sys.exit(1)
+        return
+
+    programs: list[str] = []
+    statuses: list[str] = []
+    for key in key_paths:
+        p, s = get_add_ssh_key_script(key)
+        programs.append(p)
+        statuses.append(s)
+    program = "\n\n\n".join(programs)
+    status_msg = "\n".join(statuses)
 
     combined_info = "\n".join(info_lines + [""] + status_msg.split("\n"))
     console.print(Panel(combined_info, title="[bold blue]🔑 SSH Key Authorization[/bold blue]", border_style="blue"))
@@ -193,7 +200,7 @@ def main(pub_path: Annotated[Optional[str], typer.Argument(help="Path to the pub
     res = helper.select_lan_ipv4(prefer_vpn=False)
     if res is None:
         console.print(Panel("❌ Could not determine local LAN IPv4 address", title="[bold red]Error[/bold red]", border_style="red"))
-        raise typer.Exit(code=1)
+        sys.exit(1)
 
     console.print(Panel(f"✅ Complete │ This machine accessible at: [green]{res}[/green]", title="[bold green]SSH Key Authorization[/bold green]", border_style="green", box=box.DOUBLE_EDGE))
 

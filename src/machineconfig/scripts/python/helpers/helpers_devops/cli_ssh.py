@@ -126,10 +126,11 @@ def add_ssh_key(
     choose: Annotated[bool, typer.Option(..., "--choose", "-c", help="Choose from available public keys in ~/.ssh/*.pub")] = False,
     value: Annotated[bool, typer.Option(..., "--value", "-v", help="Paste the public key content manually")] = False,
     github: Annotated[Optional[str], typer.Option(..., "--github", "-g", help="Fetch public keys from a GitHub username")] = None,
+    remote: Annotated[Optional[str], typer.Option(..., "--remote", "-r", help="Deploy to remote machine (config-name or user@host:port)")] = None,
 ) -> None:
-    """🔑 Add SSH public key to this machine so its accessible by owner of corresponding private key."""
+    """🔑 Add SSH public key to this machine (or remote with --remote)."""
     import machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_add_ssh_key as helper
-    helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github)
+    helper.main(pub_path=path, pub_choose=choose, pub_val=value, from_github=github, remote=remote)
 
 
 def debug_ssh() -> None:
