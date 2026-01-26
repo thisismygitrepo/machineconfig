@@ -200,6 +200,8 @@ bash "{str(script_path)}"
     exit_then_run_shell_script(shell_cmd, strict=True)
 
 
+
+
 def get_app():
     cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     cli_app.command(name= "update",      no_args_is_help=False, help="🔄 [u] UPDATE machineconfig")(update)
@@ -215,8 +217,9 @@ def get_app():
     cli_app.command(name= "navigate", no_args_is_help=False, help="📚 [n] NAVIGATE command structure with TUI")(navigate)
     cli_app.command(name= "n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
 
-    cli_app.command(name= "buid_docker", no_args_is_help=False, help="🧱 [d] Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
-    cli_app.command(name= "d", no_args_is_help=False, help="Build docker images (wraps jobs/shell/docker_build_and_publish.sh)", hidden=True)(buid_docker)
+    if Path.home().joinpath("code", "machineconfig").exists():
+        cli_app.command(name= "buid_docker", no_args_is_help=False, help="🧱 [d] Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
+        cli_app.command(name= "d", no_args_is_help=False, help="Build docker images (wraps jobs/shell/docker_build_and_publish.sh)", hidden=True)(buid_docker)
 
     cli_app.command(name= "readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
     cli_app.command(name= "r", no_args_is_help=False, hidden=True)(readme)
