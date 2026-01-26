@@ -159,7 +159,7 @@ def _build_preprogram() -> str:
         except ImportError:
             print("machineconfig is not installed in the current environment.")
             pass
-        from pathlib import Path
+        from pathlib import Path  # type: ignore
         _ = Path
 
     preprogram += get_body_simple_function_no_args(preprogram_func)

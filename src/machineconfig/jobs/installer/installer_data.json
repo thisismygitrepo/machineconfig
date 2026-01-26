@@ -1634,6 +1634,74 @@
       }
     },
     {
+      "appName": "dblab",
+      "repoURL": "https://github.com/danvergara/dblab",
+      "doc": "🗃️ TUI database client",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "dblab_{version}_linux_amd64.tar.gz",
+          "macos": "dblab_{version}_darwin_amd64.tar.gz",
+          "windows": "dblab_{version}_windows_amd64.tar.gz"
+        },
+        "arm64": {
+          "linux": "dblab_{version}_linux_arm64.tar.gz",
+          "macos": "dblab_{version}_darwin_arm64.tar.gz",
+          "windows": null
+        }
+      }
+    },
+    {
+      "appName": "usql",
+      "repoURL": "https://github.com/xo/usql",
+      "doc": "🗃️ Universal command-line database client",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "usql-{version}-linux-amd64.tar.bz2",
+          "macos": "usql-{version}-darwin-amd64.tar.bz2",
+          "windows": "usql-{version}-windows-amd64.zip"
+        },
+        "arm64": {
+          "linux": "usql-{version}-linux-arm64.tar.bz2",
+          "macos": "usql-{version}-darwin-arm64.tar.bz2",
+          "windows": null
+        }
+      }
+    },
+    {
+      "appName": "harlequin",
+      "repoURL": "https://github.com/tconbeer/harlequin",
+      "doc": "🗃️ Universal command-line database client",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "uv tool install harlequin",
+          "macos": "uv tool install harlequin",
+          "windows": "uv tool install harlequin"
+        },
+        "arm64": {
+          "linux": "uv tool install harlequin",
+          "macos": "uv tool install harlequin",
+          "windows": "uv tool install harlequin"
+        }
+      }
+    },
+    {
+      "appName": "sqlit",
+      "repoURL": "https://github.com/Maxteabag/sqlit",
+      "doc": "🗃️ Universal command-line database client",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "uv tool install sqlit-tui",
+          "macos": "uv tool install sqlit-tui",
+          "windows": "uv tool install sqlit-tui"
+        },
+        "arm64": {
+          "linux": "uv tool install sqlit-tui",
+          "macos": "uv tool install sqlit-tui",
+          "windows": "uv tool install sqlit-tui"
+        }
+      }
+    },
+    {
       "appName": "pgweb",
       "repoURL": "https://github.com/sosedoff/pgweb/",
       "doc": "🗃️ Web-based PostgreSQL database browser written in Go",
