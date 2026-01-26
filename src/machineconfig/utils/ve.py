@@ -3,6 +3,7 @@ from typing import Optional, TypedDict, cast, NotRequired, TYPE_CHECKING
 if TYPE_CHECKING:
     from pathlib import Path
 
+FILE_NAME = ".ve.yaml"
 class CLOUD(TypedDict, total=True):
     cloud: str
     root: str
@@ -39,32 +40,32 @@ class VE_YAML(TypedDict):
 
 
 def get_ve_path_and_ipython_profile(init_path: "Path") -> tuple[Optional[str], Optional[str]]:
-    """Works with .ve.yaml .venv"""
+    """Works with {FILE_NAME} .venv"""
     ve_path: Optional[str] = None
     ipy_profile: Optional[str] = None
     tmp = init_path
     # from machineconfig.utils.io import read_ini
     for _ in init_path.parents:
-        if tmp.joinpath(".ve.yaml").exists():
-            print(f"🔍 Found .ve.yaml @ {tmp}/.ve.yaml")
+        if tmp.joinpath(FILE_NAME).exists():
+            print(f"🔍 {tmp}/{FILE_NAME}")
             import yaml
-            ini = cast(VE_YAML, yaml.load(tmp.joinpath(".ve.yaml").read_text(encoding="utf-8"), Loader=yaml.FullLoader))
+            ini = cast(VE_YAML, yaml.load(tmp.joinpath(FILE_NAME).read_text(encoding="utf-8"), Loader=yaml.FullLoader))
             if ve_path is None:
-                if "spdecs" in ini:
+                if "specs" in ini:
                     specs = ini["specs"]
                     if "ve_path" in specs:
                         ve_path = specs["ve_path"]
-                        print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath('.ve.yaml')}")
-                    else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml [specs] has no ve_path key.")
-                else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml has no [specs] section.")
+                        print(f"🐍 Using Virtual Environment: {ve_path}. This is based on this file {tmp.joinpath(FILE_NAME)}")
+                    else: print(f"⚠️  {tmp}/{FILE_NAME} [specs] has no ve_path key.")
+                else: print(f"⚠️ {tmp}/{FILE_NAME} has no [specs] section.")
             if ipy_profile is None:
                 if "specs" in ini:
                     specs = ini["specs"]
                     if "ipy_profile" in specs:
                         ipy_profile = specs["ipy_profile"]
                         print(f"✨ Using IPython profile: {ipy_profile}")
-                    else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml [specs] has no ipy_profile key.")
-                else: print(f"⚠️ .ve.yaml @ {tmp}/.ve.yaml has no [specs] section.")
+                    else: print(f"⚠️ {tmp}/{FILE_NAME} [specs] has no ipy_profile key.")
+                else: print(f"⚠️ {tmp}/{FILE_NAME} has no [specs] section.")
         if ve_path is None and tmp.joinpath(".venv").exists():
             print(f"🔮 Using Virtual Environment found @ {tmp}/.venv")
             ve_path = tmp.joinpath(".venv").resolve().__str__()
