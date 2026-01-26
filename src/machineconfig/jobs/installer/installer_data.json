@@ -1515,12 +1515,12 @@
       }
     },
     {
-      "appName": "SqliteBrowser",
-      "repoURL": "https://github.com/sqlitebrowser/sqlitebrowser",
-      "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
+      "appName": "redis-cli",
+      "repoURL": "CMD",
+      "doc": "A cli for redis",
       "fileNamePattern": {
         "amd64": {
-          "linux": "DB.Browser.for.SQLite-v{version}-x86.64-v2.AppImage",
+          "linux": "sudo nala install redis-tools -y",
           "macos": null,
           "windows": null
         },
@@ -1566,12 +1566,12 @@
       }
     },
     {
-      "appName": "redis-cli",
-      "repoURL": "CMD",
-      "doc": "A cli for redis",
+      "appName": "SqliteBrowser",
+      "repoURL": "https://github.com/sqlitebrowser/sqlitebrowser",
+      "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
       "fileNamePattern": {
         "amd64": {
-          "linux": "sudo nala install redis-tools -y",
+          "linux": "DB.Browser.for.SQLite-v{version}-x86.64-v2.AppImage",
           "macos": null,
           "windows": null
         },
@@ -1583,7 +1583,7 @@
       }
     },
     {
-      "appName": "DBeaver",
+      "appName": "dbeaver",
       "repoURL": "https://github.com/dbeaver/dbeaver",
       "doc": "🗃️ Free universal database tool and SQL client.",
       "fileNamePattern": {
@@ -1596,6 +1596,40 @@
           "linux": "dbeaver-ce-{version}-linux.gtk.aarch64.tar.gz",
           "macos": "dbeaver-ce-{version}-macos-aarch64.dmg",
           "windows": "winget install DBeaver.DBeaver.Community --source winget --scope user --accept-package-agreements --accept-source-agreements"
+        }
+      }
+    },
+    {
+      "appName": "pgweb",
+      "repoURL": "https://github.com/sosedoff/pgweb/",
+      "doc": "🗃️ Web-based PostgreSQL database browser written in Go",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "pgweb-linux-amd64.zip",
+          "macos": "pgweb_darwin_amd64.zip",
+          "windows": "pgweb_windows_amd64.zip"
+        },
+        "arm64": {
+          "linux": "pgweb-linux-arm64.zip",
+          "macos": "pgweb_darwin_arm64.zip",
+          "windows": "pgweb_windows_arm64.zip"
+        }
+      }
+    },
+    {
+      "appName": "dbgate",
+      "repoURL": "https://github.com/dbgate/dbgate",
+      "doc": "🗃️ Cross-platform database manager for developers and database administrators",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "dbgate-{version}-linux_x64.tar.gz",
+          "macos": "dbgate-{version}-mac_x64.zip",
+          "windows": "dbgate-windows-latest.zip"
+        },
+        "arm64": {
+          "linux": "dbgate-{version}-linux_arm64.tar.gz",
+          "macos": "dbgate-{version}-mac_arm64.zip",
+          "windows": "dbgate-windows-latest-arm64.exe"
         }
       }
     },
@@ -1698,40 +1732,6 @@
           "linux": "uv tool install sqlit-tui",
           "macos": "uv tool install sqlit-tui",
           "windows": "uv tool install sqlit-tui"
-        }
-      }
-    },
-    {
-      "appName": "pgweb",
-      "repoURL": "https://github.com/sosedoff/pgweb/",
-      "doc": "🗃️ Web-based PostgreSQL database browser written in Go",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": "pgweb-linux-amd64.zip",
-          "macos": "pgweb_darwin_amd64.zip",
-          "windows": "pgweb_windows_amd64.zip"
-        },
-        "arm64": {
-          "linux": "pgweb-linux-arm64.zip",
-          "macos": "pgweb_darwin_arm64.zip",
-          "windows": "pgweb_windows_arm64.zip"
-        }
-      }
-    },
-    {
-      "appName": "dbgate",
-      "repoURL": "https://github.com/dbgate/dbgate",
-      "doc": "🗃️ Cross-platform database manager for developers and database administrators",
-      "fileNamePattern": {
-        "amd64": {
-          "linux": "dbgate-{version}-linux_x64.tar.gz",
-          "macos": "dbgate-{version}-mac_x64.zip",
-          "windows": "dbgate-windows-latest.zip"
-        },
-        "arm64": {
-          "linux": "dbgate-{version}-linux_arm64.tar.gz",
-          "macos": "dbgate-{version}-mac_arm64.zip",
-          "windows": "dbgate-windows-latest-arm64.exe"
         }
       }
     },
