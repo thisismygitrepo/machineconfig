@@ -62,6 +62,12 @@ def list_linux_devices() -> list[DeviceEntry]:
             )
     return entries
 
+def is_admin():
+    try:
+        return os.geteuid() == 0
+    except AttributeError:
+        # Use Windows API via ctypes or other method here
+        return False
 
 def mount_linux(entry: DeviceEntry, mount_point: str) -> None:
     mount_path = Path(mount_point)

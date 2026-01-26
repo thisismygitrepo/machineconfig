@@ -16,8 +16,12 @@ console = Console()
 
 
 def ssh_debug_linux() -> dict[str, dict[str, str | bool]]:
-    if system() != "Linux":
-        raise NotImplementedError("ssh_debug_linux is only supported on Linux")
+    current_os = system()
+    if current_os == "Darwin":
+        from machineconfig.scripts.python.helpers.helpers_network.ssh.ssh_debug_darwin import ssh_debug_darwin
+        return ssh_debug_darwin()
+    if current_os != "Linux":
+        raise NotImplementedError(f"ssh_debug_linux is only supported on Linux and macOS, not {current_os}")
 
     results: dict[str, dict[str, str | bool]] = {}
     issues: list[tuple[str, str, str]] = []
