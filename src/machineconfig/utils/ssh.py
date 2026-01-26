@@ -106,19 +106,54 @@ class SSH:
                 look_for_keys=look_for_keys,
             )  # type: ignore
         except Exception as _err:
-            rich.console.Console().print_exception()
-            self.password = getpass.getpass(f"Enter password for {self.username}@{self.hostname}: ")
-            self.ssh.connect(
-                hostname=self.hostname,
-                username=self.username,
-                password=self.password,
-                port=self.port,
-                key_filename=self.ssh_key_path,
-                compress=self.enable_compression,
-                sock=sock,
-                allow_agent=False,
-                look_for_keys=False,
-            )  # type: ignore
+            # Print exception without pager to avoid terminal mode issues
+            console = rich.console.Console()
+            console.print_exception(show_locals=False, max_frames=3, width=None, word_wrap=True, suppress=[])
+            
+            import sys
+            
+            # Save terminal state before getpass (Unix only)
+            old_settings = None
+            if sys.stdin.isatty() and platform.system() != "Windows":
+                try:
+                    import termios
+                    old_settings = termios.tcgetattr(sys.stdin)
+                except (ImportError, OSError):
+                    pass
+            
+            try:
+                self.password = getpass.getpass(f"Enter password for {self.username}@{self.hostname}: ")
+                self.ssh.connect(
+                    hostname=self.hostname,
+                    username=self.username,
+                    password=self.password,
+                    port=self.port,
+                    key_filename=self.ssh_key_path,
+                    compress=self.enable_compression,
+                    sock=sock,
+                    allow_agent=False,
+                    look_for_keys=False,
+                )  # type: ignore
+            except Exception:
+                # If password auth also fails, restore terminal before re-raising
+                if old_settings is not None:
+                    import termios
+                    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+                if sys.stdin.isatty():
+                    sys.stdout.write("\033[?25h")  # Show cursor
+                    sys.stdout.flush()
+                raise
+            finally:
+                # Always restore terminal state (Unix only)
+                if old_settings is not None:
+                    import termios
+                    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+                
+                # On all platforms, explicitly reset terminal to normal mode
+                if sys.stdin.isatty():
+                    sys.stdout.write("\033[?25h")  # Show cursor
+                    sys.stdout.write("\033[?1049l")  # Exit alternate screen if entered
+                    sys.stdout.flush()
         try:
             self.sftp: Optional[paramiko.SFTPClient] = self.ssh.open_sftp()
         except Exception as err:
