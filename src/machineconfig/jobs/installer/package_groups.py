@@ -61,17 +61,31 @@ PACKAGES_CODE_EDITORS = [
 
 
 # Database Tools - Database clients and visualizers
-PACKAGES_DATABASE = [
-    "SqliteBrowser",
-    "sqlite3",
-    "redis",
-    "redis-cli",
-    "postgresql-client",
-    "duckdb",
-    "DBeaver",
+DB_TUIS = [
     "rainfrog",
-
+    "lazysql",
+    "dblab",
+    "usql",
+    "harlequin",
+    "sqlit"
 ]
+DB_CLI = [
+    "duckdb",
+    "postgresql-client",
+    "sqlite3",
+    "redis-cli",
+]
+DB_DESKTOP = [
+    "dbgate",
+    "dbeaver",
+    "sqliteBrowser",
+]
+DB_WEB = [
+    "pgadmin",
+    "pgweb"
+    # https://github.com/chartdb/chartdb
+]
+PACKAGES_DATABASE: list[str] = DB_TUIS + DB_CLI + DB_DESKTOP + DB_WEB
 
 
 # Media & Entertainment - Music players and media tools
@@ -250,6 +264,10 @@ PACKAGE_GROUP2NAMES: dict[str, list[str]] = {
     "code-editors": PACKAGES_CODE_EDITORS,
     "code-analysis": PACKAGES_CODE_ANALYSIS,
     "db": PACKAGES_DATABASE,
+    "db-cli": DB_CLI,
+    "db-desktop": DB_DESKTOP,
+    "db-web": DB_WEB,
+    "db-tuils": DB_TUIS,
     "media": PACKAGES_MEDIA,
     "file-sharing": PACKAGES_FILE_SHARING,
     "productivity": PACKAGES_PRODUCTIVITY,

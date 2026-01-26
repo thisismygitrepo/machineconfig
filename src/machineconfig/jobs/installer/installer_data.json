@@ -1566,7 +1566,7 @@
       }
     },
     {
-      "appName": "SqliteBrowser",
+      "appName": "sqliteBrowser",
       "repoURL": "https://github.com/sqlitebrowser/sqlitebrowser",
       "doc": "🗃️ A visual tool to create, design, and edit database files compatible with SQLite.",
       "fileNamePattern": {
