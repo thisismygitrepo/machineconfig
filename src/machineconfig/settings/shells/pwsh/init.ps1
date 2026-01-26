@@ -112,7 +112,8 @@ catch {
 
 if (Get-Command atuin -ErrorAction SilentlyContinue) {
     try {
-        Invoke-Expression (& atuin init powershell | Out-String)
+        # Invoke-Expression (& atuin init powershell | Out-String)
+        atuin init powershell --disable-up-arrow | Out-String | Invoke-Expression
     }
     catch {
         # Do nothing
