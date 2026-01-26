@@ -3,7 +3,7 @@ from typing import Optional, TypedDict, cast, NotRequired, TYPE_CHECKING
 if TYPE_CHECKING:
     from pathlib import Path
 
-class CLOUD(TypedDict):
+class CLOUD(TypedDict, total=True):
     cloud: str
     root: str
     rel2home: bool
@@ -32,7 +32,7 @@ def read_default_cloud_config() -> CLOUD:
 
 class VE_SPECS(TypedDict):
     ve_path: str
-    ipy_profile: NotRequired[str]
+    ipy_profile: Optional[str]
 class VE_INI(TypedDict):
     specs: NotRequired[VE_SPECS]
     cloud: NotRequired[CLOUD]

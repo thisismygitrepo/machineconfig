@@ -49,7 +49,6 @@ def save_ini(path: PathLike, obj: Mapping[str, Mapping[str, Any]], verbose: bool
 def read_ini(path: "Path", encoding: Optional[str] = None):
     if not Path(path).exists() or Path(path).is_dir():
         raise FileNotFoundError(f"File not found or is a directory: {path}")
-    import configparser
     res = configparser.ConfigParser()
     res.read(filenames=[str(path)], encoding=encoding)
     return res
@@ -80,7 +79,6 @@ def remove_c_style_comments(text: str) -> str:
 
 
 def read_json(path: "Path", r: bool = False, **kwargs: Any) -> Any:  # return could be list or dict etc
-    import json
     try:
         mydict = json.loads(Path(path).read_text(encoding="utf-8"), **kwargs)
     except Exception:
@@ -90,8 +88,6 @@ def read_json(path: "Path", r: bool = False, **kwargs: Any) -> Any:  # return co
 
 
 def from_pickle(path: Path) -> Any:
-    import pickle
-
     return pickle.loads(path.read_bytes())
 
 

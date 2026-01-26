@@ -72,32 +72,32 @@ def croshell(
 
 def devops(ctx: typer.Context) -> None:
     """[d] DevOps related commands."""
-    from machineconfig.scripts.python.devops import get_app
-    get_app()(ctx.args, standalone_mode=not ctx.args)
+    from machineconfig.scripts.python.devops import get_app as get_app_devops
+    get_app_devops()(ctx.args, standalone_mode=not ctx.args)
 
 
 def cloud(ctx: typer.Context) -> None:
     """[c] Cloud management commands."""
-    from machineconfig.scripts.python.cloud import get_app
-    get_app()(ctx.args, standalone_mode=not ctx.args)
+    from machineconfig.scripts.python.cloud import get_app as get_app_cloud
+    get_app_cloud()(ctx.args, standalone_mode=not ctx.args)
 
 
 def sessions(ctx: typer.Context) -> None:
     """[s] Session and layout management."""
-    from machineconfig.scripts.python.sessions import get_app
-    get_app()(ctx.args, standalone_mode=not ctx.args)
+    from machineconfig.scripts.python.sessions import get_app as get_app_sessions
+    get_app_sessions()(ctx.args, standalone_mode=not ctx.args)
 
 
 def agents(ctx: typer.Context) -> None:
     """[a] 🤖 AI Agents management commands."""
-    from machineconfig.scripts.python.agents import get_app
-    get_app()(ctx.args, standalone_mode=not ctx.args)
+    from machineconfig.scripts.python.agents import get_app as get_app_agents
+    get_app_agents()(ctx.args, standalone_mode=not ctx.args)
 
 
 def utils(ctx: typer.Context) -> None:
     """[u] Utility commands."""
-    from machineconfig.scripts.python.utils import get_app
-    get_app()(ctx.args, standalone_mode=not ctx.args)
+    from machineconfig.scripts.python.utils import get_app as get_app_utils
+    get_app_utils()(ctx.args, standalone_mode=not ctx.args)
 
 
 

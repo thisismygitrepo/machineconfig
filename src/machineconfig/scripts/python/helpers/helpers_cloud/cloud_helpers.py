@@ -10,7 +10,6 @@ import os
 from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
-from rich import box  # Import box
 
 console = Console()
 
@@ -79,16 +78,22 @@ def get_secure_share_cloud_config(interactive: bool, cloud: Optional[str]) -> CL
 
 
 def display_header(title: str):
-    console.print(Panel(title, box=box.DOUBLE_EDGE, title_align="left"))  # Replace print with Panel
+    console.print(f"\n[bold]{title}[/bold]")
+
 def display_subheader(title: str):
-    console.print(Panel(title, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
+    console.print(f"[bold]{title}[/bold]")
+
 def display_content(content: str):
-    console.print(Panel(content, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
+    console.print(content)
+
 def display_status(status: str):
-    console.print(Panel(status, box=box.ROUNDED, title_align="left"))  # Replace print with Panel
+    console.print(status)
+
 def display_success(message: str):
-    console.print(Panel(message, box=box.ROUNDED, border_style="green", title_align="left"))  # Replace print with Panel
+    console.print(f"[green]✓ {message}[/green]")
+
 def display_warning(message: str):
-    console.print(Panel(message, box=box.ROUNDED, border_style="yellow", title_align="left"))  # Replace print with Panel
+    console.print(f"[yellow]⚠ {message}[/yellow]")
+
 def display_error(message: str):
-    console.print(Panel(message, box=box.ROUNDED, border_style="red", title_align="left"))  # Replace print with Panel
+    console.print(f"[red]✗ {message}[/red]")

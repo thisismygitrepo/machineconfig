@@ -132,7 +132,6 @@ def run_shell_script(script: str, display_script: bool, clean_env: bool):
     from rich.console import Console
     console = Console()
     if display_script:
-        from rich.syntax import Syntax
         console.print(Panel(Syntax(code=script, lexer=lexer), title=f"📄 shell script @ {temp_shell_script_path}", subtitle="shell script being executed"), style="bold red")
     proc = run_shell_file(script_path=str(temp_shell_script_path), clean_env=clean_env)
     # console.print(f"✅  [green]Script executed successfully:[/green] [blue]{temp_script_path}[/blue]")
