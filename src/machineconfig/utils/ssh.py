@@ -35,7 +35,6 @@ class SSH:
         self.port: int = port
         self.proxycommand: Optional[str] = None
         import paramiko
-        import paramiko
         import getpass
         if isinstance(host, str):
             try:
@@ -120,7 +119,7 @@ class SSH:
                 console.print(f"   1. Check if hostname resolves: [green]ping {self.hostname}[/green]")
                 console.print(f"   2. Check SSH config: [green]cat ~/.ssh/config | grep -A5 '{self.host or self.hostname}'[/green]")
                 console.print(f"   3. Add to /etc/hosts: [green]echo '192.168.x.x {self.hostname}' | sudo tee -a /etc/hosts[/green]")
-                console.print(f"   4. Check if machine is online and accessible on network\n")
+                console.print("   4. Check if machine is online and accessible on network\n")
             
             import sys
             
