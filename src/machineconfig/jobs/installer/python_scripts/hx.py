@@ -26,8 +26,8 @@ config_dict: InstallerData = {
             "windows": "helix-{version}-x86_64-windows.zip",
         },
         "arm64": {
-            "linux": "helix-{version}-arm64-linux.tar.xz",
-            "macos": "helix-{version}-arm64-macos.tar.xz",
+            "linux": "helix-{version}-aarch64-linux.tar.xz",
+            "macos": "helix-{version}-aarch64-macos.tar.xz",
             "windows": "helix-{version}-arm64-windows.zip",
         },
     },

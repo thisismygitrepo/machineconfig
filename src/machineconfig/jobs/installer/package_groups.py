@@ -192,13 +192,8 @@ PACKAGES_SYSTEM_MONITORS = [
     "btm",
     "ntop",
     "procs",
-    "bandwhich",
-    "ipinfo",
-    "sniffnet",
     "cpufetch",
     "fastfetch",
-    "topgrade",
-    "speedtest",
 ]
 
 
@@ -235,6 +230,16 @@ PACKAGES_FILE = [
     "rmz",
 ]
 
+NETWORK = [
+    "bandwhich",
+    "ipinfo",
+    "sniffnet",
+    "topgrade",
+    "speedtest",
+    "rclone",
+
+]
+
 # Terminal & Shell Enhancements - Terminal multiplexers, shell history, and prompts
 PACKAGES_TERMINAL_SHELL = [
     "zellij",
@@ -244,7 +249,6 @@ PACKAGES_TERMINAL_SHELL = [
     "starship",
     "gotty",
     "ttyd",
-    "rclone",
     "cb"
 ]
 
@@ -252,25 +256,33 @@ PACKAGES_TERMINAL_SHELL = [
 
 PACKAGE_GROUP2NAMES: dict[str, list[str]] = {
     "sysabc": ["sysabc"],
+
     "termabc": [*PACKAGES_CODE_ANALYSIS, *PACKAGES_SYSTEM_MONITORS, *PACKAGES_TERMINAL_SHELL, *PACKAGES_FILE,],
-    "gui": GUI,
-    "dev": [*PACKAGES_TERMINAL_EMULATORS, *PACKAGES_BROWSERS, *PACKAGES_CODE_EDITORS, *PACKAGES_DATABASE, *PACKAGES_MEDIA, *PACKAGES_FILE_SHARING, *PACKAGES_DEV_UTILS, *PACKAGES_CODE_ANALYSIS, *PACKAGES_PRODUCTIVITY, *TERMINAL_EYE_CANDY,],
-    "dev-utils": PACKAGES_DEV_UTILS,
-    "term-eye-candy": TERMINAL_EYE_CANDY,
-    "agents": AGENTS,
-    "terminal-emulator": PACKAGES_TERMINAL_EMULATORS,
     "shell": PACKAGES_TERMINAL_SHELL,
-    "browsers": PACKAGES_BROWSERS,
-    "code-editors": PACKAGES_CODE_EDITORS,
+    "search": PACKAGES_FILE,
+    "sys-monitor": PACKAGES_SYSTEM_MONITORS,
     "code-analysis": PACKAGES_CODE_ANALYSIS,
-    "db": PACKAGES_DATABASE,
+
+    "dev": [*PACKAGES_TERMINAL_EMULATORS,
+            *PACKAGES_BROWSERS, *PACKAGES_CODE_EDITORS, *PACKAGES_DATABASE,
+            *PACKAGES_MEDIA, *PACKAGES_FILE_SHARING, *PACKAGES_DEV_UTILS,
+            *PACKAGES_CODE_ANALYSIS, *PACKAGES_PRODUCTIVITY, *TERMINAL_EYE_CANDY,],
+    "dev-utils": PACKAGES_DEV_UTILS,
+    "eye": TERMINAL_EYE_CANDY,
+    "agents": AGENTS,
+    "terminal": PACKAGES_TERMINAL_EMULATORS,
+    "browsers": PACKAGES_BROWSERS,
+    "editors": PACKAGES_CODE_EDITORS,
+
+    "db-all": PACKAGES_DATABASE,
     "db-cli": DB_CLI,
     "db-desktop": DB_DESKTOP,
     "db-web": DB_WEB,
-    "db-tuils": DB_TUIS,
+    "db-tui": DB_TUIS,
+
     "media": PACKAGES_MEDIA,
+    "gui": GUI,
+    "nw": NETWORK,
     "file-sharing": PACKAGES_FILE_SHARING,
     "productivity": PACKAGES_PRODUCTIVITY,
-    "sys-monitor": PACKAGES_SYSTEM_MONITORS,
-    "search": PACKAGES_FILE,
 }
