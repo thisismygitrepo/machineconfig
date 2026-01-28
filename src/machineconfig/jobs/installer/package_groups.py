@@ -2,8 +2,7 @@
 GUI = [
     "brave",
     "code",
-    "git",
-    # "wezterm",  # needs admin
+    "zoomit",
 ]
 
 # AI/LLM Tools - AI-powered coding and chat assistants
@@ -31,8 +30,8 @@ AGENTS = [
 
 # Terminal Emulators & Shells - Terminal applications, emulators, and shell environments
 PACKAGES_TERMINAL_EMULATORS = [
-    "Alacritty",
-    "Wezterm",
+    "alacritty",
+    "wezterm",
     "warp",
     "vtm",
     "edex-ui",
@@ -42,20 +41,19 @@ PACKAGES_TERMINAL_EMULATORS = [
 
 # Browsers - Web browsers and terminal browsers
 PACKAGES_BROWSERS = [
-    "Brave",
+    "brave",
     "bypass-paywalls-chrome",
     "browsh",
     "carbonyl",
-    "m365",
-    "zoomit",
 ]
 
 # Code Editors & IDEs - Code editing tools
 # NOTE: Entries must match the corresponding `appName` in installer_data.json for filtering to work.
 PACKAGES_CODE_EDITORS = [
     "code",
-    "Cursor",
-    "lvim",
+    "hx",
+    # "cursor",
+    # "lvim",
 ]
 
 
@@ -127,6 +125,8 @@ PACKAGES_DEV_UTILS = [
     "rust-analyzer",
     "evcxr",
     "geckodriver",
+    "git",
+    "m365",
 ]
 
 # Code Analysis, Git & Docs - Code analysis, statistics, documentation, and Git tools
@@ -162,7 +162,6 @@ PACKAGES_PRODUCTIVITY = [
     "presenterm",
     "glow",
     "gum",
-    "hx",
 ]
 
 
@@ -257,11 +256,11 @@ PACKAGES_TERMINAL_SHELL = [
 PACKAGE_GROUP2NAMES: dict[str, list[str]] = {
     "sysabc": ["sysabc"],
 
-    "termabc": [*PACKAGES_CODE_ANALYSIS, *PACKAGES_SYSTEM_MONITORS, *PACKAGES_TERMINAL_SHELL, *PACKAGES_FILE,],
     "shell": PACKAGES_TERMINAL_SHELL,
     "search": PACKAGES_FILE,
     "sys-monitor": PACKAGES_SYSTEM_MONITORS,
     "code-analysis": PACKAGES_CODE_ANALYSIS,
+    "termabc": [*PACKAGES_CODE_ANALYSIS, *PACKAGES_SYSTEM_MONITORS, *PACKAGES_TERMINAL_SHELL, *PACKAGES_FILE,],
 
     "dev": [*PACKAGES_TERMINAL_EMULATORS,
             *PACKAGES_BROWSERS, *PACKAGES_CODE_EDITORS, *PACKAGES_DATABASE,
