@@ -53,7 +53,7 @@
         },
         "list": [
             {
-                "commandline": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+                "commandline": "pwsh.exe",
                 "cursorColor": "#D4D8E1",
                 "cursorShape": "filledBox",
                 "font": {
