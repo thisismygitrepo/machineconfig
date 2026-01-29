@@ -26,12 +26,12 @@
         "amd64": {
           "linux": "sudo nala install unzip -y; curl -fsSL https://bun.com/install | bash; . ~/.bashrc || true; sudo ln -s $(which bun) /usr/local/bin/node ",
           "windows": "powershell -c \"irm bun.sh/install.ps1|iex\"",
-          "macos": "curl -fsSL https://bun.com/install | bash"
+          "macos": "curl -fsSL https://bun.com/install | bash; . ~/.zshrc || true; sudo ln -s $(which bun) /usr/local/bin/node"
         },
         "arm64": {
           "linux": "sudo nala install unzip -y; curl -fsSL https://bun.com/install | bash; . ~/.bashrc || true; sudo ln -s $(which bun) /usr/local/bin/node ",
           "windows": "powershell -c \"irm bun.sh/install.ps1|iex\"",
-          "macos": "curl -fsSL https://bun.com/install | bash"
+          "macos": "curl -fsSL https://bun.com/install | bash; . ~/.zshrc || true; sudo ln -s $(which bun) /usr/local/bin/node"
         }
       }
     },

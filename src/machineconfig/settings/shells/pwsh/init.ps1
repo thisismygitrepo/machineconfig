@@ -14,6 +14,11 @@ function Add-ToPathIfNotAlready {
     }
 }
 
+# Use bun as node if available
+if (Test-Path "$HOME\.bun\bin\bun.exe") {
+    Set-Alias -Name node -Value "$HOME\.bun\bin\bun.exe" -Option AllScope
+}
+
 Add-ToPathIfNotAlready -Directories @(
     "$HOME\.local\bin",
     "$HOME\.bun\bin",
@@ -63,11 +68,6 @@ else {
     function ms { msearch $args }
 }
 
-
-# Use bun as node if available
-if (Test-Path "$HOME\.bun\bin\bun.exe") {
-    Set-Alias -Name node -Value "$HOME\.bun\bin\bun.exe" -Option AllScope
-}
 
 
 # sources end
