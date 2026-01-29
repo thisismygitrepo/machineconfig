@@ -3,6 +3,8 @@ GUI = [
     "brave",
     "code",
     "zoomit",
+    "wezterm",
+    "mouse-without-borders",
 ]
 
 # AI/LLM Tools - AI-powered coding and chat assistants

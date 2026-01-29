@@ -19,7 +19,6 @@ def init(which: Annotated[Literal["init", "ia", "live", "wrap"], typer.Argument(
         match which:
             case "init":
                 import machineconfig.settings as module
-                from pathlib import Path
                 if platform.system() == "Darwin":
                     init_path = Path(module.__file__).parent.joinpath("shells", "zsh", "init.sh")
                 else: init_path = Path(module.__file__).parent.joinpath("shells", "bash", "init.sh")
@@ -38,7 +37,6 @@ def init(which: Annotated[Literal["init", "ia", "live", "wrap"], typer.Argument(
         match which:
             case "init":
                 import machineconfig.settings as module
-                from pathlib import Path
                 init_path = Path(module.__file__).parent.joinpath("shells", "powershell", "init.ps1")
                 script = init_path.read_text(encoding="utf-8")
             case "ia":
@@ -66,7 +64,6 @@ def update(copy_assets: Annotated[bool, typer.Option("--assets-copy/--no-assets-
            link_public_configs: Annotated[bool, typer.Option("--link-public-configs/--no-link-public-configs", "-b/-nb", help="Link public configs after update (overwrites your configs!)")] = False,
            ):
     """🔄 UPDATE uv and machineconfig"""
-    from pathlib import Path
     if Path.home().joinpath("code", "machineconfig").exists():
         shell_script = """
 uv self update
@@ -103,7 +100,6 @@ def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets
             ):
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
     from machineconfig.utils.code import run_shell_script, get_uv_command, get_shell_script_running_lambda_function, exit_then_run_shell_script
-    from pathlib import Path
     import platform
     mcfg_path = Path.home().joinpath("code/machineconfig")
     _ = run_shell_script
@@ -152,7 +148,6 @@ def status():
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
     import machineconfig.scripts.python as navigator
-    from pathlib import Path
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import exit_then_run_shell_script
     if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
@@ -183,7 +178,6 @@ def buid_docker(
     variant: Annotated[Literal["slim", "ai"], typer.Argument(..., help="Variant to build: 'slim' or 'ai'")] = "slim",
 ) -> None:
     """🧱 `buid_docker` — wrapper for `jobs/shell/docker_build_and_publish.sh`"""
-    from pathlib import Path
     import machineconfig
     script_path = Path(machineconfig.__file__).resolve().parent.parent.parent.joinpath("jobs", "shell", "docker_build_and_publish.sh")
     if not script_path.exists():
@@ -223,6 +217,9 @@ def get_app():
     if Path.home().joinpath("code", "machineconfig").exists():
         cli_app.command(name= "buid_docker", no_args_is_help=False, help="🧱 [d] Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
         cli_app.command(name= "d", no_args_is_help=False, help="Build docker images (wraps jobs/shell/docker_build_and_publish.sh)", hidden=True)(buid_docker)
+
+        import machineconfig.jobs.installer.checks.security_cli as security_cli_module
+        cli_app.add_typer(security_cli_module.get_app(), name="security-cli", help="Security related CLI tools.")
 
     cli_app.command(name= "readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
     cli_app.command(name= "r", no_args_is_help=False, hidden=True)(readme)
