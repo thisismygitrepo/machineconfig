@@ -219,7 +219,9 @@ def get_app():
         cli_app.command(name= "d", no_args_is_help=False, help="Build docker images (wraps jobs/shell/docker_build_and_publish.sh)", hidden=True)(buid_docker)
 
         import machineconfig.jobs.installer.checks.security_cli as security_cli_module
-        cli_app.add_typer(security_cli_module.get_app(), name="security-cli", help="Security related CLI tools.")
+        sec_cli = security_cli_module.get_app()
+        cli_app.add_typer(sec_cli, name="security", help="🔐 [y] Security related CLI tools.")
+        cli_app.add_typer(sec_cli, name="y", help="🔐 [y] Security related CLI tools.", hidden=True)
 
     cli_app.command(name= "readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
     cli_app.command(name= "r", no_args_is_help=False, hidden=True)(readme)

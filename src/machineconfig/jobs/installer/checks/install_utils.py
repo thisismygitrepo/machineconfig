@@ -11,7 +11,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Optional
 
-import gdown
 from rich.console import Console
 
 from machineconfig.utils.path_extended import PathExtended
@@ -53,6 +52,7 @@ def download_google_drive_file(url: str) -> PathExtended:
         # Create a temporary directory for download
         output_dir = PathExtended.tmpdir(prefix="gdown_")
         # gdown.download returns the output filename
+        import gdown
         output_file = gdown.download(id=file_id, output=str(output_dir) + "/", quiet=False, fuzzy=True)
         
         if not output_file:

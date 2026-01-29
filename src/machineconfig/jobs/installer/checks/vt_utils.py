@@ -9,7 +9,6 @@ import time
 from pathlib import Path
 from typing import Any, Optional, TypedDict
 
-import vt
 from rich.progress import Progress, TaskID
 
 # Constants
@@ -19,15 +18,16 @@ class ScanResult(TypedDict):
     result: Optional[str]
     category: str
 
-def get_vt_client() -> vt.Client:
+def get_vt_client() -> "vt.Client":
     """Retrieves the VirusTotal client using the token from the credentials file."""
     if not VT_TOKEN_PATH.exists():
         raise FileNotFoundError(f"VirusTotal token not found at {VT_TOKEN_PATH}")
     
     token = VT_TOKEN_PATH.read_text(encoding="utf-8").split("\n")[0].strip()
+    import vt
     return vt.Client(token)
 
-def scan_file(path: Path, client: vt.Client, progress: Optional[Progress] = None, task_id: Optional[TaskID] = None) -> tuple[Optional[float], list[Any]]:
+def scan_file(path: Path, client: "vt.Client", progress: Optional[Progress] = None, task_id: Optional[TaskID] = None) -> tuple[Optional[float], list[Any]]:
     """
     Scans a file using VirusTotal.
     
