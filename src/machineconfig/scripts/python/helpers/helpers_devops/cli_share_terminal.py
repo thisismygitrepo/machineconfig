@@ -52,11 +52,16 @@ def share_terminal(
     ssl_cert: Annotated[Optional[str], typer.Option("--ssl-cert", "-C", help="SSL certificate file path")] = None,
     ssl_key: Annotated[Optional[str], typer.Option("--ssl-key", "-K", help="SSL key file path")] = None,
     ssl_ca: Annotated[Optional[str], typer.Option("--ssl-ca", "-A", help="SSL CA file path for client certificate verification")] = None,
-    over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the terminal over the internet using ngrok")] = False
+    over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the terminal over the internet using ngrok")] = False,
+    install_missing_dependencies: Annotated[bool, typer.Option("--install-missing-dependencies", "-D", help="Install missing dependencies", show_default=False)] = False,
+
 ) -> None:
-    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-    install_if_missing("ttyd")
-    if over_internet: install_if_missing("ngrok")
+    if install_missing_dependencies:
+        from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+        install_if_missing("ttyd")
+    if over_internet and install_missing_dependencies:
+        from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+        install_if_missing("ngrok")
 
     from pathlib import Path
     if username is None:

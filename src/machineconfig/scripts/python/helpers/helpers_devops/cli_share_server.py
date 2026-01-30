@@ -14,14 +14,17 @@ def web_file_explorer(
     bind_address: Annotated[str, typer.Option("--bind", "-a", help="Address to bind the server to")] = "0.0.0.0",
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the share server over the internet using ngrok")] = False,
     backend: Annotated[str, typer.Option("--backend", "-b", help="Backend to use: filebrowser (default), miniserve, qrcp, or easy-sharing")] = "miniserve",
+    install_missing_dependencies: Annotated[bool, typer.Option("--install-missing-dependencies", "-D", help="Install missing dependencies", show_default=False)] = False,
+
 ) -> None:
     from machineconfig.utils.installer_utils.installer_cli import install_if_missing
 
     if backend not in ["filebrowser", "miniserve", "qrcp", "easy-sharing"]:
         typer.echo(f"❌ ERROR: Invalid backend '{backend}'. Must be one of: filebrowser, miniserve, qrcp, easy-sharing", err=True)
         raise typer.Exit(code=1)
-    install_if_missing(which=backend)
-    if over_internet:
+    if install_missing_dependencies:
+        install_if_missing(which=backend)
+    if over_internet and install_missing_dependencies:
         install_if_missing(which="ngrok")
     if password is None and not no_auth:
         pwd_path = Path.home().joinpath("dotfiles/creds/passwords/quick_password")

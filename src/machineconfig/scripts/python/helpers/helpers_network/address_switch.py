@@ -75,4 +75,3 @@ def switch_public_ip_address(max_trials: int = 10, wait_seconds: float = 4.0) ->
 
 if __name__ == "__main__":
     switch_public_ip_address()
-

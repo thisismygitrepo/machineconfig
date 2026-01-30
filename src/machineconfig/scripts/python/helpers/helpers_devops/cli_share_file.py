@@ -4,15 +4,17 @@ from typing import Annotated, Literal
 
 
 def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'")],
-) -> None:
+    install_missing_dependencies: Annotated[bool, typer.Option("--install-missing-dependencies", "-D", help="Install missing dependencies", show_default=False)] = False,
+    ) -> None:
     """Receive a file using croc with relay server.
 Usage examples:
     devops network receive 7121-donor-olympic-bicycle
     devops network receive -- --relay 10.17.62.206:443 7121-donor-olympic-bicycle
     devops network receive -- croc --relay 10.17.62.206:443 7121-donor-olympic-bicycle
 """
-    from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-    install_if_missing(which="croc")
+    if install_missing_dependencies:
+        from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+        install_if_missing(which="croc")
     import platform
     import sys
 
@@ -98,6 +100,7 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
                     text: Annotated[str | None, typer.Option("--text", "-t", help="Send some text")] = None,
                     qrcode: Annotated[bool, typer.Option("--qrcode", "--qr", help="Show receive code as a qrcode")] = False,
                     backend: Annotated[Literal["wormhole", "w", "croc", "c"], typer.Option("--backend", "-b", help="Backend to use")] = "croc",
+                    install_missing_dependencies: Annotated[bool, typer.Option("--install-missing-dependencies", "-D", help="Install missing dependencies", show_default=False)] = False,
                     ) -> None:
     """Send a file using croc with relay server."""
     import platform
@@ -113,8 +116,9 @@ uvx magic-wormhole send {code_line} {text_line}
 """
             print(f"🚀 Sending file: {path}. Use: uvx magic-wormhole receive ")
         case "croc" | "c":
-            from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-            install_if_missing(which="croc")
+            if install_missing_dependencies:
+                from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+                install_if_missing(which="croc")
 
             # Get relay server IP from environment or use default
             import machineconfig.scripts.python.helpers.helpers_network.address as helper

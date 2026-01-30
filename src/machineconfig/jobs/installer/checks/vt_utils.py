@@ -7,12 +7,13 @@ This module provides functionality to interact with VirusTotal API.
 
 import time
 from pathlib import Path
-from typing import Any, Optional, TypedDict
-
+from typing import Any, Optional, TypedDict, TYPE_CHECKING
 from rich.progress import Progress, TaskID
 
+if TYPE_CHECKING:
+    import vt
+
 # Constants
-VT_TOKEN_PATH = Path.home().joinpath("dotfiles/creds/tokens/virustotal")
 
 class ScanResult(TypedDict):
     result: Optional[str]
@@ -20,6 +21,7 @@ class ScanResult(TypedDict):
 
 def get_vt_client() -> "vt.Client":
     """Retrieves the VirusTotal client using the token from the credentials file."""
+    VT_TOKEN_PATH = Path.home().joinpath("dotfiles/creds/tokens/virustotal")
     if not VT_TOKEN_PATH.exists():
         raise FileNotFoundError(f"VirusTotal token not found at {VT_TOKEN_PATH}")
     

@@ -133,7 +133,7 @@ def install_clis(clis_names: list[str]):
             clis_names_chosen_interactively = handle_installer_not_found(a_cli_name, all_installers_data)
             if len(clis_names_chosen_interactively)  == 0:
                 continue
-            _ = install_clis(clis_names=clis_names_chosen_interactively)
+            install_clis(clis_names=clis_names_chosen_interactively)
             continue
         message = Installer(selected_installer).install_robust(version=None)  # finish the task
         total_messages.append(message)
@@ -158,8 +158,8 @@ def install_if_missing(which: str) -> bool:
         print(f"❌ Error installing {which}: {e}")
     return False
 
-if __name__ == "__main__":
-    from machineconfig.utils.schemas.installer.installer_types import InstallerData
-    from machineconfig.utils.installer_utils.installer_class import Installer
-    _ = InstallerData, Installer
-    pass
+# if __name__ == "__main__":
+#     from machineconfig.utils.schemas.installer.installer_types import InstallerData
+#     from machineconfig.utils.installer_utils.installer_class import Installer
+#     _ = InstallerData, Installer
+#     pass
