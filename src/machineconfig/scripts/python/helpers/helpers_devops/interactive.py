@@ -80,8 +80,21 @@ def execute_installations(selected_options: list[str]) -> None:
                 console.print("✅ CLI applications installed successfully", style="bold green")
             except Exception as e:
                 console.print(f"❌ Error installing CLI applications: {e}", style="bold red")
-            if platform.system() != "Windows":
-                run_shell_script(". $HOME/.bashrc", display_script=True, clean_env=False)
+            if platform.system() == "Linux":
+                shell_profile = ". $HOME/.bashrc"
+            elif platform.system() == "Darwin":
+                shell_profile = ". $HOME/.zshrc"
+            elif platform.system() == "Windows":
+                shell_profile = None
+            else:
+                shell_profile = None
+            if shell_profile is not None:
+                try:
+                    console.print("🔄 Reloading shell profile to apply changes", style="bold cyan")
+                    run_shell_script(shell_profile, display_script=False, clean_env=False)
+                    console.print("✅ Shell profile reloaded successfully", style="bold green")
+                except Exception as e:
+                    console.print(f"❌ Error reloading shell profile: {e}", style="bold red")
 
     if "install_machineconfig" in selected_options:
         console.print(Panel("🐍 [bold green]PYTHON ENVIRONMENT[/bold green]\n[italic]Virtual environment setup[/italic]", border_style="green"))

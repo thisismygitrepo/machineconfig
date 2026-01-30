@@ -40,11 +40,11 @@ class Installer:
     def install_robust(self, version: Optional[str]) -> str:
         try:
             exe_name = self._get_exe_name()
-            result_old = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
+            result_old = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True, check=False)
             old_version_cli = result_old.stdout.strip()
             print(f"🚀 INSTALLING {exe_name.upper()} 🚀. 📊 Current version: {old_version_cli or 'Not installed'}")
             self.install(version=version)
-            result_new = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True)
+            result_new = subprocess.run(f"{exe_name} --version", shell=True, capture_output=True, text=True, check=False)
             new_version_cli = result_new.stdout.strip()
             if old_version_cli == new_version_cli:
                 return f"""📦️ 😑 {exe_name}, same version: {old_version_cli}"""
@@ -79,7 +79,7 @@ class Installer:
                 print(f"📦 Using package manager: {installer_arch_os}")
                 desc = package_manager + " installation"
                 version_to_be_installed = package_manager + "Latest"
-                result = subprocess.run(installer_arch_os, shell=True, capture_output=False, text=True)
+                result = subprocess.run(installer_arch_os, shell=True, capture_output=False, text=True, encoding="utf-8", check=False)
                 success = result.returncode == 0 and result.stderr == ""
                 if not success:
                     sub_panels = []
