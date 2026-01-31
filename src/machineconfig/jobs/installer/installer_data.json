@@ -121,6 +121,23 @@
       }
     },
     {
+      "appName": "yq",
+      "repoURL": "https://github.com/mikefarah/yq",
+      "doc": "🧙‍♂️ Command-line YAML, JSON, XML, CSV processor",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "yq_linux_amd64",
+          "windows": "yq_windows_amd64.exe",
+          "macos": "yq_darwin_amd64"
+        },
+        "arm64": {
+          "linux": "yq_linux_arm64",
+          "windows": "yq_windows_arm64.exe",
+          "macos": "yq_darwin_arm64"
+        }
+      }
+    },
+    {
       "appName": "magick",
       "repoURL": "https://github.com/ImageMagick/ImageMagick",
       "doc": "🧙‍♂️ Command-line image manipulation tool",
