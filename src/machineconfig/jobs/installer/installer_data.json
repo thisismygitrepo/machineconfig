@@ -2909,6 +2909,23 @@
       }
     },
     {
+      "appName": "openclaw",
+      "repoURL": "CMD",
+      "doc": "OpenClaw is a personal AI assistant you run on your own devices.",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "bun install -g openclaw@latest",
+          "windows": "bun install -g openclaw@latest",
+          "macos": "bun install -g openclaw@latest"
+        },
+        "arm64": {
+          "linux": "bun install -g openclaw@latest",
+          "windows": "bun install -g openclaw@latest",
+          "macos": "bun install -g openclaw@latest"
+        }
+      }
+    },
+    {
       "appName": "gemini",
       "repoURL": "CMD",
       "doc": "Terminal-based CLI agents and tools for productivity and coding.",
