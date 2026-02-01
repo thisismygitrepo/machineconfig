@@ -172,14 +172,14 @@ def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", 
     import platform
     from machineconfig.utils.code import get_uv_command
 
-    uv_cmd = get_uv_command(platform=platform.system())  # type: ignore
+    uv_cmd = get_uv_command(platform=platform.system())
     command = f"""{uv_cmd} run --with distro python -c "import distro; print(distro.name(pretty=True))" """
     import subprocess
     from pathlib import Path
     import socket
     import os
 
-    distro = subprocess.run(command, shell=True, capture_output=True, text=True).stdout.strip()
+    distro = subprocess.run(command, shell=True, capture_output=True, text=True, check=True).stdout.strip()
     system = platform.system()
     if system not in {"Windows", "Linux", "Darwin"}:
         system = "Linux"

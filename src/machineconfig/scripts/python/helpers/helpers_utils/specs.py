@@ -85,7 +85,11 @@ def clean_cpu_name(cpu_name: str) -> str:
     return cleaned.strip()
 
 
-def run_geekbench_lookup(search_term: str) -> bool:
+def escape_regex_term(term: str) -> str:
+    return re.sub(r"([.^$*+?{}\[\]\\|()])", r"\\\1", term)
+
+
+def run_geekbench_lookup(search_term: str, display_term: str) -> bool:
     """
     Run the geekbench search using uvx.
 
@@ -106,7 +110,15 @@ def run_geekbench_lookup(search_term: str) -> bool:
         search_term,
         "--verbose",
     ]
-    printable_cmd = " ".join(f'"{x}"' if " " in x else x for x in cmd)
+    display_cmd = [
+        "uvx",
+        "--from",
+        "geekbench-browser-python",
+        "gbr",
+        display_term,
+        "--verbose",
+    ]
+    printable_cmd = " ".join(f'"{x}"' if " " in x else x for x in display_cmd)
     print(f"Running: {printable_cmd}")
     try:
         # Capture output to check for results
@@ -157,7 +169,7 @@ def run_geekbench_lookup(search_term: str) -> bool:
                  if not ("description" in output.lower() and ("---" in output or "│" in output)):
                      print(f"Debug output from tool:\n{output}")
             
-            print(f"No results found for '{search_term}'.")
+            print(f"No results found for '{display_term}'.")
             return False
 
     except subprocess.CalledProcessError:
@@ -178,66 +190,52 @@ def main() -> None:
         return
 
     full_search_term = clean_cpu_name(cpu_name)
-    
-    # Retry logic: remove last word until we find something or run out of words
-    # We escape each word to ensure regex special characters (like +, (), etc) in the name
-    # are treated as literals, while preserving our ability to use regex wildcards later.
-    words = [re.escape(w) for w in full_search_term.split()]
-    
-    while words:
-        current_term = " ".join(words)
-        
-        # Heuristic: Don't search for extremely short generic terms if possible,
-        # but "AMD" or "Intel" might be what we end up with if nothing else works.
-        # Let's try at least length 2 words unless it's just 1 word left.
-        if len(words) > 1 and len(current_term) < 4:
-             words.pop()
-             continue
 
-        print(f"Search Term: {current_term}")
-        if run_geekbench_lookup(current_term):
-            return
-        
+    def try_search(term: str, note: str) -> bool:
+        if note:
+            print(f"Search Term: {term} ({note})")
+        else:
+            print(f"Search Term: {term}")
+        return run_geekbench_lookup(escape_regex_term(term), term)
+
+    if try_search(full_search_term, ""):
+        return
+
+    words = full_search_term.split()
+    if words:
         last_word = words[-1]
-        numeric_part = None
-
-        # Check if the last word starts with digits (e.g. 8745HS or 8745)
-        # We want to both strip suffix AND try wildcards.
         match_digits = re.match(r"^(\d+)([a-zA-Z].*)?$", last_word)
-        
+
         if match_digits:
             numeric_part = match_digits.group(1)
-            suffix_part = match_digits.group(2) # May be None
+            suffix_part = match_digits.group(2)
 
-            # Intermediate Try 1: Strip suffix (e.g. 8745HS -> 8745)
             if suffix_part and len(numeric_part) >= 3:
-                 intermediate_term = " ".join(words[:-1] + [numeric_part])
-                 if intermediate_term != current_term:
-                     print(f"Search Term: {intermediate_term} (stripped suffix)")
-                     if run_geekbench_lookup(intermediate_term):
+                intermediate_term = " ".join(words[:-1] + [numeric_part])
+                if intermediate_term != full_search_term:
+                    if try_search(intermediate_term, "stripped suffix"):
                         return
-            
-            # Intermediate Try 2: Wildcard/Regex search (e.g. 8745 -> 87..)
-            # The tool uses Regex, so we use dots '.' to match any character instead of '?'
+
             if numeric_part and len(numeric_part) >= 3:
-                # If 4+ digits (e.g. 8745), replace last 2 with .. -> 87..
-                # If 3 digits (e.g. 780), replace last 1 with . -> 78.
                 if len(numeric_part) >= 4:
                     wildcard_model = numeric_part[:-2] + ".."
                 else:
                     wildcard_model = numeric_part[:-1] + "."
-                
+
                 wildcard_term = " ".join(words[:-1] + [wildcard_model])
-                
-                # Check duplication against current_term and the stripped version
                 stripped_term = " ".join(words[:-1] + [numeric_part])
-                if wildcard_term != current_term and wildcard_term != stripped_term:
-                     print(f"Search Term: {wildcard_term} (regex wildcard)")
-                     if run_geekbench_lookup(wildcard_term):
+                if wildcard_term != full_search_term and wildcard_term != stripped_term:
+                    if try_search(wildcard_term, "regex wildcard"):
                         return
 
-        # Remove last word for next iteration
-        words.pop()
+    trim_term = full_search_term
+    while trim_term:
+        trim_term = trim_term[:-1]
+        trimmed_display = trim_term.strip()
+        if not trimmed_display:
+            break
+        if try_search(trimmed_display, ""):
+            return
 
     print("Could not find any matching Geekbench scores.")
 
