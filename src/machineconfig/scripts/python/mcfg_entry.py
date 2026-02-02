@@ -3,8 +3,9 @@
 Submodules are only imported when their commands are actually invoked, not at startup.
 This makes `mcfg --help` much faster by avoiding loading heavy dependencies.
 """
-from typing import Optional, Annotated
+from typing import Optional, Annotated, Literal, TypeAlias
 import typer
+from machineconfig.scripts.python.enums import BACKENDS_LOOSE, BACKENDS_MAP
 
 
 def fire(
@@ -13,19 +14,21 @@ def fire(
     function: Annotated[Optional[str], typer.Argument(help="Function to run")] = None,
     ve: Annotated[str, typer.Option("--ve", "-v", help="Virtual environment name")] = "",
     cmd: Annotated[bool, typer.Option("--cmd", "-B", help="Create a cmd fire command to launch the job asynchronously")] = False,
-    interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Whether to run the job interactively using IPython")] = False,
     debug: Annotated[bool, typer.Option("--debug", "-d", help="Enable debug mode")] = False,
     choose_function: Annotated[bool, typer.Option("--choose-function", "-c", help="Choose function interactively")] = False,
     loop: Annotated[bool, typer.Option("--loop", "-l", help="Infinite recursion (runs again after completion/interruption)")] = False,
+
+    interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Whether to run the job interactively using IPython")] = False,
     jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="Open in a jupyter notebook")] = False,
     marimo: Annotated[bool, typer.Option("--marimo", "-M", help="Open in a marimo notebook")] = False,
+    streamlit: Annotated[bool, typer.Option("--streamlit", "-S", help="Run as streamlit app")] = False,
+
     module: Annotated[bool, typer.Option("--module", "-m", help="Launch the main file")] = False,
     script: Annotated[bool, typer.Option("--script", "-s", help="Launch as a script without fire")] = False,
     optimized: Annotated[bool, typer.Option("--optimized", "-O", help="Run the optimized version of the function")] = False,
     zellij_tab: Annotated[Optional[str], typer.Option("--zellij-tab", "-z", help="Open in a new zellij tab")] = None,
     submit_to_cloud: Annotated[bool, typer.Option("--submit-to-cloud", "-C", help="Submit to cloud compute")] = False,
     remote: Annotated[bool, typer.Option("--remote", "-r", help="Launch on a remote machine")] = False,
-    streamlit: Annotated[bool, typer.Option("--streamlit", "-S", help="Run as streamlit app")] = False,
     environment: Annotated[str, typer.Option("--environment", "-E", help="Choose ip, localhost, hostname or arbitrary url")] = "",
     holdDirectory: Annotated[bool, typer.Option("--holdDirectory", "-D", help="Hold current directory and avoid cd'ing to the script directory")] = False,
     PathExport: Annotated[bool, typer.Option("--PathExport", "-P", help="Augment the PYTHONPATH with repo root")] = False,
@@ -58,16 +61,12 @@ def croshell(
     path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = None,
     project_path: Annotated[Optional[str], typer.Option("--project", "-p", help="specify uv project to use")] = None,
     uv_with: Annotated[Optional[str], typer.Option("--uv-with", "-w", help="specify uv with packages to use")] = None,
-    marimo: Annotated[bool, typer.Option("--marimo", "-m", help="open the notebook using marimo if available")] = False,
-    jupyter: Annotated[bool, typer.Option("--jupyter", "-j", help="run in jupyter interactive console")] = False,
-    vscode: Annotated[bool, typer.Option("--vscode", "-c", help="open the script in vscode")] = False,
-    visidata: Annotated[bool, typer.Option("--visidata", "-v", help="open data file in visidata")] = False,
-    python: Annotated[bool, typer.Option("--python", "-P", help="flag to use python over IPython.")] = False,
+    backend: Annotated[BACKENDS_LOOSE, typer.Option("--backend", "-b", help="specify the backend to use")] = "ipython",
     profile: Annotated[Optional[str], typer.Option("--profile", "-r", help="ipython profile to use, defaults to default profile.")] = None,
 ) -> None:
     """Cross-shell command execution."""
     from machineconfig.scripts.python.croshell import croshell as croshell_impl
-    croshell_impl(path=path, project_path=project_path, uv_with=uv_with, marimo=marimo, jupyter=jupyter, vscode=vscode, visidata=visidata, python=python, profile=profile)
+    croshell_impl(path=path, project_path=project_path, uv_with=uv_with, backend=BACKENDS_MAP[backend], profile=profile)
 
 
 def devops(ctx: typer.Context) -> None:
