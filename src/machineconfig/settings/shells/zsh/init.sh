@@ -24,7 +24,7 @@ CONFIG_ROOT="$HOME/.config/machineconfig"
 # 📂 Add directories to PATH
 add_to_path_if_not_already \
     "$CONFIG_ROOT/scripts" \
-    "$HOME/dotfiles/scripts/linux" \
+    "$HOME/dotfiles/scripts/macos" \
     "$HOME/.local/bin" \
     "$HOME/.cargo/bin" \
     "/usr/games"
@@ -34,9 +34,9 @@ add_to_path_if_not_already \
     # "/home/linuxbrew/.linuxbrew/bin" \
 
 # echo "Sourcing scripts ..."
-. $CONFIG_ROOT/settings/broot/br.sh
-. $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
-. $CONFIG_ROOT/settings/tere/terecd.sh
+# . $CONFIG_ROOT/settings/broot/br.sh
+# . $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
+# . $CONFIG_ROOT/settings/tere/terecd.sh
 . $CONFIG_ROOT/settings/yazi/shell/yazi_cd.sh
 . $CONFIG_ROOT/scripts/wrap_mcfg
 
