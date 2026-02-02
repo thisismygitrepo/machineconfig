@@ -95,7 +95,7 @@ else
         local current_prompt="$LBUFFER"
         local output
         printf "\n"
-        output=$(tv zsh_history --input "$current_prompt" --inline)
+        output=$(tv zsh-history --input "$current_prompt" --inline)
         if [[ -n "$output" ]]; then
             BUFFER="$output"
             CURSOR=${#BUFFER}
