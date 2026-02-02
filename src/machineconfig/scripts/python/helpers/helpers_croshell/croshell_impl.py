@@ -179,35 +179,35 @@ def _build_fire_line(
     match backend:
         case "visidata":
             if file_obj.suffix == ".json":
-                fire_line = f"uv run {uv_python_line} {user_uv_with_line} {uv_project_line} --with visidata vd {str(file_obj)}"
+                fire_line = f"""uv run {uv_python_line} {user_uv_with_line} {uv_project_line} --with visidata vd "{str(file_obj)}" """
             else:
-                fire_line = f"uv run {uv_python_line} {user_uv_with_line} {uv_project_line} --with visidata,pyarrow vd {str(file_obj)}"
+                fire_line = f"""uv run {uv_python_line} {user_uv_with_line} {uv_project_line} --with visidata,pyarrow vd "{str(file_obj)}" """
         case "marimo":
             if Path.home().joinpath("code/machineconfig").exists():
                 requirements = f"""{user_uv_with_line} {uv_project_line} --with marimo,sqlglot  """
             else:
-                requirements = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "marimo,sqlglot,cowsay,machineconfig[plot]>=8.69" """
+                requirements = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "marimo,sqlglot,cowsay,machineconfig[plot]>=8.70" """
             fire_line = f"""
-cd {str(pyfile.parent)}
+cd "{str(pyfile.parent)}"
 uv run {uv_python_line} --with "marimo" marimo convert {pyfile.name} -o marimo_nb.py
 uv run {requirements} marimo edit --host 0.0.0.0 marimo_nb.py
 """
         case "jupyter":
             if Path.home().joinpath("code/machineconfig").exists():
-                requirements = f"""{user_uv_with_line}  {uv_project_line}  --with jupyterlab """
+                requirements = f"""{user_uv_with_line}  {uv_project_line} --with jupyterlab """
             else:
-                requirements = f"""{user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=8.69" """
-            fire_line = f"uv run {requirements} {uv_project_line}  jupyter-lab {str(nb_target)}"
+                requirements = f"""{user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=8.70" """
+            fire_line = f"uv run {requirements} jupyter-lab {str(nb_target)}"
         case "vscode":
             user_uv_add = f"uv add {uv_with}" if uv_with is not None else ""
             fire_line = f"""
-cd {str(pyfile.parent)}
+cd "{str(pyfile.parent)}"
 uv init {uv_python_line}
 uv venv
-uv add "cowsay,machineconfig[plot]>=8.69"
+uv add "cowsay,machineconfig[plot]>=8.70"
 uv add {user_uv_add}
 # code serve-web
-code --new-window {str(pyfile)}
+code --new-window "{str(pyfile)}"
 """
         case "python" | "ipython":
             match backend:
@@ -220,7 +220,7 @@ code --new-window {str(pyfile)}
             if Path.home().joinpath("code/machineconfig").exists():
                 ve_line = f"""{user_uv_with_line}  {uv_project_line} """
             else:
-                ve_line = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=8.69" """
+                ve_line = f"""{uv_python_line} {user_uv_with_line} {uv_project_line} --with "cowsay,machineconfig[plot]>=8.70" """
             fire_line = f"uv run {ve_line} {interpreter} {interactivity} {profile} {str(pyfile)}"
 
     return fire_line

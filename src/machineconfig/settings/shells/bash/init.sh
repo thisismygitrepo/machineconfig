@@ -35,11 +35,11 @@ add_to_path_if_not_already \
     # "/home/linuxbrew/.linuxbrew/bin" \
 
 # echo "Sourcing scripts ..."
-. $CONFIG_ROOT/settings/broot/br.sh
-. $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
-. $CONFIG_ROOT/settings/tere/terecd.sh
+# . $CONFIG_ROOT/settings/broot/br.sh
+# . $CONFIG_ROOT/settings/lf/linux/exe/lfcd.sh
+# . $CONFIG_ROOT/settings/tere/terecd.sh
 . $CONFIG_ROOT/settings/yazi/shell/yazi_cd.sh
-. $CONFIG_ROOT/scripts/wrap_mcfg
+. $CONFIG_ROOT/scripts/wrap_mcfg  # gives wrap_in_shell_script
 
 # check if file in ~/dotfiles/machineconfig/init_linux.sh exists and source it
 if [ -f "$HOME/dotfiles/machineconfig/init_linux.sh" ]; then
