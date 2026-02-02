@@ -24,6 +24,10 @@ INSTALL_TMP_DIR = Path.home().joinpath("tmp_results", "tmp_installers")
 LINUX_INSTALL_PATH = Path.home().joinpath(".local/bin").__str__()
 WINDOWS_INSTALL_PATH = Path.home().joinpath("AppData/Local/Microsoft/WindowsApps").__str__()
 
+PRIVATE_SCRIPTS_ROOT = Path.home().joinpath("dotfiles/scripts")  # local directory
+PUBLIC_SCRIPTS_ROOT = CONFIG_ROOT.joinpath("scripts")  # local machineconfig directory
+LIBRARY_SCRIPTS_ROOT = LIBRARY_ROOT.joinpath("jobs", "scripts")
+
 
 if __name__ == "__main__":
     pass

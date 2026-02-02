@@ -3,7 +3,7 @@
 Submodules are only imported when their commands are actually invoked, not at startup.
 This makes `mcfg --help` much faster by avoiding loading heavy dependencies.
 """
-from typing import Optional, Annotated, Literal, TypeAlias
+from typing import Optional, Annotated
 import typer
 from machineconfig.scripts.python.enums import BACKENDS_LOOSE, BACKENDS_MAP
 

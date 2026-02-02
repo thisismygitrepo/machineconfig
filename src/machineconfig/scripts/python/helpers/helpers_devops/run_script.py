@@ -30,20 +30,17 @@ def run_py_script(ctx: typer.Context,
                   list_scripts: Annotated[bool, typer.Option(..., "--list", "-l", help="List available scripts in all locations")] = False,
                 ) -> None:
     if command:
-        exec(name)
+        exec(name)  # type: ignore
         return
-
     from pathlib import Path
     if list_scripts:
         from machineconfig.scripts.python.helpers.helpers_search.script_help import list_available_scripts
         list_available_scripts(where=where)
         return
-
     if not interactive and not name:
         typer.echo("❌ ERROR: You must provide a script name or use --interactive option to select a script.")
         raise typer.Exit(code=1)
     target_file: Optional[Path] = None
-
     if where in ["dynamic", "d"]:
         # src/machineconfig/jobs/scripts/python_scripts/a.py
         if "." in name: resolved_names: list[str] = [name]
@@ -70,7 +67,7 @@ def run_py_script(ctx: typer.Context,
             import machineconfig
             import subprocess
             import sys
-            subprocess.run([sys.executable, name], cwd=machineconfig.__path__[0])
+            subprocess.run([sys.executable, name], cwd=machineconfig.__path__[0], check=True)
             return
         else:
             if Path(name).suffix in [".sh", ".ps1", ".bat", ".cmd", ""]:
@@ -79,10 +76,7 @@ def run_py_script(ctx: typer.Context,
                 print(f"❌ Error: File '{name}' is not a recognized script type. Supported types are {'.py', '.sh', '.ps1', '.bat', '.cmd', ''}.")
                 raise typer.Exit(code=1)
 
-    from machineconfig.utils.source_of_truth import CONFIG_ROOT, LIBRARY_ROOT, DEFAULTS_PATH
-    private_root = Path.home().joinpath("dotfiles/scripts")  # local directory
-    public_root = CONFIG_ROOT.joinpath("scripts")  # local machineconfig directory
-    library_root = LIBRARY_ROOT.joinpath("jobs", "scripts")
+    from machineconfig.utils.source_of_truth import DEFAULTS_PATH, PRIVATE_SCRIPTS_ROOT, PUBLIC_SCRIPTS_ROOT, LIBRARY_SCRIPTS_ROOT
 
     def get_custom_roots() -> list[Path]:
         custom_roots: list[Path] = []
@@ -101,13 +95,13 @@ def run_py_script(ctx: typer.Context,
     roots: list[Path] = []
     match where:
         case "all" | "a":
-            roots = [private_root, public_root, library_root] + get_custom_roots()
+            roots = [PRIVATE_SCRIPTS_ROOT, PUBLIC_SCRIPTS_ROOT, LIBRARY_SCRIPTS_ROOT] + get_custom_roots()
         case "private" | "p":
-            roots = [private_root]
+            roots = [PRIVATE_SCRIPTS_ROOT]
         case "public" | "b":
-            roots = [public_root]
+            roots = [PUBLIC_SCRIPTS_ROOT]
         case "library" | "l":
-            roots = [library_root]
+            roots = [LIBRARY_SCRIPTS_ROOT]
         case "dynamic" | "d":
             roots = []
         case "custom" | "c":
