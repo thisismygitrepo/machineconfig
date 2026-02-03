@@ -2,7 +2,11 @@
 
 from pathlib import Path
 
-from .graph_data import GraphNode, build_graph, iter_nodes
+from machineconfig.scripts.python.graph.visualize.graph_data import (
+    GraphNode,
+    build_graph,
+    iter_nodes,
+)
 
 KIND_STYLES = {
     "root": {"shape": "doubleoctagon", "fillcolor": "#f1f1f1", "color": "#555555"},

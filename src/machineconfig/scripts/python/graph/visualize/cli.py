@@ -5,7 +5,7 @@ from typing import Annotated
 
 import typer
 
-from .graph_data import DEFAULT_GRAPH_PATH
+from machineconfig.scripts.python.graph.visualize.graph_data import DEFAULT_GRAPH_PATH
 
 GRAPH_HELP = f"Path to cli_graph.json (default: {DEFAULT_GRAPH_PATH})"
 
@@ -20,7 +20,7 @@ def tree(
     max_depth: Annotated[int | None, typer.Option("--max-depth", "-d", help="Limit depth of the tree")] = None,
 ) -> None:
     """Render a rich tree view in the terminal."""
-    from .rich_tree import render_tree
+    from machineconfig.scripts.python.graph.visualize.rich_tree import render_tree
 
     render_tree(path=graph, show_help=show_help, show_aliases=show_aliases, max_depth=max_depth)
 
@@ -33,7 +33,7 @@ def dot(
     max_depth: Annotated[int | None, typer.Option("--max-depth", "-d", help="Limit depth of the graph")] = None,
 ) -> None:
     """Export the graph as Graphviz DOT."""
-    from .dot_export import render_dot
+    from machineconfig.scripts.python.graph.visualize.dot_export import render_dot
 
     dot_text = render_dot(path=graph, max_depth=max_depth, include_help=include_help)
 
@@ -55,7 +55,7 @@ def sunburst(
     width: Annotated[int, typer.Option("--width", help="Image width (for static output)")] = 1200,
 ) -> None:
     """Render a Plotly sunburst view."""
-    from .plotly_views import render_plotly
+    from machineconfig.scripts.python.graph.visualize.plotly_views import render_plotly
 
     render_plotly(
         view="sunburst",
@@ -78,7 +78,7 @@ def treemap(
     width: Annotated[int, typer.Option("--width", help="Image width (for static output)")] = 1200,
 ) -> None:
     """Render a Plotly treemap view."""
-    from .plotly_views import render_plotly
+    from machineconfig.scripts.python.graph.visualize.plotly_views import render_plotly
 
     render_plotly(
         view="treemap",
@@ -101,7 +101,7 @@ def icicle(
     width: Annotated[int, typer.Option("--width", help="Image width (for static output)")] = 1200,
 ) -> None:
     """Render a Plotly icicle view."""
-    from .plotly_views import render_plotly
+    from machineconfig.scripts.python.graph.visualize.plotly_views import render_plotly
 
     render_plotly(
         view="icicle",

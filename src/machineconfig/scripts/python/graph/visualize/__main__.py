@@ -1,4 +1,4 @@
-from .cli import main
+from machineconfig.scripts.python.graph.visualize.cli import main
 
 
 if __name__ == "__main__":

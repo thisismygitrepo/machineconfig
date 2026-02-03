@@ -6,7 +6,7 @@ from rich.console import Console
 from rich.text import Text
 from rich.tree import Tree
 
-from .graph_data import GraphNode, build_graph
+from machineconfig.scripts.python.graph.visualize.graph_data import GraphNode, build_graph
 
 STYLE_BY_KIND = {
     "root": "bold white",

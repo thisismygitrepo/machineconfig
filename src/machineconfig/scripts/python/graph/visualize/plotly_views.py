@@ -2,7 +2,11 @@
 
 from pathlib import Path
 
-from .graph_data import GraphNode, build_graph, iter_nodes
+from machineconfig.scripts.python.graph.visualize.graph_data import (
+    GraphNode,
+    build_graph,
+    iter_nodes,
+)
 
 KIND_COLORS = {
     "root": "#1f2937",
