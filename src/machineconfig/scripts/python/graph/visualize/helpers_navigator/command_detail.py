@@ -9,7 +9,7 @@ from rich.panel import Panel
 from rich.console import Group
 from rich.table import Table
 from rich import box
-from machineconfig.scripts.python.helpers.helpers_navigator.data_models import CommandInfo
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.data_models import CommandInfo
 
 
 class CommandDetail(Static):

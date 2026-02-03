@@ -7,7 +7,7 @@ from textual.app import ComposeResult
 from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Static, Input, Label, Button
 from textual.screen import ModalScreen
-from machineconfig.scripts.python.helpers.helpers_navigator.data_models import CommandInfo, ArgumentInfo
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.data_models import CommandInfo, ArgumentInfo
 
 
 class CommandBuilderScreen(ModalScreen[str]):

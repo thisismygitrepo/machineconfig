@@ -4,12 +4,12 @@ Command tree widget for displaying command hierarchy.
 
 from textual.widgets import Tree
 
-from machineconfig.scripts.python.helpers.helpers_navigator.cli_graph_loader import (
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.cli_graph_loader import (
     CommandNode,
     build_command_nodes,
     load_cli_graph,
 )
-from machineconfig.scripts.python.helpers.helpers_navigator.data_models import CommandInfo
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.data_models import CommandInfo
 
 
 class CommandTree(Tree[CommandInfo]):

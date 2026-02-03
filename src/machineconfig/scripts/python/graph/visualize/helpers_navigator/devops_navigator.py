@@ -11,7 +11,7 @@
 
 
 def main() -> None:
-    from machineconfig.scripts.python.helpers.helpers_navigator.main_app import CommandNavigatorApp
+    from machineconfig.scripts.python.graph.visualize.helpers_navigator.main_app import CommandNavigatorApp
 
     CommandNavigatorApp().run()
 

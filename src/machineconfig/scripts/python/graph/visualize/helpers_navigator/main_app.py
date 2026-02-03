@@ -6,11 +6,11 @@ import subprocess
 from textual.app import App, ComposeResult
 from textual.widgets import Header, Footer, Input, Tree
 from textual.binding import Binding
-from machineconfig.scripts.python.helpers.helpers_navigator.command_builder import CommandBuilderScreen
-from machineconfig.scripts.python.helpers.helpers_navigator.command_tree import CommandTree
-from machineconfig.scripts.python.helpers.helpers_navigator.command_detail import CommandDetail
-from machineconfig.scripts.python.helpers.helpers_navigator.search_bar import SearchBar
-from machineconfig.scripts.python.helpers.helpers_navigator.data_models import CommandInfo
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.command_builder import CommandBuilderScreen
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.command_tree import CommandTree
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.command_detail import CommandDetail
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.search_bar import SearchBar
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.data_models import CommandInfo
 
 
 class CommandNavigatorApp(App[None]):

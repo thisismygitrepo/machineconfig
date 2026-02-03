@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from machineconfig.scripts.python.helpers.helpers_navigator.data_models import (
+from machineconfig.scripts.python.graph.visualize.helpers_navigator.data_models import (
     CommandInfo,
     ArgumentInfo,
 )
