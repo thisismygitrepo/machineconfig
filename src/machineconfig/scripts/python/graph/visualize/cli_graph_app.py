@@ -110,7 +110,7 @@ def icicle(
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
     from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
-    import machineconfig.scripts.python as navigator
+    import machineconfig.scripts.python.graph.visualize.helpers_navigator as navigator
     path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
     from machineconfig.utils.code import exit_then_run_shell_script
     if Path.home().joinpath("code", "machineconfig").exists():
