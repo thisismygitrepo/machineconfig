@@ -2,16 +2,16 @@
 . <( curl -sSL "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/uv.sh")
 . <( curl -sSL "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/scripts/linux/wrap_mcfg")
 
-alias devops='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" devops'
-alias cloud='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" cloud'
-alias agents='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" agents'
-alias sessions='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" sessions'
-alias ftpx='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" ftpx'
-alias fire='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" fire'
-alias croshell='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" croshell'
-alias utils='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" utils'
-alias terminal='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" terminal'
-alias msearch='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.71" msearch'
+alias devops='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" devops'
+alias cloud='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" cloud'
+alias agents='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" agents'
+alias sessions='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" sessions'
+alias ftpx='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" ftpx'
+alias fire='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" fire'
+alias croshell='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" croshell'
+alias utils='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" utils'
+alias terminal='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" terminal'
+alias msearch='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.72" msearch'
 
 alias d='wrap_in_shell_script devops'
 alias c='wrap_in_shell_script cloud'

@@ -1723,7 +1723,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "8.71"
+version = "8.72"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -1861,8 +1861,8 @@ requires-dist = [
     { name = "rich", specifier = ">=14.3.1" },
     { name = "sqlalchemy", marker = "extra == 'plot'", specifier = ">=2.0.43" },
     { name = "tenacity", specifier = ">=9.1.2" },
-    { name = "typer", specifier = ">=0.20.0" },
-    { name = "typer-slim", specifier = ">=0.20.0" },
+    { name = "typer", specifier = "==0.20.0" },
+    { name = "typer-slim", specifier = "==0.20.0" },
 ]
 provides-extras = ["windows", "plot"]
 
