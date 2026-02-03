@@ -25,7 +25,7 @@ def render_plotly(
     output: Path | None = None,
     height: int = 900,
     width: int = 1200,
-    template: str = "plotly_white",
+    template: str = "plotly_dark",
     max_depth: int | None = None,
 ) -> None:
     root = build_graph(path)
@@ -48,7 +48,7 @@ def build_figure(
     root: GraphNode,
     *,
     view: str,
-    template: str = "plotly_white",
+    template: str = "plotly_dark",
     max_depth: int | None = None,
 ):
     view_key = view.lower().strip()

@@ -145,15 +145,6 @@ def status():
     helper.main()
 
 
-def navigate():
-    """📚 NAVIGATE command structure with TUI"""
-    import machineconfig.scripts.python as navigator
-    path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
-    from machineconfig.utils.code import exit_then_run_shell_script
-    if Path.home().joinpath("code/machineconfig").exists(): executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
-    else: executable = f"""--with "{MACHINECONFIG_VERSION},textual" """
-    exit_then_run_shell_script(f"""uv run {executable} {path}""")
-
 def readme():
     from rich.console import Console
     from rich.markdown import Markdown
@@ -210,8 +201,6 @@ def get_app():
     cli_app.command(name= "s",           no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
     cli_app.command(name= "install",     no_args_is_help=False, help="📋 [i] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
     cli_app.command(name= "i",           no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
-    cli_app.command(name= "navigate", no_args_is_help=False, help="📚 [n] NAVIGATE command structure with TUI")(navigate)
-    cli_app.command(name= "n", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
 
 
     if Path.home().joinpath("code", "machineconfig").exists():

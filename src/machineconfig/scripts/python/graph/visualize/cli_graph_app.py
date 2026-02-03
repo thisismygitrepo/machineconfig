@@ -9,10 +9,7 @@ from machineconfig.scripts.python.graph.visualize.graph_data import DEFAULT_GRAP
 
 GRAPH_HELP = f"Path to cli_graph.json (default: {DEFAULT_GRAPH_PATH})"
 
-app = typer.Typer(help="Visualize the MachineConfig CLI graph in multiple formats.")
 
-
-@app.command()
 def tree(
     graph: Annotated[Path | None, typer.Option("--graph", "-g", help=GRAPH_HELP)] = None,
     show_help: Annotated[bool, typer.Option("--show-help/--no-show-help", help="Include help text in labels")] = True,
@@ -25,7 +22,6 @@ def tree(
     render_tree(path=graph, show_help=show_help, show_aliases=show_aliases, max_depth=max_depth)
 
 
-@app.command()
 def dot(
     graph: Annotated[Path | None, typer.Option("--graph", "-g", help=GRAPH_HELP)] = None,
     output: Annotated[Path | None, typer.Option("--output", "-o", help="Write DOT output to a file")] = None,
@@ -45,12 +41,11 @@ def dot(
     print(f"Wrote {output}")
 
 
-@app.command()
 def sunburst(
     graph: Annotated[Path | None, typer.Option("--graph", "-g", help=GRAPH_HELP)] = None,
     output: Annotated[Path | None, typer.Option("--output", "-o", help="Write HTML or image output")] = None,
     max_depth: Annotated[int | None, typer.Option("--max-depth", "-d", help="Limit depth of the graph")] = None,
-    template: Annotated[str, typer.Option("--template", help="Plotly template name")] = "plotly_white",
+    template: Annotated[str, typer.Option("--template", help="Plotly template name")] = "plotly_dark",
     height: Annotated[int, typer.Option("--height", help="Image height (for static output)")] = 900,
     width: Annotated[int, typer.Option("--width", help="Image width (for static output)")] = 1200,
 ) -> None:
@@ -68,12 +63,11 @@ def sunburst(
     )
 
 
-@app.command()
 def treemap(
     graph: Annotated[Path | None, typer.Option("--graph", "-g", help=GRAPH_HELP)] = None,
     output: Annotated[Path | None, typer.Option("--output", "-o", help="Write HTML or image output")] = None,
     max_depth: Annotated[int | None, typer.Option("--max-depth", "-d", help="Limit depth of the graph")] = None,
-    template: Annotated[str, typer.Option("--template", help="Plotly template name")] = "plotly_white",
+    template: Annotated[str, typer.Option("--template", help="Plotly template name")] = "plotly_dark",
     height: Annotated[int, typer.Option("--height", help="Image height (for static output)")] = 900,
     width: Annotated[int, typer.Option("--width", help="Image width (for static output)")] = 1200,
 ) -> None:
@@ -91,12 +85,11 @@ def treemap(
     )
 
 
-@app.command()
 def icicle(
     graph: Annotated[Path | None, typer.Option("--graph", "-g", help=GRAPH_HELP)] = None,
     output: Annotated[Path | None, typer.Option("--output", "-o", help="Write HTML or image output")] = None,
     max_depth: Annotated[int | None, typer.Option("--max-depth", "-d", help="Limit depth of the graph")] = None,
-    template: Annotated[str, typer.Option("--template", help="Plotly template name")] = "plotly_white",
+    template: Annotated[str, typer.Option("--template", help="Plotly template name")] = "plotly_dark",
     height: Annotated[int, typer.Option("--height", help="Image height (for static output)")] = 900,
     width: Annotated[int, typer.Option("--width", help="Image width (for static output)")] = 1200,
 ) -> None:
@@ -114,7 +107,43 @@ def icicle(
     )
 
 
+def navigate():
+    """📚 NAVIGATE command structure with TUI"""
+    from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
+    import machineconfig.scripts.python as navigator
+    path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
+    from machineconfig.utils.code import exit_then_run_shell_script
+    if Path.home().joinpath("code", "machineconfig").exists():
+        executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
+    else:
+        executable = f"""--with "{MACHINECONFIG_VERSION},textual" """
+    exit_then_run_shell_script(f"""uv run {executable} {path}""")
+
+
+def get_app() -> typer.Typer:
+    cli_app = typer.Typer(
+        help="🧭 [g] Visualize the MachineConfig CLI graph in multiple formats.",
+        no_args_is_help=True,
+        add_help_option=True,
+        add_completion=False,
+    )
+    cli_app.command(name="tree", no_args_is_help=False, help="🌳 [t] Render a rich tree view in the terminal.")(tree)
+    cli_app.command(name="t", no_args_is_help=False, help="Render a rich tree view in the terminal.", hidden=True)(tree)
+    cli_app.command(name="dot", no_args_is_help=False, help="🧩 [d] Export the graph as Graphviz DOT.")(dot)
+    cli_app.command(name="d", no_args_is_help=False, help="Export the graph as Graphviz DOT.", hidden=True)(dot)
+    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️ [s] Render a Plotly sunburst view.")(sunburst)
+    cli_app.command(name="s", no_args_is_help=False, help="Render a Plotly sunburst view.", hidden=True)(sunburst)
+    cli_app.command(name="treemap", no_args_is_help=False, help="🧱 [m] Render a Plotly treemap view.")(treemap)
+    cli_app.command(name="m", no_args_is_help=False, help="Render a Plotly treemap view.", hidden=True)(treemap)
+    cli_app.command(name="icicle", no_args_is_help=False, help="🧊 [i] Render a Plotly icicle view.")(icicle)
+    cli_app.command(name="i", no_args_is_help=False, help="Render a Plotly icicle view.", hidden=True)(icicle)
+    cli_app.command(name="tui", no_args_is_help=False, help="📚 [t] NAVIGATE command structure with TUI")(navigate)
+    cli_app.command(name="t", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
+    return cli_app
+
+
 def main() -> None:
+    app = get_app()
     app()
 
 
