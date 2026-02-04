@@ -5,7 +5,7 @@ from typing import Annotated
 
 import typer
 
-from machineconfig.scripts.python.graph.visualize.graph_data import DEFAULT_GRAPH_PATH
+from machineconfig.scripts.python.graph.visualize.graph_paths import DEFAULT_GRAPH_PATH
 
 GRAPH_HELP = f"Path to cli_graph.json (default: {DEFAULT_GRAPH_PATH})"
 
@@ -110,14 +110,27 @@ def icicle(
 def navigate():
     """📚 NAVIGATE command structure with TUI"""
     from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
-    import machineconfig.scripts.python.graph.visualize.helpers_navigator as navigator
-    path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
-    from machineconfig.utils.code import exit_then_run_shell_script
+    # import machineconfig.scripts.python.graph.visualize.helpers_navigator as navigator
+    # path = Path(navigator.__file__).resolve().parent.joinpath("devops_navigator.py")
+    # from machineconfig.utils.code import exit_then_run_shell_script
+    # if Path.home().joinpath("code", "machineconfig").exists():
+    #     executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
+    # else:
+    #     executable = f"""--with "{MACHINECONFIG_VERSION},textual" """
+    # exit_then_run_shell_script(f"""uv run {executable} {path}""")
+    def func():
+        from machineconfig.scripts.python.graph.visualize.helpers_navigator.devops_navigator import main as main_devops_navigator
+        main_devops_navigator()
+    from machineconfig.utils.code import get_shell_script_running_lambda_function, exit_then_run_shell_script
     if Path.home().joinpath("code", "machineconfig").exists():
-        executable = f"""--project "{str(Path.home().joinpath("code/machineconfig"))}" --with textual"""
+        uv_with = ["textual"]
+        uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
     else:
-        executable = f"""--with "{MACHINECONFIG_VERSION},textual" """
-    exit_then_run_shell_script(f"""uv run {executable} {path}""")
+        uv_with = [MACHINECONFIG_VERSION, "textual"]
+        uv_project_dir = None
+    shell_script, _pyfile = get_shell_script_running_lambda_function(lambda: func(),
+            uv_with=uv_with, uv_project_dir=uv_project_dir)
+    exit_then_run_shell_script(str(shell_script), strict=True)
 
 
 def get_app() -> typer.Typer:
@@ -131,7 +144,7 @@ def get_app() -> typer.Typer:
     cli_app.command(name="t", no_args_is_help=False, help="Render a rich tree view in the terminal.", hidden=True)(tree)
     cli_app.command(name="dot", no_args_is_help=False, help="🧩 [d] Export the graph as Graphviz DOT.")(dot)
     cli_app.command(name="d", no_args_is_help=False, help="Export the graph as Graphviz DOT.", hidden=True)(dot)
-    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️  [s] Render a Plotly sunburst view.")(sunburst)
+    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️ [s] Render a Plotly sunburst view.")(sunburst)
     cli_app.command(name="s", no_args_is_help=False, help="Render a Plotly sunburst view.", hidden=True)(sunburst)
     cli_app.command(name="treemap", no_args_is_help=False, help="🧱 [m] Render a Plotly treemap view.")(treemap)
     cli_app.command(name="m", no_args_is_help=False, help="Render a Plotly treemap view.", hidden=True)(treemap)

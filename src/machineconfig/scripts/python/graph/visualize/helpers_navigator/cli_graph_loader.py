@@ -11,9 +11,7 @@ from machineconfig.scripts.python.graph.visualize.helpers_navigator.data_models 
     CommandInfo,
     ArgumentInfo,
 )
-
-
-DEFAULT_CLI_GRAPH_PATH = Path(__file__).resolve().parents[2] / "graph" / "cli_graph.json"
+from machineconfig.scripts.python.graph.visualize.graph_paths import DEFAULT_GRAPH_PATH
 
 
 @dataclass
@@ -25,7 +23,7 @@ class CommandNode:
 
 def load_cli_graph(path: Path | None = None) -> dict[str, Any]:
     """Load the CLI graph JSON file."""
-    graph_path = path or DEFAULT_CLI_GRAPH_PATH
+    graph_path = path or DEFAULT_GRAPH_PATH
     with graph_path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
