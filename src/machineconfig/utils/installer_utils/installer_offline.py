@@ -151,6 +151,10 @@ if (Test-Path $ConfigsDir) {{
 """
         res_root.joinpath("install.ps1").write_text(ps1_script, encoding="utf-8")
 
+    archive_base = res_root.parent.joinpath(res_root.name)
+    shutil.make_archive(archive_base.as_posix(), "zip", root_dir=res_root)
+    shutil.rmtree(res_root)
+
 
 def import_binaries_and_configs(zip_path: Path, overwrite_configs: bool, overwrite_binaries: bool) -> None:
     if not zip_path.exists():
