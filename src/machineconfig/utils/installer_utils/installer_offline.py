@@ -1,9 +1,12 @@
 
 from pathlib import Path
+from typing import Iterable
 
+FAKE_BINARIES: list[str] = [
+        "devops", "cloud", "agents", "sessions", "ftpx", "fire", "croshell", "utils", "msearch", "explore",
+]
 
 BINARIES: list[str] = [
-    "devops", "cloud", "agents", "sessions", "ftpx", "fire", "croshell", "utils", "msearch", "explore",
     "bat",
     "cpz",
     "duckdb",
@@ -48,6 +51,92 @@ BINARIES: list[str] = [
     "yq",
 ]
 
+UV_TOOL_NAME = "machineconfig"
+UV_TOOLS_ROOT = Path.home().joinpath(".local/share/uv/tools")
+UV_PYTHON_ROOT = Path.home().joinpath(".local/share/uv/python")
+
+
+def _read_uv_python_home(tool_root: Path) -> Path | None:
+    pyvenv_cfg = tool_root.joinpath("pyvenv.cfg")
+    if not pyvenv_cfg.exists():
+        return None
+    for line in pyvenv_cfg.read_text(encoding="utf-8").splitlines():
+        if line.startswith("home = "):
+            home_path = line.split("=", 1)[1].strip()
+            if home_path:
+                return Path(home_path)
+    return None
+
+
+def _read_uv_python_bin_name(tool_root: Path) -> str | None:
+    python_link = tool_root.joinpath("bin/python")
+    if not python_link.is_symlink():
+        return None
+    try:
+        target = python_link.readlink()
+    except OSError:
+        return None
+    target_path = target if target.is_absolute() else (python_link.parent / target)
+    return target_path.name if target_path.name else None
+
+
+def _collect_uv_tool_links(install_path: Path, tool_root: Path) -> list[str]:
+    if not install_path.exists():
+        return []
+    tool_root_resolved = tool_root.resolve()
+    links: list[str] = []
+    for entry in install_path.iterdir():
+        if not entry.is_symlink():
+            continue
+        try:
+            target = entry.readlink()
+        except OSError:
+            continue
+        target_path = target if target.is_absolute() else (entry.parent / target)
+        try:
+            resolved = target_path.resolve()
+        except OSError:
+            resolved = target_path
+        if str(resolved).startswith(str(tool_root_resolved)):
+            links.append(entry.name)
+    return sorted(set(links))
+
+
+def _write_uv_manifest(res_root: Path, python_dir: str, python_bin: str, link_names: Iterable[str]) -> None:
+    manifest_path = res_root.joinpath("uv_bundle/uv_manifest.env")
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(
+        f"""TOOL_NAME={UV_TOOL_NAME}
+PYTHON_DIR={python_dir}
+PYTHON_BIN={python_bin}
+""",
+        encoding="utf-8",
+    )
+    links_path = res_root.joinpath("uv_bundle/uv_links.txt")
+    links_path.write_text("\n".join(link_names) + "\n", encoding="utf-8")
+
+
+def _rewrite_uv_bundle_shebangs(tool_root: Path, python_bin: str) -> None:
+    bin_dir = tool_root.joinpath("bin")
+    if not bin_dir.exists():
+        return
+    python_path = bin_dir.joinpath(python_bin)
+    if not python_path.exists():
+        return
+    for entry in bin_dir.iterdir():
+        if not entry.is_file():
+            continue
+        try:
+            lines = entry.read_text(encoding="utf-8").splitlines()
+        except (OSError, UnicodeDecodeError):
+            continue
+        if len(lines) == 0 or not lines[0].startswith("#!"):
+            continue
+        if "python" not in lines[0]:
+            continue
+        lines[0] = f"#!{python_path}"
+        entry.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
 
 def export() -> None:
     import platform
@@ -78,6 +167,32 @@ def export() -> None:
                 shutil.copy2(src, dst)
             else:
                 print(f"Warning: {binary} not found in {LINUX_INSTALL_PATH}, skipping export.")
+        tool_root = UV_TOOLS_ROOT.joinpath(UV_TOOL_NAME)
+        if tool_root.exists():
+            python_home = _read_uv_python_home(tool_root)
+            python_bin = _read_uv_python_bin_name(tool_root)
+            if python_home is None or python_bin is None:
+                print(f"Warning: uv tool {tool_root} missing python info, skipping uv export.")
+            else:
+                python_root = python_home.parent
+                links = _collect_uv_tool_links(install_path=install_path, tool_root=tool_root)
+                if len(links) == 0:
+                    links = [name for name in FAKE_BINARIES if tool_root.joinpath("bin", name).exists()]
+                    if tool_root.joinpath("bin/machineconfig").exists():
+                        links.append("machineconfig")
+                    if tool_root.joinpath("bin/mcfg").exists():
+                        links.append("mcfg")
+                uv_tools_dst = res_root.joinpath("uv_bundle/tools")
+                uv_python_dst = res_root.joinpath("uv_bundle/python")
+                shutil.copytree(tool_root, uv_tools_dst.joinpath(UV_TOOL_NAME), symlinks=True)
+                if python_root.exists():
+                    shutil.copytree(python_root, uv_python_dst.joinpath(python_root.name), symlinks=True)
+                    _write_uv_manifest(res_root=res_root, python_dir=python_root.name, python_bin=python_bin, link_names=links)
+                    _rewrite_uv_bundle_shebangs(uv_tools_dst.joinpath(UV_TOOL_NAME), python_bin)
+                else:
+                    print(f"Warning: uv python root {python_root} missing, skipping uv python export.")
+        else:
+            print(f"Warning: uv tool {tool_root} not found, skipping uv export.")
     elif system_name == "Windows":
         install_path = Path(WINDOWS_INSTALL_PATH)
         for binary in BINARIES:
@@ -105,6 +220,12 @@ BINS_DIR="$SCRIPT_DIR/binaries"
 CONFIGS_DIR="$SCRIPT_DIR/configs"
 INSTALL_PATH="{LINUX_INSTALL_PATH}"
 CONFIG_ROOT="{CONFIG_ROOT}"
+UV_HOME="${{UV_HOME:-$HOME/.local/share/uv}}"
+LOCAL_BIN="${{LOCAL_BIN:-$HOME/.local/bin}}"
+UV_BUNDLE_DIR="$SCRIPT_DIR/uv_bundle"
+UV_MANIFEST="$UV_BUNDLE_DIR/uv_manifest.env"
+UV_LINKS="$UV_BUNDLE_DIR/uv_links.txt"
+UV_FALLBACK_LINKS="devops cloud agents sessions ftpx fire croshell utils msearch explore machineconfig mcfg"
 
 if [ -d "$BINS_DIR" ]; then
     mkdir -p "$INSTALL_PATH"
@@ -118,6 +239,66 @@ if [ -d "$CONFIGS_DIR" ]; then
     cp -R -f "$CONFIGS_DIR"/* "$CONFIG_ROOT"/ 2>/dev/null || true
 else
     printf "%s\n" "Warning: $CONFIGS_DIR not found, skipping configs"
+fi
+
+if [ -f "$UV_MANIFEST" ]; then
+    . "$UV_MANIFEST"
+    TOOL_SRC="$UV_BUNDLE_DIR/tools/$TOOL_NAME"
+    PY_SRC="$UV_BUNDLE_DIR/python/$PYTHON_DIR"
+    TOOL_DST="$UV_HOME/tools/$TOOL_NAME"
+    PY_DST="$UV_HOME/python/$PYTHON_DIR"
+    if [ -d "$TOOL_SRC" ]; then
+        mkdir -p "$UV_HOME/tools"
+        rm -rf "$TOOL_DST"
+        cp -R -f "$TOOL_SRC" "$UV_HOME/tools/"
+    else
+        printf "%s\n" "Warning: $TOOL_SRC not found, skipping uv tool restore"
+    fi
+    if [ -d "$PY_SRC" ]; then
+        mkdir -p "$UV_HOME/python"
+        rm -rf "$PY_DST"
+        cp -R -f "$PY_SRC" "$UV_HOME/python/"
+    else
+        printf "%s\n" "Warning: $PY_SRC not found, skipping uv python restore"
+    fi
+    if [ -d "$TOOL_DST" ] && [ -d "$PY_DST" ]; then
+        if [ -f "$TOOL_DST/pyvenv.cfg" ]; then
+            sed -i.bak "s|^home = .*|home = $PY_DST/bin|" "$TOOL_DST/pyvenv.cfg" && rm -f "$TOOL_DST/pyvenv.cfg.bak"
+        fi
+        if [ -n "${{PYTHON_BIN:-}}" ] && [ -f "$PY_DST/bin/$PYTHON_BIN" ]; then
+            ln -sf "$PY_DST/bin/$PYTHON_BIN" "$TOOL_DST/bin/python"
+            ln -sf python "$TOOL_DST/bin/python3"
+            ln -sf python "$TOOL_DST/bin/$PYTHON_BIN"
+        fi
+        for file in "$TOOL_DST/bin"/*; do
+            if [ -f "$file" ]; then
+                first_line="$(head -n 1 "$file" || true)"
+                case "$first_line" in
+                    *python*) sed -i.bak "1s|^#!.*|#!$TOOL_DST/bin/python3|" "$file" && rm -f "$file.bak" ;;
+                esac
+            fi
+        done
+    fi
+    if [ -d "$TOOL_DST" ]; then
+        mkdir -p "$LOCAL_BIN"
+        while IFS= read -r link_name; do
+            [ -z "$link_name" ] && continue
+            target="$TOOL_DST/bin/$link_name"
+            if [ -f "$target" ]; then
+                ln -sf "$target" "$LOCAL_BIN/$link_name"
+            else
+                printf "%s\n" "Warning: $target not found, skipping link"
+            fi
+        done < "${{UV_LINKS:-/dev/null}}"
+        if [ ! -f "$UV_LINKS" ]; then
+            for link_name in $UV_FALLBACK_LINKS; do
+                target="$TOOL_DST/bin/$link_name"
+                if [ -f "$target" ]; then
+                    ln -sf "$target" "$LOCAL_BIN/$link_name"
+                fi
+            done
+        fi
+    fi
 fi
 """
         res_root.joinpath("install.sh").write_text(sh_script, encoding="utf-8")
