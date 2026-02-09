@@ -2,7 +2,6 @@
 """Devops Devapps Install
 """
 
-from machineconfig.utils.installer_utils.installer_helper import get_group_name_to_repr
 import typer
 from typing import Annotated, Optional
 
@@ -52,14 +51,12 @@ def main_installer_cli(
     raise typer.Exit(1)
 
 
-
-
-
 def install_interactively():
     from machineconfig.utils.options import choose_from_options
     from machineconfig.utils.schemas.installer.installer_types import get_normalized_arch, get_os_name
     from machineconfig.utils.installer_utils.installer_runner import get_installers
     from machineconfig.utils.installer_utils.installer_class import Installer
+    from machineconfig.utils.installer_utils.installer_helper import get_group_name_to_repr
     from rich.console import Console
     from rich.panel import Panel
     # from rich.table import Table
@@ -150,16 +147,9 @@ def install_if_missing(which: str) -> bool:
         print(f"✅ {which} is already installed.")
         return True
     print(f"⏳ {which} not found. Installing...")
-    from machineconfig.utils.installer_utils.installer_cli import main_installer_cli
     try:
         main_installer_cli(which=which, interactive=False)
         return True
     except Exception as e:
         print(f"❌ Error installing {which}: {e}")
     return False
-
-# if __name__ == "__main__":
-#     from machineconfig.utils.schemas.installer.installer_types import InstallerData
-#     from machineconfig.utils.installer_utils.installer_class import Installer
-#     _ = InstallerData, Installer
-#     pass
