@@ -191,16 +191,16 @@ def export() -> None:
         print(f"Warning: Config root {CONFIG_ROOT} does not exist, skipping config export.")
 
     if system_name in ["Linux", "Darwin"]:
-        sh_script = f"""#!/usr/bin/env sh
+        sh_script = """#!/usr/bin/env sh
 set -eu
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 BINS_DIR="$SCRIPT_DIR/binaries"
 CONFIGS_DIR="$SCRIPT_DIR/configs"
-INSTALL_PATH="{LINUX_INSTALL_PATH}"
-CONFIG_ROOT="{CONFIG_ROOT}"
-UV_HOME="${{UV_HOME:-$HOME/.local/share/uv}}"
-LOCAL_BIN="${{LOCAL_BIN:-$HOME/.local/bin}}"
+INSTALL_PATH="${INSTALL_PATH:-$HOME/.local/bin}"
+CONFIG_ROOT="${CONFIG_ROOT:-$HOME/.config/machineconfig}"
+UV_HOME="${UV_HOME:-$HOME/.local/share/uv}"
+LOCAL_BIN="${LOCAL_BIN:-$HOME/.local/bin}"
 UV_BUNDLE_DIR="$SCRIPT_DIR/uv_bundle"
 UV_MANIFEST="$UV_BUNDLE_DIR/uv_manifest.env"
 UV_LINKS="$UV_BUNDLE_DIR/uv_links.txt"
@@ -244,7 +244,7 @@ if [ -f "$UV_MANIFEST" ]; then
         if [ -f "$TOOL_DST/pyvenv.cfg" ]; then
             sed -i.bak "s|^home = .*|home = $PY_DST/bin|" "$TOOL_DST/pyvenv.cfg" && rm -f "$TOOL_DST/pyvenv.cfg.bak"
         fi
-        if [ -n "${{PYTHON_BIN:-}}" ] && [ -f "$PY_DST/bin/$PYTHON_BIN" ]; then
+        if [ -n "${PYTHON_BIN:-}" ] && [ -f "$PY_DST/bin/$PYTHON_BIN" ]; then
             ln -sf "$PY_DST/bin/$PYTHON_BIN" "$TOOL_DST/bin/python"
             ln -sf python "$TOOL_DST/bin/python3"
             ln -sf python "$TOOL_DST/bin/$PYTHON_BIN"
@@ -268,7 +268,7 @@ if [ -f "$UV_MANIFEST" ]; then
             else
                 printf "%s\n" "Warning: $target not found, skipping link"
             fi
-        done < "${{UV_LINKS:-/dev/null}}"
+        done < "${UV_LINKS:-/dev/null}"
         if [ ! -f "$UV_LINKS" ]; then
             for link_name in $UV_FALLBACK_LINKS; do
                 target="$TOOL_DST/bin/$link_name"
@@ -282,29 +282,29 @@ fi
 """
         res_root.joinpath("install.sh").write_text(sh_script, encoding="utf-8")
     elif system_name == "Windows":
-        ps1_script = f"""$ErrorActionPreference = "Stop"
+        ps1_script = """$ErrorActionPreference = "Stop"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BinariesDir = Join-Path $ScriptDir "binaries"
 $ConfigsDir = Join-Path $ScriptDir "configs"
-$InstallPath = "{WINDOWS_INSTALL_PATH}"
-$ConfigRoot = "{CONFIG_ROOT}"
+$InstallPath = if ($env:INSTALL_PATH) { $env:INSTALL_PATH } else { Join-Path $env:LOCALAPPDATA "Microsoft" "WindowsApps" }
+$ConfigRoot = if ($env:CONFIG_ROOT) { $env:CONFIG_ROOT } else { Join-Path $env:USERPROFILE ".config" "machineconfig" }
 
-if (Test-Path $BinariesDir) {{
+if (Test-Path $BinariesDir) {
     New-Item -ItemType Directory -Force -Path $InstallPath | Out-Null
-    Get-ChildItem -Path $BinariesDir -File | ForEach-Object {{
+    Get-ChildItem -Path $BinariesDir -File | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $InstallPath -Force
-    }}
-}} else {{
+    }
+} else {
     Write-Host "Warning: $BinariesDir not found, skipping binaries"
-}}
+}
 
-if (Test-Path $ConfigsDir) {{
+if (Test-Path $ConfigsDir) {
     New-Item -ItemType Directory -Force -Path $ConfigRoot | Out-Null
     Copy-Item -Path (Join-Path $ConfigsDir "*") -Destination $ConfigRoot -Recurse -Force
-}} else {{
+} else {
     Write-Host "Warning: $ConfigsDir not found, skipping configs"
-}}
+}
 """
         res_root.joinpath("install.ps1").write_text(ps1_script, encoding="utf-8")
 
