@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from typing import Iterable
 
@@ -208,7 +207,16 @@ UV_FALLBACK_LINKS="devops cloud agents sessions ftpx fire croshell utils msearch
 
 if [ -d "$BINS_DIR" ]; then
     mkdir -p "$INSTALL_PATH"
-    cp -f "$BINS_DIR"/* "$INSTALL_PATH"/ 2>/dev/null || true
+    for src_bin in "$BINS_DIR"/*; do
+        bin_name="$(basename "$src_bin")"
+        dst_bin="$INSTALL_PATH/$bin_name"
+        if [ -f "$dst_bin" ] && { [ "$bin_name" = "uv" ] || [ "$bin_name" = "uvx" ]; }; then
+            printf "%s\n" "Skipping $bin_name: already exists at $dst_bin"
+            continue
+        fi
+        cp -f "$src_bin" "$dst_bin"
+        chmod +x "$dst_bin" 2>/dev/null || true
+    done
 else
     printf "%s\n" "Warning: $BINS_DIR not found, skipping binaries"
 fi
@@ -230,13 +238,18 @@ if [ -f "$UV_MANIFEST" ]; then
         mkdir -p "$UV_HOME/tools"
         rm -rf "$TOOL_DST"
         cp -R -f "$TOOL_SRC" "$UV_HOME/tools/"
+        chmod -R +x "$TOOL_DST/bin" 2>/dev/null || true
     else
         printf "%s\n" "Warning: $TOOL_SRC not found, skipping uv tool restore"
     fi
     if [ -d "$PY_SRC" ]; then
         mkdir -p "$UV_HOME/python"
-        rm -rf "$PY_DST"
-        cp -R -f "$PY_SRC" "$UV_HOME/python/"
+        if [ -d "$PY_DST" ]; then
+            printf "%s\n" "Skipping uv python: $PY_DST already exists"
+        else
+            cp -R -f "$PY_SRC" "$UV_HOME/python/"
+            chmod -R +x "$PY_DST/bin" 2>/dev/null || true
+        fi
     else
         printf "%s\n" "Warning: $PY_SRC not found, skipping uv python restore"
     fi
@@ -280,15 +293,17 @@ if [ -f "$UV_MANIFEST" ]; then
     fi
 fi
 """
-        res_root.joinpath("install.sh").write_text(sh_script, encoding="utf-8")
+        install_sh = res_root.joinpath("install.sh")
+        install_sh.write_text(sh_script, encoding="utf-8")
+        install_sh.chmod(0o755)
     elif system_name == "Windows":
         ps1_script = """$ErrorActionPreference = "Stop"
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BinariesDir = Join-Path $ScriptDir "binaries"
 $ConfigsDir = Join-Path $ScriptDir "configs"
-$InstallPath = if ($env:INSTALL_PATH) { $env:INSTALL_PATH } else { Join-Path $env:LOCALAPPDATA "Microsoft" "WindowsApps" }
-$ConfigRoot = if ($env:CONFIG_ROOT) { $env:CONFIG_ROOT } else { Join-Path $env:USERPROFILE ".config" "machineconfig" }
+$InstallPath = $(if ($env:INSTALL_PATH) { $env:INSTALL_PATH } else { Join-Path $env:LOCALAPPDATA "Microsoft" "WindowsApps" })
+$ConfigRoot = $(if ($env:CONFIG_ROOT) { $env:CONFIG_ROOT } else { Join-Path $env:USERPROFILE ".config" "machineconfig" })
 
 if (Test-Path $BinariesDir) {
     New-Item -ItemType Directory -Force -Path $InstallPath | Out-Null
