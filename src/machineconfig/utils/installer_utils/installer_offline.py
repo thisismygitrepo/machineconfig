@@ -1,13 +1,6 @@
 
 from pathlib import Path
 
-"""
-bat       cpz        duckdb     gitcs  hyperfine   lazysql    procs     rmz         tv   watchexec  zellij
-broot     delta      fastfetch  gitui  jq          lsd        rainfrog  rusty-rain  uv   ya         zoxide
-btm       diskonaut  fd         glow   lazydocker  miniserve  rg        starship    uvx  yazi
-cpufetch  dua        fzf        hx     lazygit     ouch       rga       tere        viu  yq
-"""
-
 
 def export():
     import platform
