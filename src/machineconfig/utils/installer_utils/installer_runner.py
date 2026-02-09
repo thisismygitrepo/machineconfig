@@ -5,7 +5,7 @@ from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH
+from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH, WINDOWS_INSTALL_PATH
 from machineconfig.utils.io import read_json
 
 from rich.console import Console
@@ -75,7 +75,7 @@ def get_installed_cli_apps():
     print("🔍 LISTING INSTALLED CLI APPS 🔍")
     if platform.system() == "Windows":
         print("🪟 Searching for Windows executables...")
-        apps = [p for p in PathExtended.home().joinpath("AppData/Local/Microsoft/WindowsApps").glob("*.exe") if "notepad" not in str(p)]
+        apps = [p for p in PathExtended(WINDOWS_INSTALL_PATH).glob("*.exe") if "notepad" not in str(p)]
     elif platform.system() in ["Linux", "Darwin"]:
         print(f"🐧 Searching for {platform.system()} executables...")
         if platform.system() == "Linux":

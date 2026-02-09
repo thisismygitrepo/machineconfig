@@ -5,6 +5,7 @@ import platform
 import random
 from pathlib import Path
 from rich import pretty
+from machineconfig.utils.source_of_truth import WINDOWS_INSTALL_PATH
 from rich.console import Console
 
 
@@ -33,7 +34,7 @@ def print_logo(logo: str):
     if platform.system() == "Windows":
         _1x = Path.home().joinpath(r"AppData/Roaming/npm/figlet").exists()
         _2x = Path.home().joinpath(r"AppData/Roaming/npm/lolcatjs").exists()
-        _3x = Path.home().joinpath(r"AppData/Local/Microsoft/WindowsApps/boxes.exe").exists()
+        _3x = Path(WINDOWS_INSTALL_PATH).joinpath("boxes.exe").exists()
         if _1x and _2x and _3x:
             if random.choice([True, True, False]): font_box_color(logo)
             else: character_color(logo)

@@ -5,6 +5,7 @@ import platform
 import subprocess
 from typing import Optional
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
+from machineconfig.utils.source_of_truth import LINUX_INSTALL_PATH
 
 
 # config_dict: InstallerData = {"appName": "Cursor", "repoURL": "CMD", "doc": "Cursor"}
@@ -21,12 +22,12 @@ def install_linux(version: Optional[str] = None):
         raise FileNotFoundError("Cursor AppImage not found in Downloads folder.")
     else:
         print(f"Cursor AppImage found: {appimage_src}")
-    appimage_dest = f"{home}/.local/bin/cursor"
+    appimage_dest = Path(LINUX_INSTALL_PATH).joinpath("cursor").__str__()
     desktop_file = f"{home}/.local/share/applications/cursor.desktop"
     icon_path = f"{home}/.local/share/icons/cursor.png"  # Optional: set only if icon exists
 
     # Step 1: Move AppImage
-    os.makedirs(f"{home}/.local/bin", exist_ok=True)
+    Path(LINUX_INSTALL_PATH).mkdir(parents=True, exist_ok=True)
     if not os.path.exists(appimage_dest):
         shutil.move(appimage_src, appimage_dest)
     os.chmod(appimage_dest, 0o755)

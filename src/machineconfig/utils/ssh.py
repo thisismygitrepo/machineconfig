@@ -131,7 +131,6 @@ class SSH:
                     old_settings = termios.tcgetattr(sys.stdin)
                 except (ImportError, OSError):
                     pass
-            
             try:
                 self.password = getpass.getpass(f"Enter password for {self.username}@{self.hostname}: ")
                 self.ssh.connect(

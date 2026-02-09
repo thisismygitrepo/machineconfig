@@ -1,18 +1,20 @@
 
 from typing import Any, Literal, Optional, Callable, cast
 from machineconfig.utils.accessories import randstr
+from machineconfig.utils.source_of_truth import LINUX_INSTALL_PATH
 from pathlib import Path
 
 
 def get_uv_command(platform: str) -> str:
     res = cast(Literal["Windows", "windows", "nt", "Linux", "linux", "Darwin", "darwin", "macos"], platform)
+    uv_path = Path(LINUX_INSTALL_PATH).joinpath("uv").__str__()
     match res:
         case "Windows" | "windows" | "nt":
-            return """& "$env:USERPROFILE/.local/bin/uv" """
+            return f"""& "{uv_path}" """
         case "Linux" | "linux" | "Darwin" | "darwin" | "macos":
-            return """$HOME/.local/bin/uv """
+            return f"""{uv_path} """
         case _:
-            return """$HOME/.local/bin/uv """
+            return f"""{uv_path} """
 
 def print_code(code: str, lexer: str, desc: str, subtitle: str = ""):
     import platform

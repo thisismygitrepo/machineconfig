@@ -14,7 +14,7 @@ from typing import Any, Optional
 from rich.console import Console
 
 from machineconfig.utils.path_extended import PathExtended
-from machineconfig.utils.source_of_truth import CONFIG_ROOT
+from machineconfig.utils.source_of_truth import CONFIG_ROOT, LINUX_INSTALL_PATH, WINDOWS_INSTALL_PATH
 
 # Constants
 APP_SUMMARY_PATH = CONFIG_ROOT.joinpath(f"profile/records/{platform.system().lower()}/apps_summary_report.csv")
@@ -75,14 +75,14 @@ def install_cli_app(app_url: str) -> bool:
         if system in ["linux", "darwin"]:
             exe_path.chmod(0o755) # Make executable
             # Move to local bin (requires user to have write access or sudo, which we can't easily do here without interaction)
-            # Using ~/.local/bin is safer
-            install_path = Path.home() / ".local/bin"
+            # Using LINUX_INSTALL_PATH is safer
+            install_path = Path(LINUX_INSTALL_PATH)
             install_path.mkdir(parents=True, exist_ok=True)
             target = install_path / exe_path.name
             exe_path.rename(target)
             console.print(f"[green]Installed to {target}[/green]")
         elif system == "windows":
-            install_path = Path.home() / "AppData/Local/Microsoft/WindowsApps"
+            install_path = Path(WINDOWS_INSTALL_PATH)
             install_path.mkdir(parents=True, exist_ok=True)
             target = install_path / exe_path.name
             # Use shutil.move or PathExtended.move
