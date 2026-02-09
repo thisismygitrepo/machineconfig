@@ -42,25 +42,40 @@ draw_progress() {
     echo -e "${CYAN}└────────────────────────────────────────────────────────────┘${NC}"
 }
 
-# All tool deps injected on the fly via --with, nothing touches pyproject.toml
-LINTER_DEPS="--with pyright --with pylint --with mypy --with pyrefly --with cleanpy --with ruff --with ty"
-TYPE_STUB_DEPS="--with types-requests --with types-toml --with types-PyYAML --with types-pytz --with types-paramiko --with types-urllib3 --with types-mysqlclient --with types-SQLAlchemy"
-ALL_DEPS="--frozen ${LINTER_DEPS} ${TYPE_STUB_DEPS}"
-
-TOTAL_STEPS=7
+TOTAL_STEPS=8
 CURRENT_STEP=0
 
 draw_box "🚀 LINTING & TYPE CHECKING SUITE 🚀" "${BOLD}${CYAN}"
 echo
 
 ((CURRENT_STEP++))
+draw_progress $CURRENT_STEP $TOTAL_STEPS "Environment Setup"
+echo -e "${BLUE}🔧 Installing and updating development dependencies...${NC}"
+# uv add pylint pyright mypy pyrefly ruff ty --dev  # linters and type checkers
+# uv add --dev cleanpy pylint pyright mypy pyrefly --upgrade-package cleanpy pylint pyright mypy pyrefly
+uv add --dev pyright --upgrade-package pyright
+uv add --dev pylint --upgrade-package pylint
+uv add --dev mypy --upgrade-package mypy
+uv add --dev pyrefly --upgrade-package pyrefly
+uv add --dev cleanpy --upgrade-package cleanpy
+uv add --dev ruff --upgrade-package ruff
+uv add --dev ty --upgrade-package ty
+
+uv add types-requests types-toml types-PyYAML types-pytz types-paramiko types-urllib3 --dev
+uv add types-mysqlclient types-SQLAlchemy --dev
+
+echo -e "${GREEN}✅ Environment setup complete!${NC}"
+echo
+
+((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Code Cleanup"
 echo -e "${YELLOW}🧹 Cleaning and formatting code...${NC}"
-uv run ${ALL_DEPS} -m cleanpy .
-uv run ${ALL_DEPS} -m ruff clean
-uv run ${ALL_DEPS} -m ruff check . --fix
+uv run -m cleanpy .
+uv run -m ruff clean
+# uv run -m ruff format .
+uv run -m ruff check . --fix
 
-mkdir -p .ai/linters
+mkdir .ai/linters
 
 echo -e "${GREEN}🧹 Code cleanup complete!${NC}"
 echo
@@ -71,42 +86,42 @@ draw_box "🔍 TYPE CHECKERS & LINTERS 🔍" "${BOLD}${PURPLE}"
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyright Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyright...${NC}"
 rm -f ./.ai/linters/issues_pyright.md || true
-uv run ${ALL_DEPS} pyright . > ./.ai/linters/issues_pyright.md
+uv run pyright . > ./.ai/linters/issues_pyright.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyright.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "MyPy Type Checker"
 echo -e "${BLUE}📋 Analyzing types with MyPy...${NC}"
 rm -f ./.ai/linters/issues_mypy.md || true
-uv run ${ALL_DEPS} mypy . > ./.ai/linters/issues_mypy.md
+uv run mypy . > ./.ai/linters/issues_mypy.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_mypy.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pylint Code Analysis"
 echo -e "${BLUE}📋 Analyzing code quality with Pylint...${NC}"
 rm -f ./.ai/linters/issues_pylint.md || true
-uv run ${ALL_DEPS} pylint --recursive=y . > ./.ai/linters/issues_pylint.md
+uv run pylint --recursive=y . > ./.ai/linters/issues_pylint.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pylint.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyrefly Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyrefly...${NC}"
 rm -f ./.ai/linters/issues_pyrefly.md || true
-uv run ${ALL_DEPS} pyrefly check . > ./.ai/linters/issues_pyrefly.md
+uv run pyrefly check . > ./.ai/linters/issues_pyrefly.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyrefly.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Ty Type Checker"
 echo -e "${BLUE}📋 Analyzing types with ty...${NC}"
 rm -f ./.ai/linters/issues_ty.md || true
-uv run ${ALL_DEPS} ty check . > ./.ai/linters/issues_ty.md
+uv run ty check . > ./.ai/linters/issues_ty.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ty.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Ruff Linter"
 echo -e "${BLUE}📋 Checking code style with Ruff...${NC}"
 rm -f ./.ai/linters/issues_ruff.md || true
-uv run ${ALL_DEPS} ruff check . > ./.ai/linters/issues_ruff.md
+uv run ruff check . > ./.ai/linters/issues_ruff.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ruff.md${NC}"
 
 echo
