@@ -7,8 +7,12 @@ from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_type
 
 def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
     from machineconfig.utils.io import read_ini
-    config = read_ini(Path.home().joinpath(f"dotfiles/creds/llm/{provider}/api_keys.ini"))
+    api_key_path = Path.home().joinpath(f"dotfiles/creds/llm/{provider}/api_keys.ini")
     res: list[API_SPEC] = []
+    if not api_key_path.exists() or not api_key_path.is_file():
+        print(f"No API key file found for provider {provider} at expected location: {api_key_path}. Returning empty API key list.")
+        return res
+    config = read_ini(api_key_path)
     for a_section_name in list(config.sections()):
         a_section = config[a_section_name]
         if "api_key" in a_section:
@@ -96,6 +100,13 @@ sleep 0.1
                 ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=api_spec)
                 from machineconfig.scripts.python.helpers.helpers_agents.agentic_frameworks.fire_copilot import fire_copilot
                 cmd = fire_copilot(ai_spec=ai_spec, prompt_path=prompt_path, repo_root=repo_root)
+            case "codex":
+                assert provider == "openai", "Codex agent only works with openai provider."
+                api_keys = get_api_keys(provider="openai")
+                api_spec = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else API_SPEC(api_key=None, api_name="", api_label="", api_account="")
+                ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=api_spec)
+                from machineconfig.scripts.python.helpers.helpers_agents.agentic_frameworks.fire_codex import fire_codex
+                cmd = fire_codex(ai_spec=ai_spec, prompt_path=prompt_path, repo_root=repo_root)
             # case "q":
             #     from machineconfig.scripts.python.helpers.helpers_fire.fire_q import fire_q
             #     cmd = fire_q(api_key="", prompt_path=prompt_path, machine=machine)

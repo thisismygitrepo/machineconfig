@@ -70,7 +70,10 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
     if not contrib.exists():
         console.print(Panel(f"❌ ERROR: 'contrib' directory not found at expected location: {contrib}", title="Error", expand=False))
         raise FileNotFoundError(f"'contrib' directory not found at expected location: {contrib}")
-    print("   ✨ Executable and components located.")
+    print(f"""   ✨ Executable and components located.
+       - Executable: {hx_file}
+       - Contrib:    {contrib}
+       - Runtime:    {runtime}""")
 
     print("\n🗑️  [Step 3/5] Cleaning up previous installation (if any)...")
     if platform.system() in ["Linux", "Darwin"]:
@@ -98,7 +101,7 @@ def main(installer_data: InstallerData, version: Optional[str], install_lib: boo
         return f"Error: Unsupported OS: {platform.system()}"
 
     if platform.system() in ["Linux", "Darwin"]:
-        target_bin_path = PathExtended(LINUX_INSTALL_PATH) if platform.system() == "Linux" else PathExtended("/usr/local/bin")
+        target_bin_path = PathExtended(LINUX_INSTALL_PATH)
         exe_name = "hx"
         hx_file.move(folder=target_bin_path, overwrite=True)
 

@@ -23,17 +23,16 @@ def run(
     choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layouts interactively")] = False,
 
     sleep_inbetween: Annotated[float, typer.Option(..., "--sleep-inbetween", "-si", help="Sleep time in seconds between launching layouts")] = 1.0,
-    monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion")] = False,
-    sequential: Annotated[bool, typer.Option(..., "--sequential", "-s", help="Launch layouts sequentially")] = False,
-    kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if monitor flag is set)")] = False,
+    monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion (implied by --sequential)")] = False,
+    sequential: Annotated[bool, typer.Option(..., "--sequential", "-s", help="Launch layouts sequentially (waits for each layout to finish)")] = False,
+    kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if --monitor or --sequential is set)")] = False,
     subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-sh", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
-    max_tabs: Annotated[int, typer.Option(..., "--max-tabs", "-mt", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
-    max_layouts: Annotated[int, typer.Option(..., "--max-layouts", "-ml", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 25,
+    max_tabs: Annotated[int, typer.Option(..., "--max-tabs-per-layout", "-mt", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
+    max_layouts: Annotated[int, typer.Option(..., "--max-parallel-layouts", "-mpl", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 25,
     backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "auto",
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
     from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import run_layouts, find_layout_file, select_layout
-
     from pathlib import Path
     if layouts_file is not None:
         layouts_file_resolved = Path(find_layout_file(layout_path=layouts_file))
@@ -55,7 +54,6 @@ def run(
             a_layout["layoutTabs"] = substitute_home(tabs=a_layout["layoutTabs"])
             layouts_modified.append(a_layout)
         layouts_selected = layouts_modified
-
     import platform
     backend_resolved: Literal["zellij", "windows-terminal", "tmux"]
     match backend:
@@ -82,7 +80,6 @@ def run(
         case _:
             typer.echo(f"Error: Unsupported backend '{backend}'.", err=True)
             raise typer.Exit(code=1)
-
     if not sequential and len(layouts_selected) > max_layouts:
         raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
     for a_layout in layouts_selected:

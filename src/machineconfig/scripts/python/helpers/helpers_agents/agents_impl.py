@@ -91,7 +91,7 @@ def agents_create(
     print(f"Created layout in {layout_output_path}")
 
 
-def collect(agent_dir: str, output_path: str, separator: str) -> None:
+def collect(agent_dir: str, output_path: str, separator: str, pattern: Optional[str]) -> None:
     """Collect all material files from an agent directory and concatenate them."""
     if not Path(agent_dir).exists() or not Path(agent_dir).is_dir():
         raise ValueError(f"Agent directory does not exist or is not a directory: {agent_dir}")
@@ -102,24 +102,29 @@ def collect(agent_dir: str, output_path: str, separator: str) -> None:
 
     material_files: list[Path] = []
     for agent_subdir in prompts_dir.iterdir():
-        if agent_subdir.is_dir() and agent_subdir.name.startswith("agent_"):
-            material_file = agent_subdir / f"{agent_subdir.name}_material.txt"
-            if material_file.exists():
-                material_files.append(material_file)
+        if pattern is None:
+            if agent_subdir.is_dir() and agent_subdir.name.startswith("agent_"):
+                material_file = agent_subdir / f"{agent_subdir.name}_material.txt"
+                if material_file.exists():
+                    material_files.append(material_file)
+        else:
+            if agent_subdir.is_dir():
+                for material_file in agent_subdir.glob(pattern):
+                    if material_file.is_file():
+                        material_files.append(material_file)
 
     if not material_files:
         print("No material files found in the agent directory.")
         return
-
+    print(f"Found {len(material_files)} material files. Concatenating...")
+    for idx, a_file in enumerate(material_files):
+        print(f"{idx+1}. {a_file}")
     material_files.sort(key=lambda x: int(x.parent.name.split("_")[-1]))
-
     concatenated_content: list[str] = []
     for material_file in material_files:
         content = material_file.read_text(encoding="utf-8")
         concatenated_content.append(content)
-
     result = separator.join(concatenated_content)
-
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     Path(output_path).write_text(result, encoding="utf-8")
     print(f"Concatenated material written to {output_path}")

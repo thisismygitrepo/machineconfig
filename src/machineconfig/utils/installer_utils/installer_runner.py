@@ -81,7 +81,11 @@ def get_installed_cli_apps():
         if platform.system() == "Linux":
             apps = list(PathExtended(LINUX_INSTALL_PATH).glob("*")) + list(PathExtended("/usr/local/bin").glob("*"))
         else:  # Darwin/macOS
-            apps = list(PathExtended("/usr/local/bin").glob("*")) + list(PathExtended("/opt/homebrew/bin").glob("*"))
+            apps = (
+                list(PathExtended(LINUX_INSTALL_PATH).glob("*"))
+                + list(PathExtended("/usr/local/bin").glob("*"))
+                + list(PathExtended("/opt/homebrew/bin").glob("*"))
+            )
     else:
         error_msg = f"❌ ERROR: System {platform.system()} not supported"
         print(error_msg)

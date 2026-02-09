@@ -3,11 +3,13 @@ from datetime import datetime
 import logging
 import subprocess
 import time
-from typing import Optional
+from typing import Optional, TypedDict
 
+from rich import box
 from rich.console import Console
+from rich.table import Table
 
-from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo, StatusRow
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import SessionReport, GlobalSummary, StartResult, ActiveSessionInfo
 from machineconfig.utils.scheduler import Scheduler
 from machineconfig.cluster.sessions_managers.zellij.zellij_local import ZellijLayoutGenerator
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig
@@ -17,6 +19,54 @@ from machineconfig.cluster.sessions_managers.zellij.zellij_utils import zellij_l
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 console = Console()
+
+
+class _MonitoringRow(TypedDict):
+    session: str
+    tab: str
+    running: bool
+    runTime: str
+    command: str
+    processes: int
+
+
+def _format_runtime_seconds(total_seconds: float) -> str:
+    total_seconds_int = max(0, int(total_seconds))
+    hours, remainder = divmod(total_seconds_int, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"""{hours:02d}:{minutes:02d}:{seconds:02d}"""
+
+
+def _update_runtime_tracker(
+    all_status: dict[str, SessionReport],
+    runtime_seconds_by_key: dict[tuple[str, str], float],
+    elapsed_seconds: float,
+) -> None:
+    for session_name, status in all_status.items():
+        for tab_name, cmd_status in status["commands_status"].items():
+            key = (session_name, tab_name)
+            runtime_seconds = runtime_seconds_by_key.get(key, 0.0)
+            if cmd_status.get("running", False):
+                runtime_seconds_by_key[key] = runtime_seconds + elapsed_seconds
+            else:
+                runtime_seconds_by_key.setdefault(key, runtime_seconds)
+
+
+def _build_global_summary(all_status: dict[str, SessionReport]) -> GlobalSummary:
+    total_sessions = len(all_status)
+    healthy_sessions = sum(1 for status in all_status.values() if status["summary"]["session_healthy"])
+    total_commands = sum(status["summary"]["total_commands"] for status in all_status.values())
+    total_running = sum(status["summary"]["running_commands"] for status in all_status.values())
+    return {
+        "total_sessions": total_sessions,
+        "healthy_sessions": healthy_sessions,
+        "unhealthy_sessions": total_sessions - healthy_sessions,
+        "total_commands": total_commands,
+        "running_commands": total_running,
+        "stopped_commands": total_commands - total_running,
+        "all_sessions_healthy": healthy_sessions == total_sessions,
+        "all_commands_running": total_running == total_commands,
+    }
 
 
 
@@ -154,22 +204,7 @@ class ZellijLocalManager:
     def get_global_summary(self) -> GlobalSummary:
         """Get a global summary across all sessions."""
         all_status = self.check_all_sessions_status()
-
-        total_sessions = len(all_status)
-        healthy_sessions = sum(1 for status in all_status.values() if status["summary"]["session_healthy"])
-        total_commands = sum(status["summary"]["total_commands"] for status in all_status.values())
-        total_running = sum(status["summary"]["running_commands"] for status in all_status.values())
-
-        return {
-            "total_sessions": total_sessions,
-            "healthy_sessions": healthy_sessions,
-            "unhealthy_sessions": total_sessions - healthy_sessions,
-            "total_commands": total_commands,
-            "running_commands": total_running,
-            "stopped_commands": total_commands - total_running,
-            "all_sessions_healthy": healthy_sessions == total_sessions,
-            "all_commands_running": total_running == total_commands,
-        }
+        return _build_global_summary(all_status)
 
     def print_status_report(self) -> None:
         """Print a comprehensive status report for all sessions."""
@@ -226,54 +261,61 @@ class ZellijLocalManager:
             kill_sessions_on_completion: If True, kill all managed zellij sessions when monitoring stops
         """
 
-        def routine(scheduler: Scheduler):
+        runtime_seconds_by_key: dict[tuple[str, str], float] = {}
+        last_runtime_update = time.monotonic()
+
+        def routine(scheduler: Scheduler) -> None:
+            nonlocal last_runtime_update
             print(f"\n⏰ Monitoring cycle {scheduler.cycle} at {datetime.now()}")
             print("-" * 50)
 
-            if scheduler.cycle % 2 == 0:
-                # Detailed status check every other cycle
-                all_status = self.check_all_sessions_status()
+            all_status = self.check_all_sessions_status()
+            now = time.monotonic()
+            elapsed_seconds = max(0.0, now - last_runtime_update)
+            last_runtime_update = now
+            _update_runtime_tracker(all_status, runtime_seconds_by_key, elapsed_seconds)
 
-                # Create DataFrame for easier viewing
-                status_data: list[StatusRow] = []
+            if scheduler.cycle % 2 == 0:
+                status_rows: list[_MonitoringRow] = []
                 for session_name, status in all_status.items():
                     for tab_name, cmd_status in status["commands_status"].items():
-                        status_data.append(
+                        key = (session_name, tab_name)
+                        command = cmd_status.get("command", "Unknown")
+                        command_display = command if len(command) <= 60 else f"""{command[:57]}..."""
+                        status_rows.append(
                             {
                                 "session": session_name,
                                 "tab": tab_name,
                                 "running": cmd_status.get("running", False),
-                                "command": cmd_status.get("command", "Unknown")[:50] + "..." if len(cmd_status.get("command", "")) > 50 else cmd_status.get("command", ""),
+                                "runTime": _format_runtime_seconds(runtime_seconds_by_key.get(key, 0.0)),
+                                "command": command_display,
                                 "processes": len(cmd_status.get("processes", [])),
                             }
                         )
 
-                if status_data:
-                    # Format data as table
-                    if status_data:
-                        # Create header
-                        headers = list(status_data[0].keys()) if status_data else []
-                        header_line = " | ".join(f"{h:<15}" for h in headers)
-                        separator = "-" * len(header_line)
-                        print(header_line)
-                        print(separator)
-                        for row in status_data:
-                            values = [str(row.get(h, ""))[:15] for h in headers]
-                            print(" | ".join(f"{v:<15}" for v in values))
+                if status_rows:
+                    table = Table(title="📊 Zellij Monitoring", show_header=True, header_style="bold cyan", box=box.ROUNDED)
+                    table.add_column("Session", style="cyan", no_wrap=True)
+                    table.add_column("Tab", style="magenta", no_wrap=True)
+                    table.add_column("Status", justify="center")
+                    table.add_column("runTime", justify="right", style="yellow")
+                    table.add_column("Processes", justify="right", style="blue")
+                    table.add_column("Command", style="green", max_width=60)
+                    for row in status_rows:
+                        status_text = "[bold green]✅ Running[/bold green]" if row["running"] else "[bold red]❌ Stopped[/bold red]"
+                        table.add_row(row["session"], row["tab"], status_text, row["runTime"], str(row["processes"]), row["command"])
+                    console.print(table)
 
-                    # Check if all sessions have stopped
-                    running_count = sum(1 for row in status_data if row.get("running", False))
+                    running_count = sum(1 for row in status_rows if row.get("running", False))
                     if running_count == 0:
                         print("\n⚠️  All commands have stopped. Stopping monitoring.")
-                        # Set max_cycles to current cycle + 1 to exit after this cycle
                         scheduler.max_cycles = scheduler.cycle + 1
                         return
                 else:
                     print("No status data available")
             else:
-                # Quick summary check
-                global_summary = self.get_global_summary()
-                print(f"📊 Quick Summary: {global_summary['running_commands']}/{global_summary['total_commands']} commands running across {global_summary['healthy_sessions']}/{global_summary['total_sessions']} sessions")
+                global_summary = _build_global_summary(all_status)
+                print(f"""📊 Quick Summary: {global_summary['running_commands']}/{global_summary['total_commands']} commands running across {global_summary['healthy_sessions']}/{global_summary['total_sessions']} sessions""")
 
         logger.info(f"Starting monitoring routine with {wait_ms}ms intervals")
         from machineconfig.utils.scheduler import LoggerTemplate

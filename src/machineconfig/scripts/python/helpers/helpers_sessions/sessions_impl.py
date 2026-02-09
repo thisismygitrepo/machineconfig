@@ -1,7 +1,9 @@
 """Pure Python implementations for sessions commands - no typer dependencies."""
 
-from typing import Literal
 from pathlib import Path
+from typing import Literal
+
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.monitoring_types import StartResult
 
 
 def select_layout(layouts_json_file: str, selected_layouts_names: list[str], select_interactively: bool) -> list["LayoutConfig"]:
@@ -72,6 +74,16 @@ def run_layouts(
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
     import time
+    monitor_requested = monitor
+    monitor = monitor or sequential
+    if sequential and not monitor_requested:
+        print("Note: --sequential implies --monitor; waiting for each layout to finish before launching the next one.")
+
+    def raise_on_failed_start(start_results: dict[str, StartResult], backend_name: str) -> None:
+        failures = {name: result for name, result in start_results.items() if not result.get("success", False)}
+        if failures:
+            details = "; ".join(f"{name}: {result.get('error', 'unknown error')}" for name, result in failures.items())
+            raise ValueError(f"{backend_name} session start failure(s): {details}")
     match backend:
         case "zellij":
             from machineconfig.cluster.sessions_managers.zellij.zellij_local_manager import ZellijLocalManager
@@ -81,29 +93,31 @@ def run_layouts(
                 iterable = [layouts_selected]
             for i, a_layouts in enumerate(iterable):
                 manager = ZellijLocalManager(session_layouts=a_layouts)
-                manager.start_all_sessions(poll_interval=2, poll_seconds=2)
+                start_results = manager.start_all_sessions(poll_interval=2, poll_seconds=10)
+                if sequential:
+                    raise_on_failed_start(start_results, "Zellij")
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)
                     if kill_upon_completion:
                         manager.kill_all_sessions()
-                if i < len(layouts_selected) - 1:
+                if i < len(iterable) - 1:
                     time.sleep(sleep_inbetween)
         case "windows-terminal":
             if sequential:
-                from machineconfig.cluster.sessions_managers.windows_terminal.wt_local import run_wt_layout
-                for a_layout in layouts_selected:
-                    run_wt_layout(layout_config=a_layout)
-                return
-            iterable = [layouts_selected]
+                iterable = [[item] for item in layouts_selected]
+            else:
+                iterable = [layouts_selected]
             from machineconfig.cluster.sessions_managers.windows_terminal.wt_local_manager import WTLocalManager
             for i, a_layouts in enumerate(iterable):
                 manager = WTLocalManager(session_layouts=a_layouts, session_name_prefix=None)
-                manager.start_all_sessions()
+                start_results = manager.start_all_sessions()
+                if sequential:
+                    raise_on_failed_start(start_results, "Windows Terminal")
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)
                     if kill_upon_completion:
                         manager.kill_all_sessions()
-                if i < len(layouts_selected) - 1:
+                if i < len(iterable) - 1:
                     time.sleep(sleep_inbetween)
         case "tmux":
             from machineconfig.cluster.sessions_managers.tmux.tmux_local_manager import TmuxLocalManager
@@ -113,12 +127,14 @@ def run_layouts(
                 iterable = [layouts_selected]
             for i, a_layouts in enumerate(iterable):
                 manager = TmuxLocalManager(session_layouts=a_layouts, session_name_prefix=None)
-                manager.start_all_sessions()
+                start_results = manager.start_all_sessions()
+                if sequential:
+                    raise_on_failed_start(start_results, "tmux")
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)
                     if kill_upon_completion:
                         manager.kill_all_sessions()
-                if i < len(layouts_selected) - 1:
+                if i < len(iterable) - 1:
                     time.sleep(sleep_inbetween)
         case _:
             raise ValueError(f"Unsupported backend: {backend}")
