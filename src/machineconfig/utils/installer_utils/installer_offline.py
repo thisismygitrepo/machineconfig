@@ -116,26 +116,6 @@ PYTHON_BIN={python_bin}
     links_path.write_text("\n".join(link_names) + "\n", encoding="utf-8")
 
 
-def _rewrite_uv_bundle_shebangs(tool_root: Path, python_bin: str) -> None:
-    bin_dir = tool_root.joinpath("bin")
-    if not bin_dir.exists():
-        return
-    python_path = bin_dir.joinpath(python_bin)
-    if not python_path.exists():
-        return
-    for entry in bin_dir.iterdir():
-        if not entry.is_file():
-            continue
-        try:
-            lines = entry.read_text(encoding="utf-8").splitlines()
-        except (OSError, UnicodeDecodeError):
-            continue
-        if len(lines) == 0 or not lines[0].startswith("#!"):
-            continue
-        if "python" not in lines[0]:
-            continue
-        lines[0] = f"#!{python_path}"
-        entry.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def export() -> None:
@@ -188,7 +168,6 @@ def export() -> None:
                 if python_root.exists():
                     shutil.copytree(python_root, uv_python_dst.joinpath(python_root.name), symlinks=True)
                     _write_uv_manifest(res_root=res_root, python_dir=python_root.name, python_bin=python_bin, link_names=links)
-                    _rewrite_uv_bundle_shebangs(uv_tools_dst.joinpath(UV_TOOL_NAME), python_bin)
                 else:
                     print(f"Warning: uv python root {python_root} missing, skipping uv python export.")
         else:
