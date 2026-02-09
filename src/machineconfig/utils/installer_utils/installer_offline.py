@@ -1,12 +1,9 @@
 
 from pathlib import Path
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    import typer
 
 
 BINARIES: list[str] = [
+    "devops", "cloud", "agents", "sessions", "ftpx", "fire", "croshell", "utils", "msearch", "explore",
     "bat",
     "cpz",
     "duckdb",
@@ -154,85 +151,6 @@ if (Test-Path $ConfigsDir) {{
     archive_base = res_root.parent.joinpath(res_root.name)
     shutil.make_archive(archive_base.as_posix(), "zip", root_dir=res_root)
     shutil.rmtree(res_root)
-
-
-def import_binaries_and_configs(zip_path: Path, overwrite_configs: bool, overwrite_binaries: bool) -> None:
-    if not zip_path.exists():
-        print(f"Error: Zip file {zip_path} does not exist.")
-        return
-
-    import platform
-
-    os_name = platform.system().lower()
-    arch = platform.machine().lower()
-    system_name = platform.system()
-    file_name = zip_path.stem
-    if os_name not in file_name or arch not in file_name:
-        print(
-            f"Error: Zip file name {file_name} does not contain expected OS ({os_name}) and architecture ({arch}). Aborting import."
-        )
-        return
-
-    import zipfile
-
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(zip_path.parent)
-
-    extracted_root = zip_path.parent.joinpath(zip_path.stem)
-    if not extracted_root.exists():
-        extracted_root = zip_path.parent
-
-    binaries_root = extracted_root.joinpath("binaries")
-    configs_root = extracted_root.joinpath("configs")
-
-    from machineconfig.utils.source_of_truth import CONFIG_ROOT, LINUX_INSTALL_PATH, WINDOWS_INSTALL_PATH
-    import shutil
-
-    if binaries_root.exists():
-        if system_name in ["Linux", "Darwin"]:
-            install_path = Path(LINUX_INSTALL_PATH)
-        elif system_name == "Windows":
-            install_path = Path(WINDOWS_INSTALL_PATH)
-        else:
-            print(f"Unsupported platform: {system_name}. No binaries imported.")
-            install_path = None
-
-        if install_path is not None:
-            install_path.mkdir(parents=True, exist_ok=True)
-            for binary in binaries_root.iterdir():
-                dst = install_path.joinpath(binary.name)
-                if dst.exists() and not overwrite_binaries:
-                    print(f"Warning: {dst} already exists and overwrite_binaries is False. Skipping {binary.name}.")
-                    continue
-                shutil.copy2(binary, dst)
-                print(f"Imported {binary.name} to {dst}")
-    else:
-        print(f"Warning: Binaries folder {binaries_root} does not exist, skipping binary import.")
-
-    if configs_root.exists():
-        if CONFIG_ROOT.exists() and not overwrite_configs:
-            print(f"Warning: {CONFIG_ROOT} already exists and overwrite_configs is False. Skipping config import.")
-        else:
-            CONFIG_ROOT.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(configs_root, CONFIG_ROOT, dirs_exist_ok=True)
-            print(f"Imported configs from {configs_root} to {CONFIG_ROOT}")
-    else:
-        print(f"Warning: Configs folder {configs_root} does not exist, skipping config import.")
-
-
-def get_app() -> "typer.Typer":
-    import typer
-
-    app = typer.Typer(
-        help="Installer Offline - Export and Import binaries and configs for offline installation",
-        no_args_is_help=True,
-    )
-    app.command(name="export", help="[e] Export binaries and configs", no_args_is_help=False)(export)
-    app.command(name="e", help="[e] Export binaries and configs", no_args_is_help=False, hidden=True)(export)
-    app.command(name="import", help="[i] Import binaries and configs", no_args_is_help=True)(import_binaries_and_configs)
-    app.command(name="i", help="[i] Import binaries and configs", no_args_is_help=True, hidden=True)(import_binaries_and_configs)
-
-    return app
 
 
 if __name__ == "__main__":
