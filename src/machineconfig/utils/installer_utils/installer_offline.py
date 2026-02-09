@@ -263,11 +263,8 @@ if [ -f "$UV_MANIFEST" ]; then
             ln -sf python "$TOOL_DST/bin/$PYTHON_BIN"
         fi
         for file in "$TOOL_DST/bin"/*; do
-            if [ -f "$file" ]; then
-                first_line="$(head -n 1 "$file" || true)"
-                case "$first_line" in
-                    *python*) sed -i.bak "1s|^#!.*|#!$TOOL_DST/bin/python3|" "$file" && rm -f "$file.bak" ;;
-                esac
+            if [ -f "$file" ] && head -n 1 "$file" 2>/dev/null | grep -q python; then
+                sed -i.bak "1s|^#!.*|#!$TOOL_DST/bin/python3|" "$file" && rm -f "$file.bak"
             fi
         done
     fi
