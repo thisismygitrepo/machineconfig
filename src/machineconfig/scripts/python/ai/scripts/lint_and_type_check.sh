@@ -42,11 +42,6 @@ draw_progress() {
     echo -e "${CYAN}└────────────────────────────────────────────────────────────┘${NC}"
 }
 
-# All tool deps injected on the fly via --with, nothing touches pyproject.toml
-LINTER_DEPS="--with pyright --with pylint --with mypy --with pyrefly --with cleanpy --with ruff --with ty"
-TYPE_STUB_DEPS="--with types-requests --with types-toml --with types-PyYAML --with types-pytz --with types-paramiko --with types-urllib3 --with types-mysqlclient --with types-SQLAlchemy"
-ALL_DEPS="--frozen ${LINTER_DEPS} ${TYPE_STUB_DEPS}"
-
 TOTAL_STEPS=7
 CURRENT_STEP=0
 
@@ -56,9 +51,9 @@ echo
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Code Cleanup"
 echo -e "${YELLOW}🧹 Cleaning and formatting code...${NC}"
-uv run ${ALL_DEPS} -m cleanpy .
-uv run ${ALL_DEPS} -m ruff clean
-uv run ${ALL_DEPS} -m ruff check . --fix
+uv run --frozen --with cleanpy -m cleanpy .
+uv run --frozen --with ruff -m ruff clean
+uv run --frozen --with ruff -m ruff check . --fix
 
 mkdir -p .ai/linters
 
@@ -71,42 +66,42 @@ draw_box "🔍 TYPE CHECKERS & LINTERS 🔍" "${BOLD}${PURPLE}"
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyright Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyright...${NC}"
 rm -f ./.ai/linters/issues_pyright.md || true
-uv run ${ALL_DEPS} pyright . > ./.ai/linters/issues_pyright.md
+uv run --frozen --with pyright pyright . > ./.ai/linters/issues_pyright.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyright.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "MyPy Type Checker"
 echo -e "${BLUE}📋 Analyzing types with MyPy...${NC}"
 rm -f ./.ai/linters/issues_mypy.md || true
-uv run ${ALL_DEPS} mypy . > ./.ai/linters/issues_mypy.md
+uv run --frozen --with mypy mypy . > ./.ai/linters/issues_mypy.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_mypy.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pylint Code Analysis"
 echo -e "${BLUE}📋 Analyzing code quality with Pylint...${NC}"
 rm -f ./.ai/linters/issues_pylint.md || true
-uv run ${ALL_DEPS} pylint --recursive=y . > ./.ai/linters/issues_pylint.md
+uv run --frozen --with pylint pylint --recursive=y . > ./.ai/linters/issues_pylint.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pylint.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Pyrefly Type Checker"
 echo -e "${BLUE}📋 Analyzing types with Pyrefly...${NC}"
 rm -f ./.ai/linters/issues_pyrefly.md || true
-uv run ${ALL_DEPS} pyrefly check . > ./.ai/linters/issues_pyrefly.md
+uv run --frozen --with pyrefly pyrefly check . > ./.ai/linters/issues_pyrefly.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_pyrefly.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Ty Type Checker"
 echo -e "${BLUE}📋 Analyzing types with ty...${NC}"
 rm -f ./.ai/linters/issues_ty.md || true
-uv run ${ALL_DEPS} ty check . > ./.ai/linters/issues_ty.md
+uv run --frozen --with ty ty check . > ./.ai/linters/issues_ty.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ty.md${NC}"
 
 ((CURRENT_STEP++))
 draw_progress $CURRENT_STEP $TOTAL_STEPS "Ruff Linter"
 echo -e "${BLUE}📋 Checking code style with Ruff...${NC}"
 rm -f ./.ai/linters/issues_ruff.md || true
-uv run ${ALL_DEPS} ruff check . > ./.ai/linters/issues_ruff.md
+uv run --frozen --with ruff ruff check . > ./.ai/linters/issues_ruff.md
 echo -e "${GREEN}✅ Results saved to ${UNDERLINE}./.ai/linters/issues_ruff.md${NC}"
 
 echo
