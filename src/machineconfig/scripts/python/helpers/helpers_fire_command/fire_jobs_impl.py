@@ -21,7 +21,7 @@ def route(args: FireJobArgs, fire_args: str) -> None:
         return
 
     kwargs_dict = _prepare_kwargs(args=args, choice_file=choice_file)
-    choice_function = _choose_function(args=args, choice_file=choice_file, kwargs_dict=kwargs_dict)
+    choice_function = _choose_function(choose_function=args.choose_function, function=args.function, choice_file=choice_file, kwargs_dict=kwargs_dict)
     if isinstance(choice_function, tuple):
         choice_function, choice_file, kwargs_dict = choice_function
 
@@ -55,24 +55,24 @@ def _prepare_kwargs(args: FireJobArgs, choice_file: Path) -> dict[str, object]:
     return {}
 
 
-def _choose_function(args: FireJobArgs, choice_file: Path, kwargs_dict: dict[str, object]) -> Optional[str] | tuple[Optional[str], Path, dict[str, object]]:
+def _choose_function(choose_function: bool, function: Optional[str], choice_file: Path, kwargs_dict: dict[str, object]) -> Optional[str] | tuple[Optional[str], Path, dict[str, object]]:
     """Choose function to run, possibly interactively."""
-    if args.choose_function:
+    if choose_function:
         from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_route_helper import choose_function_or_lines
         choice_function, choice_file, kwargs_dict = choose_function_or_lines(choice_file, kwargs_dict)
         return (choice_function, choice_file, kwargs_dict)
-    return args.function
+    return function
 
 
 def _build_command(args: FireJobArgs, choice_file: Path, choice_function: Optional[str], kwargs_dict: dict[str, object], repo_root: Optional[Path], fire_args: str, randstr_func: RandStrFunc) -> str:
     """Build the execution command."""
     if choice_file.suffix == ".py":
-        exe_line = _build_python_exe_line(args=args, choice_file=choice_file, repo_root=repo_root)
-        choice_file_adjusted = _adjust_choice_file(args=args, choice_file=choice_file, repo_root=repo_root)
+        exe_line = _build_python_exe_line(module=args.module, interactive=args.interactive, frozen=args.frozen, streamlit=args.streamlit, environment=args.environment, jupyter=args.jupyter, choice_file=choice_file, repo_root=repo_root)
+        choice_file_adjusted = _adjust_choice_file(module=args.module, choice_file=choice_file, repo_root=repo_root)
         if args.script or (args.debug and args.choose_function):
             choice_file = _create_import_script(choice_file=choice_file, choice_function=choice_function, kwargs_dict=kwargs_dict, repo_root=repo_root, randstr_func=randstr_func)
             choice_file_adjusted = str(choice_file)
-        return _build_final_command(args=args, exe_line=exe_line, choice_file=choice_file, choice_file_adjusted=choice_file_adjusted, choice_function=choice_function, fire_args=fire_args)
+        return _build_final_command(debug=args.debug, module=args.module, streamlit=args.streamlit, hold_directory=args.holdDirectory, cmd=args.cmd, exe_line=exe_line, choice_file=choice_file, choice_file_adjusted=choice_file_adjusted, choice_function=choice_function, fire_args=fire_args)
     elif choice_file.suffix in (".ps1", ".sh"):
         return f". {choice_file}"
     elif choice_file.suffix == "":
@@ -81,13 +81,13 @@ def _build_command(args: FireJobArgs, choice_file: Path, choice_function: Option
         raise NotImplementedError(f"File type {choice_file.suffix} not supported, in the sense that I don't know how to fire it.")
 
 
-def _build_python_exe_line(args: FireJobArgs, choice_file: Path, repo_root: Optional[Path]) -> str:
+def _build_python_exe_line(module: bool, interactive: bool, frozen: bool, streamlit: bool, environment: str, jupyter: bool, choice_file: Path, repo_root: Optional[Path]) -> str:
     """Build Python execution line."""
-    module_line = "-m" if args.module else ""
+    module_line = "-m" if module else ""
     with_project = f"--project {repo_root} " if repo_root is not None else ""
-    interactive_line = "-i" if args.interactive else ""
-    frozen_line = "--frozen" if args.frozen else ""
-    if args.interactive:
+    interactive_line = "-i" if interactive else ""
+    frozen_line = "--frozen" if frozen else ""
+    if interactive:
         from machineconfig.utils.ve import get_ve_path_and_ipython_profile
         _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(init_path=choice_file)
         if ipy_profile is None:
@@ -96,20 +96,20 @@ def _build_python_exe_line(args: FireJobArgs, choice_file: Path, repo_root: Opti
     else:
         ipython_line = ""
 
-    if args.streamlit:
+    if streamlit:
         from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_route_helper import get_command_streamlit
-        interpreter_line = get_command_streamlit(choice_file=choice_file, environment=args.environment, repo_root=repo_root)
-    elif args.jupyter:
+        interpreter_line = get_command_streamlit(choice_file=choice_file, environment=environment, repo_root=repo_root)
+    elif jupyter:
         interpreter_line = "jupyter-lab"
     else:
-        interpreter_line = "python" if not args.interactive else "ipython"
+        interpreter_line = "python" if not interactive else "ipython"
 
     return f"uv run {frozen_line} {with_project} {interpreter_line} {interactive_line} {module_line} {ipython_line}"
 
 
-def _adjust_choice_file(args: FireJobArgs, choice_file: Path, repo_root: Optional[Path]) -> str:
+def _adjust_choice_file(module: bool, choice_file: Path, repo_root: Optional[Path]) -> str:
     """Adjust choice file path for module mode."""
-    if args.module and choice_file.suffix == ".py":
+    if module and choice_file.suffix == ".py":
         if repo_root is not None:
             return ".".join(Path(choice_file).relative_to(repo_root).parts).replace(".py", "")
         else:
@@ -146,9 +146,9 @@ def _create_import_script(choice_file: Path, choice_function: Optional[str], kwa
     return new_choice_file
 
 
-def _build_final_command(args: FireJobArgs, exe_line: str, choice_file: Path, choice_file_adjusted: str, choice_function: Optional[str], fire_args: str) -> str:
+def _build_final_command(debug: bool, module: bool, streamlit: bool, hold_directory: bool, cmd: bool, exe_line: str, choice_file: Path, choice_file_adjusted: str, choice_function: Optional[str], fire_args: str) -> str:
     """Build the final command string."""
-    if args.debug:
+    if debug:
         import platform
         if platform.system() == "Windows":
             return f"{exe_line} -m ipdb {choice_file_adjusted} "
@@ -156,16 +156,16 @@ def _build_final_command(args: FireJobArgs, exe_line: str, choice_file: Path, ch
             return f"{exe_line} -m pudb {choice_file_adjusted} "
         else:
             raise NotImplementedError(f"Platform {platform.system()} not supported.")
-    elif args.module:
+    elif module:
         return f"{exe_line} {choice_file_adjusted} "
     elif choice_function is not None and choice_file.suffix == ".py":
         return f"{exe_line} -m fire {choice_file_adjusted} {choice_function} {fire_args}"
-    elif args.streamlit:
-        if args.holdDirectory:
+    elif streamlit:
+        if hold_directory:
             return f"{exe_line} {choice_file}"
         else:
             return f"cd {choice_file.parent}\n{exe_line} {choice_file.name}\ncd {Path.cwd()}"
-    elif args.cmd:
+    elif cmd:
         return rf""" cd /d {choice_file.parent} & {exe_line} {choice_file.name} """
     elif choice_file.suffix == "":
         return f"{exe_line} {choice_file} {fire_args}"
