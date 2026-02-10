@@ -69,11 +69,9 @@ def _build_command(args: FireJobArgs, choice_file: Path, choice_function: Option
     if choice_file.suffix == ".py":
         exe_line = _build_python_exe_line(args=args, choice_file=choice_file, repo_root=repo_root)
         choice_file_adjusted = _adjust_choice_file(args=args, choice_file=choice_file, repo_root=repo_root)
-
         if args.script or (args.debug and args.choose_function):
             choice_file = _create_import_script(choice_file=choice_file, choice_function=choice_function, kwargs_dict=kwargs_dict, repo_root=repo_root, randstr_func=randstr_func)
             choice_file_adjusted = str(choice_file)
-
         return _build_final_command(args=args, exe_line=exe_line, choice_file=choice_file, choice_file_adjusted=choice_file_adjusted, choice_function=choice_function, fire_args=fire_args)
     elif choice_file.suffix in (".ps1", ".sh"):
         return f". {choice_file}"
@@ -88,7 +86,7 @@ def _build_python_exe_line(args: FireJobArgs, choice_file: Path, repo_root: Opti
     module_line = "-m" if args.module else ""
     with_project = f"--project {repo_root} " if repo_root is not None else ""
     interactive_line = "-i" if args.interactive else ""
-
+    frozen_line = "--frozen" if args.frozen else ""
     if args.interactive:
         from machineconfig.utils.ve import get_ve_path_and_ipython_profile
         _ve_root_from_file, ipy_profile = get_ve_path_and_ipython_profile(init_path=choice_file)
@@ -106,7 +104,7 @@ def _build_python_exe_line(args: FireJobArgs, choice_file: Path, repo_root: Opti
     else:
         interpreter_line = "python" if not args.interactive else "ipython"
 
-    return f"uv run {with_project} {interpreter_line} {interactive_line} {module_line} {ipython_line}"
+    return f"uv run {frozen_line} {with_project} {interpreter_line} {interactive_line} {module_line} {ipython_line}"
 
 
 def _adjust_choice_file(args: FireJobArgs, choice_file: Path, repo_root: Optional[Path]) -> str:
