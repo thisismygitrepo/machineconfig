@@ -3578,12 +3578,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"Google Chrome\" --Id \"Google.Chrome\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Google Chrome\" --Id \"Google.Chrome\" --source winget --accept-package-agreements --accept-source-agreements",
           "macos": null
         },
         "arm64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"Google Chrome\" --Id \"Google.Chrome\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Google Chrome\" --Id \"Google.Chrome\" --source winget --accept-package-agreements --accept-source-agreements",
           "macos": null
         }
       }
@@ -3612,12 +3612,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"Zoom\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Zoom Workplace\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
         },
         "arm64": {
           "linux": null,
-          "windows": "winget install --no-upgrade --name \"Zoom\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
+          "windows": "winget install --no-upgrade --name \"Zoom Workplace\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
         }
       }
