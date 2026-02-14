@@ -1,10 +1,17 @@
 from pathlib import Path
 from typing import Iterable
 
-FAKE_BINARIES: list[str] = [
+UV_TOOL_BINARIES: list[str] = [
         "devops", "cloud", "agents", "sessions", "ftpx", "fire", "croshell", "utils", "msearch", "explore",
 ]
+UV_TOOL_NAME = "machineconfig"
+UV_TOOLS_ROOT = Path.home().joinpath(".local/share/uv/tools")
+UV_PYTHON_ROOT = Path.home().joinpath(".local/share/uv/python")
 
+BUN_BINARIES: list[str] = [
+    "bun",
+    "bunx",
+]
 BINARIES: list[str] = [
     "bat",
     "cpz",
@@ -50,9 +57,7 @@ BINARIES: list[str] = [
     "yq",
 ]
 
-UV_TOOL_NAME = "machineconfig"
-UV_TOOLS_ROOT = Path.home().joinpath(".local/share/uv/tools")
-UV_PYTHON_ROOT = Path.home().joinpath(".local/share/uv/python")
+
 
 
 def _read_uv_python_home(tool_root: Path) -> Path | None:
@@ -136,7 +141,6 @@ def export() -> None:
     configs_root.mkdir(parents=True, exist_ok=True)
 
     from machineconfig.utils.source_of_truth import CONFIG_ROOT, LINUX_INSTALL_PATH, WINDOWS_INSTALL_PATH
-
     if system_name in ["Linux", "Darwin"]:
         install_path = Path(LINUX_INSTALL_PATH)
         for binary in BINARIES:
@@ -156,7 +160,7 @@ def export() -> None:
                 python_root = python_home.parent
                 links = _collect_uv_tool_links(install_path=install_path, tool_root=tool_root)
                 if len(links) == 0:
-                    links = [name for name in FAKE_BINARIES if tool_root.joinpath("bin", name).exists()]
+                    links = [name for name in UV_TOOL_BINARIES if tool_root.joinpath("bin", name).exists()]
                     if tool_root.joinpath("bin/machineconfig").exists():
                         links.append("machineconfig")
                     if tool_root.joinpath("bin/mcfg").exists():
@@ -319,7 +323,6 @@ if (Test-Path $ConfigsDir) {
 }
 """
         res_root.joinpath("install.ps1").write_text(ps1_script, encoding="utf-8")
-
     archive_base = res_root.parent.joinpath(res_root.name)
     shutil.make_archive(archive_base.as_posix(), "zip", root_dir=res_root)
     shutil.rmtree(res_root)
