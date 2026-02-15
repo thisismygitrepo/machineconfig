@@ -530,18 +530,18 @@
     },
     {
       "appName": "zoomit",
-      "repoURL": "https://download.sysinternals.com/files/ZoomIt.zip",
+      "repoURL": "CMD",
       "doc": "🔍 A screen zoom and annotation tool for presentations",
       "fileNamePattern": {
         "amd64": {
-          "windows": "ZoomIt.zip",
+          "windows": "https://download.sysinternals.com/files/ZoomIt.zip",
           "linux": null,
           "macos": null
         },
         "arm64": {
           "linux": null,
           "macos": null,
-          "windows": null
+          "windows": "https://download.sysinternals.com/files/ZoomIt.zip"
         }
       }
     },
