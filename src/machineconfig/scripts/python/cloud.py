@@ -47,13 +47,15 @@ def copy(
 
 
 def mount(
-    cloud: Annotated[Optional[str], typer.Option(help="cloud to mount")] = None,
-    destination: Annotated[Optional[str], typer.Option(help="destination to mount")] = None,
-    network: Annotated[Optional[str], typer.Option(help="mount network drive")] = None,
+    cloud: Annotated[Optional[str], typer.Option(..., "--cloud", "-c", help="cloud to mount.")] = None,
+    destination: Annotated[Optional[str], typer.Option(..., "--destination", "-d", help="destination to mount")] = None,
+    network: Annotated[Optional[str], typer.Option(..., "--network", "-n", help="mount network drive")] = None,
+    interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Choose cloud interactively from config.")] = True,
+
 ) -> None:
     """🔗 Mount cloud storage services as local drives."""
     from machineconfig.scripts.python.helpers.helpers_cloud.cloud_mount import mount as mount_main
-    mount_main(cloud=cloud, destination=destination, network=network)
+    mount_main(cloud=cloud, destination=destination, network=network, interactive=interactive)
 
 
 def get_app() -> typer.Typer:

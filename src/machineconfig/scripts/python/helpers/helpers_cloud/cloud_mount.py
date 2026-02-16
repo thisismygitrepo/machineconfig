@@ -49,11 +49,15 @@ mprocs "echo 'see {DEFAULT_MOUNT}/{cloud} for the mounted cloud'; rclone about {
 
 
 def mount(
-    cloud: Annotated[Optional[str], typer.Option(help="cloud to mount")] = None,
-    destination: Annotated[Optional[str], typer.Option(help="destination to mount")] = None,
-    network: Annotated[Optional[str], typer.Option(help="mount network drive")] = None,
+    cloud: Annotated[Optional[str], typer.Option(..., "--cloud", "-c", help="cloud to mount.")] = None,
+    destination: Annotated[Optional[str], typer.Option(..., "--destination", "-d", help="destination to mount")] = None,
+    network: Annotated[Optional[str], typer.Option(..., "--network", "-n", help="mount network drive")] = None,
+    interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Choose cloud interactively from config.")] = True,
 ) -> None:
+    if interactive:
+        pass
     from machineconfig.utils.options import choose_from_options
+    # from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
     from pathlib import Path
     import platform
     from rich.console import Console
@@ -61,19 +65,22 @@ def mount(
     console = Console()
     DEFAULT_MOUNT = "~/data/rclone"
 
-    # draw header box dynamically
     title = "☁️  Cloud Mount Utility"
     console.print(Panel(title, title_align="left", border_style="blue"))
 
     config = get_rclone_config()
     if cloud is None:
-        res = choose_from_options(multi=False, msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None)
-        if type(res) is str:
-            cloud = res
-        else:
+        res: list[str] = choose_from_options(multi=True, msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None, tv=True)
+        if not res:
             print("❌ Error: No cloud selected")
             raise typer.Exit(code=1)
-        print(f"🌩️  Selected cloud: {cloud}")
+        for a_cloud in res:
+            mount(cloud=a_cloud, destination=destination, network=network, interactive=False)
+        return
+    else:
+        if cloud not in config.sections():
+            print(f"❌ Error: Cloud '{cloud}' not found in config")
+            raise typer.Exit(code=1)
 
     if network is None:
         if destination is None:
@@ -146,7 +153,7 @@ sleep 0.1; zellij action resize decrease up
 zellij run --direction right --name about -- rclone about {cloud}:
 zellij action move-focus up
 # zellij action write-chars "cd $HOME/data/rclone/{cloud}; sleep 0.1; ls"
-zellij run --direction left --cwd $HOME/data/rclone/{cloud} -- lf
+zellij run --direction left --cwd $HOME/data/rclone/{cloud} -- yazi $HOME/data/rclone/{cloud}
 zellij run --direction up -- btm --default_widget_type net --expanded
 zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
 zellij action move-focus up
@@ -170,3 +177,7 @@ def get_app():
     app = typer.Typer(name="cloud-mount", help="Cloud mount utility")
     app.command(name="mount", no_args_is_help=True)(mount)
     return app
+
+if __name__ == "__main__":
+    appp = get_app()
+    appp()
