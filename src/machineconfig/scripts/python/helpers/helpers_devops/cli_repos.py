@@ -18,36 +18,22 @@ def _resolve_directory(directory: Optional[str]) -> Path:
     return Path(directory).expanduser().absolute().resolve()
 
 
-def push(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
-    """🚀 Push changes across repositories."""
+def action(
+    directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]=None,
+    recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False,
+    auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False,
+    pull: Annotated[bool, typer.Option("--pull", "-P", help="⬇️ Pull changes across repositories.")] = False,
+    commit: Annotated[bool, typer.Option("--commit", "-c", help="💾 Commit changes across repositories.")] = False,
+    push: Annotated[bool, typer.Option("--push", "-p", help="🚀 Push changes across repositories.")] = False,
+) -> None:
+    """🔄 Run pull/commit/push actions across repositories based on flags."""
+    if not pull and not commit and not push:
+        typer.echo("❌ No action selected. Use at least one of --pull, --commit, or --push.")
+        raise typer.Exit(code=1)
     repos_root = _resolve_directory(directory)
     from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
     from machineconfig.utils.path_extended import PathExtended
-    perform_git_operations(repos_root=PathExtended(repos_root), pull=False, commit=False, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
-
-
-def pull(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
-    """⬇️ Pull changes across repositories."""
-    repos_root = _resolve_directory(directory)
-    from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
-    from machineconfig.utils.path_extended import PathExtended
-    perform_git_operations(repos_root=PathExtended(repos_root), pull=True, commit=False, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
-
-
-def commit(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
-    """💾 Commit changes across repositories."""
-    repos_root = _resolve_directory(directory)
-    from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
-    from machineconfig.utils.path_extended import PathExtended
-    perform_git_operations(repos_root=PathExtended(repos_root), pull=False, commit=True, push=False, recursive=recursive, auto_uv_sync=auto_uv_sync)
-
-
-def sync(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None, recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False, auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False) -> None:
-    """🔄 Pull, commit, and push changes across repositories."""
-    repos_root = _resolve_directory(directory)
-    from machineconfig.scripts.python.helpers.helpers_repos.action import perform_git_operations
-    from machineconfig.utils.path_extended import PathExtended
-    perform_git_operations(repos_root=PathExtended(repos_root), pull=True, commit=True, push=True, recursive=recursive, auto_uv_sync=auto_uv_sync)
+    perform_git_operations(repos_root=PathExtended(repos_root), pull=pull, commit=commit, push=push, recursive=recursive, auto_uv_sync=auto_uv_sync)
 
 
 def capture(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
@@ -59,9 +45,18 @@ def capture(directory: Annotated[Optional[str], typer.Argument(help="📁 Direct
 
 def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containing repo(s).")] = ".",
           specs_path: Annotated[Optional[str], typer.Option("--specs-path", "-s", help="Path to repos.json specification file.")] = None,
-          interactive: Annotated[bool, typer.Option("--interactive/--no-interactive", "-i/-ni", help="Select interactively.")]=False
+          interactive: Annotated[bool, typer.Option("--interactive/--no-interactive", "-i/-ni", help="Select interactively.")]=False,
+          checkout_to_commit: Annotated[bool, typer.Option("--checkout-to-commit", "-ctc", help="Check out specific commits listed in the specification.")] = False,
+          checkout_to_branch: Annotated[bool, typer.Option("--checkout-to-branch", "-ctb", help="Check out to the main branch defined in the specification.")] = False,
             ) -> None:
     """📥 Clone repositories described by a repos.json specification."""
+    if checkout_to_commit and checkout_to_branch:
+        typer.echo("❌ Choose only one checkout mode: --checkout-to-commit or --checkout-to-branch.")
+        raise typer.Exit(code=1)
+
+    checkout_branch_flag = checkout_to_branch
+    checkout_commit_flag = checkout_to_commit
+
     if interactive:
         from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import BACKUP_ROOT_PRIVATE, BACKUP_ROOT_PUBLIC, get_original_path_from_backup_path
         results_public = list(BACKUP_ROOT_PUBLIC.rglob("repos.json"))
@@ -82,7 +77,7 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
             from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
             spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
             from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
-            clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=False, checkout_commit_flag=False)
+            clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=checkout_branch_flag, checkout_commit_flag=checkout_commit_flag)
         return
     if specs_path is not None:
         spec_path_self_managed = Path(specs_path).expanduser().absolute()
@@ -95,29 +90,17 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
             print(f"❌ Specification file not found: {spec_path_self_managed}. Ensure this file exists or provide it explicitly using --specs-path.")
             return
     from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
-    clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=False, checkout_commit_flag=False)
+    clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=checkout_branch_flag, checkout_commit_flag=checkout_commit_flag)
 
 
 def checkout_command(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
     """🔀 Check out specific commits listed in the specification."""
-    typer.echo("\n📥 Cloning or checking out repositories...")
-    dir_obj = _resolve_directory(directory)
-    spec_path_default = dir_obj.joinpath("repos.json")
-    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
-    spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
-    from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
-    clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=False, checkout_commit_flag=True)
+    clone(directory=directory or ".", specs_path=None, interactive=False, checkout_to_commit=True, checkout_to_branch=False)
 
 
 def checkout_to_branch_command(directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")] = None) -> None:
     """🔀 Check out to the main branch defined in the specification."""
-    typer.echo("\n📥 Cloning or checking out repositories...")
-    dir_obj = _resolve_directory(directory)
-    spec_path_default = dir_obj.joinpath("repos.json")
-    from machineconfig.scripts.python.helpers.helpers_devops.cli_config_dotfile import get_backup_path
-    spec_path_self_managed = get_backup_path(orig_path=spec_path_default, sensitivity="private", destination=None, shared=False)
-    from machineconfig.scripts.python.helpers.helpers_repos.clone import clone_repos
-    clone_repos(spec_path=spec_path_self_managed, preferred_remote=None, checkout_branch_flag=True, checkout_commit_flag=False)
+    clone(directory=directory or ".", specs_path=None, interactive=False, checkout_to_commit=False, checkout_to_branch=True)
 
 
 def count_lines_in_repo(repo_path: Annotated[str, typer.Argument(..., help="Path to the git repository")]):
@@ -231,23 +214,26 @@ uv run --with cleanpy cleanpy .
 
 def get_app():
     repos_apps = typer.Typer(help="📁 [r] Manage development repositories", no_args_is_help=True, add_help_option=True, add_completion=False)
-    mirror_app = typer.Typer(help="🔄 [m] Manage repository specifications and syncing", no_args_is_help=True, add_help_option=True, add_completion=False)
-    repos_apps.add_typer(mirror_app, name="mirror", help="🔄 [m] mirror repositories using saved specs")
-    repos_apps.add_typer(mirror_app, name="m", help="mirror repositories using saved specs", hidden=True)
 
-    repos_apps.command(name="push", help="🚀 [p] Push changes across repositories")(push)
-    repos_apps.command(name="p", help="Push changes across repositories", hidden=True)(push)
-    repos_apps.command(name="pull", help="⬇️  [P] Pull changes across repositories")(pull)
-    repos_apps.command(name="P", help="Pull changes across repositories", hidden=True)(pull)
-    repos_apps.command(name="commit", help="💾 [c] Commit changes across repositories")(commit)
-    repos_apps.command(name="c", help="Commit changes across repositories", hidden=True)(commit)
-    repos_apps.command(name="sync", help="🔄 [y] Pull, commit, and push changes across repositories")(sync)
-    repos_apps.command(name="y", help="Pull, commit, and push changes across repositories", hidden=True)(sync)
-    repos_apps.command(name="analyze", help="📊 [a] Analyze repository development over time")(analyze_repo_development)
-    repos_apps.command(name="a", help="Analyze repository development over time", hidden=True)(analyze_repo_development)
+    repos_apps.command(name="sync", help="📥 [s] Clone repositories described by a repos.json specification")(clone)
+    repos_apps.command(name="s", help="Clone repositories described by a repos.json specification", hidden=True)(clone)
+
+    repos_apps.command(name="register", help="📝 [r] Record repositories into a repos.json specification")(capture)
+    repos_apps.command(name="r", help="Record repositories into a repos.json specification", hidden=True)(capture)
+
+    repos_apps.command(name="checkout-to-commit", help="🔀 [ctc] Deprecated: use sync --checkout-to-commit", hidden=True)(checkout_command)
+    repos_apps.command(name="ctc", help="Check out specific commits listed in the specification", hidden=True)(checkout_command)
+
+    repos_apps.command(name="checkout-to-branch", help="🔀 [ctb] Deprecated: use sync --checkout-to-branch", hidden=True)(checkout_to_branch_command)
+    repos_apps.command(name="ctb", help="Check out to the main branch defined in the specification", hidden=True)(checkout_to_branch_command)
+
+    repos_apps.command(name="action", help="🔄 [a] Run pull/commit/push actions across repositories", no_args_is_help=True)(action)
+    repos_apps.command(name="a", help="Run pull/commit/push actions across repositories", hidden=True, no_args_is_help=True)(action)
+    repos_apps.command(name="analyze", help="📊 [z] Analyze repository development over time")(analyze_repo_development)
+    repos_apps.command(name="z", help="Analyze repository development over time", hidden=True)(analyze_repo_development)
 
     repos_apps.command(name="secure", help="🔐 [s] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
-    repos_apps.command(name="s", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
+    repos_apps.command(name="sec", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
 
     repos_apps.command(name="viz", help="🎬 [v] Visualize repository activity using Gource")(gource_viz)
     repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(gource_viz)
@@ -257,18 +243,6 @@ def get_app():
 
     repos_apps.command(name="cleanup", help="🧹 [n] Clean repository directories from cache files")(cleanup)
     repos_apps.command(name="n", help="Clean repository directories from cache files", hidden=True)(cleanup)
-
-    mirror_app.command(name="capture", help="📝 [cap] Record repositories into a repos.json specification")(capture)
-    mirror_app.command(name="cap", help="Record repositories into a repos.json specification", hidden=True)(capture)
-
-    mirror_app.command(name="clone", help="📥 [clo] Clone repositories described by a repos.json specification")(clone)
-    mirror_app.command(name="clo", help="Clone repositories described by a repos.json specification", hidden=True)(clone)
-
-    mirror_app.command(name="checkout-to-commit", help="🔀 [ctc] Check out specific commits listed in the specification")(checkout_command)
-    mirror_app.command(name="ctc", help="Check out specific commits listed in the specification", hidden=True)(checkout_command)
-
-    mirror_app.command(name="checkout-to-branch", help="🔀 [ctb] Check out to the main branch defined in the specification")(checkout_to_branch_command)
-    mirror_app.command(name="ctb", help="Check out to the main branch defined in the specification", hidden=True)(checkout_to_branch_command)
 
     return repos_apps
 
