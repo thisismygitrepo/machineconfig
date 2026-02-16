@@ -231,13 +231,15 @@ if ($selected) {
 
 def _run_text_search(rga: bool, directory: Optional[str]) -> None:
     """Run text search using fzf with ripgrep."""
-    from machineconfig.scripts.python.helpers.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH
+    from machineconfig.scripts.python.helpers.helpers_msearch import FZFG_LINUX_PATH, FZFG_WINDOWS_PATH, FZFG_MACOS_PATH
     import platform
 
-    if platform.system() == "Linux" or platform.system() == "Darwin":
+    if platform.system() == "Linux":
         script = FZFG_LINUX_PATH.read_text(encoding="utf-8")
     elif platform.system() == "Windows":
         script = FZFG_WINDOWS_PATH.read_text(encoding="utf-8")
+    elif platform.system() == "Darwin":
+        script = FZFG_MACOS_PATH.read_text(encoding="utf-8")
     else:
         raise RuntimeError("Unsupported platform")
     if rga:

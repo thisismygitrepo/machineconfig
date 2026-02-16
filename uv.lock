@@ -1732,7 +1732,7 @@ wheels = [
 
 [[package]]
 name = "machineconfig"
-version = "8.74"
+version = "8.75"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -1797,6 +1797,7 @@ dev = [
     { name = "pre-commit" },
     { name = "pudb" },
     { name = "pydantic" },
+    { name = "pydeps" },
     { name = "pyinstaller" },
     { name = "pylint" },
     { name = "pylsp-mypy" },
@@ -1903,6 +1904,7 @@ dev = [
     { name = "pre-commit", specifier = ">=4.5.0" },
     { name = "pudb", specifier = ">=2025.1.5" },
     { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "pydeps", specifier = ">=3.0.2" },
     { name = "pyinstaller", specifier = ">=6.18.0" },
     { name = "pylint", specifier = ">=4.0.4" },
     { name = "pylsp-mypy", specifier = ">=0.7.0" },
@@ -3120,6 +3122,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pydeps"
+version = "3.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "stdlib-list" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d1/3e/750b00bc373fe0ed1981be89f432bb58ff45ae137d486d5d1667b5f89e76/pydeps-3.0.2.tar.gz", hash = "sha256:9e73575ddd6b5614cb2463a4ee9392817cc51002a2e46184d4fb1ffef8d15832", size = 53202, upload-time = "2026-01-06T16:52:03.1Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0e/c5/e3c81d05e4ab54fab5ba613c28ec91b2baee26671c5645293b1b020c13f4/pydeps-3.0.2-py3-none-any.whl", hash = "sha256:890515899ffdb017255ba035704cfc711966469ad3aa3574c5b0b13f9f676e32", size = 47765, upload-time = "2026-01-06T16:52:01.794Z" },
+]
+
+[[package]]
 name = "pygls"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3945,6 +3959,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c4/68/79977123bb7be889ad680d79a40f339082c1978b5cfcf62c2d8d196873ac/starlette-0.52.1.tar.gz", hash = "sha256:834edd1b0a23167694292e94f597773bc3f89f362be6effee198165a35d62933", size = 2653702, upload-time = "2026-01-18T13:34:11.062Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/81/0d/13d1d239a25cbfb19e740db83143e95c772a1fe10202dda4b76792b114dd/starlette-0.52.1-py3-none-any.whl", hash = "sha256:0029d43eb3d273bc4f83a08720b4912ea4b071087a3b48db01b7c839f7954d74", size = 74272, upload-time = "2026-01-18T13:34:09.188Z" },
+]
+
+[[package]]
+name = "stdlib-list"
+version = "0.12.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/25/f1540879c8815387980e56f973e54605bd924612399ace31487f7444171c/stdlib_list-0.12.0.tar.gz", hash = "sha256:517824f27ee89e591d8ae7c1dd9ff34f672eae50ee886ea31bb8816d77535675", size = 60923, upload-time = "2025-10-24T19:21:22.849Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3b/3d/2970b27a11ae17fb2d353e7a179763a2fe6f37d6d2a9f4d40104a2f132e9/stdlib_list-0.12.0-py3-none-any.whl", hash = "sha256:df2d11e97f53812a1756fb5510393a11e3b389ebd9239dc831c7f349957f62f2", size = 87615, upload-time = "2025-10-24T19:21:20.619Z" },
 ]
 
 [[package]]
