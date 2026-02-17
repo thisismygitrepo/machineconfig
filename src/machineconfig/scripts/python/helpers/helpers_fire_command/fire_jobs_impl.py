@@ -1,5 +1,6 @@
 """Pure Python implementation for fire_jobs route command - no typer dependencies."""
 
+import subprocess
 from typing import Optional, Callable
 from pathlib import Path
 from machineconfig.scripts.python.helpers.helpers_fire_command.fire_jobs_args_helper import FireJobArgs
@@ -35,12 +36,31 @@ def route(args: FireJobArgs, fire_args: str) -> None:
 def _handle_marimo(choice_file: Path, repo_root: Optional[Path], randstr_func: RandStrFunc) -> None:
     """Handle marimo notebook launch."""
     print(f"🧽 Preparing to launch Marimo notebook for `{choice_file}`...")
-    tmp_dir = Path.home().joinpath(f"tmp_results/tmp_scripts/marimo/{choice_file.stem}_{randstr_func(10)}")
-    tmp_dir.mkdir(parents=True, exist_ok=True)
-    script = f"""
+    project_segment = f"--project {repo_root} " if repo_root is not None else ""
+    marimo_check_cmd = ["uv", "run"]
+    if repo_root is not None:
+        marimo_check_cmd.extend(["--project", str(repo_root)])
+    marimo_check_cmd.extend(["--with", "marimo", "marimo", "check", str(choice_file)])
+    check_result = subprocess.run(marimo_check_cmd, capture_output=True, text=True, check=False)
+    check_output = f"{check_result.stdout}\n{check_result.stderr}".lower()
+    not_valid_markers = ("not a valid notebook", "not recognizable as a marimo notebook", "failed to parse")
+    is_valid_marimo_notebook = not any(marker in check_output for marker in not_valid_markers)
+
+    if is_valid_marimo_notebook:
+        print(f"✅ `{choice_file}` is recognized as a marimo notebook. Skipping conversion.")
+        script = f"""
+uv run {project_segment} --with marimo --with pydantic-ai-slim marimo edit --host 0.0.0.0 {choice_file}
+# pydantic-ai-slim is added to allow ai functionality to work, if needed.
+"""
+    else:
+        print(f"♻️ `{choice_file}` is not recognized as a marimo notebook. Converting before edit.")
+        tmp_dir = Path.home().joinpath(f"tmp_results/tmp_scripts/marimo/{choice_file.stem}_{randstr_func(10)}")
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        script = f"""
 cd {tmp_dir}
 uv run --python 3.14 --with marimo marimo convert {choice_file} -o marimo_nb.py
-uv run --project {repo_root} --with marimo marimo edit --host 0.0.0.0 marimo_nb.py
+uv run {project_segment} --with marimo --with pydantic-ai-slim marimo edit --host 0.0.0.0 marimo_nb.py
+# pydantic-ai-slim is added to allow ai functionality to work, if needed.
 """
     from machineconfig.utils.code import exit_then_run_shell_script
     print(f"🚀 Launching Marimo notebook for `{choice_file}`...")
