@@ -1,7 +1,7 @@
 """Cloud mount script"""
 
 import typer
-from typing import Optional, Annotated
+from typing import Optional, Annotated, Literal
 
 
 def get_rclone_config():
@@ -15,85 +15,6 @@ def get_rclone_config():
     else:
         raise ValueError("unsupported platform")
     return config
-
-
-def _kdl_escape(value: str) -> str:
-    return value.replace("\\", "\\\\").replace('"', '\\"')
-
-
-def _build_cloud_tab_kdl(cloud_name: str, mount_cmd: str, mount_loc: str, focused: bool) -> str:
-    focus_segment = " focus=true" if focused else ""
-    escaped_cloud_name = _kdl_escape(cloud_name)
-    escaped_mount_cmd = _kdl_escape(mount_cmd)
-    escaped_mount_loc = _kdl_escape(mount_loc)
-    escaped_about_target = _kdl_escape(f"{cloud_name}:")
-    return f"""
-    tab name=\"{escaped_cloud_name}\"{focus_segment} {{
-        pane split_direction=\"vertical\" size=\"60%\" {{
-            pane name=\"mount\" command=\"bash\" {{
-                args \"-lc\" \"{escaped_mount_cmd}\"
-            }}
-            pane name=\"about\" command=\"rclone\" {{
-                args \"about\" \"{escaped_about_target}\"
-            }}
-        }}
-        pane split_direction=\"vertical\" size=\"40%\" {{
-            pane name=\"explorer\" command=\"yazi\" {{
-                args \"{escaped_mount_loc}\"
-            }}
-            pane name=\"monitor\" command=\"btm\" {{
-                args \"--default_widget_type\" \"net\" \"--expanded\"
-            }}
-            pane name=\"shell\" cwd=\"{escaped_mount_loc}\"
-        }}
-    }}
-"""
-
-
-def _build_zellij_layout_kdl(mount_commands: dict[str, str], mount_locations: dict[str, str]) -> str:
-    tab_blocks: list[str] = []
-    for index, cloud_name in enumerate(mount_commands):
-        tab_blocks.append(_build_cloud_tab_kdl(cloud_name=cloud_name, mount_cmd=mount_commands[cloud_name], mount_loc=mount_locations[cloud_name], focused=index == 0))
-    return f"""layout {{
-{''.join(tab_blocks)}
-}}
-"""
-
-
-def get_within_current_session_code():
-    return """
-
-ZJ_SESSIONS=$(zellij list-sessions)
-
-if [[ "${{ZJ_SESSIONS}}" != *"(current)"* ]]; then
-    echo "Not inside a zellij session ..."
-    echo '{mount_cmd} --daemon'
-    # exit 1
-
-    {mount_cmd} --daemon
-fi
-
-zellij run --direction down --name rclone -- {mount_cmd}
-sleep 1; zellij action resize decrease down
-sleep 0.2; zellij action resize decrease up
-sleep 0.2; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-sleep 0.1; zellij action resize decrease up
-zellij run --direction right --name about -- rclone about {cloud}:
-zellij action move-focus up
-# zellij action write-chars "cd $HOME/data/rclone/{cloud}; sleep 0.1; ls"
-zellij run --direction left --cwd $HOME/data/rclone/{cloud} -- yazi $HOME/data/rclone/{cloud}
-zellij run --direction up -- btm --default_widget_type net --expanded
-zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
-zellij action move-focus up
-"""
 
 
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
@@ -132,6 +53,7 @@ def mount(
     destination: Annotated[Optional[str], typer.Option(..., "--destination", "-d", help="destination to mount")] = None,
     network: Annotated[Optional[str], typer.Option(..., "--network", "-n", help="mount network drive")] = None,
     zellij_session: Annotated[Optional[str], typer.Option(None, "--zellij-session", "-z", help="zellij session name for Linux/macOS")] = None,
+    backend: Annotated[Literal["zellij", "z", "tmux", "t", "auto", "a"], typer.Option("--backend", "-b", help="terminal backend for Linux/macOS")] = "auto",
     interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Choose cloud interactively from config.")] = True,
 ) -> None:
     if interactive:
@@ -139,11 +61,11 @@ def mount(
     from machineconfig.utils.options import choose_from_options
     from pathlib import Path
     import platform
-    import shlex
     import subprocess
-    import tempfile
     from rich.console import Console
     from rich.panel import Panel
+    from machineconfig.scripts.python.helpers.helpers_cloud.cloud_mount_zellij import build_zellij_launch_command
+    from machineconfig.scripts.python.helpers.helpers_cloud.cloud_mont_tmux import build_tmux_launch_command
     console = Console()
     DEFAULT_MOUNT = "~/data/rclone"
     DEFAULT_ZELLIJ_SESSION = "cloud-mount"
@@ -219,6 +141,9 @@ def mount(
     console.print(Panel(f"🚀 Preparing mount command(s):\n{mount_command_info}", border_style="blue"))
 
     if system_name == "Windows":
+        if backend not in ["auto", "a"]:
+            print("❌ Error: --backend is only available on Linux/macOS for cloud mount")
+            raise typer.Exit(code=1)
         if len(clouds) > 1:
             print("❌ Error: Multiple clouds in one command is only supported on Linux/macOS")
             raise typer.Exit(code=1)
@@ -229,11 +154,20 @@ wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rcl
 """
     elif system_name in ["Linux", "Darwin"]:
         session_name = zellij_session if zellij_session else DEFAULT_ZELLIJ_SESSION
-        layout_kdl = _build_zellij_layout_kdl(mount_commands=mount_commands, mount_locations=mount_locations)
-        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", suffix=".kdl", prefix="cloud-mount-", delete=False) as layout_file:
-            layout_file.write(layout_kdl)
-            layout_path = layout_file.name
-        txt = f"zellij --session {shlex.quote(session_name)} --new-session-with-layout {shlex.quote(layout_path)}"
+        backend_resolved: Literal["zellij", "tmux"]
+        match backend:
+            case "zellij" | "z" | "auto" | "a":
+                backend_resolved = "zellij"
+            case "tmux" | "t":
+                backend_resolved = "tmux"
+            case _:
+                print(f"❌ Error: Unsupported backend '{backend}'")
+                raise typer.Exit(code=1)
+
+        if backend_resolved == "zellij":
+            txt = build_zellij_launch_command(mount_commands=mount_commands, mount_locations=mount_locations, session_name=session_name)
+        else:
+            txt = build_tmux_launch_command(mount_commands=mount_commands, mount_locations=mount_locations, session_name=session_name)
     else:
         print("❌ Error: Unsupported platform")
         raise typer.Exit(code=1)

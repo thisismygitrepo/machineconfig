@@ -1,7 +1,7 @@
 """Cloud management commands - lazy loading subcommands."""
 
 import typer
-from typing import Optional, Annotated
+from typing import Optional, Annotated, Literal
 from machineconfig.utils.ve import read_default_cloud_config
 
 
@@ -50,12 +50,13 @@ def mount(
     cloud: Annotated[Optional[str], typer.Option(..., "--cloud", "-c", help="cloud to mount.")] = None,
     destination: Annotated[Optional[str], typer.Option(..., "--destination", "-d", help="destination to mount")] = None,
     network: Annotated[Optional[str], typer.Option(..., "--network", "-n", help="mount network drive")] = None,
+    backend: Annotated[Literal["zellij", "z", "tmux", "t", "auto", "a"], typer.Option("--backend", "-b", help="terminal backend for Linux/macOS")] = "auto",
     interactive: Annotated[bool, typer.Option("--interactive", "-i", help="Choose cloud interactively from config.")] = True,
 
 ) -> None:
     """🔗 Mount cloud storage services as local drives."""
     from machineconfig.scripts.python.helpers.helpers_cloud.cloud_mount import mount as mount_main
-    mount_main(cloud=cloud, destination=destination, network=network, interactive=interactive)
+    mount_main(cloud=cloud, destination=destination, network=network, backend=backend, interactive=interactive)
 
 
 def get_app() -> typer.Typer:
