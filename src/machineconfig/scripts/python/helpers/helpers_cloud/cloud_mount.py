@@ -17,6 +17,42 @@ def get_rclone_config():
     return config
 
 
+def get_within_current_session_code():
+    return """
+
+ZJ_SESSIONS=$(zellij list-sessions)
+
+if [[ "${{ZJ_SESSIONS}}" != *"(current)"* ]]; then
+    echo "Not inside a zellij session ..."
+    echo '{mount_cmd} --daemon'
+    # exit 1
+
+    {mount_cmd} --daemon
+fi
+
+zellij run --direction down --name rclone -- {mount_cmd}
+sleep 1; zellij action resize decrease down
+sleep 0.2; zellij action resize decrease up
+sleep 0.2; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+sleep 0.1; zellij action resize decrease up
+zellij run --direction right --name about -- rclone about {cloud}:
+zellij action move-focus up
+# zellij action write-chars "cd $HOME/data/rclone/{cloud}; sleep 0.1; ls"
+zellij run --direction left --cwd $HOME/data/rclone/{cloud} -- yazi $HOME/data/rclone/{cloud}
+zellij run --direction up -- btm --default_widget_type net --expanded
+zellij run --in-place --cwd $HOME/data/rclone/{cloud} -- bash
+zellij action move-focus up
+"""
+
+
 def get_mprocs_mount_txt(cloud: str, rclone_cmd: str, cloud_brand: str):  # cloud_brand = config[cloud]["type"]
     from machineconfig.utils.path_extended import PathExtended
     from machineconfig.utils.accessories import randstr
@@ -57,7 +93,6 @@ def mount(
     if interactive:
         pass
     from machineconfig.utils.options import choose_from_options
-    # from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
     from pathlib import Path
     import platform
     from rich.console import Console
@@ -74,9 +109,11 @@ def mount(
         if not res:
             print("❌ Error: No cloud selected")
             raise typer.Exit(code=1)
-        for a_cloud in res:
-            mount(cloud=a_cloud, destination=destination, network=network, interactive=False)
-        return
+        if len(res) > 1:
+            print("❌ Error: Multiple clouds selected. Please select only one cloud.")
+            raise typer.Exit(code=1)
+        cloud = res[0]
+
     else:
         if cloud not in config.sections():
             print(f"❌ Error: Cloud '{cloud}' not found in config")
