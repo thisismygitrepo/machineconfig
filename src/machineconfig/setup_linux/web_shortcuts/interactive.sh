@@ -2,16 +2,16 @@
 . <( curl -sSL "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/setup_linux/uv.sh")
 . <( curl -sSL "https://raw.githubusercontent.com/thisismygitrepo/machineconfig/main/src/machineconfig/scripts/linux/wrap_mcfg")
 
-alias devops='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" devops'
-alias cloud='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" cloud'
-alias agents='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" agents'
-alias sessions='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" sessions'
-alias ftpx='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" ftpx'
-alias fire='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" fire'
-alias croshell='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" croshell'
-alias utils='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" utils'
-alias terminal='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" terminal'
-alias msearch='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.76" msearch'
+alias devops='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" devops'
+alias cloud='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" cloud'
+alias agents='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" agents'
+alias sessions='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" sessions'
+alias ftpx='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" ftpx'
+alias fire='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" fire'
+alias croshell='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" croshell'
+alias utils='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" utils'
+alias terminal='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" terminal'
+alias msearch='$HOME/.local/bin/uvx --python 3.14 --from "machineconfig>=8.77" msearch'
 
 alias d='wrap_in_shell_script devops'
 alias c='wrap_in_shell_script cloud'
@@ -26,4 +26,4 @@ alias ms='wrap_in_shell_script msearch'
 
 echo "mcfg command aliases are now defined in this shell session."
 
-devops self interactive
+d self install --interactive

@@ -97,11 +97,15 @@ uv tool install --no-cache --upgrade machineconfig
 def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets-copy", "-a/-na", help="Copy (overwrite) assets to the machine after the update")] = True,
             dev: Annotated[bool, typer.Option("--dev", "-d", help="Install from local development code instead of PyPI")] = False,
             export: Annotated[bool, typer.Option("--export", "-e", help="Export the installation files to get an offline image")] = False,
+            interactive_config: Annotated[bool, typer.Option("--interactive", "-i", help="🤖 INTERACTIVE configuration of machine after installation")] = False,
             ):
     """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
     if export:
         from machineconfig.utils.installer_utils import installer_offline
         installer_offline.export()
+        return
+    if interactive_config:
+        interactive()
         return
     from machineconfig.utils.code import run_shell_script, get_uv_command, get_shell_script_running_lambda_function, exit_then_run_shell_script
     import platform
@@ -209,8 +213,6 @@ def get_app():
     ctx_settings: dict[str, object] = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True, "help_option_names": []}
     cli_app.command(name= "update",      no_args_is_help=False, help="🔄 [u] UPDATE machineconfig")(update)
     cli_app.command(name= "u",           no_args_is_help=False, hidden=True)(update)
-    cli_app.command(name= "interactive", no_args_is_help=False, help="🤖 [ia] INTERACTIVE configuration of machine.")(interactive)
-    cli_app.command(name= "ia",           no_args_is_help=False, help="INTERACTIVE configuration of machine.", hidden=True)(interactive)
     cli_app.command(name= "init",         no_args_is_help=False, help="🦐 [t] Define and manage configurations")(init)
     cli_app.command(name= "t",            no_args_is_help=False, hidden=True)(init)
     cli_app.command(name= "status",      no_args_is_help=False, help="📊 [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
