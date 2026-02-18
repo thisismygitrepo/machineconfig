@@ -1,14 +1,26 @@
 sudo apt update -y || true
 sudo apt install nala -y || true
-sudo nala install curl wget gpg lsb-release apt-transport-https \
+
+sudo nala install -y \
+  curl wget gpg lsb-release apt-transport-https \
   samba fuse3 nfs-common \
   git net-tools htop nano \
-  build-essential \  # Where it brings gcc, make, etc.,
-  python3-dev \  # ensures headers for your Python version.
-  unzip \   # bun installer needs this to unzip files.
-  pkg-config \  
-  libssl-dev \  # essential for SSL/TLS support in many applications, compiling rust binaries will need them.
-    -y || true
+  build-essential \
+  python3-dev \
+  unzip \
+  pkg-config \
+  libssl-dev || true
+# nala depends on python and occasionally fails.
+
+sudo apt install -y \
+  curl wget gpg lsb-release apt-transport-https \
+  samba fuse3 nfs-common \
+  git net-tools htop nano \
+  build-essential \
+  python3-dev \
+  unzip \
+  pkg-config \
+  libssl-dev || true
 
 curl -fsSL https://bun.com/install | bash
 . ~/.bashrc || true
