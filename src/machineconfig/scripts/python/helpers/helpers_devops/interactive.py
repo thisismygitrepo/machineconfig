@@ -9,12 +9,25 @@ Interactive Machine Configuration Setup Script
 import sys
 from pathlib import Path
 import platform
+from typing import Literal
 import questionary
 from questionary import Choice
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from machineconfig.utils.code import run_shell_script
+
+InstallOption = Literal[
+    "install_machineconfig",
+    "sysabc",
+    "termabc",
+    "install_shell_profile",
+    "install_ssh_server",
+    "link_public_configs",
+    "link_private_configs",
+    "retrieve_repositories",
+    "retrieve_data",
+]
 
 console = Console()
 
@@ -54,22 +67,33 @@ def display_header() -> None:
     console.print()
 
 
-def get_installation_choices() -> list[str]:
+def get_installation_choices() -> list[InstallOption]:
     """Get user choices for installation options."""
+    v0: InstallOption = "install_machineconfig"
+    v1: InstallOption = "sysabc"
+    v2: InstallOption = "termabc"
+    v3: InstallOption = "install_shell_profile"
+    v4: InstallOption = "install_ssh_server"
+    v5: InstallOption = "retrieve_repositories"
+    v6: InstallOption = "retrieve_data"
+    v7: InstallOption = "link_public_configs"
+    v8: InstallOption = "link_private_configs"
     choices = [
-        Choice(value="install_machineconfig", title="🐍 Install machineconfig cli.", checked=False),
-        Choice(value="sysabc", title="📥 Install System Package Manager (Needed for other apps to be installed).", checked=False),
-        Choice(value="termabc", title="⚡ Install Terminal CLI apps essentials (group `termabc`)", checked=False),
-        Choice(value="install_shell_profile", title="🐚 Configure Shell Profile And Map Other Configs.", checked=False),
-        Choice(value="install_ssh_server", title="🔒 [ADVANCED] Configure SSH Server", checked=False),
-        Choice(value="retrieve_repositories", title="📚 [ADVANCED] Retrieve Repositories", checked=False),
-        Choice(value="retrieve_data", title="💾 [ADVANCED] Retrieve Data.", checked=False),
+        Choice(value=v0, title="🐍 Install machineconfig cli.", checked=False),
+        Choice(value=v1, title="📥 Install System Package Manager (Needed for other apps to be installed).", checked=False),
+        Choice(value=v2, title="⚡ Install Terminal CLI apps essentials (group `termabc`)", checked=False),
+        Choice(value=v3, title="🐚 Configure Shell Profile And Map Other Configs.", checked=False),
+        Choice(value=v7, title="🔗 Link Public Configs (symlink public dotfiles).", checked=False),
+        Choice(value=v8, title="🔐 [ADVANCED] Link Private Configs (symlink private dotfiles).", checked=False),
+        Choice(value=v4, title="🔒 [ADVANCED] Configure SSH Server", checked=False),
+        Choice(value=v5, title="📚 [ADVANCED] Retrieve Repositories", checked=False),
+        Choice(value=v6, title="💾 [ADVANCED] Retrieve Data.", checked=False),
     ]
-    selected = questionary.checkbox("Select the installation options you want to execute:", choices=choices, show_description=True).ask()
-    return selected or []
+    selected: list[InstallOption] = questionary.checkbox("Select the installation options you want to execute:", choices=choices, show_description=True).ask() or []
+    return selected
 
 
-def execute_installations(selected_options: list[str]) -> None:
+def execute_installations(selected_options: list[InstallOption]) -> None:
     for maybe_a_group in selected_options:
         if maybe_a_group in ("termabc", "sysabc"):
             console.print(Panel("⚡ [bold bright_yellow]CLI APPLICATIONS[/bold bright_yellow]\n[italic]Command-line tools installation[/italic]", border_style="bright_yellow"))
@@ -129,7 +153,19 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
         except Exception as e:
             console.print(f"❌ Error configuring shell profile: {e}", style="bold red")
 
-    if "retrieve_repositories" in selected_options or "retrieve_data" in selected_options:
+    if "link_public_configs" in selected_options:
+        console.print(Panel("🔗 [bold bright_green]LINK PUBLIC CONFIGS[/bold bright_green]\n[italic]Symlinking public dotfiles[/italic]", border_style="bright_green"))
+        console.print("🔧 Linking public configs", style="bold cyan")
+        try:
+            from machineconfig.profile.create_links_export import main_from_parser
+            main_from_parser(sensitivity="public", method="symlink", on_conflict="overwrite-default-path", which="all")
+            console.print("✅ Public configs linked successfully", style="bold green")
+        except Exception as e:
+            console.print(f"❌ Error linking public configs: {e}", style="bold red")
+
+    require_dotfiles: list[InstallOption] = [
+        "retrieve_repositories", "retrieve_data", "link_private_configs"]
+    if any(a_selected in require_dotfiles for a_selected in selected_options):
         # we cannot proceed before dotfiles are in place
         if Path.home().joinpath("dotfiles").exists():
             console.print("✅ Dotfiles directory found.", style="bold green")
@@ -168,10 +204,16 @@ Set-Service -Name sshd -StartupType 'Automatic'"""
             if not Path.home().joinpath("dotfiles").exists():
                 console.print("❌ Dotfiles directory still not found after attempted import. Exiting...", style="bold red")
                 sys.exit(1)
-            # devops config sync --sensitivity public --method symlink --on-conflict overwrite-default-path --which all
-            # devops config sync --sensitivity private --method symlink --on-conflict overwrite-default-path --which all
+
+    if "link_private_configs" in selected_options:
+        console.print(Panel("🔐 [bold bright_red]LINK PRIVATE CONFIGS[/bold bright_red]\n[italic]Symlinking private dotfiles[/italic]", border_style="bright_red"))
+        console.print("🔧 Linking private configs", style="bold cyan")
+        try:
             from machineconfig.profile.create_links_export import main_from_parser
             main_from_parser(sensitivity="private", method="symlink", on_conflict="overwrite-default-path", which="all")
+            console.print("✅ Private configs linked successfully", style="bold green")
+        except Exception as e:
+            console.print(f"❌ Error linking private configs: {e}", style="bold red")
 
     if "retrieve_repositories" in selected_options:
         console.print(Panel("📚 [bold bright_magenta]REPOSITORIES[/bold bright_magenta]\n[italic]Project code retrieval[/italic]", border_style="bright_magenta"))
