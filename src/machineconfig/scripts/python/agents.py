@@ -2,7 +2,7 @@
 
 from typing import Optional, get_args, Annotated, Literal
 import typer
-from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
+from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, AI_FRAMEWORK, HOST, PROVIDER
 
 
 def agents_create(
@@ -56,10 +56,26 @@ def make_agents_command_template() -> None:
         raise typer.Exit(1) from e
 
 
-def init_config(root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None) -> None:
+def init_config(
+    root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None,
+    framework: Annotated[Optional[list[AI_FRAMEWORK]], typer.Option("--framework", "-f", help=f"AI framework to configure. Repeat for multiple values. One of {', '.join(get_args(AI_FRAMEWORK))}")] = None,
+    all_frameworks: Annotated[bool, typer.Option("--all-frameworks", "-a", help="Configure all supported AI frameworks")] = False,
+    include_common: Annotated[bool, typer.Option("--include-common/--skip-common", help="Create shared .ai/.scripts scaffold and update .gitignore")] = True,
+    add_lint_task: Annotated[bool, typer.Option("--add-lint-task/--skip-lint-task", help="Add VS Code lint/type-check task")] = True,
+) -> None:
     """Initialize AI configurations in the current repository."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import init_config as impl
-    impl(root=root)
+
+    try:
+        impl(
+            root=root,
+            frameworks=tuple(framework or []),
+            all_frameworks=all_frameworks,
+            include_common=include_common,
+            add_lint_task=add_lint_task,
+        )
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
 
 
 def make_todo_files(

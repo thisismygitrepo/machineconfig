@@ -163,11 +163,26 @@ def make_agents_command_template() -> None:
     print(f"Prompt template written to {save_path_root}")
 
 
-def init_config(root: Optional[str]) -> None:
+def init_config(root: Optional[str], frameworks: tuple[str, ...], all_frameworks: bool, include_common: bool, add_lint_task: bool) -> None:
     """Initialize AI configurations in the current repository."""
-    from machineconfig.scripts.python.ai.initai import add_ai_configs
+    from machineconfig.scripts.python.ai.initai import DEFAULT_AI_FRAMEWORKS, add_ai_configs
+    from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AI_FRAMEWORK
+
     if root is None:
         repo_root = Path.cwd()
     else:
         repo_root = Path(root).expanduser().resolve()
-    add_ai_configs(repo_root=repo_root)
+
+    if all_frameworks:
+        selected_frameworks: tuple[AI_FRAMEWORK, ...] = DEFAULT_AI_FRAMEWORKS
+    elif len(frameworks) > 0:
+        selected_frameworks_list: list[AI_FRAMEWORK] = []
+        for framework in frameworks:
+            if framework not in DEFAULT_AI_FRAMEWORKS:
+                raise ValueError(f"Unsupported framework: {framework}")
+            selected_frameworks_list.append(framework)
+        selected_frameworks = tuple(dict.fromkeys(selected_frameworks_list))
+    else:
+        raise ValueError("Provide at least one --framework option, or pass --all-frameworks")
+
+    add_ai_configs(repo_root=repo_root, frameworks=selected_frameworks, include_common_scaffold=include_common, add_vscode_task=add_lint_task)
