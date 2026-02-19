@@ -106,7 +106,7 @@ def visualize(
     seconds_per_day: Annotated[float, typer.Option("--seconds-per-day", "-spd", help="Speed of simulation (lower = faster)")] = 0.1,
     auto_skip_seconds: Annotated[float, typer.Option("--auto-skip-seconds", "-as", help="Skip to next entry if nothing happens for X seconds")] = 1.0,
     title: Annotated[Optional[str], typer.Option("--title", "-t", help="Title for the visualization")] = None,
-    hide_items: Annotated[list[str], typer.Option("--hide", "-h", help="Items to hide: bloom, date, dirnames, files, filenames, mouse, progress, root, tree, users, usernames")] = [],
+    hide_items: Annotated[Optional[list[str]], typer.Option("--hide", "-h", help="Items to hide: bloom, date, dirnames, files, filenames, mouse, progress, root, tree, users, usernames")] = None,
     key_items: Annotated[bool, typer.Option("--key", "-k", help="Show file extension key")] = False,
     fullscreen: Annotated[bool, typer.Option("--fullscreen", "-f", help="Run in fullscreen mode")] = False,
     viewport: Annotated[Optional[str], typer.Option("--viewport", "-v", help="Camera viewport (e.g., '1000x1000')")] = None,
@@ -196,7 +196,7 @@ def visualize(
     elif not title and not output_file:
         cmd.extend(["--title", repo_path.name])
 
-    for hide_item in hide_items:
+    for hide_item in (hide_items or []):
         cmd.extend(["--hide", hide_item])
 
     if key_items:
