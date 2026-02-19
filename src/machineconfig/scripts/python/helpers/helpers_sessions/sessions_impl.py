@@ -67,7 +67,7 @@ def find_layout_file(layout_path: str) -> str:
 def run_layouts(
     sleep_inbetween: float,
     monitor: bool,
-    sequential: bool,
+    parallel_layouts: int | None,
     kill_upon_completion: bool,
     backend: Literal["zellij", "windows-terminal", "tmux"],
     layouts_selected: list["LayoutConfig"],
@@ -75,9 +75,16 @@ def run_layouts(
     """Launch terminal sessions based on a layout configuration file."""
     import time
     monitor_requested = monitor
-    monitor = monitor or sequential
-    if sequential and not monitor_requested:
-        print("Note: --sequential implies --monitor; waiting for each layout to finish before launching the next one.")
+    monitor = monitor or (parallel_layouts is not None)
+    if parallel_layouts is not None and not monitor_requested:
+        print("Note: --parallel-layouts implies --monitor; waiting for each batch to finish before launching the next one.")
+    if parallel_layouts is not None and parallel_layouts <= 0:
+        raise ValueError("parallel_layouts must be a positive integer when provided")
+
+    if parallel_layouts is None:
+        iterable: list[list["LayoutConfig"]] = [layouts_selected]
+    else:
+        iterable = [layouts_selected[index:index + parallel_layouts] for index in range(0, len(layouts_selected), parallel_layouts)]
 
     def raise_on_failed_start(start_results: dict[str, StartResult], backend_name: str) -> None:
         failures = {name: result for name, result in start_results.items() if not result.get("success", False)}
@@ -87,15 +94,10 @@ def run_layouts(
     match backend:
         case "zellij":
             from machineconfig.cluster.sessions_managers.zellij.zellij_local_manager import ZellijLocalManager
-            if sequential:
-                iterable: list[list[LayoutConfig]] = [[item] for item in layouts_selected]
-            else:
-                iterable = [layouts_selected]
             for i, a_layouts in enumerate(iterable):
                 manager = ZellijLocalManager(session_layouts=a_layouts)
                 start_results = manager.start_all_sessions(poll_interval=2, poll_seconds=10)
-                if sequential:
-                    raise_on_failed_start(start_results, "Zellij")
+                raise_on_failed_start(start_results, "Zellij")
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)
                     if kill_upon_completion:
@@ -103,16 +105,11 @@ def run_layouts(
                 if i < len(iterable) - 1:
                     time.sleep(sleep_inbetween)
         case "windows-terminal":
-            if sequential:
-                iterable = [[item] for item in layouts_selected]
-            else:
-                iterable = [layouts_selected]
             from machineconfig.cluster.sessions_managers.windows_terminal.wt_local_manager import WTLocalManager
             for i, a_layouts in enumerate(iterable):
                 manager = WTLocalManager(session_layouts=a_layouts, session_name_prefix=None)
                 start_results = manager.start_all_sessions()
-                if sequential:
-                    raise_on_failed_start(start_results, "Windows Terminal")
+                raise_on_failed_start(start_results, "Windows Terminal")
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)
                     if kill_upon_completion:
@@ -121,15 +118,10 @@ def run_layouts(
                     time.sleep(sleep_inbetween)
         case "tmux":
             from machineconfig.cluster.sessions_managers.tmux.tmux_local_manager import TmuxLocalManager
-            if sequential:
-                iterable = [[item] for item in layouts_selected]
-            else:
-                iterable = [layouts_selected]
             for i, a_layouts in enumerate(iterable):
                 manager = TmuxLocalManager(session_layouts=a_layouts, session_name_prefix=None)
                 start_results = manager.start_all_sessions()
-                if sequential:
-                    raise_on_failed_start(start_results, "tmux")
+                raise_on_failed_start(start_results, "tmux")
                 if monitor:
                     manager.run_monitoring_routine(wait_ms=2000)
                     if kill_upon_completion:

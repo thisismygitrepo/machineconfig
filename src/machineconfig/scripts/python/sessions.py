@@ -1,6 +1,6 @@
 """Sessions management commands - lazy loading subcommands."""
 
-from typing import Optional, Literal, Annotated
+from typing import Optional, Literal, Annotated, Callable, cast
 import typer
 
 
@@ -21,14 +21,13 @@ def run(
     layouts_file: Annotated[Optional[str], typer.Option(..., "--layouts-file", "-f", help="Path to the layout.json file")] = None,
     choose: Annotated[Optional[str], typer.Option(..., "--choose", "-c", help="Comma separated names of layouts to be selected from the layout file passed")] = None,
     choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layouts interactively")] = False,
-
-    sleep_inbetween: Annotated[float, typer.Option(..., "--sleep-inbetween", "-si", help="Sleep time in seconds between launching layouts")] = 1.0,
-    monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion (implied by --sequential)")] = False,
-    sequential: Annotated[bool, typer.Option(..., "--sequential", "-s", help="Launch layouts sequentially (waits for each layout to finish)")] = False,
-    kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if --monitor or --sequential is set)")] = False,
-    subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-sh", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
-    max_tabs: Annotated[int, typer.Option(..., "--max-tabs-per-layout", "-mt", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
-    max_layouts: Annotated[int, typer.Option(..., "--max-parallel-layouts", "-mpl", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 25,
+    sleep_inbetween: Annotated[float, typer.Option(..., "--sleep-inbetween", "-S", help="Sleep time in seconds between launching layouts")] = 1.0,
+    monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion (implied by --parallel-layouts)")] = False,
+    parallel_layouts: Annotated[Optional[int], typer.Option(..., "--parallel-layouts", "-p", help="Maximum number of layouts to launch per monitored batch. 1 behaves like sequential mode.")] = None,
+    kill_upon_completion: Annotated[bool, typer.Option(..., "--kill-upon-completion", "-k", help="Kill session(s) upon completion (only relevant if --monitor or --parallel-layouts is set)")] = False,
+    subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-H", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
+    max_tabs: Annotated[int, typer.Option(..., "--max-tabs-per-layout", "-T", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
+    max_layouts: Annotated[int, typer.Option(..., "--max-parallel-layouts", "-P", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 25,
     backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "auto",
 ) -> None:
     """Launch terminal sessions based on a layout configuration file."""
@@ -80,15 +79,19 @@ def run(
         case _:
             typer.echo(f"Error: Unsupported backend '{backend}'.", err=True)
             raise typer.Exit(code=1)
-    if not sequential and len(layouts_selected) > max_layouts:
+    if parallel_layouts is not None and parallel_layouts <= 0:
+        raise ValueError("--parallel-layouts must be a positive integer.")
+    if parallel_layouts is None and len(layouts_selected) > max_layouts:
         raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
+    if parallel_layouts is not None and parallel_layouts > max_layouts:
+        raise ValueError(f"--parallel-layouts value {parallel_layouts} exceeds --max-parallel-layouts limit {max_layouts}.")
     for a_layout in layouts_selected:
         if len(a_layout["layoutTabs"]) > max_tabs:
             raise ValueError(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
 
     try:
-        run_layouts(
-        sleep_inbetween=sleep_inbetween, monitor=monitor, sequential=sequential, kill_upon_completion=kill_upon_completion,
+        cast(Callable[..., None], run_layouts)(
+        sleep_inbetween=sleep_inbetween, monitor=monitor, parallel_layouts=parallel_layouts, kill_upon_completion=kill_upon_completion,
         layouts_selected=layouts_selected,
         backend=backend_resolved)
     except ValueError as e:
