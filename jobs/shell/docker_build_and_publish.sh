@@ -34,8 +34,6 @@ if [ ! -f "$DOCKERFILE_PATH" ]; then
     exit 1
 fi
 
-# curl -s -I https://api.github.com/repos/jqlang/jq/releases/latest | grep -E "(status|x-ratelimit)"
-#
 
 echo """🚀 STARTING DOCKER BUILD | Building image ${IMAGE_NAME}:${DATE} """
 echo """🧹 CLEANUP | Removing old docker images"""

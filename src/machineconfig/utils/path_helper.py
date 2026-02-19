@@ -153,10 +153,10 @@ def search_for_files_of_interest(path_obj: Path, suffixes: set[str]) -> list[Pat
 
 def get_choice_file(path: str, suffixes: Optional[set[str]]):
     path_obj = sanitize_path(path)
+    print(f"🔍 Resolving path `{path}` to `{path_obj}`")
     if suffixes is None:
-        import platform
         if platform.system() == "Windows":
-            suffixes = {".py", ".ps1", ".sh"}
+            suffixes = {".py", ".ps1"}
         elif platform.system() in ["Linux", "Darwin"]:
             suffixes = {".py", ".sh"}
         else:

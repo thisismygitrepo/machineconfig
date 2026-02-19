@@ -63,8 +63,8 @@ def fire(
     )
     try:
         route(args, fire_args)
-    except SystemExit:
-        raise
+    except SystemExit as e:
+        raise e from e
     except Exception as e:
         import sys
         print(f"❌ Error: {e}", file=sys.stderr)
