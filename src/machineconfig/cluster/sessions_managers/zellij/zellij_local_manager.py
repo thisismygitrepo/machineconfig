@@ -292,7 +292,6 @@ class ZellijLocalManager:
                                 "processes": len(cmd_status.get("processes", [])),
                             }
                         )
-
                 if status_rows:
                     table = Table(title="📊 Zellij Monitoring", show_header=True, header_style="bold cyan", box=box.ROUNDED)
                     table.add_column("Session", style="cyan", no_wrap=True)

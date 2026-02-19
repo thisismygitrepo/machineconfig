@@ -5,6 +5,7 @@ import random
 import string
 import psutil
 import logging
+import os
 from typing import List
 from pathlib import Path
 
@@ -77,6 +78,18 @@ def validate_layout_config(layout_config: LayoutConfig) -> None:
             raise ValueError(f"Invalid startDir for tab '{tab['tabName']}': {tab['startDir']}")
 
 
+def _normalize_cli_token(token: str) -> str:
+    stripped = token.strip().strip('"').strip("'")
+    return os.path.expanduser(os.path.expandvars(stripped))
+
+
+def _basename_from_token(token: str) -> str:
+    normalized = _normalize_cli_token(token)
+    if not normalized:
+        return ""
+    return Path(normalized).name
+
+
 def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandStatus:
     """Check the running status of a command for a specific tab."""
     # Find the tab with the given name
@@ -94,6 +107,15 @@ def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandS
     cmd, args = parse_command(command)
     try:
         shells = {"bash", "sh", "zsh", "fish"}
+        generic_args = {"run", "python", "python3", "--with", "--project", "--directory", "-m", "--", "&&"}
+        normalized_cmd = _normalize_cli_token(cmd)
+        cmd_basename = _basename_from_token(cmd)
+        normalized_args = [_normalize_cli_token(arg) for arg in args]
+        significant_args = [
+            arg
+            for arg in normalized_args
+            if len(arg) > 4 and arg not in generic_args and not arg.startswith("--") and not arg.startswith("-")
+        ]
         matching_processes = []
         for proc in psutil.process_iter(["pid", "name", "cmdline", "status", "ppid", "create_time", "memory_info"]):
             try:
@@ -103,44 +125,68 @@ def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandS
                     continue
                 if info.get("status") in ["zombie", "dead", "stopped"]:
                     continue
-                proc_name = info.get("name", "")
+                proc_name = str(info.get("name", ""))
                 is_match = False
-                joined_cmdline = " ".join(proc_cmdline)
+                normalized_proc_cmdline = [_normalize_cli_token(item) for item in proc_cmdline]
+                joined_cmdline = " ".join(normalized_proc_cmdline)
+                proc_exec_basename = _basename_from_token(normalized_proc_cmdline[0]) if normalized_proc_cmdline else ""
+
+                primary_cmd_match = (
+                    proc_name == cmd
+                    or proc_name == normalized_cmd
+                    or proc_name == cmd_basename
+                    or proc_exec_basename == cmd_basename
+                    or (normalized_cmd != "" and normalized_proc_cmdline and normalized_cmd == normalized_proc_cmdline[0])
+                )
+
+                matched_significant_arg_count = sum(
+                    1
+                    for arg in significant_args
+                    if any(arg == cmdline_arg or arg in cmdline_arg for cmdline_arg in normalized_proc_cmdline)
+                )
+                matched_any_arg = any(
+                    any(arg == cmdline_arg or arg in cmdline_arg for cmdline_arg in normalized_proc_cmdline)
+                    for arg in normalized_args
+                )
                 # Primary matching heuristics - more precise matching
-                if proc_name == cmd and cmd not in shells:
+                if primary_cmd_match and cmd_basename not in shells:
                     # For non-shell commands, match if args appear in cmdline
-                    if not args or any(arg in joined_cmdline for arg in args):
+                    if not normalized_args:
                         is_match = True
-                elif proc_name == cmd and cmd in shells:
+                    elif significant_args and matched_significant_arg_count > 0:
+                        is_match = True
+                    elif matched_any_arg:
+                        is_match = True
+                elif primary_cmd_match and cmd_basename in shells:
                     # For shell commands, require more precise matching to avoid false positives
-                    if args:
+                    if normalized_args:
                         # Check if all args appear as separate cmdline arguments (not just substrings)
                         args_found = 0
-                        for arg in args:
-                            for cmdline_arg in proc_cmdline[1:]:  # Skip shell name
+                        for arg in normalized_args:
+                            for cmdline_arg in normalized_proc_cmdline[1:]:  # Skip shell name
                                 if arg == cmdline_arg or (len(arg) > 3 and arg in cmdline_arg):
                                     args_found += 1
                                     break
                         # Require at least as many args found as we're looking for
-                        if args_found >= len(args):
+                        if args_found >= len(normalized_args):
                             is_match = True
-                elif cmd in proc_cmdline[0] and cmd not in shells:
+                elif normalized_cmd and normalized_cmd in normalized_proc_cmdline[0] and cmd_basename not in shells:
                     # Non-shell command in first argument
                     is_match = True
 
                 # Additional shell wrapper filter - be more restrictive for shells
-                if is_match and proc_name in shells and args:
+                if is_match and proc_name in shells and normalized_args:
                     # For shell processes, ensure the match is actually meaningful
                     # Don't match generic shell sessions just because they contain common paths
                     meaningful_match = False
-                    for arg in args:
+                    for arg in normalized_args:
                         # Only consider it meaningful if the arg is substantial (not just a common path)
-                        if len(arg) > 10 and any(arg == cmdline_arg for cmdline_arg in proc_cmdline[1:]):
+                        if len(arg) > 10 and any(arg == cmdline_arg for cmdline_arg in normalized_proc_cmdline[1:]):
                             meaningful_match = True
                             break
                         # Or if it's an exact script name match
                         elif arg.endswith(".py") or arg.endswith(".sh") or arg.endswith(".rb"):
-                            if any(arg in cmdline_arg for cmdline_arg in proc_cmdline[1:]):
+                            if any(arg in cmdline_arg for cmdline_arg in normalized_proc_cmdline[1:]):
                                 meaningful_match = True
                                 break
                     if not meaningful_match:
@@ -161,7 +207,7 @@ def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandS
                         {
                             "pid": info["pid"],  # type: ignore[index]
                             "name": proc_name,
-                            "cmdline": proc_cmdline,
+                            "cmdline": normalized_proc_cmdline,
                             "status": info.get("status", "unknown"),
                             "cmdline_str": joined_cmdline,
                             "create_time": info.get("create_time", 0.0),
@@ -197,7 +243,7 @@ def check_command_status(tab_name: str, layout_config: LayoutConfig) -> CommandS
                             if child_name not in shells:
                                 meaningful = True
                                 break
-                            if cmd in child_cmdline or any(arg in child_cmdline for arg in args):
+                            if normalized_cmd in child_cmdline or any(arg in child_cmdline for arg in normalized_args):
                                 meaningful = True
                                 break
                         except (psutil.NoSuchProcess, psutil.AccessDenied):
