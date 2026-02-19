@@ -232,8 +232,8 @@ def get_app():
     repos_apps.command(name="analyze", help="📊 [z] Analyze repository development over time")(analyze_repo_development)
     repos_apps.command(name="z", help="Analyze repository development over time", hidden=True)(analyze_repo_development)
 
-    repos_apps.command(name="secure", help="🔐 [s] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
-    repos_apps.command(name="sec", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
+    repos_apps.command(name="guard", help="🔐 [g] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
+    repos_apps.command(name="g", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
 
     repos_apps.command(name="viz", help="🎬 [v] Visualize repository activity using Gource")(gource_viz)
     repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(gource_viz)
