@@ -245,4 +245,3 @@ def get_app():
     repos_apps.command(name="n", help="Clean repository directories from cache files", hidden=True)(cleanup)
 
     return repos_apps
-

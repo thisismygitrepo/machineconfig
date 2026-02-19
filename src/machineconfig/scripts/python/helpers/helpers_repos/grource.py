@@ -189,7 +189,7 @@ def visualize(
 
     if resolution:
         width, height = resolution.split("x")
-        cmd.extend(["-{}x{}".format(width, height)])
+        cmd.extend([f"-{width}x{height}"])
 
     if title:
         cmd.extend(["--title", title])
@@ -259,10 +259,10 @@ def visualize(
             except subprocess.CalledProcessError as e:
                 print(f"❌ Error during video rendering: {e}")
                 raise typer.Exit(1)
-            except FileNotFoundError:
+            except FileNotFoundError as e:
                 print("❌ Error: ffmpeg not found. Please install ffmpeg to create video output.")
                 print("   Download from: https://ffmpeg.org/download.html")
-                raise typer.Exit(1)
+                raise typer.Exit(1) from e
         else:
             cmd.extend(["-o", "-"])
             ffmpeg_cmd = [
@@ -290,10 +290,10 @@ def visualize(
                 print(f"\n✅ Video saved to: {output_file}")
             except subprocess.CalledProcessError as e:
                 print(f"❌ Error during video rendering: {e}")
-                raise typer.Exit(1)
-            except FileNotFoundError:
+                raise typer.Exit(1) from e
+            except FileNotFoundError as e:
                 print("❌ Error: ffmpeg not found. Please install ffmpeg to create video output.")
-                raise typer.Exit(1)
+                raise typer.Exit(1) from e
     else:
         print("🎬 Launching interactive visualization...")
         print(f"   Command: {' '.join(cmd)}")
@@ -302,8 +302,8 @@ def visualize(
             subprocess.run(cmd, check=True)
         except subprocess.CalledProcessError as e:
             print(f"❌ Error running gource: {e}")
-            raise typer.Exit(1)
-        except FileNotFoundError:
+            raise typer.Exit(1) from e
+        except FileNotFoundError as e:
             print("❌ Error: gource not found. Please install gource first.")
             if platform.system() == "Windows":
                 print("   Run: uv run python src/machineconfig/scripts/python/grource.py install")
@@ -312,7 +312,7 @@ def visualize(
                 print("     - Ubuntu/Debian: sudo apt install gource")
                 print("     - macOS: brew install gource")
                 print("     - Fedora: sudo dnf install gource")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
     print("\n" + "=" * 80)
     print("✅ VISUALIZATION COMPLETED")
