@@ -171,3 +171,6 @@ CLAUDE.md
 .scripts
 CRUSH.md
 .clinerules
+
+AGENTS.md
+node_modules

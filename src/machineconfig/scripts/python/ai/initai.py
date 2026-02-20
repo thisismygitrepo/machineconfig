@@ -1,6 +1,5 @@
 from pathlib import Path
 from collections.abc import Sequence
-from typing import get_args
 
 from machineconfig.scripts.python.ai.utils import generic
 from machineconfig.scripts.python.ai.solutions.claude import claude
@@ -10,14 +9,11 @@ from machineconfig.scripts.python.ai.solutions.crush import crush
 from machineconfig.scripts.python.ai.solutions.cursor import cursors
 from machineconfig.scripts.python.ai.solutions.gemini import gemini
 from machineconfig.scripts.python.ai.utils.vscode_tasks import add_lint_and_type_check_task
-from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AI_FRAMEWORK
+from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS
 from machineconfig.utils.accessories import get_repo_root
 
 
-DEFAULT_AI_FRAMEWORKS: tuple[AI_FRAMEWORK, ...] = get_args(AI_FRAMEWORK)
-
-
-def _build_framework_config(repo_root: Path, framework: AI_FRAMEWORK) -> None:
+def _build_framework_config(repo_root: Path, framework: AGENTS) -> None:
     match framework:
         case "copilot":
             github_copilot.build_configuration(repo_root=repo_root)
@@ -32,10 +28,10 @@ def _build_framework_config(repo_root: Path, framework: AI_FRAMEWORK) -> None:
         case "cline":
             cline.build_configuration(repo_root=repo_root)
         case _:
-            raise ValueError(f"Unsupported framework: {framework}")
+            print(ValueError(f"Unsupported framework: {framework}"))
 
 
-def add_ai_configs(repo_root: Path, frameworks: Sequence[AI_FRAMEWORK], include_common_scaffold: bool, add_vscode_task: bool) -> None:
+def add_ai_configs(repo_root: Path, frameworks: Sequence[AGENTS], include_common_scaffold: bool, add_vscode_task: bool) -> None:
     if len(frameworks) == 0:
         raise ValueError("At least one framework must be provided")
 
@@ -55,6 +51,6 @@ def add_ai_configs(repo_root: Path, frameworks: Sequence[AI_FRAMEWORK], include_
     if add_vscode_task:
         add_lint_and_type_check_task(repo_root=repo_root)
 
-    selected_frameworks = tuple(dict.fromkeys(frameworks))
+    selected_frameworks: tuple[AGENTS, ...] = tuple(dict.fromkeys(frameworks))
     for framework in selected_frameworks:
         _build_framework_config(repo_root=repo_root, framework=framework)

@@ -35,6 +35,35 @@ applyTo: "**/*.py"
 * Please run `uv run -m pyright $file_touched` and address all issues. if `pyright is not there, first run `uv add pyright --dev`.
 * For all type checkers and linters, like mypy, pyright, pyrefly and pylint, there are config files at different levels of the repo all the way up to home directory level. You don't need to worry about them, just be mindful that they exist. The tools themselves will respect the configs therein.
 * If you want to run all linters and pycheckers agains the entire project to make sure everything is clean, I prepared a nice shell script, you can run it from the repo root as `./.ai/scripts/lint_and_type_check.sh`. It will produce markdown files that are you are meant to look at @ ./.ai/linters/*.md
+* Rust-inspired style, e.g.
+from typing import Literal, Optional, TypeAlias
+class Success:
+  def __init__(self, value: int):
+    self.value = value
+FAILURE_REASON: TypeAlias = Literal["cache_missing", "service_history_missing"]
+class Failure:
+    def __init__(self, reason: FAILURE_REASON, message: Optional[str] = None):
+        self.reason: FAILURE_REASON = reason
+        self.message = message
+def fallible_function(a: int, b: int) -> Success | Failure:
+    if a > b: return Success(value=a+b)
+    else: return Failure(reason="service_history_missing", message="a is not greater than b")
+def example_usage() -> None:
+    result = fallible_function(2, 3)
+    match result:
+        case Success():  # Correct
+            print("Addition succeeded.")
+        case Failure():  # <--- Looks wrong, because no variable passed, but its correct, it works like this in python3.11+
+            # Now this only matches if result IS a Failure instance
+            print("Addition failed.")
+            print(f"Reason: {result.reason}, Message: {result.message}")
+            q = result.reason
+            match q:
+                case "cache_missing":
+                    print("Handle cache missing scenario.")
+                case "service_history_missing":
+                    print("Handle service history missing scenario.")
+
 
 # General Programming Ethos:
 * Make sure all the code is rigorous, no lazy stuff.

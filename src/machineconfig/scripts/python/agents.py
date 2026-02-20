@@ -2,7 +2,7 @@
 
 from typing import Optional, get_args, Annotated, Literal
 import typer
-from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, AI_FRAMEWORK, HOST, PROVIDER
+from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
 
 def agents_create(
@@ -58,8 +58,7 @@ def make_agents_command_template() -> None:
 
 def init_config(
     root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None,
-    framework: Annotated[Optional[list[AI_FRAMEWORK]], typer.Option("--framework", "-f", help=f"AI framework to configure. Repeat for multiple values. One of {', '.join(get_args(AI_FRAMEWORK))}")] = None,
-    all_frameworks: Annotated[bool, typer.Option("--all-frameworks", "-a", help="Configure all supported AI frameworks")] = False,
+    agents: Annotated[str, typer.Option("--agent", "-a", help=f"AI agents to configure (comma-separated), default is all of them. {','.join(get_args(AGENTS))}")] = "",
     include_common: Annotated[bool, typer.Option("--include-common/--skip-common", help="Create shared .ai/.scripts scaffold and update .gitignore")] = True,
     add_lint_task: Annotated[bool, typer.Option("--add-lint-task/--skip-lint-task", help="Add VS Code lint/type-check task")] = True,
 ) -> None:
@@ -67,10 +66,15 @@ def init_config(
     from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import init_config as impl
 
     try:
+        from typing import cast
+        if agents:
+            frameworks__ = tuple(agent.strip() for agent in agents.split(",") if agent.strip())
+            resolved: tuple[AGENTS, ...] = cast(tuple[AGENTS, ...], frameworks__)
+        else:
+            resolved = cast(tuple[AGENTS, ...], get_args(AGENTS))
+
         impl(
-            root=root,
-            frameworks=tuple(framework or []),
-            all_frameworks=all_frameworks,
+            root=root, frameworks=resolved,
             include_common=include_common,
             add_lint_task=add_lint_task,
         )
@@ -134,4 +138,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    pass
+    main()

@@ -2,6 +2,7 @@
 
 from typing import Optional, cast
 from pathlib import Path
+from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS
 
 
 def agents_create(
@@ -69,7 +70,7 @@ def agents_create(
             shutil.rmtree(agents_dir)
         agents_dir_obj = Path(agents_dir)
 
-    from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import HOST, AGENTS, PROVIDER
+    from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import HOST, PROVIDER
     prep_agent_launch(
         repo_root=repo_root,
         agents_dir=agents_dir_obj,
@@ -163,25 +164,22 @@ def make_agents_command_template() -> None:
     print(f"Prompt template written to {save_path_root}")
 
 
-def init_config(root: Optional[str], frameworks: tuple[str, ...], all_frameworks: bool, include_common: bool, add_lint_task: bool) -> None:
+def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_common: bool, add_lint_task: bool) -> None:
     """Initialize AI configurations in the current repository."""
-    from machineconfig.scripts.python.ai.initai import DEFAULT_AI_FRAMEWORKS, add_ai_configs
-    from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AI_FRAMEWORK
-
+    from machineconfig.scripts.python.ai.initai import add_ai_configs
     if root is None:
         repo_root = Path.cwd()
     else:
         repo_root = Path(root).expanduser().resolve()
-
-    if all_frameworks:
-        selected_frameworks: tuple[AI_FRAMEWORK, ...] = DEFAULT_AI_FRAMEWORKS
-    elif len(frameworks) > 0:
-        selected_frameworks_list: list[AI_FRAMEWORK] = []
+    from typing import get_args
+    if len(frameworks) > 0:
+        selected_frameworks_list: list[AGENTS] = []
         for framework in frameworks:
-            if framework not in DEFAULT_AI_FRAMEWORKS:
-                raise ValueError(f"Unsupported framework: {framework}")
+
+            if framework not in get_args(AGENTS):
+                raise ValueError(f"Unsupported framework: {framework}. The supported frameworks are: {', '.join(get_args(AGENTS))}")
             selected_frameworks_list.append(framework)
-        selected_frameworks = tuple(dict.fromkeys(selected_frameworks_list))
+        selected_frameworks: tuple[AGENTS, ...] = tuple(dict.fromkeys(selected_frameworks_list))
     else:
         raise ValueError("Provide at least one --framework option, or pass --all-frameworks")
 

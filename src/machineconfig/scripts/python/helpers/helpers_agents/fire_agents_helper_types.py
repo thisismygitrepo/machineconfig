@@ -17,7 +17,6 @@ from typing import Literal, TypeAlias, TypedDict
 # Warp
 
 AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "qwen-code", "copilot", "codex", "crush", "q", "opencode", "kilocode", "cline", "auggie", "warp", "droid"]
-AI_FRAMEWORK: TypeAlias = Literal["copilot", "cursor", "gemini", "claude", "crush", "cline"]
 HOST: TypeAlias = Literal["local", "docker"]
 PROVIDER: TypeAlias = Literal["azure", "google", "aws", "openai", "anthropic", "openrouter", "xai"]
 
