@@ -1226,6 +1226,40 @@
       }
     },
     {
+      "appName": "poppler",
+      "repoURL": "https://github.com/oschwartz10612/poppler-windows",
+      "doc": "PDF rendering library - Windows builds.",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "poppler.py",
+          "linux": "sudo nala install poppler-utils -y",
+          "macos": "brew install --upgrade poppler"
+        },
+        "arm64": {
+          "windows": "poppler.py",
+          "linux": "sudo nala install poppler-utils -y",
+          "macos": "brew install --upgrade poppler"
+        }
+      }
+    },
+    {
+      "appName": "resvg",
+      "repoURL": "https://github.com/linebender/resvg",
+      "doc": "SVG rendering library - Windows builds.",
+      "fileNamePattern": {
+        "amd64": {
+          "windows": "resvg-win64.zip",
+          "linux": "resvg-linux-x86_64.tar.gz",
+          "macos": "resvg-macos-x86_64.zip"
+        },
+        "arm64": {
+          "windows": "resvg-win64.zip",
+          "linux": "resvg-linux-aarch64.tar.gz",
+          "macos": "resvg-macos-aarch64.zip"
+        }
+      }
+    },
+    {
       "appName": "watchexec",
       "repoURL": "https://github.com/watchexec/watchexec",
       "doc": "👀 Executes commands in response to file modifications.",
@@ -3619,23 +3653,6 @@
           "linux": null,
           "windows": "winget install --no-upgrade --name \"Zoom Workplace\" --Id \"Zoom.Zoom\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": null
-        }
-      }
-    },
-    {
-      "appName": "poppler",
-      "repoURL": "https://github.com/oschwartz10612/poppler-windows",
-      "doc": "PDF rendering library - Windows builds.",
-      "fileNamePattern": {
-        "amd64": {
-          "windows": "poppler.py",
-          "linux": "sudo nala install poppler-utils -y",
-          "macos": "brew install --upgrade poppler"
-        },
-        "arm64": {
-          "windows": "poppler.py",
-          "linux": "sudo nala install poppler-utils -y",
-          "macos": "brew install --upgrade poppler"
         }
       }
     },

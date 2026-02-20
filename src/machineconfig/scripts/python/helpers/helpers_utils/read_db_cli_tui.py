@@ -53,15 +53,22 @@ def _url_for(p: Path) -> str:
     return f'"{prefix}{p}"'
 
 
-def _promote_backend(backend: BACKEND, resolved: list[Path]) -> BACKEND:
+def _validate_backend(backend: BACKEND, resolved: list[Path]) -> None:
     is_all_duckdb = all(p.suffix.lower() in DUCKDB_EXTS for p in resolved)
     if is_all_duckdb and backend not in DUCKDB_CAPABLE:
-        print(f"⚠  '{backend}' does not support DuckDB → switching to harlequin")
-        return "harlequin"
+        duckdb_capable_list = ", ".join(sorted(DUCKDB_CAPABLE))
+        raise ValueError(
+            f"Backend '{backend}' does not support DuckDB files.\n"
+            f"DuckDB-capable backends: {duckdb_capable_list}\n"
+            f"Files: {[str(p) for p in resolved]}"
+        )
     if len(resolved) > 1 and backend not in MULTI_DB_CAPABLE:
-        print(f"⚠  '{backend}' cannot open multiple files → switching to harlequin ({len(resolved)} files)")
-        return "harlequin"
-    return backend
+        multi_capable_list = ", ".join(sorted(MULTI_DB_CAPABLE))
+        raise ValueError(
+            f"Backend '{backend}' cannot open multiple files simultaneously.\n"
+            f"Multi-file-capable backends: {multi_capable_list}\n"
+            f"Files ({len(resolved)}): {[str(p) for p in resolved]}"
+        )
 
 
 def app(
@@ -97,7 +104,7 @@ def app(
         print(f"Found {len(resolved)} file(s) matching '{find}' under '{root}'")
 
     if resolved:
-        backend_strict = _promote_backend(backend_strict, resolved)
+        _validate_backend(backend_strict, resolved)
 
     shell_script_init = 'echo "Initializing TUI DB Visualizer..."'
     cmd = ""

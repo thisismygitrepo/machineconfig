@@ -76,17 +76,16 @@ def main(installer_data: InstallerData, version: Optional[str]):
     install_if_missing(which="duckdb")
     install_if_missing(which="poppler")
     install_if_missing(which="jq")
-    if platform.system() == "Windows":
-        install_if_missing(which="git")
+    install_if_missing(which="resvg")
+    # on windows those are missing
+    install_if_missing(which="git")
+    install_if_missing(which="7zip")
+    install_if_missing(which="file")
     import git
     git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)
     force_remove(yazi_flavours_path)
     yazi_plugins_dir.mkdir(parents=True, exist_ok=True)
-    import git
     git.Repo.clone_from("https://github.com/yazi-rs/flavors", yazi_flavours_path)
-    if platform.system() == "Windows":
-        install_if_missing(which="7zip")
-        install_if_missing(which="file")
     script = """
 ya pkg add 'ndtoan96/ouch'  # make ouch default previewer in yazi for compressed files
 ya pkg add 'AnirudhG07/rich-preview'  # rich-cli based previewer for yazi
@@ -95,7 +94,6 @@ ya pkg add 'Tyarel8/goto-drives'
 ya pkg add 'uhs-robert/sshfs'
 ya pkg add 'boydaihungst/file-extra-metadata'
 ya pkg add 'wylie102/duckdb'
-
 """
     from machineconfig.utils.code import run_shell_script
     run_shell_script(script, display_script=True, clean_env=False)
