@@ -8,8 +8,20 @@ from machineconfig.scripts.python.ai.solutions.copilot import github_copilot
 from machineconfig.scripts.python.ai.solutions.crush import crush
 from machineconfig.scripts.python.ai.solutions.cursor import cursors
 from machineconfig.scripts.python.ai.solutions.gemini import gemini
-from machineconfig.scripts.python.ai.utils.vscode_tasks import add_lint_and_type_check_task
-from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS
+from machineconfig.scripts.python.ai.solutions.qwen_code import qwen_code
+from machineconfig.scripts.python.ai.solutions.codex import codex
+from machineconfig.scripts.python.ai.solutions.q import amazon_q
+from machineconfig.scripts.python.ai.solutions.opencode import opencode
+from machineconfig.scripts.python.ai.solutions.kilocode import kilocode
+from machineconfig.scripts.python.ai.solutions.auggie import auggie
+from machineconfig.scripts.python.ai.solutions.warp import warp
+from machineconfig.scripts.python.ai.solutions.droid import droid
+from machineconfig.scripts.python.ai.utils.vscode_tasks import (
+    add_lint_and_type_check_task,
+)
+from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import (
+    AGENTS,
+)
 from machineconfig.utils.accessories import get_repo_root
 
 
@@ -27,11 +39,32 @@ def _build_framework_config(repo_root: Path, framework: AGENTS) -> None:
             crush.build_configuration(repo_root=repo_root)
         case "cline":
             cline.build_configuration(repo_root=repo_root)
+        case "qwen-code":
+            qwen_code.build_configuration(repo_root=repo_root)
+        case "codex":
+            codex.build_configuration(repo_root=repo_root)
+        case "q":
+            amazon_q.build_configuration(repo_root=repo_root)
+        case "opencode":
+            opencode.build_configuration(repo_root=repo_root)
+        case "kilocode":
+            kilocode.build_configuration(repo_root=repo_root)
+        case "auggie":
+            auggie.build_configuration(repo_root=repo_root)
+        case "warp":
+            warp.build_configuration(repo_root=repo_root)
+        case "droid":
+            droid.build_configuration(repo_root=repo_root)
         case _:
             print(ValueError(f"Unsupported framework: {framework}"))
 
 
-def add_ai_configs(repo_root: Path, frameworks: Sequence[AGENTS], include_common_scaffold: bool, add_vscode_task: bool) -> None:
+def add_ai_configs(
+    repo_root: Path,
+    frameworks: Sequence[AGENTS],
+    include_common_scaffold: bool,
+    add_vscode_task: bool,
+) -> None:
     if len(frameworks) == 0:
         raise ValueError("At least one framework must be provided")
 

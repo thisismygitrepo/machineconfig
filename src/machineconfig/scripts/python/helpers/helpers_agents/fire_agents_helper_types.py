@@ -1,4 +1,3 @@
-
 from typing import Literal, TypeAlias, TypedDict
 
 
@@ -16,9 +15,26 @@ from typing import Literal, TypeAlias, TypedDict
 # Cursor
 # Warp
 
-AGENTS: TypeAlias = Literal["cursor-agent", "gemini", "qwen-code", "copilot", "codex", "crush", "q", "opencode", "kilocode", "cline", "auggie", "warp", "droid"]
+AGENTS: TypeAlias = Literal[
+    "cursor",
+    "gemini",
+    "claude",
+    "qwen-code",
+    "copilot",
+    "codex",
+    "crush",
+    "q",
+    "opencode",
+    "kilocode",
+    "cline",
+    "auggie",
+    "warp",
+    "droid",
+]
 HOST: TypeAlias = Literal["local", "docker"]
-PROVIDER: TypeAlias = Literal["azure", "google", "aws", "openai", "anthropic", "openrouter", "xai"]
+PROVIDER: TypeAlias = Literal[
+    "azure", "google", "aws", "openai", "anthropic", "openrouter", "xai"
+]
 
 
 class API_SPEC(TypedDict):
@@ -37,4 +53,6 @@ class AI_SPEC(TypedDict):
 
 
 AGENT_NAME_FORMATTER = "agent_{idx}_cmd.sh"  # e.g., agent_0_cmd.sh
-SEARCH_STRATEGIES: TypeAlias = Literal["file_path", "keyword_search", "filename_pattern"]
+SEARCH_STRATEGIES: TypeAlias = Literal[
+    "file_path", "keyword_search", "filename_pattern"
+]
