@@ -206,7 +206,7 @@ def ssh_debug_darwin() -> dict[str, dict[str, str | bool]]:
     if ok and "Status: Enabled" in pf_status:
         ok2, pf_rules = run_cmd(["sudo", "pfctl", "-s", "rules"])
         if ok2:
-            ssh_blocked = any(f"block" in line and (f"port {ssh_port}" in line or "port ssh" in line) for line in pf_rules.split("\n"))
+            ssh_blocked = any("block" in line and (f"port {ssh_port}" in line or "port ssh" in line) for line in pf_rules.split("\n"))
             if ssh_blocked:
                 results["firewall"] = {"status": "error", "message": "PF blocking SSH"}
                 issues.append(("PF blocking SSH", "Incoming connections dropped", "Check /etc/pf.conf and remove blocking rules for port 22"))

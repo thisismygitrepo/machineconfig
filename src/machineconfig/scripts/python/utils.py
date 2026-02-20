@@ -108,6 +108,18 @@ def compress_pdf(
     impl(pdf_input=pdf_input, output=output, quality=quality, image_dpi=image_dpi, compress_streams=compress_streams, use_objstms=use_objstms)
 
 
+def read_db_cli_tui(
+    path: Annotated[Optional[str], typer.Argument(..., help="The path to the file-based db")] = None,
+    backend: Annotated[Literal["rainfrog", "r", "lazysql", "l", "dblab", "d", "usql", "u", "harlequin", "h", "sqlit", "s"], typer.Option("--backend", "-b", help="The TUI database client to use.")] = "rainfrog",
+    read_only: Annotated[bool, typer.Option("--read-only", "-r", help="Open the database in read-only mode (if supported by backend).")] = False,
+    theme: Annotated[Optional[str], typer.Option("--theme", "-t", help="Theme to use (if supported by backend).")] = None,
+    limit: Annotated[Optional[int], typer.Option("--limit", "-l", help="Maximum number of rows to load (if supported by backend).")] = None,
+) -> None:
+    """🗃️ TUI DB Visualizer."""
+    from machineconfig.scripts.python.helpers.helpers_utils.read_db_cli_tui import app as impl
+    impl(path=path, backend=backend, read_only=read_only, theme=theme, limit=limit)
+
+
 def get_app() -> typer.Typer:
     app = typer.Typer(help="🛠️ utilities operations", no_args_is_help=True, add_help_option=True, add_completion=False)
     app.command(name="kill-process", no_args_is_help=False, help="⚔️ [k] Choose a process to kill")(kill_process)
@@ -136,9 +148,15 @@ def get_app() -> typer.Typer:
     app.command(name="type-hint", no_args_is_help=True, help="📝 [t] Type hint a file or project directory.")(type_hint)
     app.command(name="t", no_args_is_help=True, hidden=True)(type_hint)
 
+    app.command(name="read-db", no_args_is_help=False, help="🗃️ [db] TUI DB Visualizer.")(read_db_cli_tui)
+    app.command(name="db", no_args_is_help=False, hidden=True)(read_db_cli_tui)
+
     return app
 
 
 def main():
     app = get_app()
     app()
+
+if __name__ == "__main__":
+    main()
