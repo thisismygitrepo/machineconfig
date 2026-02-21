@@ -92,12 +92,12 @@
       "doc": "🧙‍♂️ Distributed version control system",
       "fileNamePattern": {
         "amd64": {
-          "linux": "sudo nala install git",
+          "linux": "sudo nala install git -y",
           "windows": "winget install --no-upgrade --name \"Git\" --Id \"Git.Git\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install git"
         },
         "arm64": {
-          "linux": "sudo nala install git",
+          "linux": "sudo nala install git -y",
           "windows": "winget install --no-upgrade --name \"Git\" --Id \"Git.Git\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install git"
         }
@@ -325,17 +325,34 @@
       }
     },
     {
+      "appName": "tmux",
+      "repoURL": "CMD",
+      "doc": "🖥️ Terminal multiplexer",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "sudo nala install tmux -y",
+          "windows": null,
+          "macos": "brew install tmux"
+        },
+        "arm64": {
+          "linux": "sudo nala install tmux -y",
+          "windows": null,
+          "macos": "brew install tmux"
+        }
+      }
+    },
+    {
       "appName": "boxes",
       "repoURL": "CMD",
       "doc": "📦 ASCI draws boxes around text.",
       "fileNamePattern": {
         "amd64": {
           "windows": "boxes.py",
-          "linux": "sudo nala install boxes",
+          "linux": "sudo nala install boxes -y",
           "macos": "brew install boxes"
         },
         "arm64": {
-          "linux": "sudo nala install boxes",
+          "linux": "sudo nala install boxes -y",
           "macos": "brew install boxes",
           "windows": "boxes.py"
         }
@@ -3526,12 +3543,12 @@
       "doc": "🌐 Mount remote filesystems over SSH",
       "fileNamePattern": {
         "amd64": {
-          "linux": "sudo nala install sshfs",
+          "linux": "sudo nala install sshfs -y",
           "windows": "winget install --no-upgrade --name \"SSHFS-win\" --Id \"SSHFS-Win.SSHFS-Win\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install sshfs"
         },
         "arm64": {
-          "linux": "sudo nala install sshfs",
+          "linux": "sudo nala install sshfs -y",
           "windows": "winget install --no-upgrade --name \"SSHFS-win\" --Id \"SSHFS-Win.SSHFS-Win\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "macos": "brew install sshfs"
         }
@@ -3662,12 +3679,12 @@
       "doc": "📦 File archiver with high compression ratio",
       "fileNamePattern": {
         "amd64": {
-          "linux": "sudo nala install p7zip-full",
+          "linux": "sudo nala install p7zip-full -y",
           "windows": "winget install --no-upgrade --name \"7-zip\" --Id \"7zip.7zip\" --source winget --accept-package-agreements --accept-source-agreements",
           "macos": "brew install p7zip"
         },
         "arm64": {
-          "linux": "sudo nala install p7zip-full",
+          "linux": "sudo nala install p7zip-full -y",
           "windows": "winget install --no-upgrade --name \"7-zip\" --Id \"7zip.7zip\" --source winget --accept-package-agreements --accept-source-agreements",
           "macos": "brew install p7zip"
         }

@@ -1,4 +1,5 @@
 
+from typing import TypeAlias, Literal
 GUI = [
     "brave",
     "code",
@@ -254,8 +255,15 @@ PACKAGES_TERMINAL_SHELL = [
 ]
 
 
+PACKAGE_NAME: TypeAlias = Literal[
+    "sysabc",
+    "shell", "search", "sys-monitor", "code-analysis", "termabc",
+    "dev", "dev-utils", "eye", "agents", "terminal", "browsers", "editors",
+    "db-all", "db-cli", "db-desktop", "db-web", "db-tui",
+    "media", "gui", "nw", "file-sharing", "productivity",
+]
 
-PACKAGE_GROUP2NAMES: dict[str, list[str]] = {
+PACKAGE_GROUP2NAMES: dict[PACKAGE_NAME, list[str]] = {
     "sysabc": ["sysabc"],
 
     "shell": PACKAGES_TERMINAL_SHELL,

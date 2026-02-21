@@ -3,7 +3,7 @@
 from machineconfig.utils.installer_utils.installer_locator_utils import check_if_installed_already
 from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData, InstallerDataFiles, get_normalized_arch, get_os_name, OPERATING_SYSTEMS, CPU_ARCHITECTURES
-from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
+from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES, PACKAGE_NAME
 from machineconfig.utils.path_extended import PathExtended
 from machineconfig.utils.source_of_truth import INSTALL_VERSION_ROOT, LINUX_INSTALL_PATH, WINDOWS_INSTALL_PATH
 from machineconfig.utils.io import read_json
@@ -95,7 +95,7 @@ def get_installed_cli_apps():
     return apps
 
 
-def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[str]]) -> list[InstallerData]:
+def get_installers(os: OPERATING_SYSTEMS, arch: CPU_ARCHITECTURES, which_cats: Optional[list[PACKAGE_NAME]]) -> list[InstallerData]:
     import machineconfig.jobs.installer as module
     from pathlib import Path
     res_raw: InstallerDataFiles = read_json(Path(module.__file__).parent.joinpath("installer_data.json"))
