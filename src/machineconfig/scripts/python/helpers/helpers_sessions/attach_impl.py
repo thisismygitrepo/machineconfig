@@ -18,6 +18,25 @@ def strip_ansi_codes(text: str) -> str:
     return _ANSI_ESCAPE_RE.sub("", text)
 
 
+def _natural_sort_key(text: str) -> list[int | str]:
+    """Return a key for natural (human) sorting: numbers are compared numerically."""
+    import re
+
+    return [
+        int(part) if part.isdigit() else part.lower()
+        for part in re.split(r"(\d+)", text)
+    ]
+
+
+def _session_sort_key(raw_line: str) -> tuple[bool, list[int | str]]:
+    """Sort key: active sessions first, then EXITED; within each group sort by session name (natural order)."""
+    is_exited = "EXITED" in raw_line
+    clean = strip_ansi_codes(raw_line)
+    # Extract session name: everything before " [Created"
+    name = clean.split(" [Created")[0].strip()
+    return (is_exited, _natural_sort_key(name))
+
+
 def choose_zellij_session(
     name: str | None, new_session: bool, kill_all: bool
 ) -> tuple[str, str | None]:
@@ -36,7 +55,7 @@ def choose_zellij_session(
     except subprocess.CalledProcessError:
         sessions = []
     sessions = [s for s in sessions if s.strip()]
-    sessions.sort(key=lambda s: ("EXITED" in s, strip_ansi_codes(s).lower()))
+    sessions.sort(key=_session_sort_key)
     if "current" in sessions:
         return ("error", "Already in a Zellij session, avoiding nesting and exiting.")
     if len(sessions) == 0:
@@ -92,7 +111,11 @@ def choose_tmux_session(
     except subprocess.CalledProcessError:
         sessions = []
     sessions = [s for s in sessions if s.strip()]
-    sessions.sort(key=lambda s: strip_ansi_codes(s).lower())
+    sessions.sort(
+        key=lambda s: _natural_sort_key(
+            strip_ansi_codes(s).split(" [Created")[0].strip()
+        )
+    )
     if len(sessions) == 0:
         return ("run_script", "tmux new-session")
     if len(sessions) == 1:
