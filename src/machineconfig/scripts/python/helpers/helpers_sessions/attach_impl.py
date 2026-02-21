@@ -70,14 +70,18 @@ def choose_zellij_session(
     kill_all_and_new_label = "KILL ALL SESSIONS & START NEW"
     options = sessions + [new_session_label, kill_all_and_new_label]
     try:
-        session_name = choose_from_options(
+        session_names = choose_from_options(
             msg="Choose a Zellij session to attach to:",
-            multi=False,
+            multi=True,
             options=options,
             tv=True,
+            custom_input=False,
         )
     except Exception as e:
         return ("error", f"Error choosing Zellij session: {e}")
+    if len(session_names) == 0:
+        return ("error", "No Zellij session selected.")
+    session_name = session_names[0]
     if session_name == new_session_label:
         cmd = f"zellij --layout {STANDARD}"
         if kill_all:
@@ -126,14 +130,18 @@ def choose_tmux_session(
     kill_all_and_new_label = "KILL ALL SESSIONS & START NEW"
     options = sessions + [new_session_label, kill_all_and_new_label]
     try:
-        session_name = choose_from_options(
+        session_names = choose_from_options(
             msg="Choose a tmux session to attach to:",
-            multi=False,
+            multi=True,
             options=options,
             tv=True,
+            custom_input=False,
         )
     except Exception as e:
         return ("error", f"Error choosing tmux session: {e}")
+    if len(session_names) == 0:
+        return ("error", "No tmux session selected.")
+    session_name = session_names[0]
     if session_name == new_session_label:
         cmd = "tmux new-session"
         if kill_all:
