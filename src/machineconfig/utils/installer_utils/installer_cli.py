@@ -140,9 +140,11 @@ def install_clis(clis_names: list[str]):
         for a_message in total_messages:
             console.print(f"[blue]• {a_message}[/blue]")
     return None
-def install_if_missing(which: str) -> bool:
+def install_if_missing(which: str, binary_name: Optional[str] = None) -> bool:
     from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
-    exists = check_tool_exists(which)
+    if binary_name is None:
+        binary_name = which
+    exists = check_tool_exists(binary_name)
     if exists:
         print(f"✅ {which} is already installed.")
         return True

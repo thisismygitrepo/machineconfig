@@ -53,6 +53,7 @@ def main(installer_data: InstallerData, version: Optional[str]):
     import time
 
     def on_rm_error(_func: Callable[..., Any], path: str, exc: BaseException) -> None:
+        _ = _func, exc
         os.chmod(path, stat.S_IWRITE)
         try:
             os.unlink(path)
@@ -74,12 +75,12 @@ def main(installer_data: InstallerData, version: Optional[str]):
     # previewers:
     install_if_missing(which= "glow")
     install_if_missing(which="duckdb")
-    install_if_missing(which="poppler")
+    install_if_missing(which="poppler", binary_name="pdftoppm")
     install_if_missing(which="jq")
     install_if_missing(which="resvg")
     # on windows those are missing
     install_if_missing(which="git")
-    install_if_missing(which="7zip")
+    install_if_missing(which="7zip", binary_name="7z")
     install_if_missing(which="file")
     import git
     git.Repo.clone_from("https://github.com/yazi-rs/plugins", yazi_plugins_path)

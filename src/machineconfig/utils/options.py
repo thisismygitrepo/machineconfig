@@ -62,7 +62,16 @@ def choose_from_options[T](
             "tmp_results/tmp_files/choices_" + randstr(6) + ".txt"
         )
         options_txt_path.parent.mkdir(parents=True, exist_ok=True)
-        options_txt_path.write_text("\n".join(options_strings), encoding="utf-8")
+        row_separator = "|"
+        options_index_to_value: dict[str, str] = {}
+        entries_lines: list[str] = []
+        for idx, option_string in enumerate(options_strings):
+            option_display = option_string.replace("\n", " ").replace(row_separator, "¦")
+            entries_lines.append(f"{idx}{row_separator}{option_display}")
+            options_index_to_value[str(idx)] = option_string
+        options_txt_path.write_text("\n".join(entries_lines), encoding="utf-8")
+        banner_message = Text.from_markup(msg).plain.strip().replace("\n", " ")
+        banner_message = f"ℹ {banner_message}" if banner_message else ""
 
         # Run `tv` interactively so the user can make selections. We redirect tv's
         # stdout to a temporary output file so we can read the chosen lines after
@@ -85,12 +94,16 @@ def choose_from_options[T](
             # Also: `tv --ansi` is a flag (no value). Passing `true` makes it a positional argument
             # (channel/path/command), which can lead to confusing behavior.
             source_cmd = f'cmd /C type "{options_txt_path}"'
+            escaped_banner_message_windows = banner_message.replace("'", "''")
+            input_header_arg = f" --input-header '{escaped_banner_message_windows}'" if banner_message else ""
             tv_cmd = f"""
 $OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-tv  {preview_line} --no-sort --ansi --source-command '{source_cmd}' --source-output "{{}}" | Out-File -Encoding utf8 -FilePath "{tv_out_path}" """
+tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command '{source_cmd}' --source-display "{{split:|:1}}" --source-output "{{split:|:0}}" | Out-File -Encoding utf8 -FilePath "{tv_out_path}" """
         else:
             source_cmd = f'cat "{options_txt_path}"'
-            tv_cmd = f"""tv  {preview_line} --no-sort --ansi --source-command "{source_cmd}" --source-output "{{}}" > "{tv_out_path}" """
+            escaped_banner_message = banner_message.replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$").replace("`", "\\`")
+            input_header_arg = f' --input-header "{escaped_banner_message}"' if banner_message else ""
+            tv_cmd = f"""tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command "{source_cmd}" --source-display "{{split:|:1}}" --source-output "{{split:|:0}}" > "{tv_out_path}" """
 
         # print(f"Running tv command: {tv_cmd}")
         # print(f"Options file: {options_txt_path}")
@@ -109,7 +122,24 @@ tv  {preview_line} --no-sort --ansi --source-command '{source_cmd}' --source-out
         # Read selections (if any) from the output file created by tv.
         print(f"Reading tv output from: {tv_out_path}")
         out_text = tv_out_path.read_text(encoding="utf-8-sig")
-        choice_string_multi = [x for x in out_text.splitlines() if x.strip() != ""]
+        selected_rows = [x for x in out_text.splitlines() if x.strip() != ""]
+        choice_string_multi = [options_index_to_value[x] for x in selected_rows if x in options_index_to_value]
+        if not choice_string_multi and not multi:
+            options_txt_path.unlink(missing_ok=True)
+            tv_out_path.unlink(missing_ok=True)
+            console.print(Panel("❓ No option selected!", title="Error", expand=False))
+            return choose_from_options(
+                msg=msg,
+                options=options,
+                header=header,
+                tail=tail,
+                prompt=prompt,
+                default=default,
+                tv=tv,
+                multi=multi,
+                custom_input=custom_input,
+                preview=preview,
+            )
 
         # if len(choice_string_multi) == 0:  # e.g. user pressed escape
         #     console.print(Panel("❓ No option selected!", title="Error", expand=False))

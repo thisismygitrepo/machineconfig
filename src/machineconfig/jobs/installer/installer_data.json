@@ -3662,14 +3662,14 @@
       "doc": "📦 File archiver with high compression ratio",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
+          "linux": "sudo nala install p7zip-full",
           "windows": "winget install --no-upgrade --name \"7-zip\" --Id \"7zip.7zip\" --source winget --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install p7zip"
         },
         "arm64": {
-          "linux": null,
+          "linux": "sudo nala install p7zip-full",
           "windows": "winget install --no-upgrade --name \"7-zip\" --Id \"7zip.7zip\" --source winget --accept-package-agreements --accept-source-agreements",
-          "macos": null
+          "macos": "brew install p7zip"
         }
       }
     },
