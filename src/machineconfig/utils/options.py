@@ -62,14 +62,7 @@ def choose_from_options[T](
             "tmp_results/tmp_files/choices_" + randstr(6) + ".txt"
         )
         options_txt_path.parent.mkdir(parents=True, exist_ok=True)
-        row_separator = "|"
-        options_index_to_value: dict[str, str] = {}
-        entries_lines: list[str] = []
-        for idx, option_string in enumerate(options_strings):
-            option_display = option_string.replace("\n", " ").replace(row_separator, "¦")
-            entries_lines.append(f"{idx}{row_separator}{option_display}")
-            options_index_to_value[str(idx)] = option_string
-        options_txt_path.write_text("\n".join(entries_lines), encoding="utf-8")
+        options_txt_path.write_text("\n".join(options_strings), encoding="utf-8")
         banner_message = Text.from_markup(msg).plain.strip().replace("\n", " ")
         banner_message = f"ℹ {banner_message}" if banner_message else ""
 
@@ -98,12 +91,12 @@ def choose_from_options[T](
             input_header_arg = f" --input-header '{escaped_banner_message_windows}'" if banner_message else ""
             tv_cmd = f"""
 $OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
-tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command '{source_cmd}' --source-display "{{split:|:1}}" --source-output "{{split:|:0}}" | Out-File -Encoding utf8 -FilePath "{tv_out_path}" """
+tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command '{source_cmd}' --source-output "{{}}" | Out-File -Encoding utf8 -FilePath "{tv_out_path}" """
         else:
             source_cmd = f'cat "{options_txt_path}"'
             escaped_banner_message = banner_message.replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$").replace("`", "\\`")
             input_header_arg = f' --input-header "{escaped_banner_message}"' if banner_message else ""
-            tv_cmd = f"""tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command "{source_cmd}" --source-display "{{split:|:1}}" --source-output "{{split:|:0}}" > "{tv_out_path}" """
+            tv_cmd = f"""tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command "{source_cmd}" --source-output "{{}}" > "{tv_out_path}" """
 
         # print(f"Running tv command: {tv_cmd}")
         # print(f"Options file: {options_txt_path}")
@@ -122,8 +115,7 @@ tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --sou
         # Read selections (if any) from the output file created by tv.
         print(f"Reading tv output from: {tv_out_path}")
         out_text = tv_out_path.read_text(encoding="utf-8-sig")
-        selected_rows = [x for x in out_text.splitlines() if x.strip() != ""]
-        choice_string_multi = [options_index_to_value[x] for x in selected_rows if x in options_index_to_value]
+        choice_string_multi = [x for x in out_text.splitlines() if x.strip() != ""]
         if not choice_string_multi and not multi:
             options_txt_path.unlink(missing_ok=True)
             tv_out_path.unlink(missing_ok=True)
