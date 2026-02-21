@@ -272,12 +272,9 @@ def search(
         from rich.panel import Panel
         from rich.syntax import Syntax
         from machineconfig.scripts.python.graph.visualize.graph_paths import DEFAULT_GRAPH_PATH
-        from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
         from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
-
-        if not check_tool_exists("tv"):
-            raise RuntimeError("`tv` is required for explore search. Install `tv` and try again.")
-
+        from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+        install_if_missing(which="tv")
         graph_file = Path(graph_path_str) if graph_path_str else DEFAULT_GRAPH_PATH
         graph_data = json.loads(graph_file.read_text(encoding="utf-8"))
         root = graph_data.get("root")
