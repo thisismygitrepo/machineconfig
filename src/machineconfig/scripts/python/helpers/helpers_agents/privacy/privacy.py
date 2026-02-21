@@ -14,7 +14,7 @@ in the following cli how to set it for maximal prviacy *turn off any telemetry, 
     "aider",
     "aichat",  # rust cli
     "copilot",  # cli from github copilot extension
-    "gemini",  # gemini cli 
+    "gemini",  # gemini cli
     "crush",  # cli from charm team
     "mods",  # cli from same people as crush (not agent) @ https://github.com/charmbracelet/mods
     "opencode-ai",
@@ -33,8 +33,11 @@ in the following cli how to set it for maximal prviacy *turn off any telemetry, 
 from typing import Optional
 
 
-def apply_max_privacy_and_security_rules_and_configs(overwrite: bool, repo_root: Optional[str]) -> None:
+def apply_max_privacy_and_security_rules_and_configs(
+    overwrite: bool, repo_root: Optional[str]
+) -> None:
     from machineconfig.utils.source_of_truth import LIBRARY_ROOT
+
     root = LIBRARY_ROOT / "scripts/python/helpers_agents/privacy/configs"
     from pathlib import Path
 
@@ -71,20 +74,26 @@ def apply_max_privacy_and_security_rules_and_configs(overwrite: bool, repo_root:
         aichat_settings_target_global.write_text(aichat_settings_source.read_text())
 
     if repo_root:
-        aichat_settings_target_repo = Path(repo_root).joinpath(".config/aichat/config.yaml")
+        aichat_settings_target_repo = Path(repo_root).joinpath(
+            ".config/aichat/config.yaml"
+        )
         if not aichat_settings_target_repo.exists() or overwrite:
             aichat_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
             aichat_settings_target_repo.write_text(aichat_settings_source.read_text())
 
     # Copilot privacy settings
     copilot_settings_source = root.joinpath("copilot/config.yml")
-    copilot_settings_target_global = Path.home().joinpath(".config/gh-copilot/config.yml")
+    copilot_settings_target_global = Path.home().joinpath(
+        ".config/gh-copilot/config.yml"
+    )
     if not copilot_settings_target_global.exists() or overwrite:
         copilot_settings_target_global.parent.mkdir(parents=True, exist_ok=True)
         copilot_settings_target_global.write_text(copilot_settings_source.read_text())
 
     if repo_root:
-        copilot_settings_target_repo = Path(repo_root).joinpath(".config/gh-copilot/config.yml")
+        copilot_settings_target_repo = Path(repo_root).joinpath(
+            ".config/gh-copilot/config.yml"
+        )
         if not copilot_settings_target_repo.exists() or overwrite:
             copilot_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
             copilot_settings_target_repo.write_text(copilot_settings_source.read_text())
@@ -101,6 +110,18 @@ def apply_max_privacy_and_security_rules_and_configs(overwrite: bool, repo_root:
         if not crush_settings_target_repo.exists() or overwrite:
             crush_settings_target_repo.parent.mkdir(parents=True, exist_ok=True)
             crush_settings_target_repo.write_text(crush_settings_source.read_text())
+
+    # OpenCode privacy settings
+    try:
+        from machineconfig.scripts.python.helpers.helpers_agents.privacy.configs.opencode.opencode_privacy import (
+            apply_opencode_privacy,
+        )
+
+        apply_opencode_privacy(scope="global")
+        if repo_root:
+            apply_opencode_privacy(scope="repo", repo_path=repo_root)
+    except Exception as e:
+        print(f"Failed to apply opencode privacy settings: {e}")
 
     # next, cursh cli
 

@@ -1,5 +1,5 @@
 -- DuckDB plugin configuration
--- require("duckdb"):setup()
+require("duckdb"):setup()
 
 -- https://yazi-rs.github.io/docs/tips#symlink-in-status
 -- https://yazi-rs.github.io/docs/tips#user-group-in-status
