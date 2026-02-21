@@ -36,7 +36,7 @@ def tree(
         uv_with=uv_with,
         uv_project_dir=uv_project_dir,
     )
-    exit_then_run_shell_script(str(shell_script), strict=True)
+    exit_then_run_shell_script(str(shell_script), strict=False)
 
 
 def dot(
@@ -54,10 +54,9 @@ def dot(
 
         if output_path is None:
             print(dot_text)
-            return
-
-        output_path.write_text(dot_text, encoding="utf-8")
-        print(f"Wrote {output_path}")
+        else:
+            output_path.write_text(dot_text, encoding="utf-8")
+            print(f"Wrote {output_path}")
 
     from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
     from machineconfig.utils.code import get_shell_script_running_lambda_function, exit_then_run_shell_script
@@ -78,7 +77,7 @@ def dot(
         uv_with=uv_with,
         uv_project_dir=uv_project_dir,
     )
-    exit_then_run_shell_script(str(shell_script), strict=True)
+    exit_then_run_shell_script(str(shell_script), strict=False)
 
 
 def sunburst(
@@ -130,7 +129,7 @@ def sunburst(
         uv_with=uv_with,
         uv_project_dir=uv_project_dir,
     )
-    exit_then_run_shell_script(str(shell_script), strict=True)
+    exit_then_run_shell_script(str(shell_script), strict=False)
 
 
 def treemap(
@@ -182,7 +181,7 @@ def treemap(
         uv_with=uv_with,
         uv_project_dir=uv_project_dir,
     )
-    exit_then_run_shell_script(str(shell_script), strict=True)
+    exit_then_run_shell_script(str(shell_script), strict=False)
 
 
 def icicle(
@@ -234,7 +233,7 @@ def icicle(
         uv_with=uv_with,
         uv_project_dir=uv_project_dir,
     )
-    exit_then_run_shell_script(str(shell_script), strict=True)
+    exit_then_run_shell_script(str(shell_script), strict=False)
 
 
 def navigate():
@@ -260,7 +259,125 @@ def navigate():
         uv_project_dir = None
     shell_script, _pyfile = get_shell_script_running_lambda_function(lambda: func(),
             uv_with=uv_with, uv_project_dir=uv_project_dir)
-    exit_then_run_shell_script(str(shell_script), strict=True)
+    exit_then_run_shell_script(str(shell_script), strict=False)
+
+
+def search(
+    graph_path: Annotated[Path | None, typer.Option("--graph-path", "-g", help="Path to cli_graph.json")] = None,
+) -> None:
+    """🔎 Search cli_graph.json entries and print the full selected entry."""
+    def func(graph_path_str: str | None) -> None:
+        import json
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.syntax import Syntax
+        from machineconfig.scripts.python.graph.visualize.graph_paths import DEFAULT_GRAPH_PATH
+        from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
+        from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
+        from machineconfig.utils.source_of_truth import REPO_ROOT
+
+        if not check_tool_exists("tv"):
+            raise RuntimeError("`tv` is required for explore search. Install `tv` and try again.")
+
+        graph_file = Path(graph_path_str) if graph_path_str else DEFAULT_GRAPH_PATH
+        graph_data = json.loads(graph_file.read_text(encoding="utf-8"))
+        root = graph_data.get("root")
+        if not isinstance(root, dict):
+            raise ValueError(f"Invalid graph root in {graph_file}")
+
+        entries: list[tuple[str, str, dict[str, object]]] = []
+
+        def walk(node: dict[str, object], parent_tokens: list[str]) -> None:
+            node_name = node.get("name")
+            node_name_str = node_name if isinstance(node_name, str) else ""
+            tokens = parent_tokens + ([node_name_str] if node_name_str else [])
+            source = node.get("source")
+            if node.get("kind") == "command" and isinstance(source, dict):
+                source_file = source.get("file")
+                if isinstance(source_file, str) and source_file.endswith(".py"):
+                    command_path = " ".join(tokens).strip() or source_file
+                    entries.append((source_file, command_path, node))
+            children = node.get("children")
+            if isinstance(children, list):
+                for child in children:
+                    if isinstance(child, dict):
+                        walk(child, tokens)
+
+        walk(root, [])
+        if not entries:
+            raise ValueError(f"No .py command entries found in {graph_file}")
+
+        entries.sort(key=lambda item: (item[0], item[1]))
+        file_to_entries: dict[str, list[tuple[str, dict[str, object]]]] = {}
+        for source_file, command_path, entry in entries:
+            file_to_entries.setdefault(source_file, []).append((command_path, entry))
+
+        file_preview_mapping: dict[str, str] = {}
+        for source_file in file_to_entries:
+            source_path = REPO_ROOT.joinpath(source_file)
+            if source_path.exists():
+                file_preview_mapping[source_file] = source_path.read_text(encoding="utf-8")
+            else:
+                file_preview_mapping[source_file] = f"# Missing source file\n{source_path}"
+
+        selected_file = choose_from_dict_with_preview(
+            options_to_preview_mapping=file_preview_mapping,
+            extension="py",
+            multi=False,
+            preview_size_percent=60,
+        )
+        if selected_file is not None:
+            entry_preview_mapping: dict[str, str] = {}
+            entry_lookup: dict[str, tuple[str, dict[str, object]]] = {}
+            for idx, (command_path, entry) in enumerate(file_to_entries[selected_file], start=1):
+                summary = str(entry.get("short_help") or entry.get("help") or entry.get("doc") or "").strip()
+                option_key = f"{idx:03d} {command_path}" if command_path else f"{idx:03d} {entry.get('name', 'command')}"
+                entry_lookup[option_key] = (command_path, entry)
+                if summary:
+                    entry_preview_mapping[option_key] = summary + "\n\n" + json.dumps(entry, ensure_ascii=False, indent=2)
+                else:
+                    entry_preview_mapping[option_key] = json.dumps(entry, ensure_ascii=False, indent=2)
+
+            selected_entry_key = choose_from_dict_with_preview(
+                options_to_preview_mapping=entry_preview_mapping,
+                extension="json",
+                multi=False,
+                preview_size_percent=70,
+            )
+            if selected_entry_key is not None:
+                selected_command, selected_entry = entry_lookup[selected_entry_key]
+                console = Console()
+                console.print(
+                    Panel(
+                        f"[bold]Source file:[/bold] {selected_file}\n[bold]Command:[/bold] {selected_command}",
+                        title="🔎 CLI Graph Search Result",
+                        border_style="green",
+                    )
+                )
+                console.print(
+                    Panel(
+                        Syntax(json.dumps(selected_entry, ensure_ascii=False, indent=2), "json", line_numbers=True),
+                        title="📦 Full cli_graph.json Entry",
+                        border_style="cyan",
+                    )
+                )
+            
+
+    from machineconfig.utils.ssh_utils.abc import MACHINECONFIG_VERSION
+    from machineconfig.utils.code import get_shell_script_running_lambda_function, exit_then_run_shell_script
+
+    if Path.home().joinpath("code", "machineconfig").exists():
+        uv_with = []
+        uv_project_dir = str(Path.home().joinpath("code/machineconfig"))
+    else:
+        uv_with = [MACHINECONFIG_VERSION]
+        uv_project_dir = None
+    shell_script, _pyfile = get_shell_script_running_lambda_function(
+        lambda: func(graph_path_str=str(graph_path) if graph_path else None),
+        uv_with=uv_with,
+        uv_project_dir=uv_project_dir,
+    )
+    exit_then_run_shell_script(str(shell_script), strict=False)
 
 
 def get_app() -> typer.Typer:
@@ -270,18 +387,20 @@ def get_app() -> typer.Typer:
         add_help_option=True,
         add_completion=False,
     )
+    cli_app.command(name="search", no_args_is_help=False, help="🔎 [s] Search cli_graph.json entries with TV preview.")(search)
+    cli_app.command(name="s", no_args_is_help=False, help="Search cli_graph.json entries with TV preview.", hidden=True)(search)
     cli_app.command(name="tree", no_args_is_help=False, help="🌳 [t] Render a rich tree view in the terminal.")(tree)
     cli_app.command(name="t", no_args_is_help=False, help="Render a rich tree view in the terminal.", hidden=True)(tree)
     cli_app.command(name="dot", no_args_is_help=False, help="🧩 [d] Export the graph as Graphviz DOT.")(dot)
     cli_app.command(name="d", no_args_is_help=False, help="Export the graph as Graphviz DOT.", hidden=True)(dot)
-    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️ [s] Render a Plotly sunburst view.")(sunburst)
-    cli_app.command(name="s", no_args_is_help=False, help="Render a Plotly sunburst view.", hidden=True)(sunburst)
+    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️ [u] Render a Plotly sunburst view.")(sunburst)
+    cli_app.command(name="u", no_args_is_help=False, help="Render a Plotly sunburst view.", hidden=True)(sunburst)
     cli_app.command(name="treemap", no_args_is_help=False, help="🧱 [m] Render a Plotly treemap view.")(treemap)
     cli_app.command(name="m", no_args_is_help=False, help="Render a Plotly treemap view.", hidden=True)(treemap)
     cli_app.command(name="icicle", no_args_is_help=False, help="🧊 [i] Render a Plotly icicle view.")(icicle)
     cli_app.command(name="i", no_args_is_help=False, help="Render a Plotly icicle view.", hidden=True)(icicle)
-    cli_app.command(name="tui", no_args_is_help=False, help="📚 [t] NAVIGATE command structure with TUI")(navigate)
-    cli_app.command(name="t", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
+    cli_app.command(name="tui", no_args_is_help=False, help="📚 [u] NAVIGATE command structure with TUI")(navigate)
+    cli_app.command(name="u", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
     return cli_app
 
 

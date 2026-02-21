@@ -1,5 +1,7 @@
+import getpass
 import json
 import os
+import tempfile
 from pathlib import Path
 
 from machineconfig.scripts.python.helpers.helpers_devops.mount_helpers.commands import ensure_ok, run_command, run_command_sudo
@@ -69,6 +71,29 @@ def is_admin():
         # Use Windows API via ctypes or other method here
         return False
 
+def _mount_bitlocker_linux(device_path: str, mount_point: str) -> None:
+    print("🔒 BitLocker volume detected.")
+    method = input("Unlock method?\n  [1] Paste password\n  [2] Path to recovery key / BEK file\nChoice [1]: ").strip() or "1"
+    dislocker_dir = Path(tempfile.mkdtemp(prefix="dislocker_"))
+    if method == "2":
+        key_file = input("Path to key file: ").strip()
+        dislocker_cmd = ["dislocker", device_path, "-f", key_file, "--", str(dislocker_dir)]
+    else:
+        password = getpass.getpass("BitLocker password: ")
+        dislocker_cmd = ["dislocker", device_path, f"-u{password}", "--", str(dislocker_dir)]
+    result = run_command_sudo(dislocker_cmd)
+    ensure_ok(result, "dislocker")
+    mount_path = Path(mount_point)
+    try:
+        mount_path.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        ensure_ok(run_command_sudo(["mkdir", "-p", str(mount_path)]), "mkdir")
+    dislocker_file = dislocker_dir / "dislocker-file"
+    result = run_command_sudo(["mount", "-o", "loop", str(dislocker_file), str(mount_path)])
+    ensure_ok(result, "mount (dislocker-file)")
+    print(f"🔓 BitLocker volume mounted at {mount_point} (dislocker temp dir: {dislocker_dir})")
+
+
 def mount_linux(entry: DeviceEntry, mount_point: str) -> None:
     mount_path = Path(mount_point)
     try:
@@ -80,7 +105,12 @@ def mount_linux(entry: DeviceEntry, mount_point: str) -> None:
         result = run_command(["mount", entry.device_path, str(mount_path)])
     else:
         result = run_command_sudo(["mount", entry.device_path, str(mount_path)])
-    ensure_ok(result, "mount")
+    if result.returncode != 0:
+        err = (result.stderr + result.stdout).lower()
+        if "bitlocker" in err:
+            _mount_bitlocker_linux(entry.device_path, mount_point)
+            return
+        ensure_ok(result, "mount")  # re-raise original error for non-BitLocker failures
 
 
 def _is_partition_of_disk(partition: DeviceEntry, disk: DeviceEntry) -> bool:
