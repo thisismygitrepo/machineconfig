@@ -18,7 +18,7 @@ def choose_from_options[T](
     default: Optional[T] = None,
     tv: bool = False,
     preview: Optional[Literal["bat"]] = None,
-) -> T: ...
+) -> Optional[T]: ...
 @overload
 def choose_from_options[T](
     options: Iterable[T],
@@ -31,7 +31,7 @@ def choose_from_options[T](
     default: Optional[T] = None,
     tv: bool = False,
     preview: Optional[Literal["bat"]] = None,
-) -> list[T]: ...
+) -> Optional[list[T]]: ...
 def choose_from_options[T](
     options: Iterable[T],
     msg: str,
@@ -43,10 +43,15 @@ def choose_from_options[T](
     default: Optional[T] = None,
     tv: bool = False,
     preview: Optional[Literal["bat"]] = None,
-) -> Union[T, list[T]]:
+) -> Optional[Union[T, list[T]]]:
     # TODO: replace with https://github.com/tmbo/questionary
     # # also see https://github.com/charmbracelet/gum
-    options_strings: list[str] = [str(x) for x in options]
+    options_list: list[T] = list(options)
+    if len(options_list) == 0:
+        console = Console()
+        console.print(Panel("❓ No options available to choose from.", title="Error", expand=False))
+        return None
+    options_strings: list[str] = [str(x) for x in options_list]
     default_string = str(default) if default is not None else None
     console = Console()
     from machineconfig.utils.installer_utils.installer_locator_utils import (
@@ -78,7 +83,10 @@ def choose_from_options[T](
                 r"""--preview-command "bat -n --color=always {}" --preview-size 70 """
             )
         else:
-            raise ValueError(f"Unknown preview type: {preview}")
+            console.print(Panel(f"❓ Unknown preview type: {preview}", title="Error", expand=False))
+            options_txt_path.unlink(missing_ok=True)
+            tv_out_path.unlink(missing_ok=True)
+            return None
         import platform
 
         if platform.system() == "Windows":
@@ -88,14 +96,25 @@ def choose_from_options[T](
             # (channel/path/command), which can lead to confusing behavior.
             source_cmd = f'cmd /C type "{options_txt_path}"'
             escaped_banner_message_windows = banner_message.replace("'", "''")
-            input_header_arg = f" --input-header '{escaped_banner_message_windows}'" if banner_message else ""
+            input_header_arg = (
+                f" --input-header '{escaped_banner_message_windows}'"
+                if banner_message
+                else ""
+            )
             tv_cmd = f"""
 $OutputEncoding = [Console]::InputEncoding = [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command '{source_cmd}' --source-output "{{}}" | Out-File -Encoding utf8 -FilePath "{tv_out_path}" """
         else:
             source_cmd = f'cat "{options_txt_path}"'
-            escaped_banner_message = banner_message.replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$").replace("`", "\\`")
-            input_header_arg = f' --input-header "{escaped_banner_message}"' if banner_message else ""
+            escaped_banner_message = (
+                banner_message.replace("\\", "\\\\")
+                .replace('"', '\\"')
+                .replace("$", "\\$")
+                .replace("`", "\\`")
+            )
+            input_header_arg = (
+                f' --input-header "{escaped_banner_message}"' if banner_message else ""
+            )
             tv_cmd = f"""tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --source-command "{source_cmd}" --source-output "{{}}" > "{tv_out_path}" """
 
         # print(f"Running tv command: {tv_cmd}")
@@ -108,30 +127,20 @@ tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --sou
 
         # If tv returned a non-zero code and there is no output file, treat it as an error.
         if res.returncode != 0 and not tv_out_path.exists():
-            raise RuntimeError(
-                f"Got error running tv command: {tv_cmd}\nreturncode: {res.returncode}"
-            )
+            console.print(Panel("❌ Interactive picker failed.", title="Error", expand=False))
+            options_txt_path.unlink(missing_ok=True)
+            tv_out_path.unlink(missing_ok=True)
+            return None
 
         # Read selections (if any) from the output file created by tv.
         print(f"Reading tv output from: {tv_out_path}")
         out_text = tv_out_path.read_text(encoding="utf-8-sig")
         choice_string_multi = [x for x in out_text.splitlines() if x.strip() != ""]
-        if not choice_string_multi and not multi:
+        if not choice_string_multi:
             options_txt_path.unlink(missing_ok=True)
             tv_out_path.unlink(missing_ok=True)
-            console.print(Panel("❓ No option selected!", title="Error", expand=False))
-            return choose_from_options(
-                msg=msg,
-                options=options,
-                header=header,
-                tail=tail,
-                prompt=prompt,
-                default=default,
-                tv=tv,
-                multi=multi,
-                custom_input=custom_input,
-                preview=preview,
-            )
+            console.print(Panel("❓ No option selected!", title="Cancelled", expand=False))
+            return None
 
         # if len(choice_string_multi) == 0:  # e.g. user pressed escape
         #     console.print(Panel("❓ No option selected!", title="Error", expand=False))
@@ -143,35 +152,39 @@ tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --sou
         if not multi:
             try:
                 choice_one_string = choice_string_multi[0]
-                if isinstance(list(options)[0], str):
+                if isinstance(options_list[0], str):
                     print(f"✅ Selected option: {choice_one_string}")
                     return cast(T, choice_one_string)
                 choice_idx = options_strings.index(choice_one_string)
-                choice_made = list(options)[choice_idx]
+                choice_made = options_list[choice_idx]
                 print(f"✅ Selected option: {choice_made}")
                 return choice_made
-            except IndexError as ie:
+            except (IndexError, ValueError):
                 # print(f"❌ Error: {options=}, {choice_string_multi=}")
                 print(f"🔍 Available choices: {len(choice_string_multi)}")
-                raise ie
-        if isinstance(list(options)[0], str):
+                return None
+        if isinstance(options_list[0], str):
             result2 = cast(list[T], choice_string_multi)
             print(f"✅ Selected options: {result2}")
             return result2
-        choice_idx_s = [options_strings.index(x) for x in choice_string_multi]
-        result = [list(options)[x] for x in choice_idx_s]
+        try:
+            choice_idx_s = [options_strings.index(x) for x in choice_string_multi]
+        except ValueError:
+            console.print(Panel("❌ Could not map selected option(s) to source list.", title="Error", expand=False))
+            return None
+        result = [options_list[x] for x in choice_idx_s]
         print(f"✅ Selected options: {result}")
         return result
     else:
         if default is not None:
-            assert default in options, (
-                f"Default `{default}` option not in options `{list(options)}`"
+            assert default in options_list, (
+                f"Default `{default}` option not in options `{options_list}`"
             )
             default_msg = Text(" <<<<-------- DEFAULT", style="bold red")
         else:
             default_msg = Text("")
         txt = Text("\n" + msg + "\n")
-        for idx, key in enumerate(options):
+        for idx, key in enumerate(options_list):
             txt = (
                 txt
                 + Text(f"{idx:2d} ", style="bold blue")
@@ -196,30 +209,20 @@ tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --sou
                         "🧨 Default option not available!", title="Error", expand=False
                     )
                 )
-                return choose_from_options(
-                    msg=msg,
-                    options=options,
-                    header=header,
-                    tail=tail,
-                    prompt=prompt,
-                    default=default,
-                    tv=tv,
-                    multi=multi,
-                    custom_input=custom_input,
-                )
+                return None
             choice_idx = options_strings.index(default_string)
             assert default is not None, "🧨 Default option not available!"
             choice_one: T = default
         else:
             try:
                 choice_idx = int(choice_string, base=10)
-                choice_one = list(options)[choice_idx]
+                choice_one = options_list[choice_idx]
             except (
                 IndexError
             ) as ie:  # i.e. converting to integer was successful but indexing failed.
                 if choice_string in options_strings:  # string input
-                    choice_idx = options_strings.index(choice_one)  # type: ignore
-                    choice_one = list(options)[choice_idx]
+                    choice_idx = options_strings.index(choice_string)
+                    choice_one = options_list[choice_idx]
                 elif custom_input:
                     return str(choice_string)  # type: ignore
                 else:
@@ -232,24 +235,14 @@ tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --sou
                             expand=False,
                         )
                     )
-                    return choose_from_options(
-                        msg=msg,
-                        options=options,
-                        header=header,
-                        tail=tail,
-                        prompt=prompt,
-                        default=default,
-                        tv=tv,
-                        multi=multi,
-                        custom_input=custom_input,
-                    )
+                    return None
             except (
                 TypeError,
                 ValueError,
             ) as te:  # int(choice_string) failed due to # either the number is invalid, or the input is custom.
                 if choice_string in options_strings:  # string input
-                    choice_idx = options_strings.index(choice_one)  # type: ignore
-                    choice_one = list(options)[choice_idx]
+                    choice_idx = options_strings.index(choice_string)
+                    choice_one = options_list[choice_idx]
                 elif custom_input:
                     return choice_string  # type: ignore
                 else:
@@ -262,17 +255,7 @@ tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --sou
                             expand=False,
                         )
                     )
-                    return choose_from_options(
-                        msg=msg,
-                        options=options,
-                        header=header,
-                        tail=tail,
-                        prompt=prompt,
-                        default=default,
-                        tv=tv,
-                        multi=multi,
-                        custom_input=custom_input,
-                    )
+                    return None
         console.print(
             Panel(
                 f"✅ Selected option {choice_idx}: {choice_one}",
@@ -285,7 +268,7 @@ tv  {preview_line} --no-sort --ansi --input-position top{input_header_arg} --sou
     return choice_one
 
 
-def choose_cloud_interactively() -> str:
+def choose_cloud_interactively() -> Optional[str]:
     console = Console()
     console.print(
         Panel(
@@ -307,13 +290,15 @@ def choose_cloud_interactively() -> str:
         raise RuntimeError(
             "You don't have remotes. Configure your rclone first to get cloud services access."
         )
-    cloud: str = choose_from_options(
+    cloud = choose_from_options(
         msg="WHICH CLOUD?",
         multi=False,
         options=list(remotes),
         default=remotes[0],
         tv=True,
     )
+    if cloud is None:
+        return None
     console.print(
         Panel(f"✅ SELECTED CLOUD | {cloud}", border_style="bold blue", expand=False)
     )
@@ -329,8 +314,8 @@ def get_ssh_hosts() -> list[str]:
 
 
 @overload
-def choose_ssh_host(multi: Literal[False]) -> str: ...
+def choose_ssh_host(multi: Literal[False]) -> Optional[str]: ...
 @overload
-def choose_ssh_host(multi: Literal[True]) -> list[str]: ...
+def choose_ssh_host(multi: Literal[True]) -> Optional[list[str]]: ...
 def choose_ssh_host(multi: bool):
     return choose_from_options(msg="", options=get_ssh_hosts(), multi=multi, tv=True)

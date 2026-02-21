@@ -12,6 +12,8 @@ def pick_device(entries: list[DeviceEntry], header: str) -> DeviceEntry:
 		options.append(option)
 		map_option[option] = entry
 	choice = choose_from_options(options=options, msg="Select a device", multi=False, header=header, tv=True)
+	if choice is None:
+		raise RuntimeError("Device selection cancelled")
 	selected = map_option.get(choice)
 	if selected is None:
 		raise RuntimeError("Selection not found")

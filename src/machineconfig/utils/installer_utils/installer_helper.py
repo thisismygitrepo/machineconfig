@@ -42,14 +42,13 @@ def handle_installer_not_found(search_term: str, app_apps: list[InstallerData]) 
     order_matches_with_docs = [f"{app_name:<20} : " + name_to_doc.get(app_name, "") for app_name in ordered_matches]
     from machineconfig.utils.options import choose_from_options
 
-    try:
-        chosen = choose_from_options(
-            options=order_matches_with_docs,
-            msg=f"🔍 No installer found for '[red]{search_term}[/red]'. Did you mean one of these?",
-            multi=True,
-            tv=True
-        )
-    except KeyboardInterrupt:
+    chosen = choose_from_options(
+        options=order_matches_with_docs,
+        msg=f"🔍 No installer found for '[red]{search_term}[/red]'. Did you mean one of these?",
+        multi=True,
+        tv=True
+    )
+    if chosen is None or len(chosen) == 0:
         print("\n❌ Selection cancelled by user.")
         return []
     apps_chosen = [app.split(" : ")[0].strip() for app in chosen]

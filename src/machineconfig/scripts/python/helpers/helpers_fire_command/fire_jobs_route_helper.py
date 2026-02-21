@@ -24,6 +24,8 @@ def choose_function_or_lines(choice_file: Path, kwargs_dict: dict[str, object]) 
         from machineconfig.scripts.python.helpers.helpers_fire_command.file_wrangler import parse_pyfile
         options, func_args = parse_pyfile(file_path=str(choice_file))
         choice_function_tmp = choose_from_options(msg="Choose a function to run", options=options, tv=True, multi=False)
+        if choice_function_tmp is None:
+            return None, choice_file, kwargs_dict
         assert isinstance(choice_function_tmp, str), f"choice_function must be a string. Got {type(choice_function_tmp)}"
         choice_index = options.index(choice_function_tmp)
         choice_function = choice_function_tmp.split(" -- ")[0]
@@ -45,6 +47,8 @@ def choose_function_or_lines(choice_file: Path, kwargs_dict: dict[str, object]) 
                 continue
             options.append(line)
         chosen_lines = choose_from_options(msg="Choose a line to run", options=options, tv=True, multi=True)
+        if chosen_lines is None or len(chosen_lines) == 0:
+            return None, choice_file, kwargs_dict
         choice_file = Path.home().joinpath(f"tmp_results/tmp_scripts/shell/{randstr(10)}.sh")
         choice_file.parent.mkdir(parents=True, exist_ok=True)
         choice_file.write_text("\n".join(chosen_lines), encoding="utf-8")

@@ -145,6 +145,9 @@ def run_py_script(ctx: typer.Context,
             from machineconfig.utils.options import choose_from_options
             options = [str(p) for p in potential_matches]
             chosen_file_part = choose_from_options(options, multi=False, msg="Select the script to run:", tv=True, preview="bat")
+            if chosen_file_part is None:
+                typer.echo(typer.style("❌ Selection cancelled.", fg=typer.colors.YELLOW))
+                raise typer.Exit(code=1)
             target_file = Path(chosen_file_part)
 
     typer.echo(typer.style(f"✅ Found script at: {target_file}", fg=typer.colors.GREEN))

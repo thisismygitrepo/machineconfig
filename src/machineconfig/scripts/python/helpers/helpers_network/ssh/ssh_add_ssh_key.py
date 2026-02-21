@@ -136,7 +136,10 @@ def main(pub_path: Optional[str], pub_choose: bool, pub_val: bool, from_github: 
             return
         info_lines.append(f"📄 Source: Local ~/.ssh │ Found {len(pub_keys_all)} key(s)")
         from machineconfig.utils.options import choose_from_options
-        options_str: list[str] = choose_from_options(options=[str(x) for x in pub_keys_all], msg="Select public key(s) to authorize", multi=True, tv=True)
+        options_str = choose_from_options(options=[str(x) for x in pub_keys_all], msg="Select public key(s) to authorize", multi=True, tv=True)
+        if options_str is None or len(options_str) == 0:
+            console.print(Panel("❓ Key selection cancelled.", title="[bold yellow]Cancelled[/bold yellow]", border_style="yellow"))
+            return
         key_paths = [Path(x) for x in options_str]
 
     elif pub_val:

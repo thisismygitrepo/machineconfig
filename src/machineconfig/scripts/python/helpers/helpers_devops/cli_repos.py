@@ -65,7 +65,10 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
             print("❌ No repos.json specifications found in backup directories.")
             return
         from machineconfig.utils.options import choose_from_options
-        chosen_files: list[str] = choose_from_options(options=[str(p) for p in results_public + results_private], msg="Select a repos.json specification to clone from:", multi=True, tv=True)
+        chosen_files = choose_from_options(options=[str(p) for p in results_public + results_private], msg="Select a repos.json specification to clone from:", multi=True, tv=True)
+        if chosen_files is None or len(chosen_files) == 0:
+            print("❓ Selection cancelled. No repositories were cloned.")
+            return
         for file in chosen_files:
             if str(file).startswith(str(BACKUP_ROOT_PRIVATE)):
                 original_path = get_original_path_from_backup_path(Path(file), sensitivity="private", destination=None, shared=False)

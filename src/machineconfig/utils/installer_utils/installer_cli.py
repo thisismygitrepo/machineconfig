@@ -65,6 +65,11 @@ def install_interactively():
     category_display_to_name = get_group_name_to_repr()
     options = list(category_display_to_name.keys()) + installer_options
     program_names = choose_from_options(multi=True, msg="Categories are prefixed with 📦", options=options, header="🚀 CHOOSE DEV APP OR CATEGORY", tv=True)
+    if program_names is None or len(program_names) == 0:
+        from rich.console import Console
+        from rich.panel import Panel
+        Console().print(Panel("❓ Selection cancelled. Nothing to install.", title="Cancelled", border_style="yellow"))
+        return
     installation_messages: list[str] = []
     for _an_idx, a_program_name in enumerate(program_names):
         if a_program_name.startswith("📦 "):

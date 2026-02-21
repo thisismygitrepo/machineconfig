@@ -154,7 +154,11 @@ def main_backup_retrieve(direction: DIRECTION, which: Optional[str], cloud: Opti
             console.print(Panel(f"⚠️  DEFAULT CLOUD CONFIGURATION\n🌥️  Using default cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))
         except (FileNotFoundError, KeyError, IndexError):
             console.print(Panel("🔍 DEFAULT CLOUD NOT FOUND\n🔄 Please select a cloud configuration from the options below", title="[bold red]Error: Cloud Not Found[/bold red]", border_style="red"))
-            cloud = choose_cloud_interactively().strip()
+            cloud_choice = choose_cloud_interactively()
+            if cloud_choice is None:
+                console.print(Panel("❓ Cloud selection cancelled.", title="[bold yellow]Cancelled[/bold yellow]", border_style="yellow"))
+                return
+            cloud = cloud_choice.strip()
     else:
         cloud = cloud.strip()
         console.print(Panel(f"🌥️  Using provided cloud: {cloud}", title="[bold blue]Cloud Configuration[/bold blue]", border_style="blue"))

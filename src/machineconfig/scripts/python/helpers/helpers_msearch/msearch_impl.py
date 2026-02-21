@@ -158,6 +158,9 @@ def _run_ast_search(directory: str) -> None:
 
     try:
         res = choose_from_options(options=symbols, msg="Select a symbol to search for:", tv=True, multi=False)
+        if res is None:
+            print("❓ Selection cancelled.")
+            return
         from rich import print_json
         import json
 

@@ -75,8 +75,8 @@ def mount(
 
     config = get_rclone_config()
     if cloud is None:
-        res: list[str] = choose_from_options(multi=True, msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None, tv=True)
-        if not res:
+        res = choose_from_options(multi=True, msg="which cloud", options=config.sections(), header="CLOUD MOUNT", default=None, tv=True)
+        if res is None or len(res) == 0:
             print("❌ Error: No cloud selected")
             raise typer.Exit(code=1)
         clouds: list[str] = res

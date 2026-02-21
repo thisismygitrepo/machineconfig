@@ -58,6 +58,8 @@ def find_layout_file(layout_path: str) -> str:
         files = search_for_files_of_interest(path_obj, suffixes={".py", ".sh", ".ps1"})
         print(f"🔍 Got #{len(files)} results.")
         choice_file = choose_from_options(multi=False, options=files, tv=True, msg="Choose one option")
+        if choice_file is None:
+            raise FileNotFoundError("No layout file selected.")
         choice_file = Path(choice_file).expanduser().absolute()
     else:
         choice_file = path_obj

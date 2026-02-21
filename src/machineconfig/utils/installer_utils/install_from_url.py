@@ -157,6 +157,9 @@ def install_from_github_url(github_url: str) -> None:
         console.print(Panel("Release assets lack download URLs.", title="❌ Error", border_style="red"))
         return None
     selection_label = choose_from_options(options=list(options_map.keys()), msg="Select a release asset", multi=False, header="📦 GitHub Release Assets", tv=True)
+    if selection_label is None:
+        console.print(Panel("❓ Asset selection cancelled.", title="Cancelled", border_style="yellow"))
+        return None
     selected_asset = options_map[selection_label]
     download_url_value = selected_asset["browser_download_url"]
     asset_name_value = selected_asset["name"]

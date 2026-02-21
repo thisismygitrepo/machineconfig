@@ -46,6 +46,9 @@ schemes_list = [
 def main2():
     console.print(Panel("🎨 WezTerm Theme Selector", title_align="left", border_style="green"))
     option = choose_from_options(multi=False, options=schemes_list, header="Choose a theme for Wezterm", tv=True, msg="Use arrow keys to navigate, Enter to select a theme")
+    if option is None:
+        console.print(Panel("❓ Theme selection cancelled.", title_align="left", border_style="yellow"))
+        return
     set_theme(option)
     print(f"✅ Theme set to: {option}")
 
