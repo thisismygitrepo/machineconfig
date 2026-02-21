@@ -368,20 +368,20 @@ def get_app() -> typer.Typer:
         add_help_option=True,
         add_completion=False,
     )
+    cli_app.command(name="search", no_args_is_help=False, help="🔎 [s] Search all cli_graph.json command entries.")(search)
+    cli_app.command(name="s", no_args_is_help=False, help="Search all cli_graph.json command entries.", hidden=True)(search)
     cli_app.command(name="tree", no_args_is_help=False, help="🌳 [t] Render a rich tree view in the terminal.")(tree)
     cli_app.command(name="t", no_args_is_help=False, help="Render a rich tree view in the terminal.", hidden=True)(tree)
     cli_app.command(name="dot", no_args_is_help=False, help="🧩 [d] Export the graph as Graphviz DOT.")(dot)
     cli_app.command(name="d", no_args_is_help=False, help="Export the graph as Graphviz DOT.", hidden=True)(dot)
-    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️ [s] Render a Plotly sunburst view.")(sunburst)
-    cli_app.command(name="s", no_args_is_help=False, help="Render a Plotly sunburst view.", hidden=True)(sunburst)
+    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️ [b] Render a Plotly sunburst view.")(sunburst)
+    cli_app.command(name="b", no_args_is_help=False, help="Render a Plotly sunburst view.", hidden=True)(sunburst)
     cli_app.command(name="treemap", no_args_is_help=False, help="🧱 [m] Render a Plotly treemap view.")(treemap)
     cli_app.command(name="m", no_args_is_help=False, help="Render a Plotly treemap view.", hidden=True)(treemap)
     cli_app.command(name="icicle", no_args_is_help=False, help="🧊 [i] Render a Plotly icicle view.")(icicle)
     cli_app.command(name="i", no_args_is_help=False, help="Render a Plotly icicle view.", hidden=True)(icicle)
     cli_app.command(name="tui", no_args_is_help=False, help="📚 [u] NAVIGATE command structure with TUI")(navigate)
     cli_app.command(name="u", no_args_is_help=False, help="NAVIGATE command structure with TUI", hidden=True)(navigate)
-    cli_app.command(name="search", no_args_is_help=False, help="🔎 [se] Search all cli_graph.json command entries.")(search)
-    cli_app.command(name="se", no_args_is_help=False, help="Search all cli_graph.json command entries.", hidden=True)(search)
     return cli_app
 
 
