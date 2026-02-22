@@ -2,14 +2,15 @@
 
 from typing import Optional, cast
 from pathlib import Path
-from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS
+from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
 
 def agents_create(
-    agent: str,
-    host: str,
+    agent: AGENTS,
+    host: HOST,
     model: str,
-    provider: str,
+    provider: Optional[PROVIDER],
+    context: Optional[str],
     context_path: Optional[str],
     separator: str,
     agent_load: int,
@@ -31,30 +32,38 @@ def agents_create(
     if len(provided_prompt) != 1:
         raise ValueError("Exactly one of --prompt or --prompt-path must be provided")
 
+    context_options = [context, context_path]
+    provided_context = [opt for opt in context_options if opt is not None]
+    if len(provided_context) > 1:
+        raise ValueError("Provide at most one of --context or --context-path")
+
     repo_root = get_repo_root(Path.cwd())
     if repo_root is None:
         raise RuntimeError("💥 Could not determine the repository root. Please run this script from within a git repository.")
 
     print(f"Operating @ {repo_root}")
 
-    if context_path is None:
-        context_path_resolved = Path(repo_root) / ".ai" / "todo"
+    if context is not None:
+        prompt_material_re_splitted = [context]
     else:
-        context_path_resolved = Path(context_path).expanduser().resolve()
+        if context_path is None:
+            context_path_resolved = Path(repo_root) / ".ai" / "todo"
+        else:
+            context_path_resolved = Path(context_path).expanduser().resolve()
 
-    if not context_path_resolved.exists():
-        raise ValueError(f"Path does not exist: {context_path_resolved}")
+        if not context_path_resolved.exists():
+            raise ValueError(f"Path does not exist: {context_path_resolved}")
 
-    if context_path_resolved.is_file():
-        prompt_material_re_splitted = chunk_prompts(context_path_resolved, tasks_per_prompt=agent_load, joiner=separator)
-    elif context_path_resolved.is_dir():
-        files = [f for f in context_path_resolved.rglob("*") if f.is_file()]
-        if not files:
-            raise ValueError(f"No files found in directory: {context_path_resolved}")
-        concatenated = separator.join(f.read_text(encoding="utf-8") for f in files)
-        prompt_material_re_splitted = [concatenated]
-    else:
-        raise ValueError(f"Path is neither file nor directory: {context_path_resolved}")
+        if context_path_resolved.is_file():
+            prompt_material_re_splitted = chunk_prompts(context_path_resolved, tasks_per_prompt=agent_load, joiner=separator)
+        elif context_path_resolved.is_dir():
+            files = [f for f in context_path_resolved.rglob("*") if f.is_file()]
+            if not files:
+                raise ValueError(f"No files found in directory: {context_path_resolved}")
+            concatenated = separator.join(f.read_text(encoding="utf-8") for f in files)
+            prompt_material_re_splitted = [concatenated]
+        else:
+            raise ValueError(f"Path is neither file nor directory: {context_path_resolved}")
 
     if prompt_path is not None:
         prompt_prefix = Path(prompt_path).read_text(encoding="utf-8")
@@ -70,17 +79,16 @@ def agents_create(
             shutil.rmtree(agents_dir)
         agents_dir_obj = Path(agents_dir)
 
-    from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import HOST, PROVIDER
     prep_agent_launch(
         repo_root=repo_root,
         agents_dir=agents_dir_obj,
         prompts_material=prompt_material_re_splitted,
         keep_material_in_separate_file=separate,
         prompt_prefix=prompt_prefix,
-        machine=cast(HOST, host),
-        agent=cast(AGENTS, agent_selected),
+        machine=host,
+        agent=agent_selected,
         model=model,
-        provider=cast(PROVIDER, provider),
+        provider=provider,
         job_name=job_name,
     )
     layoutfile = get_agents_launch_layout(session_root=agents_dir_obj)

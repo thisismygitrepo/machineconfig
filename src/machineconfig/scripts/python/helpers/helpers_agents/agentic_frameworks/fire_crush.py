@@ -21,6 +21,8 @@ crush run {prompt_path}
                 provider = "gemini"  # weird crush way of naming.
             else:
                 provider = ai_spec["provider"]
+            if provider is None:
+                raise ValueError("Provider must be specified for Crush agent.")
             json_filled = json_filled.replace("{provider}", provider)
             from machineconfig.utils.accessories import randstr
             temp_config_file_local = Path.home().joinpath("tmp_results/tmp_files/crush_" + randstr(8) + ".json")

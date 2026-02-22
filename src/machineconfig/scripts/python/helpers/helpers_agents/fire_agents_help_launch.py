@@ -2,6 +2,7 @@
 import random
 import shlex
 from pathlib import Path
+from typing import Optional
 from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, AGENT_NAME_FORMATTER, HOST, PROVIDER, AI_SPEC, API_SPEC
 
 
@@ -29,7 +30,7 @@ def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
 
 
 def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,
-                      machine: HOST, model: str, provider: PROVIDER, agent: AGENTS, *, job_name: str) -> None:
+                      machine: HOST, model: str, provider: Optional[PROVIDER], agent: AGENTS, *, job_name: str) -> None:
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)
@@ -88,6 +89,7 @@ sleep 0.1
                 cmd = fire_cursor(ai_spec=ai_spec, prompt_path=prompt_path)
                 raise NotImplementedError("Cursor agent is not implemented yet, api key missing")
             case "crush":
+                assert provider is not None, "Provider must be specified for Crush agent."
                 api_keys = get_api_keys(provider=provider)
                 api_spec = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else None
                 if api_spec is None:

@@ -6,24 +6,25 @@ from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_type
 
 
 def agents_create(
-    agent: Annotated[AGENTS, typer.Option(..., "--agents", "-a", help=f"Agent type. One of {', '.join(get_args(AGENTS)[:3])}")],
-    host: Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")],
-    model: Annotated[str, typer.Option(..., "--model", "-m", help="Model to use (for crush agent).")],
-    provider: Annotated[PROVIDER, typer.Option(..., "--provider", "-p", help=f"Provider to use (for crush agent). One of {', '.join(get_args(PROVIDER)[:3])}")],
-    context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-c", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
-    separator: Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = "\n",
-    agent_load: Annotated[int, typer.Option(..., "--agent-load", "-al", help="Number of tasks per prompt")] = 13,
-    prompt: Annotated[Optional[str], typer.Option(..., "--prompt", "-P", help="Prompt prefix as string")] = None,
-    prompt_path: Annotated[Optional[str], typer.Option(..., "--prompt-path", "-pp", help="Path to prompt file")] = None,
-    job_name: Annotated[str, typer.Option(..., "--job-name", "-j", help="Job name")] = "AI_Agents",
-    separate: Annotated[bool, typer.Option(..., "--separate", "-S", help="Keep prompt material in separate file to the context.")] = True,
-    output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Path to write the layout.json file")] = None,
-    agents_dir: Annotated[Optional[str], typer.Option(..., "--agents-dir", "-ad", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
+    agent:        Annotated[AGENTS, typer.Option(..., "--agents", "-a", help="Agent type.")],
+    model:        Annotated[str, typer.Option(..., "--model", "-m", help="Model to use.")],
+    provider:     Annotated[Optional[PROVIDER], typer.Option(..., "--provider", "-v", help="Provider to use (if agent support many)")] = None,
+    host:         Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")] = "local",
+    context:      Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context as a direct string. Mutually exclusive with --context-path.")] = None,
+    context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
+    separator:    Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = "\n",
+    agent_load:   Annotated[int, typer.Option(..., "--agent-load", "-l", help="Number of tasks per prompt")] = 13,
+    prompt:       Annotated[Optional[str], typer.Option(..., "--prompt", "-p", help="Prompt prefix as string")] = None,
+    prompt_path:  Annotated[Optional[str], typer.Option(..., "--prompt-path", "-P", help="Path to prompt file")] = None,
+    job_name:     Annotated[str, typer.Option(..., "--job-name", "-j", help="Job name")] = "AI_Agents",
+    separate:     Annotated[bool, typer.Option(..., "--separate", "-S", help="Keep prompt material in separate file to the context.")] = True,
+    output_path:  Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Path to write the layout.json file")] = None,
+    agents_dir:   Annotated[Optional[str], typer.Option(..., "--agents-dir", "-d", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
 ) -> None:
     """Create agents layout file, ready to run."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import agents_create as impl
     try:
-        impl(agent=agent, host=host, model=model, provider=provider, context_path=context_path, separator=separator, agent_load=agent_load, prompt=prompt, prompt_path=prompt_path, job_name=job_name, separate=separate, output_path=output_path, agents_dir=agents_dir)
+        impl(agent=agent, host=host, model=model, provider=provider, context=context, context_path=context_path, separator=separator, agent_load=agent_load, prompt=prompt, prompt_path=prompt_path, job_name=job_name, separate=separate, output_path=output_path, agents_dir=agents_dir)
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
     except RuntimeError as e:
