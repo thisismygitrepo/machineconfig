@@ -1,9 +1,9 @@
 $ErrorActionPreference = "Stop"
 
 $settingsCandidates = @(
-    Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
-    Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json",
-    Join-Path $env:LOCALAPPDATA "Microsoft\Windows Terminal\settings.json"
+    (Join-Path -Path $env:LOCALAPPDATA -ChildPath "Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json")
+    (Join-Path -Path $env:LOCALAPPDATA -ChildPath "Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json")
+    (Join-Path -Path $env:LOCALAPPDATA -ChildPath "Microsoft\Windows Terminal\settings.json")
 )
 
 $settingsPath = $settingsCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
