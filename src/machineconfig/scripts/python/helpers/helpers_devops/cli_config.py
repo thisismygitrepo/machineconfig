@@ -101,6 +101,51 @@ def starship_theme():
         subprocess.run(["bash", str(script_path)], check=True)
 
 
+def configure_wezterm_theme() -> None:
+    """🔗 Select WezTerm theme with interactive live preview."""
+    import machineconfig.scripts.python.helpers.helpers_devops.themes.choose_wezterm_theme as choose_wezterm_theme
+    choose_wezterm_theme.main()
+
+
+def configure_ghostty_theme() -> None:
+    """🔗 Select Ghostty theme with interactive preview."""
+    import os
+    import platform
+    import subprocess
+
+    ghostty_config_path = Path(os.environ.get("XDG_CONFIG_HOME", "~/.config")).expanduser() / "ghostty" / "config"
+    auto_theme_include = "config-file = ?auto/theme.ghostty"
+
+    existing_lines = ghostty_config_path.read_text(encoding="utf-8").splitlines() if ghostty_config_path.exists() else []
+    existing_lines_stripped = [line.strip() for line in existing_lines]
+    if auto_theme_include not in existing_lines_stripped:
+        ghostty_config_path.parent.mkdir(parents=True, exist_ok=True)
+        if existing_lines and existing_lines[-1].strip():
+            existing_lines.append("")
+        existing_lines.append(auto_theme_include)
+        ghostty_config_path.write_text("\n".join(existing_lines) + "\n", encoding="utf-8")
+
+    reload_hint = "cmd+shift+," if platform.system() == "Darwin" else "ctrl+shift+,"
+    typer.echo("🎨 Opening Ghostty interactive theme preview. Use arrows/j/k to browse, Enter then w to save.")
+    typer.echo(f"💡 After saving, reload Ghostty config with {reload_hint} to apply.")
+    subprocess.run(["ghostty", "+list-themes"], check=True)
+
+
+def configure_windows_terminal_theme() -> None:
+    """🔗 Select Windows Terminal color scheme with interactive live preview."""
+    import platform
+    import subprocess
+
+    if platform.system().lower() != "windows":
+        typer.echo("Error: Windows Terminal theme selection is only supported on Windows systems.", err=True)
+        raise typer.Exit(code=1)
+    script_path = Path(__file__).parent.joinpath("themes", "choose_windows_terminal_theme.ps1")
+    try:
+        subprocess.run(["pwsh", "-File", str(script_path)], check=True)
+    except FileNotFoundError:
+        subprocess.run(["powershell", "-File", str(script_path)], check=True)
+
+
 def copy_assets(which: Annotated[Literal["scripts", "s", "settings", "t", "both", "b"], typer.Argument(..., help="Which assets to copy")]):
     """🔗 Copy asset files from library to machine."""
     import machineconfig.profile.create_helper as create_helper
@@ -161,6 +206,12 @@ def get_app():
     config_apps.command("t", no_args_is_help=False, help="Select starship prompt theme.", hidden=True)(starship_theme)
     config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗 [T] Select powershell prompt theme.")(pwsh_theme)
     config_apps.command("T", no_args_is_help=False, help="Select powershell prompt theme.", hidden=True)(pwsh_theme)
+    config_apps.command("wezterm-theme", no_args_is_help=False, help="🔗 [W] Select WezTerm terminal theme.")(configure_wezterm_theme)
+    config_apps.command("W", no_args_is_help=False, help="Select WezTerm terminal theme.", hidden=True)(configure_wezterm_theme)
+    config_apps.command("ghostty-theme", no_args_is_help=False, help="🔗 [g] Select Ghostty terminal theme.")(configure_ghostty_theme)
+    config_apps.command("g", no_args_is_help=False, help="Select Ghostty terminal theme.", hidden=True)(configure_ghostty_theme)
+    config_apps.command("windows-terminal-theme", no_args_is_help=False, help="🔗 [x] Select Windows Terminal color scheme.")(configure_windows_terminal_theme)
+    config_apps.command("wt-theme", no_args_is_help=False, help="Select Windows Terminal color scheme.", hidden=True)(configure_windows_terminal_theme)
 
     config_apps.command("copy-assets", no_args_is_help=True, help="🔗 [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
