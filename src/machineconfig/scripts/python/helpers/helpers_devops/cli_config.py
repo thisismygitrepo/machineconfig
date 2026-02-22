@@ -211,6 +211,7 @@ def get_app():
     config_apps.command("ghostty-theme", no_args_is_help=False, help="🔗 [g] Select Ghostty terminal theme.")(configure_ghostty_theme)
     config_apps.command("g", no_args_is_help=False, help="Select Ghostty terminal theme.", hidden=True)(configure_ghostty_theme)
     config_apps.command("windows-terminal-theme", no_args_is_help=False, help="🔗 [x] Select Windows Terminal color scheme.")(configure_windows_terminal_theme)
+    config_apps.command("x", no_args_is_help=False, help="Select Windows Terminal color scheme.", hidden=True)(configure_windows_terminal_theme)
     config_apps.command("wt-theme", no_args_is_help=False, help="Select Windows Terminal color scheme.", hidden=True)(configure_windows_terminal_theme)
 
     config_apps.command("copy-assets", no_args_is_help=True, help="🔗 [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
