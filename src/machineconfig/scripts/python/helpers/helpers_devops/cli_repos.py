@@ -215,6 +215,52 @@ uv run --with cleanpy cleanpy .
         run_shell_script(script, display_script=True, clean_env=False)
 
 
+def config_linters(
+    directory: Annotated[str, typer.Argument(help="📁 Git repository directory to configure.")] = ".",
+    linter: Annotated[Optional[str], typer.Option("--linter", "-t", help="Linter to configure: ruff, mypy, pylint, flake8.")] = None,
+) -> None:
+    """🧰 Add linter config files to a git repository."""
+    target_dir = Path(directory).expanduser().absolute().resolve()
+
+    from git import Repo, InvalidGitRepositoryError
+
+    try:
+        Repo(str(target_dir), search_parent_directories=True)
+    except InvalidGitRepositoryError:
+        typer.echo(f"❌ {target_dir} is not within a git repository. Pass a path inside a git repo and retry.")
+        raise typer.Exit(code=1)
+
+    templates_dir = Path(__file__).resolve().parents[4].joinpath("settings", "linters")
+    if not templates_dir.exists():
+        typer.echo(f"❌ Linter template directory not found: {templates_dir}")
+        raise typer.Exit(code=1)
+
+    linter_to_file: dict[str, str] = {
+        "flake8": ".flake8",
+        "mypy": ".mypy.ini",
+        "pylint": ".pylintrc",
+        "ruff": ".ruff.toml",
+    }
+    available_linters: list[str] = sorted(linter_to_file.keys())
+
+    if linter is not None and linter not in linter_to_file:
+        typer.echo(f"❌ Unsupported linter '{linter}'. Choose one of: {', '.join(available_linters)}")
+        raise typer.Exit(code=1)
+
+    selected_linters: list[str]
+    if linter is not None:
+        selected_linters = [linter]
+    else:
+        selected_linters = available_linters
+
+    for selected_linter in selected_linters:
+        file_name = linter_to_file[selected_linter]
+        source = templates_dir.joinpath(file_name)
+        destination = target_dir.joinpath(file_name)
+        destination.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
+        typer.echo(f"✅ Added {file_name} to {target_dir}")
+
+
 def get_app():
     repos_apps = typer.Typer(help="📁 <r> Manage development repositories", no_args_is_help=True, add_help_option=True, add_completion=False)
 
@@ -242,7 +288,10 @@ def get_app():
     repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(gource_viz)
 
     repos_apps.command(name="count-lines", help="📄 <l> Count python lines of code in current repo + historical edits.")(count_lines_in_repo)
-    repos_apps.command(name="l", help="Count python lines of code in current repo + historical edits.", hidden=True)(count_lines_in_repo)
+    repos_apps.command(name="lc", help="Count python lines of code in current repo + historical edits.", hidden=True)(count_lines_in_repo)
+
+    repos_apps.command(name="config-linters", help="🧰 <l> Add linter config files to a git repository", no_args_is_help=True)(config_linters)
+    repos_apps.command(name="l", help="Add linter config files to a git repository", hidden=True, no_args_is_help=True)(config_linters)
 
     repos_apps.command(name="cleanup", help="🧹 <n> Clean repository directories from cache files")(cleanup)
     repos_apps.command(name="n", help="Clean repository directories from cache files", hidden=True)(cleanup)
