@@ -31,6 +31,10 @@ def _safe_resolve(path: Path, strict: bool = False) -> Path:
         return path
 
 
+def resolve(path: Path, strict: bool = False) -> Path:
+    return _safe_resolve(_to_path(path), strict=strict)
+
+
 def _is_user_admin() -> bool:
     if os.name == "nt":
         try:
@@ -103,6 +107,10 @@ def _finalize_result(source: Path, result: Path, *, inplace: bool, orig: bool, v
     return source if orig else result
 
 
+def _append_path_name(path: Path, name: str) -> Path:
+    return append(path=path, name=name)
+
+
 def delete(path: Path, sure: bool = False, verbose: bool = True) -> Path:
     path_obj = _to_path(path)
     if not sure:
@@ -113,7 +121,7 @@ def delete(path: Path, sure: bool = False, verbose: bool = True) -> Path:
         path_obj.unlink(missing_ok=True)
         if verbose:
             _print_message(f"❌ Could NOT DELETE nonexisting file {path_obj!r}. ")
-        return path_obj
+        return path_obj  # broken symlinks exhibit funny existence behaviour, catch them here.
     if path_obj.is_file() or path_obj.is_symlink():
         path_obj.unlink(missing_ok=True)
     else:
@@ -137,7 +145,7 @@ def move(
     content: bool = False,
 ) -> Path:
     path_obj = _to_path(path)
-    source = _safe_resolve(_expand(path_obj))
+    source = _expand(path_obj).resolve()
     destination = _resolve_path(path_obj, folder=folder, name=name, target_path=target_path, default_name=path_obj.absolute().name, rel2it=rel2it)
     if parents:
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -153,78 +161,95 @@ def move(
     else:
         try:
             source.rename(destination)
-        except OSError as err:
+        except OSError as oe:
             import shutil
 
             shutil.move(str(source), str(destination))
-            _ = err
+            _ = oe
     if verbose:
         _print_message(f"🚚 MOVED {path_obj!r} ==> {destination!r}`")
     return destination
 
 
 def copy(
-    path: Path,
-    folder: Optional[Path] = None,
+    source: Path | str,
+    folder: PathLike = None,
     name: Optional[str] = None,
-    target_path: Optional[Path] = None,
+    target_path: PathLike = None,
     content: bool = False,
     verbose: bool = True,
     append_name: Optional[str] = None,
     overwrite: bool = False,
     orig: bool = False,
+    *,
+    path: PathLike = None,
+    append: Optional[str] = None,
 ) -> Path:
-    path_obj = _to_path(path)
-    source = _safe_resolve(_expand(path_obj))
-    destination = _safe_resolve(_expand(_resolve_path(path_obj, folder=folder, name=name, target_path=target_path, default_name=path_obj.name, rel2it=False)))
+    if path is not None and target_path is not None:
+        raise AssertionError("If `path` is passed, `target_path` cannot be passed.")
+    if append is not None and append_name is not None:
+        raise AssertionError("If `append` is passed, `append_name` cannot be passed.")
+    path_obj = _to_path(source)
+    resolved_target_path = path if path is not None else target_path
+    resolved_append_name = append if append is not None else append_name
+    source_path = _safe_resolve(_expand(path_obj))
+    destination = _safe_resolve(_expand(_resolve_path(path_obj, folder=folder, name=name, target_path=resolved_target_path, default_name=path_obj.name, rel2it=False)))
     destination.parent.mkdir(parents=True, exist_ok=True)
-    if destination == source:
-        destination = append(path_obj, name=append_name if append_name is not None else f"_copy_{randstr()}")
+    if destination == source_path:
+        destination = _append_path_name(path_obj, name=resolved_append_name if resolved_append_name is not None else f"_copy_{randstr()}")
     if not content and overwrite and destination.exists():
         delete(destination, sure=True)
     if not content and not overwrite and destination.exists():
         raise FileExistsError(f"💥 Destination already exists: {destination!r}")
-    if source.is_file():
+    if source_path.is_file():
         import shutil
 
-        shutil.copy(str(source), str(destination))
+        shutil.copy(str(source_path), str(destination))
         if verbose:
-            _print_message(f"🖨️ COPIED {source!r} ==> {destination!r}")
-    elif source.is_dir():
+            _print_message(f"🖨️ COPIED {source_path!r} ==> {destination!r}")
+    elif source_path.is_dir():
         destination = destination.parent if content else destination
         from shutil import copytree
 
-        copytree(str(source), str(destination))
+        copytree(str(source_path), str(destination))
         if verbose:
-            _print_message(f"🖨️ COPIED {'Content of ' if content else ''} {source!r} ==> {destination!r}")
+            _print_message(f"🖨️ COPIED {'Content of ' if content else ''} {source_path!r} ==> {destination!r}")
     else:
-        _print_message(f"💥 Could NOT COPY. Not a file nor a path: {source!r}.")
+        _print_message(f"💥 Could NOT COPY. Not a file nor a path: {source_path!r}.")
     return path_obj if orig else destination
 
 
 def download(
-    url_path: Path | str,
+    path: PathLike = None,
     folder: PathLike = None,
     name: Optional[str] = None,
     allow_redirects: bool = True,
     timeout: Optional[int] = None,
     params: Any = None,
+    *,
+    url_path: PathLike = None,
 ) -> Path:
     import requests
 
-    response = requests.get(as_url_str(_to_path(url_path)), allow_redirects=allow_redirects, timeout=timeout, params=params)
+    if path is None and url_path is None:
+        raise AssertionError("Either `path` or `url_path` must be passed.")
+    if path is not None and url_path is not None:
+        raise AssertionError("Pass either `path` or `url_path`, not both.")
+    source_path = path if path is not None else url_path
+    assert source_path is not None
+    response = requests.get(as_url_str(_to_path(source_path)), allow_redirects=allow_redirects, timeout=timeout, params=params)
     assert response.status_code == 200, f"Download failed with status code {response.status_code}\n{response.text}"
     if name is not None:
-        filename = name
+        f_name = name
     else:
         try:
-            filename = response.headers["Content-Disposition"].split("filename=")[1].replace('"', "")
+            f_name = response.headers["Content-Disposition"].split("filename=")[1].replace('"', "")
         except (KeyError, IndexError):
-            filename = validate_name(str(_to_path(response.history[-1].url).name if len(response.history) > 0 else _to_path(response.url).name))
-    destination = (Path.home().joinpath("Downloads") if folder is None else _to_path(folder)).joinpath(filename)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_bytes(response.content)
-    return destination
+            f_name = validate_name(str(_to_path(response.history[-1].url).name if len(response.history) > 0 else _to_path(response.url).name))
+    dest_path = (Path.home().joinpath("Downloads") if folder is None else _to_path(folder)).joinpath(f_name)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    dest_path.write_bytes(response.content)
+    return dest_path
 
 
 def append(
@@ -248,8 +273,12 @@ def append(
     full_suffix = suffix or "".join(prefixed_path.suffixes)
     subpath = path_obj.name.split(".")[0] + full_name + full_suffix
     destination = path_obj.parent.joinpath(subpath)
+    inplace = bool(inplace)
+    overwrite = bool(overwrite)
+    orig = bool(orig)
+    strict = bool(strict)
     if inplace:
-        assert path_obj.exists(), f"`inplace` flag is only relevant if path exists. It doesn't {path_obj}"
+        assert path_obj.exists(), f"`inplace` flag is only relevant if the path exists. It doesn't {path_obj}"
         if overwrite and destination.exists():
             delete(destination, sure=True, verbose=verbose)
         if not overwrite and destination.exists():
@@ -303,10 +332,10 @@ def collapseuser(path: Path, strict: bool = True, placeholder: str = "~") -> Pat
     home_obj = Path.home()
     expanded = _expand(path_obj).absolute()
     if strict:
-        assert str(expanded.resolve()).startswith(str(home_obj)), ValueError(f"`{home_obj}` is not in the subpath of `{path_obj}`")
-    if str(path_obj).startswith(placeholder) or home_obj.as_posix() not in path_obj.resolve().as_posix():
+        assert str(_safe_resolve(expanded)).startswith(str(home_obj)), ValueError(f"`{home_obj}` is not in the subpath of `{path_obj}`")
+    if str(path_obj).startswith(placeholder) or home_obj.as_posix() not in _safe_resolve(path_obj).as_posix():
         return path_obj
-    reduced = Path(str(expanded.resolve(strict=strict)).replace(str(home_obj), ""))
+    reduced = Path(str(_safe_resolve(expanded, strict=strict)).replace(str(home_obj), ""))
     if len(reduced.parts) and reduced.parts[0] in {"\\", "/"}:
         reduced = _path_from_parts(reduced.parts[1:])
     return Path(placeholder) / reduced
@@ -360,23 +389,27 @@ def size(path: Path, units: Literal["b", "kb", "mb", "gb"] = "mb") -> float:
 
 
 def clickable(path: Path) -> Path:
-    return Path(_safe_resolve(_expand(path), strict=False).as_uri())
+    path_obj = _to_path(path)
+    return Path(path_obj.expanduser().resolve().as_uri())
 
 
 def as_url_str(path: Path) -> str:
-    return _to_path(path).as_posix().replace("https:/", "https://").replace("http:/", "http://")
+    path_obj = _to_path(path)
+    return path_obj.as_posix().replace("https:/", "https://").replace("http:/", "http://")
 
 
-def as_zip_path(path: Path) -> Any:
+def as_zip_path(path: Path | str) -> Any:
     import zipfile
 
-    return zipfile.Path(_safe_resolve(_expand(path), strict=False))
+    path_obj = _to_path(path)
+    resolved = _safe_resolve(_expand(path_obj), strict=False)
+    return zipfile.Path(resolved)
 
 
-def symlink_to(path: Path, target: Path, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True) -> Path:
+def symlink_to(path: Path | str, target: Path | str, verbose: bool = True, overwrite: bool = False, orig: bool = False, strict: bool = True) -> Path:
     path_obj = _to_path(path)
     path_obj.parent.mkdir(parents=True, exist_ok=True)
-    target_obj = _safe_resolve(_expand(target), strict=False)
+    target_obj = _safe_resolve(_expand(_to_path(target)), strict=False)
     if strict:
         assert target_obj.exists(), f"Target path `{target}` (aka `{target_obj}`) doesn't exist. This will create a broken link."
     if overwrite and (path_obj.is_symlink() or path_obj.exists()):
@@ -384,7 +417,7 @@ def symlink_to(path: Path, target: Path, verbose: bool = True, overwrite: bool =
     if system() == "Windows" and not _is_user_admin():
         import win32com.shell.shell  # type: ignore
 
-        _process_info = win32com.shell.shell.ShellExecuteEx(lpVerb="runas", lpFile=sys.executable, lpParameters=f" -c \"from pathlib import Path; Path(r'{_expand(path_obj)}').symlink_to(r'{target_obj}')\"")
+        _process_info = win32com.shell.shell.ShellExecuteEx(lpVerb="runas", lpFile=sys.executable, lpParameters=f" -c \"from pathlib import Path; Path(r'{_expand(path_obj)}').symlink_to(r'{str(target_obj)}')\"")
         _ = _process_info
         time.sleep(1)
     else:
@@ -420,7 +453,7 @@ def search(
         active_filters.append(lambda x: x.is_dir())
     if not folders:
         active_filters.append(lambda x: x.is_file())
-    path_obj = _safe_resolve(_expand(path), strict=False)
+    path_obj = resolve(_expand(path), strict=False)
     if ".zip" in str(path_obj) and compressed:
         import fnmatch
         import zipfile
@@ -433,18 +466,18 @@ def search(
         filtered = [item for item in raw_zip if fnmatch.fnmatch(item.at, pattern)]
         return [Path(str(item)) for item in filtered if (folders or item.is_file()) and (files or item.is_dir())]
     if dotfiles:
-        raw_paths: list[Path | str] = list(path_obj.glob(pattern) if not r else path_obj.rglob(pattern))
+        raw_paths: list[Path | str] = list(path_obj.glob(pattern) if not r else _to_path(path).rglob(pattern))
     else:
         from glob import glob
 
         if r:
-            globbed = glob(str(path_obj / "**" / pattern), recursive=True)
+            globbed = glob(str(path_obj / "**" / pattern), recursive=r)
         else:
             globbed = glob(str(path_obj.joinpath(pattern)))
         raw_paths = [Path(item) for item in globbed]
     if ".zip" not in str(path_obj) and compressed:
         nested: list[Path] = []
-        for compressed_file in search(path_obj, "*.zip", r=r):
+        for compressed_file in search(path=path, pattern="*.zip", r=r):
             nested.extend(
                 search(
                     path=compressed_file,
@@ -474,30 +507,28 @@ def search(
 
 
 def tmpdir(prefix: str = "") -> Path:
-    folder = f"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}"
-    return tmp(folder=Path(folder))
+    folder = rf"tmp_dirs/{prefix + ('_' if prefix != '' else '') + randstr()}"
+    return tmp(folder=_to_path(folder))
 
 
-def tmpfile(name: Optional[str] = None, suffix: str = "", folder: Optional[Path] = None, tstamp: bool = False, noun: bool = False) -> Path:
+def tmpfile(name: Optional[str] = None, suffix: str = "", folder: PathLike = None, tstamp: bool = False, noun: bool = False) -> Path:
     concrete_name = name or randstr(noun=noun)
     suffix_part = ("_" + str(timestamp())) if tstamp else ""
-    folder_path = folder or Path("tmp_files")
+    folder_path = _to_path(folder) if folder else Path("tmp_files")
     return tmp(file=f"{concrete_name}_{randstr()}{suffix_part}{suffix}", folder=folder_path)
 
 
-def tmp(folder: Optional[Path] = None, file: Optional[str] = None, root: str = "~/tmp_results") -> Path:
-    folder_path = "" if folder is None else _to_path(folder)
-    file_path = "" if file is None else file
-    base = Path(root).expanduser().joinpath(folder_path).joinpath(file_path)
+def tmp(folder: PathLike = None, file: Optional[str] = None, root: str = "~/tmp_results") -> Path:
+    base = Path(root).expanduser().joinpath(folder or "").joinpath(file or "")
     target_path = base.parent if file else base
     target_path.mkdir(parents=True, exist_ok=True)
     return base
 
 
 def zip_path(
-    path: Path,
-    target_path: Optional[Path] = None,
-    folder: Optional[Path] = None,
+    path: Path | str,
+    target_path: PathLike = None,
+    folder: PathLike = None,
     name: Optional[str] = None,
     arcname: Optional[str] = None,
     inplace: bool = False,
@@ -530,6 +561,34 @@ def zip_path(
         output_path = Path(shutil.make_archive(base_name=base_name, format="zip", root_dir=str(root_dir), base_dir=str(base_dir), verbose=False, **kwargs))
     message = f"ZIPPED {source!r} ==> {output_path!r}"
     return _finalize_result(_to_path(path), output_path, inplace=inplace, orig=orig, verbose=verbose, message=message)
+
+
+def zip(
+    source: Path | str,
+    path: PathLike = None,
+    folder: PathLike = None,
+    name: Optional[str] = None,
+    arcname: Optional[str] = None,
+    inplace: bool = False,
+    verbose: bool = True,
+    content: bool = False,
+    orig: bool = False,
+    mode: FILE_MODE = "w",
+    **kwargs: Any,
+) -> Path:
+    return zip_path(
+        source,
+        target_path=path,
+        folder=folder,
+        name=name,
+        arcname=arcname,
+        inplace=inplace,
+        verbose=verbose,
+        content=content,
+        orig=orig,
+        mode=mode,
+        **kwargs,
+    )
 
 
 def _unzip_archive(
@@ -961,6 +1020,7 @@ __all__ = [
     "get_remote_path",
     "move",
     "rel2home",
+    "resolve",
     "search",
     "size",
     "split",
@@ -978,6 +1038,7 @@ __all__ = [
     "unzip",
     "validate_name",
     "with_name",
+    "zip",
     "zip_n_encrypt",
     "zip_path",
 ]

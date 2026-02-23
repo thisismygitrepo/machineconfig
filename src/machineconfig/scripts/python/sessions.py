@@ -1,14 +1,14 @@
 """Sessions management commands - lazy loading subcommands."""
 
-from typing import Optional, Literal, Annotated, Callable, cast
+from typing import Optional, Literal, Annotated
 import typer
 
 
 def balance_load(
     layout_path: Annotated[str, typer.Argument(..., help="Path to the layout.json file")],
     max_thresh: Annotated[int, typer.Option(..., "--max-threshold", "-m", help="Maximum tabs per layout")],
-    thresh_type: Annotated[Literal["number", "n", "weight", "w"], typer.Option(..., "--threshold-type", "-t", help="Threshold type")],
-    breaking_method: Annotated[Literal["moreLayouts", "ml", "combineTabs", "ct"], typer.Option(..., "--breaking-method", "-b", help="Breaking method")],
+    thresh_type: Annotated[Literal["number", "n", "weight", "w"], typer.Option(..., "--threshold-type", "-t", help="Threshold type")] = "number",
+    breaking_method: Annotated[Literal["moreLayouts", "ml", "combineTabs", "ct"], typer.Option(..., "--breaking-method", "-b", help="Breaking method")] = "moreLayouts",
     output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Path to write the adjusted layout.json file")] = None,
 ) -> None:
     """Adjust layout file to limit max tabs per layout, etc."""
@@ -90,12 +90,68 @@ def run(
             raise ValueError(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
 
     try:
-        cast(Callable[..., None], run_layouts)(
+        run_layouts(
         sleep_inbetween=sleep_inbetween, monitor=monitor, parallel_layouts=parallel_layouts, kill_upon_completion=kill_upon_completion,
         layouts_selected=layouts_selected,
         backend=backend_resolved)
     except ValueError as e:
         typer.echo(str(e))
+        raise typer.Exit(1) from e
+
+
+def run_dynamic(
+    ctx: typer.Context,
+    max_parallel_tabs: Annotated[int, typer.Option(..., "--max-parallel-tabs", "-p", help="How many tabs to run at the same time.")],
+    kill_finished_tabs: Annotated[bool, typer.Option(..., "--kill-finished-tabs", "-k", help="Close each tab once its command is finished.")] = False,
+    layouts_file: Annotated[Optional[str], typer.Option(..., "--layouts-file", "-f", help="Path to the layout.json file")] = None,
+    choose: Annotated[Optional[str], typer.Option(..., "--choose", "-c", help="Name of the layout to run dynamically. Must resolve to exactly one layout.")] = None,
+    choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layout interactively")] = False,
+    subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-H", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
+    backend: Annotated[Literal["zellij", "z", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer to use")] = "auto",
+    poll_seconds: Annotated[float, typer.Option(..., "--poll-seconds", "-s", help="Polling interval in seconds used to detect finished tabs.")] = 2.0,
+) -> None:
+    """Run one layout dynamically: keep at most N tabs active and start new tabs as soon as one finishes."""
+    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import find_layout_file, select_layout
+    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_dynamic import run_dynamic as impl
+    from pathlib import Path
+    if layouts_file is not None:
+        layouts_file_resolved = Path(find_layout_file(layout_path=layouts_file))
+    else:
+        layouts_file_resolved = Path.home().joinpath("dotfiles/machineconfig/layouts.json")
+
+    if not layouts_file_resolved.exists():
+        typer.echo(ctx.get_help())
+        typer.echo(f"❌ Layouts file not found: {layouts_file_resolved}", err=True)
+        raise typer.Exit(code=1)
+
+    if choose is None:
+        layouts_names_resolved: list[str] = []
+    else:
+        layouts_names_resolved = [name.strip() for name in choose.split(",") if name.strip()]
+
+    layouts_selected = select_layout(
+        layouts_json_file=str(layouts_file_resolved),
+        selected_layouts_names=layouts_names_resolved,
+        select_interactively=choose_interactively,
+    )
+    if len(layouts_selected) != 1:
+        raise ValueError(f"run_dynamic expects exactly one selected layout, got {len(layouts_selected)}.")
+
+    selected_layout = layouts_selected[0]
+    if subsitute_home:
+        from machineconfig.utils.schemas.layouts.layout_types import substitute_home
+        selected_layout["layoutTabs"] = substitute_home(tabs=selected_layout["layoutTabs"])
+
+    try:
+        impl(
+            layout=selected_layout,
+            max_parallel_tabs=max_parallel_tabs,
+            kill_finished_tabs=kill_finished_tabs,
+            backend=backend,
+            poll_seconds=poll_seconds,
+        )
+    except ValueError as e:
+        typer.echo(str(e), err=True)
         raise typer.Exit(1) from e
 
 
@@ -167,6 +223,9 @@ def get_app() -> typer.Typer:
 
     layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="[r] Run the selected layout(s)")(run)
     layouts_app.command("r", no_args_is_help=True, help=run.__doc__, hidden=True)(run)
+
+    layouts_app.command("run-dynamic", no_args_is_help=True, help=run_dynamic.__doc__, short_help="[rd] Run one layout with dynamic tab scheduling")(run_dynamic)
+    layouts_app.command("rd", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
 
     layouts_app.command("attach", no_args_is_help=False, help=attach_to_session.__doc__, short_help="[a] Attach to a Zellij session")(attach_to_session)
     layouts_app.command("a", no_args_is_help=False, help=attach_to_session.__doc__, hidden=True)(attach_to_session)

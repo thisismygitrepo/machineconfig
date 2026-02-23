@@ -90,11 +90,10 @@ def agents_create(
     if agents_dir is None:
         agents_dir_obj = Path(repo_root) / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
     else:
-        import shutil
-        if Path(agents_dir).exists():
-            shutil.rmtree(agents_dir)
-        agents_dir_obj = Path(agents_dir)
-
+        agents_dir_obj = Path(agents_dir).expanduser().resolve().absolute()
+        if agents_dir_obj.exists():
+            import shutil
+            shutil.rmtree(agents_dir_obj)
     prep_agent_launch(
         repo_root=repo_root,
         agents_dir=agents_dir_obj,
