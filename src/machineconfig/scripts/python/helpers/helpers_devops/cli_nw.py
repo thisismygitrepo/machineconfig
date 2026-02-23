@@ -246,9 +246,9 @@ def get_app():
     # app = cli_share_server.get_share_file_app()
     # nw_apps.add_typer(app, name="share-file", help="📁 <f> Share a file via relay server", no_args_is_help=True)
     # nw_apps.add_typer(app, name="f", help="Share a file via relay server", hidden=True, no_args_is_help=True)
-    nw_apps.command(name="send", no_args_is_help=True, hidden=False, help="📁 [sx] send files from here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_send)
+    nw_apps.command(name="send", no_args_is_help=True, hidden=False, help="📁 <sx> send files from here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_send)
     nw_apps.command(name="sx", no_args_is_help=True, hidden=True, help="📁 [sx] send files from here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_send)
-    nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
+    nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 <rx> receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
     nw_apps.command(name="rx", no_args_is_help=True, hidden=True, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
 
     nw_apps.command(name="share-temp-file", help="🌡️ <T> Share a file via temp.sh")(cli_share_temp.upload_file)

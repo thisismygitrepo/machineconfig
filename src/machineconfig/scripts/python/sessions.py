@@ -224,8 +224,8 @@ def get_app() -> typer.Typer:
     layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="<r> Run the selected layout(s)")(run)
     layouts_app.command("r", no_args_is_help=True, help=run.__doc__, hidden=True)(run)
 
-    layouts_app.command("run-dynamic", no_args_is_help=True, help=run_dynamic.__doc__, short_help="[rd] Run one layout with dynamic tab scheduling")(run_dynamic)
-    layouts_app.command("rd", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
+    layouts_app.command("run-dynamic", no_args_is_help=True, help=run_dynamic.__doc__, short_help="<d> Run one layout with dynamic tab scheduling")(run_dynamic)
+    layouts_app.command("d", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
 
     layouts_app.command("attach", no_args_is_help=False, help=attach_to_session.__doc__, short_help="<a> Attach to a Zellij session")(attach_to_session)
     layouts_app.command("a", no_args_is_help=False, help=attach_to_session.__doc__, hidden=True)(attach_to_session)
