@@ -25,6 +25,30 @@ from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_type
 from machineconfig.utils.accessories import get_repo_root
 
 
+def _snapshot_repo_files(repo_root: Path) -> dict[Path, tuple[int, int]]:
+    files_state: dict[Path, tuple[int, int]] = {}
+    for path in repo_root.rglob("*"):
+        if path.is_file() is False:
+            continue
+        if ".git" in path.parts:
+            continue
+        file_stat = path.stat()
+        files_state[path.relative_to(repo_root)] = (file_stat.st_mtime_ns, file_stat.st_size)
+    return files_state
+
+
+def _collect_touched_files(before: dict[Path, tuple[int, int]], after: dict[Path, tuple[int, int]]) -> list[str]:
+    touched_files: list[str] = []
+    for path, after_state in after.items():
+        before_state = before.get(path)
+        if before_state is None or before_state != after_state:
+            relative_path = path.as_posix()
+            if relative_path != ".gitignore":
+                touched_files.append(relative_path)
+    touched_files.sort()
+    return touched_files
+
+
 def _build_framework_config(repo_root: Path, framework: AGENTS) -> None:
     match framework:
         case "copilot":
@@ -63,6 +87,7 @@ def add_ai_configs(
     repo_root: Path,
     frameworks: Sequence[AGENTS],
     include_common_scaffold: bool,
+    add_all_touched_configs_to_gitignore: bool,
     add_vscode_task: bool,
 ) -> None:
     if len(frameworks) == 0:
@@ -71,15 +96,15 @@ def add_ai_configs(
     repo_root_resolved = get_repo_root(repo_root)
     if repo_root_resolved is not None:
         repo_root = repo_root_resolved  # this means you can run the command from any subdirectory of the repo.
+
+    files_before_configuration = _snapshot_repo_files(repo_root=repo_root)
+
     if include_common_scaffold:
         dot_ai_dir = repo_root.joinpath(".ai")
         dot_ai_dir.mkdir(parents=True, exist_ok=True)
         dot_scripts_dir = repo_root.joinpath(".scripts")
         dot_scripts_dir.mkdir(parents=True, exist_ok=True)
         generic.create_dot_scripts(repo_root=repo_root)
-        if not repo_root.joinpath(".gitignore").exists():
-            repo_root.joinpath(".gitignore").touch()
-        generic.adjust_gitignore(repo_root=repo_root)
 
     if add_vscode_task:
         add_lint_and_type_check_task(repo_root=repo_root)
@@ -87,3 +112,13 @@ def add_ai_configs(
     selected_frameworks: tuple[AGENTS, ...] = tuple(dict.fromkeys(frameworks))
     for framework in selected_frameworks:
         _build_framework_config(repo_root=repo_root, framework=framework)
+
+    files_after_configuration = _snapshot_repo_files(repo_root=repo_root)
+    touched_config_files = _collect_touched_files(before=files_before_configuration, after=files_after_configuration)
+
+    if include_common_scaffold or add_all_touched_configs_to_gitignore:
+        dot_git_ignore_path = repo_root.joinpath(".gitignore")
+        if dot_git_ignore_path.exists() is False:
+            dot_git_ignore_path.touch()
+        extra_entries: list[str] = touched_config_files if add_all_touched_configs_to_gitignore else []
+        generic.adjust_gitignore(repo_root=repo_root, include_default_entries=include_common_scaffold, extra_entries=extra_entries)

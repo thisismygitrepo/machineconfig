@@ -187,7 +187,7 @@ def make_agents_command_template() -> None:
     print(f"Prompt template written to {save_path_root}")
 
 
-def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_common: bool, add_lint_task: bool) -> None:
+def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_common: bool, add_all_configs_to_gitignore: bool, add_lint_task: bool) -> None:
     """Initialize AI configurations in the current repository."""
     from machineconfig.scripts.python.ai.initai import add_ai_configs
     if root is None:
@@ -206,4 +206,4 @@ def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_com
     else:
         raise ValueError("Provide at least one --framework option, or pass --all-frameworks")
 
-    add_ai_configs(repo_root=repo_root, frameworks=selected_frameworks, include_common_scaffold=include_common, add_vscode_task=add_lint_task)
+    add_ai_configs(repo_root=repo_root, frameworks=selected_frameworks, include_common_scaffold=include_common, add_all_touched_configs_to_gitignore=add_all_configs_to_gitignore, add_vscode_task=add_lint_task)

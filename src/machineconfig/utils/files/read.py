@@ -31,7 +31,7 @@ class Read:
                 return pl.read_parquet(path, **kwargs)
             elif suffix == "csv":
                 import polars as pl
-                return pl.read_csv(path, **kwargs)
+                return pl.read_csv(path, infer_schema_length=10000, **kwargs)
             elif suffix == "npz" or suffix == "npy":
                 import numpy as np
                 return np.load(str(path), **kwargs)

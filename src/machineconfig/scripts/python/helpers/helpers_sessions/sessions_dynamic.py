@@ -1,10 +1,13 @@
 """Dynamic tab scheduling for a single layout."""
 
 from collections import deque
+from pathlib import Path
 import subprocess
+import tempfile
 import time
 from typing import Literal, TypedDict
 
+from machineconfig.cluster.sessions_managers.zellij.zellij_utils.zellij_local_helper import parse_command, format_args_for_kdl
 from machineconfig.cluster.sessions_managers.zellij.zellij_utils.zellij_local_helper import check_command_status
 from machineconfig.cluster.sessions_managers.zellij.zellij_local_manager import ZellijLocalManager
 from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
@@ -30,27 +33,47 @@ def _run_zellij_action(session_name: str, args: list[str]) -> None:
         raise RuntimeError(f"Failed command: {' '.join(cmd)}\n{detail}")
 
 
-def _spawn_tab(session_name: str, task: DynamicTabTask) -> None:
+def _create_single_tab_layout_file(task: DynamicTabTask) -> str:
     tab = task["tab"]
-    runtime_tab_name = task["runtime_tab_name"]
-    _run_zellij_action(session_name=session_name, args=["action", "new-tab", "--name", runtime_tab_name, "--cwd", tab["startDir"]])
-    time.sleep(0.5)
-    _run_zellij_action(session_name=session_name, args=["action", "go-to-tab-name", runtime_tab_name])
-    time.sleep(0.5)
-    _run_zellij_action(
-        session_name=session_name,
-        args=["action", "new-pane", "--direction", "down", "--", "/bin/bash", "-lc", tab["command"]],
+    tab_name = task["runtime_tab_name"].replace('"', '\\"')
+    tab_cwd = tab["startDir"].replace('"', '\\"')
+    command_text = tab["command"]
+    _, _args = parse_command(command_text)
+    args_for_bash = ["-lc", command_text]
+    args_kdl = format_args_for_kdl(args_for_bash)
+    layout_content = (
+        f"layout {{\n"
+        f"  tab name=\"{tab_name}\" cwd=\"{tab_cwd}\" {{\n"
+        f"    pane command=\"/bin/bash\" {{\n"
+        f"      args {args_kdl}\n"
+        f"    }}\n"
+        f"  }}\n"
+        f"}}\n"
     )
-    time.sleep(0.5)
-    _run_zellij_action(session_name=session_name, args=["action", "move-focus", "up"])
-    time.sleep(0.2)
-    _run_zellij_action(session_name=session_name, args=["action", "close-pane"])
+    layout_dir = Path.home().joinpath("tmp_results/sessions/zellij_layouts_dynamic")
+    layout_dir.mkdir(parents=True, exist_ok=True)
+    layout_file_path = tempfile.mkstemp(suffix="_dynamic_tab.kdl", dir=layout_dir)[1]
+    Path(layout_file_path).write_text(layout_content, encoding="utf-8")
+    return layout_file_path
+
+
+def _spawn_tab(session_name: str, task: DynamicTabTask) -> None:
+    runtime_tab_name = task["runtime_tab_name"]
+    layout_file = _create_single_tab_layout_file(task=task)
+    _run_zellij_action(session_name=session_name, args=["action", "new-tab", "--name", runtime_tab_name, "--layout", layout_file])
 
 
 def _close_tab(session_name: str, runtime_tab_name: str) -> None:
-    _run_zellij_action(session_name=session_name, args=["action", "go-to-tab-name", runtime_tab_name])
-    time.sleep(0.2)
-    _run_zellij_action(session_name=session_name, args=["action", "close-tab"])
+    try:
+        go_to_cmd = ["zellij", "--session", session_name, "action", "go-to-tab-name", runtime_tab_name]
+        go_to_result = subprocess.run(go_to_cmd, capture_output=True, text=True, timeout=2.0, check=False)
+        if go_to_result.returncode != 0:
+            return
+        time.sleep(0.1)
+        close_cmd = ["zellij", "--session", session_name, "action", "close-tab"]
+        subprocess.run(close_cmd, capture_output=True, text=True, timeout=2.0, check=False)
+    except Exception:
+        return
 
 
 def _run_tmux_command(args: list[str]) -> None:

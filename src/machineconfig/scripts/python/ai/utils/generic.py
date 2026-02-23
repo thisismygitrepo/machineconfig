@@ -1,6 +1,7 @@
 
 from pathlib import Path
 import platform
+from collections.abc import Sequence
 
 from machineconfig.utils.source_of_truth import LIBRARY_ROOT
 
@@ -33,19 +34,30 @@ def adjust_for_os(config_path: Path) -> str:
         raise NotImplementedError(f"Platform {platform.system()} is not supported.")
 
 
-def adjust_gitignore(repo_root: Path) -> None:
+def adjust_gitignore(repo_root: Path, include_default_entries: bool, extra_entries: Sequence[str]) -> None:
     dot_git_ignore_path = repo_root.joinpath(".gitignore")
     if dot_git_ignore_path.exists() is False:
         return
 
     dot_git_ignore_content = dot_git_ignore_path.read_text(encoding="utf-8")
+    existing_entries = {
+        line.strip()
+        for line in dot_git_ignore_content.splitlines()
+        if line.strip() != "" and line.lstrip().startswith("#") is False
+    }
+    desired_entries: list[str] = []
+    if include_default_entries:
+        from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
+        desired_entries.extend(EXCLUDE_DIRS)
+    desired_entries.extend(entry.strip() for entry in extra_entries if entry.strip() != "")
+
     entries_to_add: list[str] = []
-    from machineconfig.utils.source_of_truth import EXCLUDE_DIRS
-    for entry in EXCLUDE_DIRS:
-        if entry not in dot_git_ignore_content:
+    for entry in dict.fromkeys(desired_entries):
+        if entry not in existing_entries:
             entries_to_add.append(entry)
 
     if len(entries_to_add) == 0:
         return
 
-    dot_git_ignore_path.write_text(data=dot_git_ignore_content + "\n" + "\n".join(entries_to_add), encoding="utf-8")
+    separator = "" if dot_git_ignore_content == "" or dot_git_ignore_content.endswith("\n") else "\n"
+    dot_git_ignore_path.write_text(data=dot_git_ignore_content + separator + "\n".join(entries_to_add) + "\n", encoding="utf-8")
