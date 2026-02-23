@@ -47,6 +47,21 @@ class Read:
         from machineconfig.utils.io import read_json
         return read_json(path, r=r, **kwargs)
     @staticmethod
+    def jsonl(path: 'Path', r: bool = False, **kwargs: Any) -> Any:  # return could be list or dict etc
+        # from machineconfig.utils.io import read_json
+        # return read_json(path, r=r, **kwargs)
+        raw = Path(path).read_text(encoding="utf-8").splitlines()
+        res = []
+        import json
+        for line in raw:
+            try:
+                res.append(json.loads(line, **kwargs))
+            except json.JSONDecodeError as ex:
+                print(f"💥 Failed to parse line as JSON: {line}\nError: {ex}")
+                raise ex
+        _ = r
+        return res
+    @staticmethod
     def yaml(path: 'Path', r: bool = False) -> Any:  # return could be list or dict etc
         import yaml
         with open(str(path), "r", encoding="utf-8") as file:
