@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from pathlib import Path
 from platform import system
@@ -110,20 +109,19 @@ def delete(path: Path, sure: bool = False, verbose: bool = True) -> Path:
         if verbose:
             _print_message(f"❌ Did NOT DELETE because user is not sure. file: {path_obj!r}.")
         return path_obj
-    expanded = _expand(path_obj)
-    if not expanded.exists():
-        expanded.unlink(missing_ok=True)
+    if not path_obj.exists():
+        path_obj.unlink(missing_ok=True)
         if verbose:
-            _print_message(f"❌ Could NOT DELETE nonexisting file {expanded!r}. ")
+            _print_message(f"❌ Could NOT DELETE nonexisting file {path_obj!r}. ")
         return path_obj
-    if expanded.is_file() or expanded.is_symlink():
-        expanded.unlink(missing_ok=True)
+    if path_obj.is_file() or path_obj.is_symlink():
+        path_obj.unlink(missing_ok=True)
     else:
         import shutil
 
-        shutil.rmtree(expanded, ignore_errors=False)
+        shutil.rmtree(path_obj, ignore_errors=False)
     if verbose:
-        _print_message(f"🗑️ ❌ DELETED {expanded!r}.")
+        _print_message(f"🗑️ ❌ DELETED {path_obj!r}.")
     return path_obj
 
 
@@ -140,13 +138,13 @@ def move(
 ) -> Path:
     path_obj = _to_path(path)
     source = _safe_resolve(_expand(path_obj))
-    destination = _resolve_path(source, folder=folder, name=name, target_path=target_path, default_name=source.absolute().name, rel2it=rel2it)
+    destination = _resolve_path(path_obj, folder=folder, name=name, target_path=target_path, default_name=path_obj.absolute().name, rel2it=rel2it)
     if parents:
         destination.parent.mkdir(parents=True, exist_ok=True)
     if content:
-        assert source.is_dir(), NotADirectoryError(f"💥 When `content` is True path must be a directory. It is not: `{source!r}`")
-        for child in source.glob("*"):
-            move(path=child, folder=destination.parent, content=False, overwrite=overwrite, verbose=verbose)
+        assert path_obj.is_dir(), NotADirectoryError(f"💥 When `content` flag is set to True, path must be a directory. It is not: `{path_obj!r}`")
+        for child in path_obj.glob("*"):
+            move(path=child, folder=destination.parent, content=False, overwrite=overwrite)
         return destination
     if overwrite:
         tmp_path = source.rename(destination.parent.absolute() / randstr())
@@ -178,7 +176,7 @@ def copy(
 ) -> Path:
     path_obj = _to_path(path)
     source = _safe_resolve(_expand(path_obj))
-    destination = _safe_resolve(_expand(_resolve_path(source, folder=folder, name=name, target_path=target_path, default_name=source.name, rel2it=False)))
+    destination = _safe_resolve(_expand(_resolve_path(path_obj, folder=folder, name=name, target_path=target_path, default_name=path_obj.name, rel2it=False)))
     destination.parent.mkdir(parents=True, exist_ok=True)
     if destination == source:
         destination = append(path_obj, name=append_name if append_name is not None else f"_copy_{randstr()}")
@@ -205,8 +203,8 @@ def copy(
 
 
 def download(
-    url_path: Path,
-    folder: Optional[Path] = None,
+    url_path: Path | str,
+    folder: PathLike = None,
     name: Optional[str] = None,
     allow_redirects: bool = True,
     timeout: Optional[int] = None,
@@ -214,7 +212,7 @@ def download(
 ) -> Path:
     import requests
 
-    response = requests.get(as_url_str(url_path), allow_redirects=allow_redirects, timeout=timeout, params=params)
+    response = requests.get(as_url_str(_to_path(url_path)), allow_redirects=allow_redirects, timeout=timeout, params=params)
     assert response.status_code == 200, f"Download failed with status code {response.status_code}\n{response.text}"
     if name is not None:
         filename = name
@@ -222,9 +220,8 @@ def download(
         try:
             filename = response.headers["Content-Disposition"].split("filename=")[1].replace('"', "")
         except (KeyError, IndexError):
-            src_url = response.history[-1].url if len(response.history) > 0 else response.url
-            filename = validate_name(str(Path(src_url).name))
-    destination = (Path.home() / "Downloads" if folder is None else _to_path(folder)).joinpath(filename)
+            filename = validate_name(str(_to_path(response.history[-1].url).name if len(response.history) > 0 else _to_path(response.url).name))
+    destination = (Path.home().joinpath("Downloads") if folder is None else _to_path(folder)).joinpath(filename)
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_bytes(response.content)
     return destination
@@ -247,7 +244,8 @@ def append(
         indexed_name = f"{name}_{len(search(path_obj.parent, pattern=pattern))}"
         return append(path_obj, name=indexed_name, index=False, verbose=verbose, suffix=suffix, inplace=inplace, overwrite=overwrite, orig=orig, strict=strict)
     full_name = name or ("_" + str(timestamp()))
-    full_suffix = suffix or "".join(path_obj.suffixes)
+    prefixed_path = path_obj.parent.joinpath(f"bruh{path_obj.name}")
+    full_suffix = suffix or "".join(prefixed_path.suffixes)
     subpath = path_obj.name.split(".")[0] + full_name + full_suffix
     destination = path_obj.parent.joinpath(subpath)
     if inplace:
@@ -277,16 +275,19 @@ def with_name(
 ) -> Path:
     path_obj = _to_path(path)
     destination = path_obj.parent / name
+    orig = bool(orig)
+    strict = bool(strict)
     if inplace:
-        assert path_obj.exists(), f"`inplace` flag is only relevant if path exists. It doesn't {path_obj}"
+        assert path_obj.exists(), f"`inplace` flag is only relevant if the path exists. It doesn't {path_obj}"
         if overwrite and destination.exists():
             delete(destination, sure=True, verbose=verbose)
         if not overwrite and destination.exists():
             if strict:
                 raise FileExistsError(f"❌ RENAMING failed. File `{destination}` already exists.")
-            if verbose:
-                _print_message(f"⚠️ SKIPPED RENAMING {path_obj!r} ➡️ {destination!r} because FileExistsError and scrict=False policy.")
-            return path_obj if orig else destination
+            else:
+                if verbose:
+                    _print_message(f"⚠️ SKIPPED RENAMING {path_obj!r} ➡️ {destination!r} because FileExistsError and scrict=False policy.")
+                return path_obj if orig else destination
         path_obj.rename(destination)
         if verbose:
             _print_message(f"RENAMED {path_obj!r} ➡️ {destination!r}")
@@ -294,7 +295,7 @@ def with_name(
 
 
 def rel2home(path: Path) -> Path:
-    return _expand(path).absolute().relative_to(Path.home())
+    return Path(_to_path(path).expanduser().absolute().relative_to(Path.home()))
 
 
 def collapseuser(path: Path, strict: bool = True, placeholder: str = "~") -> Path:
@@ -302,11 +303,13 @@ def collapseuser(path: Path, strict: bool = True, placeholder: str = "~") -> Pat
     home_obj = Path.home()
     expanded = _expand(path_obj).absolute()
     if strict:
-        assert str(expanded.resolve(strict=True)).startswith(str(home_obj)), ValueError(f"`{home_obj}` is not in the subpath of `{path_obj}`")
-    resolved = expanded.resolve(strict=strict) if strict else _safe_resolve(expanded, strict=False)
-    if str(path_obj).startswith(placeholder) or home_obj.as_posix() not in _safe_resolve(expanded, strict=False).as_posix():
+        assert str(expanded.resolve()).startswith(str(home_obj)), ValueError(f"`{home_obj}` is not in the subpath of `{path_obj}`")
+    if str(path_obj).startswith(placeholder) or home_obj.as_posix() not in path_obj.resolve().as_posix():
         return path_obj
-    return Path(placeholder) / resolved.relative_to(home_obj)
+    reduced = Path(str(expanded.resolve(strict=strict)).replace(str(home_obj), ""))
+    if len(reduced.parts) and reduced.parts[0] in {"\\", "/"}:
+        reduced = _path_from_parts(reduced.parts[1:])
+    return Path(placeholder) / reduced
 
 
 def split(
@@ -319,25 +322,25 @@ def split(
     path_obj = _to_path(path)
     if index is None and at is not None:
         if not strict:
-            items = str(path_obj).split(sep=str(at))
-            one, two = items[0], items[1]
-            left = Path(one[:-1]) if one.endswith("/") else Path(one)
-            right = Path(two[1:]) if two.startswith("/") else Path(two)
+            one, two = (items := str(path_obj).split(sep=str(at)))[0], items[1]
+            one, two = Path(one[:-1]) if one.endswith("/") else Path(one), Path(two[1:]) if two.startswith("/") else Path(two)
         else:
-            split_index = path_obj.parts.index(str(at))
-            left, right = _path_from_parts(path_obj.parts[0:split_index]), _path_from_parts(path_obj.parts[split_index + 1 :])
+            index = path_obj.parts.index(str(at))
+            one, two = _path_from_parts(path_obj.parts[0:index]), _path_from_parts(path_obj.parts[index + 1 :])
     elif index is not None and at is None:
-        left, right = _path_from_parts(path_obj.parts[:index]), _path_from_parts(path_obj.parts[index + 1 :])
+        one, two = _path_from_parts(path_obj.parts[:index]), _path_from_parts(path_obj.parts[index + 1 :])
         at = path_obj.parts[index]
     else:
         raise ValueError("Either `index` or `at` can be provided. Both are not allowed simulatanesouly.")
+    assert at is not None
     if sep == 0:
-        return left, right
-    if sep == 1:
-        return left, Path(at) / right
-    if sep == -1:
-        return left / str(at), right
-    raise ValueError(f"`sep` should take a value from the set [-1, 0, 1] but got {sep}")
+        return one, two
+    elif sep == 1:
+        return one, Path(at) / two
+    elif sep == -1:
+        return one / at, two
+    else:
+        raise ValueError(f"`sep` should take a value from the set [-1, 0, 1] but got {sep}")
 
 
 def size(path: Path, units: Literal["b", "kb", "mb", "gb"] = "mb") -> float:

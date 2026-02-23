@@ -5,6 +5,20 @@ from pathlib import Path
 from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
 
+def _split_and_chunk_prompts(raw_material: str, separator: str, tasks_per_prompt: int) -> list[str]:
+    prompts = [piece for piece in raw_material.split(separator) if piece.strip() != ""]
+    if not prompts:
+        return []
+    if tasks_per_prompt >= len(prompts):
+        print("No need to chunk prompts, as tasks_per_prompt >= total prompts.", f"({tasks_per_prompt} >= {len(prompts)})")
+        return prompts
+    print(f"Chunking {len(prompts)} prompts into groups of {tasks_per_prompt} rows/tasks each.")
+    grouped: list[str] = []
+    for idx in range(0, len(prompts), tasks_per_prompt):
+        grouped.append(separator.join(prompts[idx : idx + tasks_per_prompt]))
+    return grouped
+
+
 def agents_create(
     agent: AGENTS,
     host: HOST,
@@ -17,7 +31,7 @@ def agents_create(
     prompt: Optional[str],
     prompt_path: Optional[str],
     job_name: str,
-    separate: bool,
+    join_prompt_and_context: bool,
     output_path: Optional[str],
     agents_dir: Optional[str],
 ) -> None:
@@ -44,7 +58,9 @@ def agents_create(
     print(f"Operating @ {repo_root}")
 
     if context is not None:
-        prompt_material_re_splitted = [context]
+        prompt_material_re_splitted = _split_and_chunk_prompts(raw_material=context, separator=separator, tasks_per_prompt=agent_load)
+        if not prompt_material_re_splitted:
+            raise ValueError("Provided --context does not contain any non-empty task after splitting")
     else:
         if context_path is None:
             context_path_resolved = Path(repo_root) / ".ai" / "todo"
@@ -83,7 +99,7 @@ def agents_create(
         repo_root=repo_root,
         agents_dir=agents_dir_obj,
         prompts_material=prompt_material_re_splitted,
-        keep_material_in_separate_file=separate,
+        join_prompt_and_context=join_prompt_and_context,
         prompt_prefix=prompt_prefix,
         machine=host,
         agent=agent_selected,

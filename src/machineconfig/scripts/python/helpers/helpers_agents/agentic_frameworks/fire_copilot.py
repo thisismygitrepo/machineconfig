@@ -9,7 +9,7 @@ def fire_copilot(ai_spec: AI_SPEC, prompt_path: Path, repo_root: Path) -> str:
     safe_prompt_path = shlex.quote(str(prompt_rel))
     model_value = ai_spec["model"]
     model_arg = f"--model {shlex.quote(model_value)}" if model_value else ""
-    base_cmd = f"""copilot -p "$(cat {safe_prompt_path})" {model_arg} --allow-all-tools"""
+    base_cmd = f"""copilot -p "$(cat {safe_prompt_path})" {model_arg} --yolo """
     match ai_spec["machine"]:
         case "local":
             cmd = f"""

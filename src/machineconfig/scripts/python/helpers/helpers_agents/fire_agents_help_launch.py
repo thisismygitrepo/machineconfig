@@ -29,7 +29,7 @@ def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
     return res
 
 
-def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, keep_material_in_separate_file: bool,
+def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, join_prompt_and_context: bool,
                       machine: HOST, model: str, provider: Optional[PROVIDER], agent: AGENTS, *, job_name: str) -> None:
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
@@ -39,13 +39,13 @@ def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[
         prompt_root = prompt_folder / f"agent_{idx}"
         prompt_root.mkdir(parents=True, exist_ok=True)
         prompt_path = prompt_root / f"agent_{idx}_prompt.txt"
-        if keep_material_in_separate_file:
+        if join_prompt_and_context:
+            prompt_material_path = prompt_path
+            prompt_path.write_text(prompt_prefix + """\nPlease only look @ the following:\n""" + a_prompt_material, encoding="utf-8")
+        else:
             prompt_material_path = prompt_root / f"agent_{idx}_material.txt"
             prompt_material_path.write_text(a_prompt_material, encoding="utf-8")
             prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path.relative_to(repo_root)}. You don't need to do any other work beside the content of this material file.""", encoding="utf-8")
-        else:
-            prompt_material_path = prompt_path
-            prompt_path.write_text(prompt_prefix + """\nPlease only look @ the following:\n""" + a_prompt_material, encoding="utf-8")
 
         agent_cmd_launch_path = prompt_root / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
         random_sleep_time = random.uniform(0, 5)

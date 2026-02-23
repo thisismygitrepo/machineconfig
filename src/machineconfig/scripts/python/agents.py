@@ -17,14 +17,14 @@ def agents_create(
     prompt:       Annotated[Optional[str], typer.Option(..., "--prompt", "-p", help="Prompt prefix as string")] = None,
     prompt_path:  Annotated[Optional[str], typer.Option(..., "--prompt-path", "-P", help="Path to prompt file")] = None,
     job_name:     Annotated[str, typer.Option(..., "--job-name", "-j", help="Job name")] = "AI_Agents",
-    separate:     Annotated[bool, typer.Option(..., "--separate", "-S", help="Keep prompt material in separate file to the context.")] = True,
+    join_prompt_and_context:     Annotated[bool, typer.Option(..., "--joined-prompt-context", "-j", help="Join prompt file to the context.")] = False,
     output_path:  Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Path to write the layout.json file")] = None,
     agents_dir:   Annotated[Optional[str], typer.Option(..., "--agents-dir", "-d", help="Directory to store agent files. If not provided, will be constructed automatically.")] = None,
 ) -> None:
     """Create agents layout file, ready to run."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import agents_create as impl
     try:
-        impl(agent=agent, host=host, model=model, provider=provider, context=context, context_path=context_path, separator=separator, agent_load=agent_load, prompt=prompt, prompt_path=prompt_path, job_name=job_name, separate=separate, output_path=output_path, agents_dir=agents_dir)
+        impl(agent=agent, host=host, model=model, provider=provider, context=context, context_path=context_path, separator=separator, agent_load=agent_load, prompt=prompt, prompt_path=prompt_path, job_name=job_name, join_prompt_and_context=join_prompt_and_context, output_path=output_path, agents_dir=agents_dir)
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
     except RuntimeError as e:
