@@ -62,13 +62,13 @@ def mount(
 def get_app() -> typer.Typer:
     app = typer.Typer(add_completion=False, no_args_is_help=True, help="☁️ Cloud management commands")
 
-    app.command(name="sync", no_args_is_help=True, short_help="🔄 [s] Synchronize files/folders between local and cloud storage.")(sync)
+    app.command(name="sync", no_args_is_help=True, short_help="🔄 <s> Synchronize files/folders between local and cloud storage.")(sync)
     app.command(name="s", no_args_is_help=True, hidden=True)(sync)
 
-    app.command(name="copy", no_args_is_help=True, short_help="📤 [c] Upload or 📥 Download files/folders to/from cloud storage.")(copy)
+    app.command(name="copy", no_args_is_help=True, short_help="📤 <c> Upload or 📥 Download files/folders to/from cloud storage.")(copy)
     app.command(name="c", no_args_is_help=True, hidden=True)(copy)
 
-    app.command(name="mount", no_args_is_help=True, short_help="🔗 [m] Mount cloud storage services as local drives.")(mount)
+    app.command(name="mount", no_args_is_help=True, short_help="🔗 <m> Mount cloud storage services as local drives.")(mount)
     app.command(name="m", no_args_is_help=True, hidden=True)(mount)
 
     return app

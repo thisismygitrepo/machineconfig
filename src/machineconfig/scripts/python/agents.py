@@ -113,24 +113,24 @@ def get_app() -> typer.Typer:
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     sep = "\n"
     agents_full_help = f"""
-[c] Create agents layout file, ready to run.
+<c> Create agents layout file, ready to run.
 {sep}
 PROVIDER options: {', '.join(get_args(PROVIDER))}
 {sep}
 AGENT options: {', '.join(get_args(AGENTS))}
 """
     agents_create.__doc__ = agents_full_help
-    agents_app.command("create", no_args_is_help=True, help=agents_create.__doc__, short_help="[c] Create agents layout file, ready to run.")(agents_create)
+    agents_app.command("create", no_args_is_help=True, help=agents_create.__doc__, short_help="<c> Create agents layout file, ready to run.")(agents_create)
     agents_app.command("c", no_args_is_help=True, help=agents_create.__doc__, hidden=True)(agents_create)
-    agents_app.command("collect", no_args_is_help=True, help=collect.__doc__, short_help="[T] Collect all agent materials into a single file.")(collect)
+    agents_app.command("collect", no_args_is_help=True, help=collect.__doc__, short_help="<T> Collect all agent materials into a single file.")(collect)
     agents_app.command("T", no_args_is_help=True, help=collect.__doc__, hidden=True)(collect)
-    agents_app.command("make-template", no_args_is_help=False, help=make_agents_command_template.__doc__, short_help="[t] Create a template for fire agents")(make_agents_command_template)
+    agents_app.command("make-template", no_args_is_help=False, help=make_agents_command_template.__doc__, short_help="<t> Create a template for fire agents")(make_agents_command_template)
     agents_app.command("t", no_args_is_help=False, help=make_agents_command_template.__doc__, hidden=True)(make_agents_command_template)
-    agents_app.command("make-config", no_args_is_help=False, help=init_config.__doc__, short_help="[g] Initialize AI configurations in the current repository")(init_config)
+    agents_app.command("make-config", no_args_is_help=False, help=init_config.__doc__, short_help="<g> Initialize AI configurations in the current repository")(init_config)
     agents_app.command("g", no_args_is_help=False, help=init_config.__doc__, hidden=True)(init_config)
-    agents_app.command("make-todo", no_args_is_help=True, short_help="[d] Generate a markdown file listing all Python files in the repo")(make_todo_files)
+    agents_app.command("make-todo", no_args_is_help=True, short_help="<d> Generate a markdown file listing all Python files in the repo")(make_todo_files)
     agents_app.command("d", no_args_is_help=True, hidden=True)(make_todo_files)
-    agents_app.command(name="make-symlinks", no_args_is_help=True, short_help="[s] Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
+    agents_app.command(name="make-symlinks", no_args_is_help=True, short_help="<s> Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     agents_app.command(name="s", no_args_is_help=True, hidden=True)(create_symlink_command)
     return agents_app
 

@@ -195,13 +195,13 @@ bash "{str(script_path)}"
 
 
 def explore(ctx: typer.Context) -> None:
-    """🧭 [x] Explore the MachineConfig CLI graph."""
+    """🧭 <x> Explore the MachineConfig CLI graph."""
     import machineconfig.scripts.python.graph.visualize.cli_graph_app as cli_graph_app
     cli_graph_app.get_app()(ctx.args, standalone_mode=False)
 
 
 def security(ctx: typer.Context) -> None:
-    """🔐 [y] Security related CLI tools."""
+    """🔐 <y> Security related CLI tools."""
     import machineconfig.jobs.installer.checks.security_cli as security_cli_module
     security_cli_module.get_app()(ctx.args, standalone_mode=False)
 
@@ -209,32 +209,32 @@ def security(ctx: typer.Context) -> None:
 
 
 def get_app():
-    cli_app = typer.Typer(help="🔄 [s] self operations subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
+    cli_app = typer.Typer(help="🔄 <s> self operations subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     ctx_settings: dict[str, object] = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True, "help_option_names": []}
-    cli_app.command(name= "update",      no_args_is_help=False, help="🔄 [u] UPDATE machineconfig")(update)
+    cli_app.command(name= "update",      no_args_is_help=False, help="🔄 <u> UPDATE machineconfig")(update)
     cli_app.command(name= "u",           no_args_is_help=False, hidden=True)(update)
-    cli_app.command(name= "init",         no_args_is_help=False, help="🦐 [t] Define and manage configurations")(init)
+    cli_app.command(name= "init",         no_args_is_help=False, help="🦐 <t> Define and manage configurations")(init)
     cli_app.command(name= "t",            no_args_is_help=False, hidden=True)(init)
-    cli_app.command(name= "status",      no_args_is_help=False, help="📊 [s] STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
+    cli_app.command(name= "status",      no_args_is_help=False, help="📊 <s> STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
     cli_app.command(name= "s",           no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
-    cli_app.command(name= "install",     no_args_is_help=False, help="📋 [i] CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
+    cli_app.command(name= "install",     no_args_is_help=False, help="📋 <i> CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
     cli_app.command(name= "i",           no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
 
     # src\machineconfig\utils\installer_utils\installer_offline.py
     # from machineconfig.utils.installer_utils import installer_offline
     # cli_app.add_typer(installer_offline.get_app(), name="offline", help="📦 [io] Export and Import binaries and configs for offline installation")
 
-    cli_app.command(name="explore", help="🧭 [x] Explore the MachineConfig CLI graph.", context_settings=ctx_settings)(explore)
+    cli_app.command(name="explore", help="🧭 <x> Explore the MachineConfig CLI graph.", context_settings=ctx_settings)(explore)
     cli_app.command(name="x", hidden=True, context_settings=ctx_settings)(explore)
 
     if Path.home().joinpath("code", "machineconfig").exists():
-        cli_app.command(name= "buid-docker", no_args_is_help=False, help="🧱 [d] Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
+        cli_app.command(name= "buid-docker", no_args_is_help=False, help="🧱 <d> Build docker images (wraps jobs/shell/docker_build_and_publish.sh)")(buid_docker)
         cli_app.command(name= "d", no_args_is_help=False, help="Build docker images (wraps jobs/shell/docker_build_and_publish.sh)", hidden=True)(buid_docker)
 
-        cli_app.command(name="security", help="🔐 [y] Security related CLI tools.", context_settings=ctx_settings)(security)
-        cli_app.command(name="y", help="🔐 [y] Security related CLI tools.", hidden=True, context_settings=ctx_settings)(security)
+        cli_app.command(name="security", help="🔐 <y> Security related CLI tools.", context_settings=ctx_settings)(security)
+        cli_app.command(name="y", help="🔐 <y> Security related CLI tools.", hidden=True, context_settings=ctx_settings)(security)
 
 
-    cli_app.command(name= "readme", no_args_is_help=False, help="📚 [r] render readme markdown in terminal.")(readme)
+    cli_app.command(name= "readme", no_args_is_help=False, help="📚 <r> render readme markdown in terminal.")(readme)
     cli_app.command(name= "r", no_args_is_help=False, hidden=True)(readme)
     return cli_app

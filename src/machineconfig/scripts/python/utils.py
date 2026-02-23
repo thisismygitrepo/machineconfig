@@ -122,22 +122,22 @@ def read_db_cli_tui(
 
 def get_app() -> typer.Typer:
     app = typer.Typer(help="🛠️ utilities operations", no_args_is_help=True, add_help_option=True, add_completion=False)
-    app.command(name="kill-process", no_args_is_help=False, help="⚔️ [k] Choose a process to kill")(kill_process)
+    app.command(name="kill-process", no_args_is_help=False, help="⚔️ <k> Choose a process to kill")(kill_process)
     app.command(name="k", no_args_is_help=False, hidden=True)(kill_process)
 
-    app.command("environment", no_args_is_help=False, help="📚 [v] NAVIGATE ENV/PATH variable with TUI")(tui_env)
+    app.command("environment", no_args_is_help=False, help="📚 <v> NAVIGATE ENV/PATH variable with TUI")(tui_env)
     app.command("v", no_args_is_help=False, hidden=True)(tui_env)
 
     app.command(name="upgrade-packages", no_args_is_help=False, help="⬆️ [up] Upgrade project dependencies.")(upgrade_packages)
     app.command(name="up", no_args_is_help=False, hidden=True)(upgrade_packages)
 
-    app.command(name="download", no_args_is_help=True, help="⬇️ [d] Download a file from a URL and optionally decompress it.")(download)
+    app.command(name="download", no_args_is_help=True, help="⬇️ <d> Download a file from a URL and optionally decompress it.")(download)
     app.command(name="d", no_args_is_help=True, hidden=True)(download)
-    app.command(name="get-machine-specs", no_args_is_help=False, help="💻 [g] Get machine specifications.")(get_machine_specs)
+    app.command(name="get-machine-specs", no_args_is_help=False, help="💻 <g> Get machine specifications.")(get_machine_specs)
     app.command(name="g", no_args_is_help=False, hidden=True)(get_machine_specs)
-    app.command(name="init-project", no_args_is_help=False, help="🚀 [i] Initialize a project with a uv virtual environment and install dev packages.")(init_project)
+    app.command(name="init-project", no_args_is_help=False, help="🚀 <i> Initialize a project with a uv virtual environment and install dev packages.")(init_project)
     app.command(name="i", no_args_is_help=False, hidden=True)(init_project)
-    app.command(name="edit", no_args_is_help=False, help="✏️ [e] Open a file in the default editor.")(edit_file_with_hx)
+    app.command(name="edit", no_args_is_help=False, help="✏️ <e> Open a file in the default editor.")(edit_file_with_hx)
     app.command(name="e", no_args_is_help=False, hidden=True)(edit_file_with_hx)
 
     app.command(name="pdf-merge", no_args_is_help=True, help="📄 [pm] Merge two PDF files into one.")(merge_pdfs)
@@ -145,7 +145,7 @@ def get_app() -> typer.Typer:
     app.command(name="pdf-compress", no_args_is_help=True, help="📦 [pc] Compress a PDF file.")(compress_pdf)
     app.command(name="pc", no_args_is_help=True, hidden=True)(compress_pdf)
 
-    app.command(name="type-hint", no_args_is_help=True, help="📝 [t] Type hint a file or project directory.")(type_hint)
+    app.command(name="type-hint", no_args_is_help=True, help="📝 <t> Type hint a file or project directory.")(type_hint)
     app.command(name="t", no_args_is_help=True, hidden=True)(type_hint)
 
     app.command(name="read-db", no_args_is_help=False, help="🗃️ [db] TUI DB Visualizer.")(read_db_cli_tui)

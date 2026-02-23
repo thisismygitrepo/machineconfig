@@ -52,19 +52,19 @@ def register_data(
 def get_app() -> typer.Typer:
     app = typer.Typer(
         name="data",
-        help="🗄️ [d] Backup and retrieve configuration files and directories to/from cloud storage using rclone.",
+        help="🗄️ <d> Backup and retrieve configuration files and directories to/from cloud storage using rclone.",
         no_args_is_help=True,
         add_help_option=True,
         add_completion=False,
     )
 
-    app.command(name="sync", no_args_is_help=True, hidden=False, help="🔄 [s] Sync (backup) files and directories to cloud storage using rclone.")(
+    app.command(name="sync", no_args_is_help=True, hidden=False, help="🔄 <s> Sync (backup) files and directories to cloud storage using rclone.")(
         sync
     )
 
     app.command(name="s", no_args_is_help=True, hidden=True)(sync)
 
-    app.command(name="register", no_args_is_help=True, hidden=False, help="📝 [r] Register a new backup entry in user backup.toml.")(register_data)
+    app.command(name="register", no_args_is_help=True, hidden=False, help="📝 <r> Register a new backup entry in user backup.toml.")(register_data)
 
     app.command(name="r", no_args_is_help=True, hidden=True)(register_data)
 

@@ -188,41 +188,41 @@ def mount_device(
 
 
 def get_app():
-    config_apps = typer.Typer(help="⚙️ [c] configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
-    config_apps.command("sync", no_args_is_help=True, help="🔗 [s] Sync dotfiles.")(create_links_export.main_from_parser)
+    config_apps = typer.Typer(help="⚙️ <c> configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
+    config_apps.command("sync", no_args_is_help=True, help="🔗 <s> Sync dotfiles.")(create_links_export.main_from_parser)
     config_apps.command("s", no_args_is_help=True, help="Sync dotfiles.", hidden=True)(create_links_export.main_from_parser)
 
-    config_apps.command("register", no_args_is_help=True, help="🔗 [r] Register dotfiles agains user mapper.toml")(dotfile_module.register_dotfile)
+    config_apps.command("register", no_args_is_help=True, help="🔗 <r> Register dotfiles agains user mapper.toml")(dotfile_module.register_dotfile)
     config_apps.command("r", no_args_is_help=True,  hidden=True)(dotfile_module.register_dotfile)
 
-    config_apps.command("export-dotfiles", no_args_is_help=True, help="🔗 [e] Export dotfiles for migration to new machine.")(dotfile_module.export_dotfiles)
+    config_apps.command("export-dotfiles", no_args_is_help=True, help="🔗 <e> Export dotfiles for migration to new machine.")(dotfile_module.export_dotfiles)
     config_apps.command("e", no_args_is_help=True, help="Export dotfiles for migration to new machine.", hidden=True)(dotfile_module.export_dotfiles)
-    config_apps.command("import-dotfiles", no_args_is_help=False, help="🔗 [i] Import dotfiles from exported archive.")(dotfile_module.import_dotfiles)
+    config_apps.command("import-dotfiles", no_args_is_help=False, help="🔗 <i> Import dotfiles from exported archive.")(dotfile_module.import_dotfiles)
     config_apps.command("i", no_args_is_help=False, help="Import dotfiles from exported archive.", hidden=True)(dotfile_module.import_dotfiles)
 
-    config_apps.command("shell", no_args_is_help=False, help="🔗 [S] Configure your shell profile.")(configure_shell_profile)
+    config_apps.command("shell", no_args_is_help=False, help="🔗 <S> Configure your shell profile.")(configure_shell_profile)
     config_apps.command("S", no_args_is_help=False, help="Configure your shell profile.", hidden=True)(configure_shell_profile)
-    config_apps.command("starship-theme", no_args_is_help=False, help="🔗 [t] Select starship prompt theme.")(starship_theme)
+    config_apps.command("starship-theme", no_args_is_help=False, help="🔗 <t> Select starship prompt theme.")(starship_theme)
     config_apps.command("t", no_args_is_help=False, help="Select starship prompt theme.", hidden=True)(starship_theme)
-    config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗 [T] Select powershell prompt theme.")(pwsh_theme)
+    config_apps.command("pwsh-theme", no_args_is_help=False, help="🔗 <T> Select powershell prompt theme.")(pwsh_theme)
     config_apps.command("T", no_args_is_help=False, help="Select powershell prompt theme.", hidden=True)(pwsh_theme)
-    config_apps.command("wezterm-theme", no_args_is_help=False, help="🔗 [W] Select WezTerm terminal theme.")(configure_wezterm_theme)
+    config_apps.command("wezterm-theme", no_args_is_help=False, help="🔗 <W> Select WezTerm terminal theme.")(configure_wezterm_theme)
     config_apps.command("W", no_args_is_help=False, help="Select WezTerm terminal theme.", hidden=True)(configure_wezterm_theme)
-    config_apps.command("ghostty-theme", no_args_is_help=False, help="🔗 [g] Select Ghostty terminal theme.")(configure_ghostty_theme)
+    config_apps.command("ghostty-theme", no_args_is_help=False, help="🔗 <g> Select Ghostty terminal theme.")(configure_ghostty_theme)
     config_apps.command("g", no_args_is_help=False, help="Select Ghostty terminal theme.", hidden=True)(configure_ghostty_theme)
-    config_apps.command("windows-terminal-theme", no_args_is_help=False, help="🔗 [x] Select Windows Terminal color scheme.")(configure_windows_terminal_theme)
+    config_apps.command("windows-terminal-theme", no_args_is_help=False, help="🔗 <x> Select Windows Terminal color scheme.")(configure_windows_terminal_theme)
     config_apps.command("x", no_args_is_help=False, help="Select Windows Terminal color scheme.", hidden=True)(configure_windows_terminal_theme)
     config_apps.command("wt-theme", no_args_is_help=False, help="Select Windows Terminal color scheme.", hidden=True)(configure_windows_terminal_theme)
 
-    config_apps.command("copy-assets", no_args_is_help=True, help="🔗 [c] Copy asset files from library to machine.", hidden=False)(copy_assets)
+    config_apps.command("copy-assets", no_args_is_help=True, help="🔗 <c> Copy asset files from library to machine.", hidden=False)(copy_assets)
     config_apps.command("c", no_args_is_help=True, help="Copy asset files from library to machine.", hidden=True)(copy_assets)
 
-    config_apps.command("dump", no_args_is_help=True, help="🔗 [d] Dump example configuration files.")(dump_config)
+    config_apps.command("dump", no_args_is_help=True, help="🔗 <d> Dump example configuration files.")(dump_config)
     config_apps.command("d", no_args_is_help=True, help="Dump example configuration files.", hidden=True)(dump_config)
 
-    config_apps.command("list-devices", no_args_is_help=False, help="🔗 [l] List available devices for mounting.")(list_devices)
+    config_apps.command("list-devices", no_args_is_help=False, help="🔗 <l> List available devices for mounting.")(list_devices)
     config_apps.command("l", no_args_is_help=False, help="List available devices for mounting.", hidden=True)(list_devices)
-    config_apps.command("mount", no_args_is_help=True, help="🔗 [m] Mount a device to a mount point.")(mount_device)
+    config_apps.command("mount", no_args_is_help=True, help="🔗 <m> Mount a device to a mount point.")(mount_device)
     config_apps.command("m", no_args_is_help=True, help="Mount a device to a mount point.", hidden=True)(mount_device)
 
 

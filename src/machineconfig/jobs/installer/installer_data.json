@@ -196,12 +196,12 @@
         "amd64": {
           "linux": "diskonaut-{version}-unknown-linux-musl.tar.gz",
           "windows": null,
-          "macos": null
+          "macos": "brew install diskonaut"
         },
         "arm64": {
           "linux": null,
           "windows": null,
-          "macos": null
+          "macos": "brew install diskonaut"
         }
       }
     },

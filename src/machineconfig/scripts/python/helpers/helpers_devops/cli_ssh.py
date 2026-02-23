@@ -149,13 +149,13 @@ def debug_ssh() -> None:
 
 def get_app() -> typer.Typer:
     ssh_app = typer.Typer(help="🔐 SSH subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
-    ssh_app.command(name="install-server", help="📡 [i] Install SSH server")(install_ssh_server)
+    ssh_app.command(name="install-server", help="📡 <i> Install SSH server")(install_ssh_server)
     ssh_app.command(name="i", help="Install SSH server", hidden=True)(install_ssh_server)
-    ssh_app.command(name="change-port", help="🔌 [p] Change SSH port (Linux/WSL only)")(change_ssh_port)
+    ssh_app.command(name="change-port", help="🔌 <p> Change SSH port (Linux/WSL only)")(change_ssh_port)
     ssh_app.command(name="p", help="Change SSH port", hidden=True)(change_ssh_port)
-    ssh_app.command(name="add-key", help="🔑 [k] Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
+    ssh_app.command(name="add-key", help="🔑 <k> Add SSH public key to this machine", no_args_is_help=True)(add_ssh_key)
     ssh_app.command(name="k", help="Add SSH public key to this machine", hidden=True, no_args_is_help=True)(add_ssh_key)
 
-    ssh_app.command(name="debug", help="🐛 [d] Debug SSH connection")(debug_ssh)
+    ssh_app.command(name="debug", help="🐛 <d> Debug SSH connection")(debug_ssh)
     ssh_app.command(name="d", help="Debug SSH connection", hidden=True)(debug_ssh)
     return ssh_app

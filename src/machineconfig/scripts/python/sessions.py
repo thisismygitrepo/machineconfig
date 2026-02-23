@@ -221,22 +221,22 @@ def create_from_function(
 def get_app() -> typer.Typer:
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
 
-    layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="[r] Run the selected layout(s)")(run)
+    layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="<r> Run the selected layout(s)")(run)
     layouts_app.command("r", no_args_is_help=True, help=run.__doc__, hidden=True)(run)
 
     layouts_app.command("run-dynamic", no_args_is_help=True, help=run_dynamic.__doc__, short_help="[rd] Run one layout with dynamic tab scheduling")(run_dynamic)
     layouts_app.command("rd", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
 
-    layouts_app.command("attach", no_args_is_help=False, help=attach_to_session.__doc__, short_help="[a] Attach to a Zellij session")(attach_to_session)
+    layouts_app.command("attach", no_args_is_help=False, help=attach_to_session.__doc__, short_help="<a> Attach to a Zellij session")(attach_to_session)
     layouts_app.command("a", no_args_is_help=False, help=attach_to_session.__doc__, hidden=True)(attach_to_session)
 
-    layouts_app.command("create-from-function", no_args_is_help=True, short_help="[c] Create a layout from a function")(create_from_function)
+    layouts_app.command("create-from-function", no_args_is_help=True, short_help="<c> Create a layout from a function")(create_from_function)
     layouts_app.command("c", no_args_is_help=True, hidden=True)(create_from_function)
 
-    layouts_app.command("balance-load", no_args_is_help=True, help=balance_load.__doc__, short_help="[b] Balance the load across sessions")(balance_load)
+    layouts_app.command("balance-load", no_args_is_help=True, help=balance_load.__doc__, short_help="<b> Balance the load across sessions")(balance_load)
     layouts_app.command("b", no_args_is_help=True, help=balance_load.__doc__, hidden=True)(balance_load)
 
-    layouts_app.command("create-template", no_args_is_help=False, help=create_template.__doc__, short_help="[t] Create a layout template file")(create_template)
+    layouts_app.command("create-template", no_args_is_help=False, help=create_template.__doc__, short_help="<t> Create a layout template file")(create_template)
     layouts_app.command("t", no_args_is_help=False, help=create_template.__doc__, hidden=True)(create_template)
     return layouts_app
 

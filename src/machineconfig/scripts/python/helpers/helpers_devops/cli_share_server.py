@@ -114,10 +114,10 @@ filebrowser --address {bind_address} --port {port} --root "{path_obj}" --databas
 
 def get_share_file_app():
     app = typer.Typer(name="share-file", help="Send or receive files using croc with relay server.")
-    app.command(name="send", no_args_is_help=True, hidden=False, help="[s] send files from here.")(share_file_send)
-    app.command(name="s", no_args_is_help=True, hidden=True, help="[s] send files from here.")(share_file_send)
-    app.command(name="receive", no_args_is_help=True, hidden=False, help="[r] receive files to here.")(share_file_receive)
-    app.command(name="r", no_args_is_help=True, hidden=True, help="[r] receive files to here.")(share_file_receive)
+    app.command(name="send", no_args_is_help=True, hidden=False, help="<s> send files from here.")(share_file_send)
+    app.command(name="s", no_args_is_help=True, hidden=True, help="<s> send files from here.")(share_file_send)
+    app.command(name="receive", no_args_is_help=True, hidden=False, help="<r> receive files to here.")(share_file_receive)
+    app.command(name="r", no_args_is_help=True, hidden=True, help="<r> receive files to here.")(share_file_receive)
     return app
 
 def main_with_parser():

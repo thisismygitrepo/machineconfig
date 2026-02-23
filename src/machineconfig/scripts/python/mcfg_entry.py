@@ -70,31 +70,31 @@ def croshell(
 
 
 def devops(ctx: typer.Context) -> None:
-    """[d] DevOps related commands."""
+    """<d> DevOps related commands."""
     from machineconfig.scripts.python.devops import get_app as get_app_devops
     get_app_devops()(ctx.args, standalone_mode=not ctx.args)
 
 
 def cloud(ctx: typer.Context) -> None:
-    """[c] Cloud management commands."""
+    """<c> Cloud management commands."""
     from machineconfig.scripts.python.cloud import get_app as get_app_cloud
     get_app_cloud()(ctx.args, standalone_mode=not ctx.args)
 
 
 def sessions(ctx: typer.Context) -> None:
-    """[s] Session and layout management."""
+    """<s> Session and layout management."""
     from machineconfig.scripts.python.sessions import get_app as get_app_sessions
     get_app_sessions()(ctx.args, standalone_mode=not ctx.args)
 
 
 def agents(ctx: typer.Context) -> None:
-    """[a] 🤖 AI Agents management commands."""
+    """<a> 🤖 AI Agents management commands."""
     from machineconfig.scripts.python.agents import get_app as get_app_agents
     get_app_agents()(ctx.args, standalone_mode=not ctx.args)
 
 
 def utils(ctx: typer.Context) -> None:
-    """[u] Utility commands."""
+    """<u> Utility commands."""
     from machineconfig.scripts.python.utils import get_app as get_app_utils
     get_app_utils()(ctx.args, standalone_mode=not ctx.args)
 
@@ -105,22 +105,22 @@ def get_app() -> typer.Typer:
 
     ctx_settings: dict[str, object] = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True, "help_option_names": []}
 
-    app.command(name="devops", help="[d] DevOps related commands", context_settings=ctx_settings)(devops)
+    app.command(name="devops", help="<d> DevOps related commands", context_settings=ctx_settings)(devops)
     app.command(name="d", hidden=True, context_settings=ctx_settings)(devops)
-    app.command(name="cloud", help="[c] Cloud management commands", context_settings=ctx_settings)(cloud)
+    app.command(name="cloud", help="<c> Cloud management commands", context_settings=ctx_settings)(cloud)
     app.command(name="c", hidden=True, context_settings=ctx_settings)(cloud)
-    app.command(name="sessions", help="[s] Session and layout management", context_settings=ctx_settings)(sessions)
+    app.command(name="sessions", help="<s> Session and layout management", context_settings=ctx_settings)(sessions)
     app.command(name="s", hidden=True, context_settings=ctx_settings)(sessions)
-    app.command(name="agents", help="[a] 🤖 AI Agents management commands", context_settings=ctx_settings)(agents)
+    app.command(name="agents", help="<a> 🤖 AI Agents management commands", context_settings=ctx_settings)(agents)
     app.command(name="a", hidden=True, context_settings=ctx_settings)(agents)
-    app.command(name="utils", help="[u] Utility commands", context_settings=ctx_settings)(utils)
+    app.command(name="utils", help="<u> Utility commands", context_settings=ctx_settings)(utils)
     app.command(name="u", hidden=True, context_settings=ctx_settings)(utils)
 
-    app.command(name="fire", help="[f] Fire and manage jobs", no_args_is_help=False, context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
+    app.command(name="fire", help="<f> Fire and manage jobs", no_args_is_help=False, context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
     app.command(name="f", hidden=True, no_args_is_help=False, context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
     app.command("ftpx", no_args_is_help=True, help="[ff] File transfer utility though SSH")(ftpx)
     app.command("ff", no_args_is_help=True, hidden=True)(ftpx)
-    app.command("croshell", no_args_is_help=False, help="[r] Cross-shell command execution")(croshell)
+    app.command("croshell", no_args_is_help=False, help="<r> Cross-shell command execution")(croshell)
     app.command("r", no_args_is_help=False, hidden=True)(croshell)
 
     return app

@@ -216,12 +216,12 @@ uv run --with cleanpy cleanpy .
 
 
 def get_app():
-    repos_apps = typer.Typer(help="📁 [r] Manage development repositories", no_args_is_help=True, add_help_option=True, add_completion=False)
+    repos_apps = typer.Typer(help="📁 <r> Manage development repositories", no_args_is_help=True, add_help_option=True, add_completion=False)
 
-    repos_apps.command(name="sync", help="📥 [s] Clone repositories described by a repos.json specification")(clone)
+    repos_apps.command(name="sync", help="📥 <s> Clone repositories described by a repos.json specification")(clone)
     repos_apps.command(name="s", help="Clone repositories described by a repos.json specification", hidden=True)(clone)
 
-    repos_apps.command(name="register", help="📝 [r] Record repositories into a repos.json specification")(capture)
+    repos_apps.command(name="register", help="📝 <r> Record repositories into a repos.json specification")(capture)
     repos_apps.command(name="r", help="Record repositories into a repos.json specification", hidden=True)(capture)
 
     repos_apps.command(name="checkout-to-commit", help="🔀 [ctc] Deprecated: use sync --checkout-to-commit", hidden=True)(checkout_command)
@@ -230,21 +230,21 @@ def get_app():
     repos_apps.command(name="checkout-to-branch", help="🔀 [ctb] Deprecated: use sync --checkout-to-branch", hidden=True)(checkout_to_branch_command)
     repos_apps.command(name="ctb", help="Check out to the main branch defined in the specification", hidden=True)(checkout_to_branch_command)
 
-    repos_apps.command(name="action", help="🔄 [a] Run pull/commit/push actions across repositories", no_args_is_help=True)(action)
+    repos_apps.command(name="action", help="🔄 <a> Run pull/commit/push actions across repositories", no_args_is_help=True)(action)
     repos_apps.command(name="a", help="Run pull/commit/push actions across repositories", hidden=True, no_args_is_help=True)(action)
-    repos_apps.command(name="analyze", help="📊 [z] Analyze repository development over time")(analyze_repo_development)
+    repos_apps.command(name="analyze", help="📊 <z> Analyze repository development over time")(analyze_repo_development)
     repos_apps.command(name="z", help="Analyze repository development over time", hidden=True)(analyze_repo_development)
 
-    repos_apps.command(name="guard", help="🔐 [g] Securely sync git repository to/from cloud with encryption")(secure_repo_main)
+    repos_apps.command(name="guard", help="🔐 <g> Securely sync git repository to/from cloud with encryption")(secure_repo_main)
     repos_apps.command(name="g", help="Securely sync git repository to/from cloud with encryption", hidden=True)(secure_repo_main)
 
-    repos_apps.command(name="viz", help="🎬 [v] Visualize repository activity using Gource")(gource_viz)
+    repos_apps.command(name="viz", help="🎬 <v> Visualize repository activity using Gource")(gource_viz)
     repos_apps.command(name="v", help="Visualize repository activity using Gource", hidden=True)(gource_viz)
 
-    repos_apps.command(name="count-lines", help="📄 [l] Count python lines of code in current repo + historical edits.")(count_lines_in_repo)
+    repos_apps.command(name="count-lines", help="📄 <l> Count python lines of code in current repo + historical edits.")(count_lines_in_repo)
     repos_apps.command(name="l", help="Count python lines of code in current repo + historical edits.", hidden=True)(count_lines_in_repo)
 
-    repos_apps.command(name="cleanup", help="🧹 [n] Clean repository directories from cache files")(cleanup)
+    repos_apps.command(name="cleanup", help="🧹 <n> Clean repository directories from cache files")(cleanup)
     repos_apps.command(name="n", help="Clean repository directories from cache files", hidden=True)(cleanup)
 
     return repos_apps

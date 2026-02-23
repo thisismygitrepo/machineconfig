@@ -236,51 +236,51 @@ sudo warp-cli connect
 
 
 def get_app():
-    nw_apps = typer.Typer(help="🔐 [n] Network subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
-    nw_apps.command(name="share-terminal", help="📡 [t] Share terminal via web browser")(cli_share_terminal.share_terminal)
+    nw_apps = typer.Typer(help="🔐 <n> Network subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
+    nw_apps.command(name="share-terminal", help="📡 <t> Share terminal via web browser")(cli_share_terminal.share_terminal)
     nw_apps.command(name="t", help="Share terminal via web browser", hidden=True)(cli_share_terminal.share_terminal)
 
-    nw_apps.command(name="share-server", help="🌐 [s] Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.web_file_explorer)
+    nw_apps.command(name="share-server", help="🌐 <s> Start local/global server to share files/folders via web browser", no_args_is_help=True)(cli_share_server.web_file_explorer)
     nw_apps.command(name="s", help="Start local/global server to share files/folders via web browser", hidden=True, no_args_is_help=True)(cli_share_server.web_file_explorer)
 
     # app = cli_share_server.get_share_file_app()
-    # nw_apps.add_typer(app, name="share-file", help="📁 [f] Share a file via relay server", no_args_is_help=True)
+    # nw_apps.add_typer(app, name="share-file", help="📁 <f> Share a file via relay server", no_args_is_help=True)
     # nw_apps.add_typer(app, name="f", help="Share a file via relay server", hidden=True, no_args_is_help=True)
     nw_apps.command(name="send", no_args_is_help=True, hidden=False, help="📁 [sx] send files from here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_send)
     nw_apps.command(name="sx", no_args_is_help=True, hidden=True, help="📁 [sx] send files from here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_send)
     nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
     nw_apps.command(name="rx", no_args_is_help=True, hidden=True, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
 
-    nw_apps.command(name="share-temp-file", help="🌡️ [T] Share a file via temp.sh")(cli_share_temp.upload_file)
+    nw_apps.command(name="share-temp-file", help="🌡️ <T> Share a file via temp.sh")(cli_share_temp.upload_file)
     nw_apps.command(name="T", help="Share a file via temp.sh", hidden=True)(cli_share_temp.upload_file)
 
-    nw_apps.add_typer(cli_ssh.get_app(), name="ssh", help="🔐 [S] SSH subcommands")
+    nw_apps.add_typer(cli_ssh.get_app(), name="ssh", help="🔐 <S> SSH subcommands")
     nw_apps.add_typer(cli_ssh.get_app(), name="S", help="SSH subcommands", hidden=True)
 
-    nw_apps.command(name="show-address", help="📌 [a] Show this computer addresses on network")(show_address)
+    nw_apps.command(name="show-address", help="📌 <a> Show this computer addresses on network")(show_address)
     nw_apps.command(name="a", help="Show this computer addresses on network", hidden=True)(show_address)
 
-    nw_apps.command(name="switch-public-ip", help="🔁 [c] Switch public IP address (Cloudflare WARP)")(switch_public_ip_address)
+    nw_apps.command(name="switch-public-ip", help="🔁 <c> Switch public IP address (Cloudflare WARP)")(switch_public_ip_address)
     nw_apps.command(name="c", help="Switch public IP address (Cloudflare WARP)", hidden=True)(switch_public_ip_address)
 
-    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 [w] WiFi connection utility.")(wifi_select)
+    nw_apps.command(name="wifi-select", no_args_is_help=True, help="📶 <w> WiFi connection utility.")(wifi_select)
     nw_apps.command(name="w", no_args_is_help=True, hidden=True)(wifi_select)
 
-    nw_apps.command(name="bind-wsl-port", help="🔌 [b] Bind WSL port to Windows host", no_args_is_help=True)(bind_wsl_port)
+    nw_apps.command(name="bind-wsl-port", help="🔌 <b> Bind WSL port to Windows host", no_args_is_help=True)(bind_wsl_port)
     nw_apps.command(name="b", help="Bind WSL port to Windows host", hidden=True, no_args_is_help=True)(bind_wsl_port)
-    nw_apps.command(name="open-wsl-port", no_args_is_help=True, help="🔥 [o] Open Windows firewall ports for WSL.", hidden=False)(open_wsl_port)
+    nw_apps.command(name="open-wsl-port", no_args_is_help=True, help="🔥 <o> Open Windows firewall ports for WSL.", hidden=False)(open_wsl_port)
     nw_apps.command(name="o", no_args_is_help=True, help="Open Windows firewall ports for WSL.", hidden=True)(open_wsl_port)
-    nw_apps.command(name="link-wsl-windows", no_args_is_help=False, help="🔗 [l] Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
+    nw_apps.command(name="link-wsl-windows", no_args_is_help=False, help="🔗 <l> Link WSL home and Windows home directories.", hidden=False)(link_wsl_and_windows_home)
     nw_apps.command(name="l", no_args_is_help=False, help="Link WSL home and Windows home directories.", hidden=True)(link_wsl_and_windows_home)
 
 
-    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️ [r] Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
+    nw_apps.command(name="reset-cloudflare-tunnel", help="☁️ <r> Reset Cloudflare tunnel service")(reset_cloudflare_tunnel)
     nw_apps.command(name="r", help="Reset Cloudflare tunnel service", hidden=True)(reset_cloudflare_tunnel)
-    nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫 [p] Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
+    nw_apps.command(name="add-ip-exclusion-to-warp", help="🚫 <p> Add IP exclusion to WARP")(add_ip_exclusion_to_warp)
     nw_apps.command(name="p", help="Add IP exclusion to WARP", hidden=True)(add_ip_exclusion_to_warp)
 
     # VS Code Tunnels helper
-    nw_apps.command(name="vscode-share", no_args_is_help=True, help="🧑‍💻 [v] Share workspace via VS Code Tunnels")(vscode_share)
+    nw_apps.command(name="vscode-share", no_args_is_help=True, help="🧑‍💻 <v> Share workspace via VS Code Tunnels")(vscode_share)
     nw_apps.command(name="v", no_args_is_help=True, hidden=True, help="Share workspace via VS Code Tunnels")(vscode_share)
 
     return nw_apps
