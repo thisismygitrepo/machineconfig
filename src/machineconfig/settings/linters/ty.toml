@@ -1,0 +1,12 @@
+# from https://docs.astral.sh/ty/reference/configuration/
+
+[rules]
+# .pylintrc in this repo disables many checks; keep ty diagnostics non-blocking by default.
+all = "warn"
+
+[environment]
+python-version = "3.13"
+
+[src]
+exclude = ["**/.ipynb_checkpoints/", "**/*.ipynb"]
+respect-ignore-files = true

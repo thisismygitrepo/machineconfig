@@ -1,0 +1,10 @@
+untyped-def-behavior = "check-and-infer-return-any"
+enabled-ignores = ["type", "pyrefly", "mypy", "pyright", "pyre", "ty"]
+ignore-errors-in-generated-code = true
+use-ignore-files = true
+
+[errors]
+missing-import = "warn"
+implicit-any = "ignore"
+implicitly-defined-attribute = "ignore"
+deprecated = "warn"
