@@ -217,7 +217,7 @@ uv run --with cleanpy cleanpy .
 
 def config_linters(
     directory: Annotated[str, typer.Argument(help="📁 Git repository directory to configure.")] = ".",
-    linter: Annotated[Optional[str], typer.Option("--linter", "-t", help="Linter to configure: ruff, mypy, pylint, flake8.")] = None,
+    linter: Annotated[Optional[str], typer.Option("--linter", "-t", help="Linter to configure: ruff, mypy, pylint, flake8, ty.")] = None,
 ) -> None:
     """🧰 Add linter config files to a git repository."""
     target_dir = Path(directory).expanduser().absolute().resolve()
@@ -240,6 +240,7 @@ def config_linters(
         "mypy": ".mypy.ini",
         "pylint": ".pylintrc",
         "ruff": ".ruff.toml",
+        "ty": "ty.toml",
     }
     available_linters: list[str] = sorted(linter_to_file.keys())
 

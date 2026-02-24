@@ -242,7 +242,9 @@ flake8 = {original = '~/.flake8', self_managed = 'CONFIG_ROOT/settings/linters/.
 mypy = {original = '~/mypy/config/mypy.ini', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini', os = 'any'}
 mypy2 = {original = '~/.config/mypy/config', self_managed = 'CONFIG_ROOT/settings/linters/.mypy.ini', os = 'any'}
 ruff = {original = '~/.ruff.toml', self_managed = 'CONFIG_ROOT/settings/linters/.ruff.toml', os = 'any'}
+ty = {original = '~/.config/ty/ty.toml', self_managed = 'CONFIG_ROOT/settings/linters/ty.toml', os = 'any'}
 pylint = {original = '~/.pylintrc', self_managed = 'CONFIG_ROOT/settings/linters/.pylintrc', os = 'any'}
+pyrefly = {original = '~/pyrefly.toml', self_managed = 'CONFIG_ROOT/settings/linters/pyrefly.toml', os = 'any'}
 
 
 [atuin]
@@ -250,4 +252,3 @@ config_linux = {original = '~/.config/atuin/config.toml', self_managed = 'CONFIG
 themes_linux = {original = '~/.config/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'linux,darwin'}
 config_windows = {original = '~/AppData/Roaming/atuin/config.toml', self_managed = 'CONFIG_ROOT/settings/atuin/config.toml', os = 'windows'}
 themes_windows = {original = '~/AppData/Roaming/atuin/themes', self_managed = 'CONFIG_ROOT/settings/atuin/themes', contents = true, os = 'windows'}
-
