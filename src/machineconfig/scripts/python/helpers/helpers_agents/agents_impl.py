@@ -2,6 +2,7 @@
 
 from typing import Optional, cast
 from pathlib import Path
+from time import perf_counter
 from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
 
 
@@ -190,10 +191,13 @@ def make_agents_command_template() -> None:
 def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_common: bool, add_all_configs_to_gitignore: bool, add_lint_task: bool) -> None:
     """Initialize AI configurations in the current repository."""
     from machineconfig.scripts.python.ai.initai import add_ai_configs
+    started_at = perf_counter()
+    print("[init-config] Starting configuration")
     if root is None:
         repo_root = Path.cwd()
     else:
         repo_root = Path(root).expanduser().resolve()
+    print(f"[init-config] Repository root input: {repo_root}")
     from typing import get_args
     if len(frameworks) > 0:
         selected_frameworks_list: list[AGENTS] = []
@@ -203,7 +207,14 @@ def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_com
                 raise ValueError(f"Unsupported framework: {framework}. The supported frameworks are: {', '.join(get_args(AGENTS))}")
             selected_frameworks_list.append(framework)
         selected_frameworks: tuple[AGENTS, ...] = tuple(dict.fromkeys(selected_frameworks_list))
+        print(f"[init-config] Selected frameworks: {', '.join(selected_frameworks)}")
     else:
         raise ValueError("Provide at least one --framework option, or pass --all-frameworks")
 
+    before_add_configs = perf_counter()
+    print("[init-config] Running add_ai_configs")
     add_ai_configs(repo_root=repo_root, frameworks=selected_frameworks, include_common_scaffold=include_common, add_all_touched_configs_to_gitignore=add_all_configs_to_gitignore, add_vscode_task=add_lint_task)
+    add_configs_elapsed = perf_counter() - before_add_configs
+    total_elapsed = perf_counter() - started_at
+    print(f"[init-config] add_ai_configs finished in {add_configs_elapsed:.3f}s")
+    print(f"[init-config] Completed in {total_elapsed:.3f}s")
