@@ -60,9 +60,9 @@ def make_agents_command_template() -> None:
 def init_config(
     root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None,
     agents: Annotated[str, typer.Option("--agent", "-a", help=f"AI agents to configure (comma-separated), default is all of them. {','.join(get_args(AGENTS))}")] = "",
-    include_common: Annotated[bool, typer.Option("--include-common/--skip-common", help="Create shared .ai/.scripts scaffold and update .gitignore")] = True,
-    add_all_configs_to_gitignore: Annotated[bool, typer.Option("--add-all-configs-to-gitignore/--skip-all-configs-to-gitignore", help="Track all files touched by init-config and add them to .gitignore")] = False,
-    add_lint_task: Annotated[bool, typer.Option("--add-lint-task/--skip-lint-task", help="Add VS Code lint/type-check task")] = True,
+    include_scripts: Annotated[bool, typer.Option("--include-scripts/--skip-scripts", "-s", help="Create shared .ai/.scripts scaffold and update .gitignore")] = False,
+    add_all_configs_to_gitignore: Annotated[bool, typer.Option("--add-to-gitignore", "-g", help="Track all files touched by init-config and add them to .gitignore")] = False,
+    add_lint_task: Annotated[bool, typer.Option("--add-lint-task/--skip-lint-task", "-l",help="Add VS Code lint/type-check task")] = False,
 ) -> None:
     """Initialize AI configurations in the current repository."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import init_config as impl
@@ -77,7 +77,7 @@ def init_config(
 
         impl(
             root=root, frameworks=resolved,
-            include_common=include_common,
+            include_common=include_scripts,
             add_all_configs_to_gitignore=add_all_configs_to_gitignore,
             add_lint_task=add_lint_task,
         )

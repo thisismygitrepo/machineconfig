@@ -146,11 +146,11 @@ def _build_preprogram() -> str:
             from machineconfig.utils.path_extended import PathExtended
             _ = PathExtended
         except ImportError:
-            print("machineconfig is not installed in the current environment.")
+            print("Croshell: machineconfig is not installed in the current environment.")
+            print("Skipping logo printing and some utilities. Some features may not work as expected.")
             pass
         from pathlib import Path  # type: ignore
         _ = Path
-
     preprogram += get_body_simple_function_no_args(preprogram_func)
     return preprogram
 
