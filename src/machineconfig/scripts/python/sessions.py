@@ -19,8 +19,8 @@ def balance_load(
 def run(
     ctx: typer.Context,
     layouts_file: Annotated[Optional[str], typer.Option(..., "--layouts-file", "-f", help="Path to the layout.json file")] = None,
-    choose: Annotated[Optional[str], typer.Option(..., "--choose", "-c", help="Comma separated names of layouts to be selected from the layout file passed")] = None,
-    choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layouts interactively")] = False,
+    choose_layouts: Annotated[Optional[str], typer.Option(..., "--choose-layouts", "-c", help="Comma separated layout names. Pass empty string to select layouts interactively.")] = None,
+    choose_tabs: Annotated[Optional[str], typer.Option(..., "--choose-tabs", "-t", help="Comma separated tab names. Pass empty string to select tabs interactively from all layouts.")] = None,
     sleep_inbetween: Annotated[float, typer.Option(..., "--sleep-inbetween", "-S", help="Sleep time in seconds between launching layouts")] = 1.0,
     monitor: Annotated[bool, typer.Option(..., "--monitor", "-m", help="Monitor the layout sessions for completion (implied by --parallel-layouts)")] = False,
     parallel_layouts: Annotated[Optional[int], typer.Option(..., "--parallel-layouts", "-p", help="Maximum number of layouts to launch per monitored batch. 1 behaves like sequential mode.")] = None,
@@ -42,10 +42,75 @@ def run(
         typer.echo(f"❌ Layouts file not found: {layouts_file_resolved}", err=True)
         raise typer.Exit(code=1)
 
-    if choose is None: layouts_names_resolved: list[str] = []
-    else: layouts_names_resolved = [name.strip() for name in choose.split(",") if name.strip()]
-    layouts_selected = select_layout(layouts_json_file=str(layouts_file_resolved), selected_layouts_names=layouts_names_resolved,
-                    select_interactively=choose_interactively,)
+    if choose_layouts is None:
+        layouts_names_resolved: list[str] = []
+        choose_layouts_interactively = False
+    elif choose_layouts == "":
+        layouts_names_resolved = []
+        choose_layouts_interactively = True
+    else:
+        layouts_names_resolved = [name.strip() for name in choose_layouts.split(",") if name.strip()]
+        choose_layouts_interactively = False
+
+    layouts_selected = select_layout(
+        layouts_json_file=str(layouts_file_resolved),
+        selected_layouts_names=layouts_names_resolved,
+        select_interactively=choose_layouts_interactively,
+    )
+
+    if choose_tabs is not None:
+        from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
+
+        all_layouts = select_layout(layouts_json_file=str(layouts_file_resolved), selected_layouts_names=[], select_interactively=False)
+        allowed_layout_names = {layout["layoutName"] for layout in layouts_selected}
+        flat_tab_refs: list[tuple[str, int, TabConfig]] = []
+        for layout in all_layouts:
+            for tab_index, tab in enumerate(layout["layoutTabs"]):
+                flat_tab_refs.append((layout["layoutName"], tab_index, tab))
+
+        selected_tab_refs: set[tuple[str, int]] = set()
+        if choose_tabs == "":
+            import json
+            from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
+
+            options_to_preview_mapping: dict[str, str] = {}
+            key_to_ref: dict[str, tuple[str, int]] = {}
+            for layout_name, tab_index, tab in flat_tab_refs:
+                option_key = f"{layout_name}::{tab.get('tabName', f'tab#{tab_index + 1}')}[{tab_index}]"
+                options_to_preview_mapping[option_key] = json.dumps({"layoutName": layout_name, "tabIndex": tab_index, "tab": tab}, indent=4)
+                key_to_ref[option_key] = (layout_name, tab_index)
+            chosen_keys = choose_from_dict_with_preview(options_to_preview_mapping=options_to_preview_mapping, extension="json", multi=True, preview_size_percent=40)
+            selected_tab_refs = {key_to_ref[key] for key in chosen_keys}
+        else:
+            tab_tokens = [token.strip() for token in choose_tabs.split(",") if token.strip()]
+            for token in tab_tokens:
+                if "::" in token:
+                    layout_name_token, tab_name_token = token.split("::", 1)
+                    token_matches = {
+                        (layout_name, tab_index)
+                        for layout_name, tab_index, tab in flat_tab_refs
+                        if layout_name == layout_name_token and tab.get("tabName", "") == tab_name_token
+                    }
+                else:
+                    token_matches = {
+                        (layout_name, tab_index)
+                        for layout_name, tab_index, tab in flat_tab_refs
+                        if tab.get("tabName", "") == token
+                    }
+                if len(token_matches) == 0:
+                    raise ValueError(f"Tab selector '{token}' matched no tabs.")
+                selected_tab_refs.update(token_matches)
+
+        merged_tabs = [
+            tab
+            for layout_name, tab_index, tab in flat_tab_refs
+            if layout_name in allowed_layout_names and (layout_name, tab_index) in selected_tab_refs
+        ]
+        if len(merged_tabs) == 0:
+            raise ValueError("No tabs were selected in the chosen layouts.")
+        custom_layout: LayoutConfig = {"layoutName": "custom-tabs", "layoutTabs": merged_tabs}
+        layouts_selected = [custom_layout]
+
     if subsitute_home:
         from machineconfig.utils.schemas.layouts.layout_types import substitute_home, LayoutConfig
         layouts_modified: list["LayoutConfig"] = []
@@ -104,8 +169,7 @@ def run_dynamic(
     max_parallel_tabs: Annotated[int, typer.Option(..., "--max-parallel-tabs", "-p", help="How many tabs to run at the same time.")],
     kill_finished_tabs: Annotated[bool, typer.Option(..., "--kill-finished-tabs", "-k", help="Close each tab once its command is finished.")] = False,
     layouts_file: Annotated[Optional[str], typer.Option(..., "--layouts-file", "-f", help="Path to the layout.json file")] = None,
-    choose: Annotated[Optional[str], typer.Option(..., "--choose", "-c", help="Name of the layout to run dynamically. Must resolve to exactly one layout.")] = None,
-    choose_interactively: Annotated[bool, typer.Option(..., "--choose-interactively", "-i", help="Select layout interactively")] = False,
+    choose_layouts: Annotated[Optional[str], typer.Option(..., "--choose-layouts", "-c", help="Comma separated layout names. Pass empty string to select layouts interactively.")] = None,
     subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-H", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
     backend: Annotated[Literal["zellij", "z", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer to use")] = "auto",
     poll_seconds: Annotated[float, typer.Option(..., "--poll-seconds", "-s", help="Polling interval in seconds used to detect finished tabs.")] = 2.0,
@@ -124,15 +188,20 @@ def run_dynamic(
         typer.echo(f"❌ Layouts file not found: {layouts_file_resolved}", err=True)
         raise typer.Exit(code=1)
 
-    if choose is None:
+    if choose_layouts is None:
         layouts_names_resolved: list[str] = []
+        choose_layouts_interactively = False
+    elif choose_layouts == "":
+        layouts_names_resolved = []
+        choose_layouts_interactively = True
     else:
-        layouts_names_resolved = [name.strip() for name in choose.split(",") if name.strip()]
+        layouts_names_resolved = [name.strip() for name in choose_layouts.split(",") if name.strip()]
+        choose_layouts_interactively = False
 
     layouts_selected = select_layout(
         layouts_json_file=str(layouts_file_resolved),
         selected_layouts_names=layouts_names_resolved,
-        select_interactively=choose_interactively,
+        select_interactively=choose_layouts_interactively,
     )
     if len(layouts_selected) != 1:
         raise ValueError(f"run_dynamic expects exactly one selected layout, got {len(layouts_selected)}.")
