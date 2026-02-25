@@ -14,7 +14,6 @@ def croshell(
 ) -> None:
     """Cross-shell command execution."""
     interactivity = "-i"
-    # interpreter = "python" if python else "ipython"
     user_uv_with_line = "INIT_VALUE_INVALID"
     if uv_with is not None:
         match backend:
@@ -160,14 +159,7 @@ def _build_fire_line(
     file_obj: Path,
     pyfile: Path,
     nb_target: Path,
-
-    # visidata: bool,
-    # marimo: bool,
-    # jupyter: bool,
-    # vscode: bool,
-    # interpreter: str,
     backend: BACKENDS,
-
     interactivity: str,
     ipython_profile: str,
     uv_python_line: str,
@@ -215,7 +207,7 @@ code --new-window "{str(pyfile)}"
                     interpreter = "python"
                     profile = ""
                 case "ipython":
-                    interpreter = "ipython"
+                    interpreter = "python -m IPython"
                     profile = f" --profile {ipython_profile} --no-banner"
             if Path.home().joinpath("code/machineconfig").exists():
                 ve_line = f"""{user_uv_with_line}  {uv_project_line} """
