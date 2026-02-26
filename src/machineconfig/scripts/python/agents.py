@@ -58,11 +58,15 @@ def make_agents_command_template() -> None:
 
 
 def init_config(
-    root: Annotated[Optional[str], typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")] = None,
+    root: Annotated[str, typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")],
     agents: Annotated[str, typer.Option("--agent", "-a", help=f"AI agents to configure (comma-separated), default is all of them. {','.join(get_args(AGENTS))}")] = "",
+
+    add_config: Annotated[bool, typer.Option("--add-config/--skip-config", "-c", help="Create private agent config files/directories")] = True,
+    add_instructions: Annotated[bool, typer.Option("--add-instructions/--skip-instructions", "-i", help="Create agent instructions files (e.g. AGENTS.md)")] = True,
     include_scripts: Annotated[bool, typer.Option("--include-scripts/--skip-scripts", "-s", help="Create shared .ai/.scripts scaffold and update .gitignore")] = False,
-    add_all_configs_to_gitignore: Annotated[bool, typer.Option("--add-to-gitignore", "-g", help="Track all files touched by init-config and add them to .gitignore")] = False,
-    add_lint_task: Annotated[bool, typer.Option("--add-lint-task/--skip-lint-task", "-l",help="Add VS Code lint/type-check task")] = False,
+    add_lint_task: Annotated[bool, typer.Option("--add-lint-task/--skip-lint-task", "-l",help="Add VS Code lint/type-check task only")]= False,
+
+    add_to_gitignore: Annotated[bool, typer.Option("--add-to-gitignore", "-g", help="Track all files touched by init-config and add them to .gitignore")] = False,
 ) -> None:
     """Initialize AI configurations in the current repository."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import init_config as impl
@@ -78,8 +82,10 @@ def init_config(
         impl(
             root=root, frameworks=resolved,
             include_common=include_scripts,
-            add_all_configs_to_gitignore=add_all_configs_to_gitignore,
+            add_all_configs_to_gitignore=add_to_gitignore,
             add_lint_task=add_lint_task,
+            add_config=add_config,
+            add_instructions=add_instructions,
         )
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
@@ -126,8 +132,8 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_app.command("T", no_args_is_help=True, help=collect.__doc__, hidden=True)(collect)
     agents_app.command("make-template", no_args_is_help=False, help=make_agents_command_template.__doc__, short_help="<t> Create a template for fire agents")(make_agents_command_template)
     agents_app.command("t", no_args_is_help=False, help=make_agents_command_template.__doc__, hidden=True)(make_agents_command_template)
-    agents_app.command("make-config", no_args_is_help=False, help=init_config.__doc__, short_help="<g> Initialize AI configurations in the current repository")(init_config)
-    agents_app.command("g", no_args_is_help=False, help=init_config.__doc__, hidden=True)(init_config)
+    agents_app.command("make-config", no_args_is_help=True, help=init_config.__doc__, short_help="<g> Initialize AI configurations in the current repository")(init_config)
+    agents_app.command("g", no_args_is_help=True, help=init_config.__doc__, hidden=True)(init_config)
     agents_app.command("make-todo", no_args_is_help=True, short_help="<d> Generate a markdown file listing all Python files in the repo")(make_todo_files)
     agents_app.command("d", no_args_is_help=True, hidden=True)(make_todo_files)
     agents_app.command(name="make-symlinks", no_args_is_help=True, short_help="<s> Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)

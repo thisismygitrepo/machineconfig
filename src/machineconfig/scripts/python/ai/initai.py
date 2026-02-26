@@ -50,36 +50,36 @@ def _collect_touched_files(before: dict[Path, tuple[int, int]], after: dict[Path
     return touched_files
 
 
-def _build_framework_config(repo_root: Path, framework: AGENTS) -> None:
+def _build_framework_config(repo_root: Path, framework: AGENTS, add_private_config: bool, add_instructions: bool) -> None:
     match framework:
         case "copilot":
-            github_copilot.build_configuration(repo_root=repo_root)
+            github_copilot.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "cursor":
-            cursors.build_configuration(repo_root=repo_root)
+            cursors.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "gemini":
-            gemini.build_configuration(repo_root=repo_root)
+            gemini.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "claude":
-            claude.build_configuration(repo_root=repo_root)
+            claude.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "crush":
-            crush.build_configuration(repo_root=repo_root)
+            crush.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "cline":
-            cline.build_configuration(repo_root=repo_root)
+            cline.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "qwen-code":
-            qwen_code.build_configuration(repo_root=repo_root)
+            qwen_code.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "codex":
-            codex.build_configuration(repo_root=repo_root)
+            codex.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "q":
-            amazon_q.build_configuration(repo_root=repo_root)
+            amazon_q.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "opencode":
-            opencode.build_configuration(repo_root=repo_root)
+            opencode.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "kilocode":
-            kilocode.build_configuration(repo_root=repo_root)
+            kilocode.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "auggie":
-            auggie.build_configuration(repo_root=repo_root)
+            auggie.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "warp":
-            warp.build_configuration(repo_root=repo_root)
+            warp.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "droid":
-            droid.build_configuration(repo_root=repo_root)
+            droid.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case _:
             print(ValueError(f"Unsupported framework: {framework}"))
 
@@ -90,13 +90,15 @@ def add_ai_configs(
     include_common_scaffold: bool,
     add_all_touched_configs_to_gitignore: bool,
     add_vscode_task: bool,
+    add_private_config: bool,
+    add_instructions: bool,
 ) -> None:
     if len(frameworks) == 0:
         raise ValueError("At least one framework must be provided")
 
     started_at = perf_counter()
     print(
-        f"[init-config] add_ai_configs:start frameworks={','.join(frameworks)} include_common={include_common_scaffold} add_gitignore={add_all_touched_configs_to_gitignore} add_lint_task={add_vscode_task}"
+        f"[init-config] add_ai_configs:start frameworks={','.join(frameworks)} include_common={include_common_scaffold} add_gitignore={add_all_touched_configs_to_gitignore} add_lint_task={add_vscode_task} add_private_config={add_private_config} add_instructions={add_instructions}"
     )
 
     repo_root_resolved = get_repo_root(repo_root)
@@ -140,7 +142,7 @@ def add_ai_configs(
     for framework in selected_frameworks:
         framework_started = perf_counter()
         print(f"[init-config] framework start: {framework}")
-        _build_framework_config(repo_root=repo_root, framework=framework)
+        _build_framework_config(repo_root=repo_root, framework=framework, add_private_config=add_private_config, add_instructions=add_instructions)
         framework_elapsed = perf_counter() - framework_started
         framework_total_elapsed = perf_counter() - started_at
         print(f"[init-config] framework done: {framework} in {framework_elapsed:.3f}s (total {framework_total_elapsed:.3f}s)")

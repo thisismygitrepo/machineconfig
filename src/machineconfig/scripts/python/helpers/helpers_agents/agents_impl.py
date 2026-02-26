@@ -188,7 +188,15 @@ def make_agents_command_template() -> None:
     print(f"Prompt template written to {save_path_root}")
 
 
-def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_common: bool, add_all_configs_to_gitignore: bool, add_lint_task: bool) -> None:
+def init_config(
+    root: Optional[str],
+    frameworks: tuple[AGENTS, ...],
+    include_common: bool,
+    add_all_configs_to_gitignore: bool,
+    add_lint_task: bool,
+    add_config: bool,
+    add_instructions: bool,
+) -> None:
     """Initialize AI configurations in the current repository."""
     from machineconfig.scripts.python.ai.initai import add_ai_configs
     started_at = perf_counter()
@@ -213,7 +221,15 @@ def init_config(root: Optional[str], frameworks: tuple[AGENTS, ...], include_com
 
     before_add_configs = perf_counter()
     print("[init-config] Running add_ai_configs")
-    add_ai_configs(repo_root=repo_root, frameworks=selected_frameworks, include_common_scaffold=include_common, add_all_touched_configs_to_gitignore=add_all_configs_to_gitignore, add_vscode_task=add_lint_task)
+    add_ai_configs(
+        repo_root=repo_root,
+        frameworks=selected_frameworks,
+        include_common_scaffold=include_common,
+        add_all_touched_configs_to_gitignore=add_all_configs_to_gitignore,
+        add_vscode_task=add_lint_task,
+        add_private_config=add_config,
+        add_instructions=add_instructions,
+    )
     add_configs_elapsed = perf_counter() - before_add_configs
     total_elapsed = perf_counter() - started_at
     print(f"[init-config] add_ai_configs finished in {add_configs_elapsed:.3f}s")
