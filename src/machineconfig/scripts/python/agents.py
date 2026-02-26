@@ -61,12 +61,12 @@ def init_config(
     root: Annotated[str, typer.Option(..., "--root", "-r", help="Root directory of the repository to initialize AI configs in. Defaults to current directory.")],
     agents: Annotated[str, typer.Option("--agent", "-a", help=f"AI agents to configure (comma-separated), default is all of them. {','.join(get_args(AGENTS))}")] = "",
 
-    add_config: Annotated[bool, typer.Option("--add-config/--skip-config", "-c", help="Create private agent config files/directories")] = True,
-    add_instructions: Annotated[bool, typer.Option("--add-instructions/--skip-instructions", "-i", help="Create agent instructions files (e.g. AGENTS.md)")] = True,
-    include_scripts: Annotated[bool, typer.Option("--include-scripts/--skip-scripts", "-s", help="Create shared .ai/.scripts scaffold and update .gitignore")] = False,
-    add_lint_task: Annotated[bool, typer.Option("--add-lint-task/--skip-lint-task", "-l",help="Add VS Code lint/type-check task only")]= False,
+    add_config: Annotated[bool, typer.Option("--add-config", "-c", help="Create private agent config files/directories")] = True,
+    add_instructions: Annotated[bool, typer.Option("--add-instructions", "-i", help="Create agent instructions files (e.g. AGENTS.md)")] = True,
+    add_scripts: Annotated[bool, typer.Option("--include-scripts", "-s", help="Create shared .ai/.scripts scaffold")] = False,
+    add_vscode_tasks: Annotated[bool, typer.Option("--add-vscode-tasks", "-l",help="Add VS Code lint/type-check task only")]= False,
 
-    add_to_gitignore: Annotated[bool, typer.Option("--add-to-gitignore", "-g", help="Track all files touched by init-config and add them to .gitignore")] = False,
+    add_to_gitignore: Annotated[bool, typer.Option("--add-gitignore", "-g", help="Track all files touched by init-config and add them to .gitignore")] = False,
 ) -> None:
     """Initialize AI configurations in the current repository."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_impl import init_config as impl
@@ -81,9 +81,9 @@ def init_config(
 
         impl(
             root=root, frameworks=resolved,
-            include_common=include_scripts,
+            include_common=add_scripts,
             add_all_configs_to_gitignore=add_to_gitignore,
-            add_lint_task=add_lint_task,
+            add_lint_task=add_vscode_tasks,
             add_config=add_config,
             add_instructions=add_instructions,
         )

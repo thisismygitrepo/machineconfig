@@ -106,7 +106,7 @@ def add_ai_configs(
         repo_root = repo_root_resolved  # this means you can run the command from any subdirectory of the repo.
     print(f"[init-config] repository root resolved: {repo_root}")
 
-    should_track_touched_files = include_common_scaffold or add_all_touched_configs_to_gitignore
+    should_track_touched_files = add_all_touched_configs_to_gitignore
     files_before_configuration: dict[Path, tuple[int, int]] = {}
     if should_track_touched_files:
         phase_started = perf_counter()
@@ -170,8 +170,7 @@ def add_ai_configs(
         dot_git_ignore_path = repo_root.joinpath(".gitignore")
         if dot_git_ignore_path.exists() is False:
             dot_git_ignore_path.touch()
-        extra_entries: list[str] = touched_config_files if add_all_touched_configs_to_gitignore else []
-        generic.adjust_gitignore(repo_root=repo_root, include_default_entries=include_common_scaffold, extra_entries=extra_entries)
+        generic.adjust_gitignore(repo_root=repo_root, include_default_entries=False, extra_entries=touched_config_files)
         gitignore_elapsed = perf_counter() - phase_started
         total_elapsed_after_gitignore = perf_counter() - started_at
         print(f"[init-config] .gitignore update done in {gitignore_elapsed:.3f}s (total {total_elapsed_after_gitignore:.3f}s)")
