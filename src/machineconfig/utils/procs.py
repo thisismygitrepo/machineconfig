@@ -2,7 +2,7 @@
 
 import psutil
 from rich.progress import Progress, SpinnerColumn, TextColumn
-from typing import Optional, TypedDict, List
+from typing import Literal, Optional, TypedDict, List
 from rich.console import Console
 from rich.panel import Panel
 from datetime import datetime
@@ -23,6 +23,10 @@ class ProcessInfo(TypedDict):
     memory_usage_mb: float
     status: str
     create_time: datetime
+    ports: list[int]
+
+
+SearchField = Literal["command", "ports", "name", "pid", "username", "status", "memory", "cpu"]
 
 
 class FileAccessInfo(TypedDict):
@@ -91,6 +95,7 @@ class ProcessManager:
                             "status": proc.status(),
                             "create_time": create_time,
                             "command": " ".join(proc.cmdline()),
+                            "ports": sorted({conn.laddr.port for conn in proc.net_connections(kind="inet") if conn.laddr}),
                         }
                     )
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
@@ -119,7 +124,24 @@ class ProcessManager:
             lines.append(line)
         return "\n".join(lines)
 
-    def choose_and_kill(self):
+    def _search_value(self, process: ProcessInfo, search_by: SearchField) -> str:
+        if search_by == "command":
+            return process["command"]
+        if search_by == "ports":
+            return ",".join(str(port) for port in process["ports"]) if process["ports"] else "no-ports"
+        if search_by == "name":
+            return process["name"]
+        if search_by == "pid":
+            return str(process["pid"])
+        if search_by == "username":
+            return process["username"]
+        if search_by == "status":
+            return process["status"]
+        if search_by == "memory":
+            return f"{process['memory_usage_mb']:.2f}"
+        return f"{process['cpu_percent']:.2f}"
+
+    def choose_and_kill(self, search_by: SearchField = "command") -> None:
         # # header for interactive process selection
         # title = "🎯  INTERACTIVE PROCESS SELECTION AND TERMINATION"
         # console.print(Panel(title, title="[bold blue]Process Info[/bold blue]", border_style="blue"))
@@ -142,13 +164,25 @@ class ProcessManager:
         # def choose_from_dict_with_preview(options_to_preview_mapping: dict[str, Any], extension: str | None, multi: bool, preview_size_percent: float) -> str | list[str] | None:
 
         import json
-        commands = choose_from_dict_with_preview(
-            options_to_preview_mapping={str(proc["command"]): json.dumps({k: str(v) for k, v in proc.items()}, indent=2) for proc in self.data},
+        option_to_process: dict[str, ProcessInfo] = {}
+        options_to_preview_mapping: dict[str, str] = {}
+        for idx, process in enumerate(self.data):
+            searchable = self._search_value(process=process, search_by=search_by)
+            label = f"{searchable} | pid={process['pid']} | name={process['name']} | idx={idx}"
+            option_to_process[label] = process
+            options_to_preview_mapping[label] = json.dumps({k: str(v) for k, v in process.items()}, indent=2)
+
+        selected_labels = choose_from_dict_with_preview(
+            options_to_preview_mapping=options_to_preview_mapping,
             multi=True,
             extension="json",
             preview_size_percent=70,
         )
-        selected_processes = [proc for proc in self.data if str(proc["command"]) in commands]
+        selected_processes = [option_to_process[label] for label in selected_labels if label in option_to_process]
+
+        if len(selected_processes) == 0:
+            console.print(Panel("🔔 No processes selected.", title="[bold blue]Process Info[/bold blue]", border_style="blue"))
+            return
 
         for process in selected_processes:
             print(f"PID: {process['pid']}, Name: {process['name']}, Memory: {process['memory_usage_mb']:.2f}MB")

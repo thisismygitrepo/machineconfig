@@ -4,12 +4,38 @@ import typer
 from typing import Annotated, Optional, Literal
 
 
-def kill_process(interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactively choose the process to kill")] = True) -> None:
+def kill_process(
+    interactive: Annotated[bool, typer.Option(..., "--interactive", "-i", help="Interactively choose the process to kill")] = True,
+    search_by: Annotated[
+        Literal["command", "c", "ports", "p", "name", "n", "pid", "P", "username", "u", "status", "s", "memory", "m", "cpu", "C"],
+        typer.Option(..., "--filter-by", "-f", help="Field used to search/filter processes in interactive mode."),
+    ] = "command",
+) -> None:
     """⚔️ Choose a process to kill."""
     from machineconfig.utils.procs import ProcessManager
     if interactive:
         proc = ProcessManager()
-        proc.choose_and_kill()
+        match search_by:
+            case "command" | "c":
+                search_by = "command"
+            case "ports" | "p":
+                search_by = "ports"
+            case "name" | "n":
+                search_by = "name"
+            case "pid" | "P":
+                search_by = "pid"
+            case "username" | "u":
+                search_by = "username"
+            case "status" | "s":
+                search_by = "status"
+            case "memory" | "m":
+                search_by = "memory"
+            case "cpu" | "C":
+                search_by = "cpu"
+            case _:
+                typer.echo(f"Invalid search_by value: {search_by}", err=True)
+                raise typer.Exit(code=1)
+        proc.choose_and_kill(search_by=search_by)
         return
     _ = ProcessManager
 
