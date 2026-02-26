@@ -5,7 +5,8 @@ import textwrap
 
 def secure_codex_configs() -> None:
     config_content = textwrap.dedent(
-        """\
+        """
+
         [analytics]
         enabled = false
         [otel]
@@ -15,14 +16,10 @@ def secure_codex_configs() -> None:
         log_user_prompt = false
         [history]
         persistence = "none"
-        web_search = "disabled"
         commit_attribution = ""
         [features]
-        web_search = false
-        web_search_cached = false
-        web_search_request = false
-        collab = false
-        remote_models = false
+        multi_agent = true
+        remote_models = true
     """
     )
     targets = [pathlib.Path.home() / ".codex" / "config.toml", pathlib.Path.cwd() / ".codex" / "config.toml"]
@@ -34,4 +31,3 @@ def secure_codex_configs() -> None:
                 os.chmod(config_path, 0o600)
             except:
                 pass
-

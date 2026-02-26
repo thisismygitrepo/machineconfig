@@ -7,16 +7,20 @@ from machineconfig.scripts.python.ai.utils.shared import get_generic_instruction
 def _build_private_config() -> str:
     return textwrap.dedent(
         """\
-        approval_policy = "on-request"
+        approval_policy = "never"
         sandbox_mode = "workspace-write"
         allow_login_shell = false
-        web_search = "disabled"
+        web_search = "enabled"
         project_doc_max_bytes = 32768
         project_doc_fallback_filenames = []
         mcp_oauth_credentials_store = "auto"
 
         [sandbox_workspace_write]
-        network_access = false
+        network_access = true
+
+        [features]
+        multi_agent = true
+        remote_models = true
 
         [analytics]
         enabled = false

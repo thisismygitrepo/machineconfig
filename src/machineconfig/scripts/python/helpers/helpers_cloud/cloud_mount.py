@@ -153,7 +153,10 @@ def mount(
 wt --window 0 --profile "Windows PowerShell" --startingDirectory "$HOME/data/rclone" `; split-pane --horizontal  --profile "Command Prompt" --size 0.2 powershell -Command "{mount_cmd}" `; split-pane --vertical --profile "Windows PowerShell" --size 0.2 powershell -NoExit -Command "rclone about {cloud_name}:"  `; move-focus up
 """
     elif system_name in ["Linux", "Darwin"]:
-        session_name = zellij_session if zellij_session else DEFAULT_ZELLIJ_SESSION
+        import string
+        import random
+        three_random_letters = ''.join(random.choices(string.ascii_lowercase, k=3))
+        session_name = zellij_session if zellij_session else (DEFAULT_ZELLIJ_SESSION + "-" + three_random_letters)
         backend_resolved: Literal["zellij", "tmux"]
         match backend:
             case "zellij" | "z" | "auto" | "a":
