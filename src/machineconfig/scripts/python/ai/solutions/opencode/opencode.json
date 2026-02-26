@@ -1,4 +1,44 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": [".github/instructions/*.md"]
+  "share": "disabled",
+  "autoupdate": false,
+  "instructions": [
+    "AGENTS.md",
+    ".github/instructions/*.md"
+  ],
+  "permission": {
+    "*": "ask",
+    "external_directory": "ask",
+    "edit": "ask",
+    "task": "ask",
+    "webfetch": "deny",
+    "websearch": "deny",
+    "codesearch": "deny",
+    "bash": {
+      "*": "ask",
+      "git *": "allow"
+    },
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow"
+    }
+  },
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": false
+    },
+    "mcp_everything": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-everything"
+      ],
+      "enabled": false
+    }
+  }
 }
