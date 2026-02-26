@@ -175,11 +175,12 @@ sudo $cloudflared_path --config $home_dir/.cloudflared/config.yml service instal
 
 def vscode_share(
     action: Annotated[Literal["run", "install-service", "uninstall-service", "share-local"], typer.Option(..., "--action", "-a", help="Action to perform", case_sensitive=False, show_choices=True)],
-    name: Annotated[str | None, typer.Option("--name", "-n", help="Name for the tunnel/service")] = None,
-    path: Annotated[str | None, typer.Option("--path", "-p", help="Path to share locally (for share-local)")] = None,
-    extra_args: Annotated[str | None, typer.Option("--extra-args", "-e", help="Extra args to append to the code tunnel command")] = None,
+    name: Annotated[str | None, typer.Option("--name", "-n", help="Name for tunnel/service actions (run, install-service)")] = None,
+    path: Annotated[str | None, typer.Option("--path", "-p", help="Server base path for local web mode (share-local)")] = None,
+    host: Annotated[str | None, typer.Option("--host", "-h", help="Host for local web mode (share-local), e.g. 0.0.0.0")] = None,
+    extra_args: Annotated[str | None, typer.Option("--extra-args", "-e", help="Extra args to append to the generated VS Code command")] = None,
 ) -> None:
-    """🧑‍💻 Share workspace using VS Code Tunnels ("code tunnel")
+    """🧑‍💻 Share workspace using VS Code CLI ("code tunnel" / "code serve-web")
 
     Note: this helper prints recommended commands and optionally runs them.
     If you need more functionality, consult VS Code Tunnels docs: https://code.visualstudio.com/docs/remote/tunnels
@@ -198,10 +199,10 @@ def vscode_share(
         cmd = "code tunnel service uninstall"
         desc = "Uninstall code tunnel service"
     elif action == "share-local":
-        p = path or "."
-        # Some VS Code CLI integrations prefer starting a tunnel and then using the editor to expose resources.
-        cmd = f"code tunnel {name_part} {accept} {extra}".strip()
-        desc = f"Start tunnel and then share local path: {p} (use VS Code UI to forward ports / share files)"
+        host_part = f"--host {host}" if host else ""
+        server_base_path_part = f"--server-base-path {path}" if path else ""
+        cmd = f"code serve-web {accept} {host_part} {server_base_path_part} {extra}".strip()
+        desc = "Run local VS Code web server (serve-web)"
     else:
         print(f"Unknown action: {action}")
         return

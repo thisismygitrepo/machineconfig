@@ -76,7 +76,7 @@ def type_hint(path: Annotated[str, typer.Argument(..., help="Path to file/projec
     from pathlib import Path
     path_resolved = Path(path).resolve()
     if not path_resolved.exists():
-        typer.echo(f"Error: The provided path '{path}' does not exist.", err=True)
+        typer.echo(f"Err or: The provided path '{path}' does not exist.", err=True)
         raise typer.Exit(code=1)
     if path_resolved.is_file():
         modules = [path_resolved]
