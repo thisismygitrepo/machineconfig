@@ -3944,6 +3944,23 @@
           "macos": null
         }
       }
+    },
+    {
+      "appName": "polymarket",
+      "repoURL": "https://github.com/Polymarket/polymarket-cli",
+      "doc": "Polymarket CLI for market interactions",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "polymarket-{version}-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": "polymarket-{version}-x86_64-apple-darwin.tar.gz",
+          "windows": null
+        },
+        "arm64": {
+          "linux": "polymarket-{version}-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "polymarket-{version}-aarch64-apple-darwin.tar.gz",
+          "windows": null
+        }
+      }
     }
   ]
 }
