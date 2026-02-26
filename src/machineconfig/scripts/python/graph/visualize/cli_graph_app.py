@@ -371,7 +371,7 @@ def get_app() -> typer.Typer:
     cli_app.command(name="t", no_args_is_help=False, help="Render a rich tree view in the terminal.", hidden=True)(tree)
     cli_app.command(name="dot", no_args_is_help=False, help="🧩 <d> Export the graph as Graphviz DOT.")(dot)
     cli_app.command(name="d", no_args_is_help=False, help="Export the graph as Graphviz DOT.", hidden=True)(dot)
-    cli_app.command(name="sunburst", no_args_is_help=False, help="☀️ <b> Render a Plotly sunburst view.")(sunburst)
+    cli_app.command(name="sunburst", no_args_is_help=False, help="☀ <b> Render a Plotly sunburst view.")(sunburst)
     cli_app.command(name="b", no_args_is_help=False, help="Render a Plotly sunburst view.", hidden=True)(sunburst)
     cli_app.command(name="treemap", no_args_is_help=False, help="🧱 <m> Render a Plotly treemap view.")(treemap)
     cli_app.command(name="m", no_args_is_help=False, help="Render a Plotly treemap view.", hidden=True)(treemap)

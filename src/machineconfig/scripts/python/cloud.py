@@ -30,7 +30,7 @@ def sync(
 def copy(
     source: Annotated[str, typer.Argument(help="📂 file/folder path to be taken from here.")],
     target: Annotated[str, typer.Argument(help="🎯 file/folder path to be be sent to here.")],
-    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="✍️ Overwrite existing file.")] = defaults["overwrite"],
+    overwrite: Annotated[bool, typer.Option("--overwrite", "-o", help="📝 Overwrite existing file.")] = defaults["overwrite"],
     share: Annotated[bool, typer.Option("--share", "-s", help="🔗 Share file / directory")] = defaults["share"],
     rel2home: Annotated[bool, typer.Option("--relative2home", "-r", help="🏠 Relative to `myhome` folder")] = defaults["rel2home"],
     root: Annotated[str, typer.Option("--root", "-R", help="🌳 Remote root.")] = defaults["root"],
@@ -39,7 +39,7 @@ def copy(
     encrypt: Annotated[bool, typer.Option("--encrypt", "-e", help="🔐 Encrypt before sending.")] = defaults["encrypt"],
     zip_: Annotated[bool, typer.Option("--zip", "-z", help="📦 unzip after receiving.")] = defaults["zip"],
     os_specific: Annotated[bool, typer.Option("--os-specific", "-O", help="💻 choose path specific for this OS.")] = defaults["os_specific"],
-    config: Annotated[Optional[str], typer.Option("--config", "-c", help="⚙️ path to .ve.yaml file.")] = None,
+    config: Annotated[Optional[str], typer.Option("--config", "-c", help="🔧 path to .ve.yaml file.")] = None,
 ) -> None:
     """📤 Upload or 📥 Download files/folders to/from cloud storage services."""
     from machineconfig.scripts.python.helpers.helpers_cloud.cloud_copy import main as copy_main
@@ -60,7 +60,7 @@ def mount(
 
 
 def get_app() -> typer.Typer:
-    app = typer.Typer(add_completion=False, no_args_is_help=True, help="☁️ Cloud management commands")
+    app = typer.Typer(add_completion=False, no_args_is_help=True, help="☁ Cloud management commands")
 
     app.command(name="sync", no_args_is_help=True, short_help="🔄 <s> Synchronize files/folders between local and cloud storage.")(sync)
     app.command(name="s", no_args_is_help=True, hidden=True)(sync)

@@ -6,7 +6,7 @@ from machineconfig.profile.create_links_export import REPO_LOOSE
 
 def sync(
     direction: Annotated[Literal["up", "u", "down", "d"], typer.Argument(..., help="Direction of sync: backup or retrieve")],
-    cloud: Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁️  Cloud configuration name (rclone config name)")] = None,
+    cloud: Annotated[Optional[str], typer.Option("--cloud", "-c", help="☁ Cloud configuration name (rclone config name)")] = None,
     which: Annotated[
         Optional[str], typer.Option("--which", "-w", help="📝 Comma-separated list of items to BACKUP (from backup.toml), or 'all' for all items")
     ] = None,
@@ -52,7 +52,7 @@ def register_data(
 def get_app() -> typer.Typer:
     app = typer.Typer(
         name="data",
-        help="🗄️ <d> Backup and retrieve configuration files and directories to/from cloud storage using rclone.",
+        help="🗄 <d> Backup and retrieve configuration files and directories to/from cloud storage using rclone.",
         no_args_is_help=True,
         add_help_option=True,
         add_completion=False,

@@ -1,7 +1,44 @@
 """devops with emojis - lazy loading subcommands."""
 
 import typer
-from typing import Optional, Annotated, Literal
+from typing import Optional, Annotated, Literal, TypedDict, Callable
+
+
+class EmojiDisplayDiagnostic(TypedDict):
+    emoji: str
+    codepoints: list[str]
+    char_count: int
+    has_variation_selector_16: bool
+    terminal_width: int | None
+
+
+def emoji_display_diagnostics(emojis: list[str]) -> list[EmojiDisplayDiagnostic]:
+    import unicodedata
+    wcswidth_func: Callable[[str], int] | None
+
+    try:
+        from wcwidth import wcswidth
+        wcswidth_func = wcswidth
+    except Exception:
+        wcswidth_func = None
+
+    diagnostics: list[EmojiDisplayDiagnostic] = []
+    for emoji in emojis:
+        codepoints = [f"U+{ord(ch):04X} {unicodedata.name(ch, '?')}" for ch in emoji]
+        diagnostics.append(
+            {
+                "emoji": emoji,
+                "codepoints": codepoints,
+                "char_count": len(emoji),
+                "has_variation_selector_16": "\uFE0F" in emoji,
+                "terminal_width": wcswidth_func(emoji) if wcswidth_func is not None else None,
+            }
+        )
+    return diagnostics
+
+
+def inspect_devops_help_emojis() -> list[EmojiDisplayDiagnostic]:
+    return emoji_display_diagnostics(emojis=["🔧", "📁", "🔩", "💾", "🔧", "🌐", "🚀"])
 
 
 def install(which: Annotated[Optional[str], typer.Argument(..., help="Comma-separated list of program names to install, or group name if --group flag is set.")] = None,
@@ -57,10 +94,10 @@ def execute(
 
 
 def get_app() -> typer.Typer:
-    cli_app = typer.Typer(help="🛠️ DevOps operations", no_args_is_help=True, add_help_option=True, add_completion=False)
+    cli_app = typer.Typer(help="🔧 DevOps operations", no_args_is_help=True, add_help_option=True, add_completion=False)
     ctx_settings: dict[str, object] = {"allow_extra_args": True, "allow_interspersed_args": True, "ignore_unknown_options": True, "help_option_names": []}
 
-    cli_app.command("install", no_args_is_help=True, help=install.__doc__, short_help="🛠️  <i> Install essential packages")(install)
+    cli_app.command("install", no_args_is_help=True, help=install.__doc__, short_help="🔧 <i> Install essential packages")(install)
     cli_app.command("i", no_args_is_help=True, help=install.__doc__, hidden=True)(install)
 
     cli_app.command("repos", help="📁 <r> Manage development repositories", context_settings=ctx_settings)(repos)

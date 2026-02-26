@@ -22,7 +22,7 @@ def action(
     directory: Annotated[Optional[str], typer.Argument(help="📁 Directory containing repo(s).")]=None,
     recursive: Annotated[bool, typer.Option("--recursive", "-r", help="🔍 Recurse into nested repositories.")] = False,
     auto_uv_sync: Annotated[bool, typer.Option("--uv-sync/--no-uv-sync", "-u/-ns", help="Automatic uv sync after pulls.")] = False,
-    pull: Annotated[bool, typer.Option("--pull", "-P", help="⬇️ Pull changes across repositories.")] = False,
+    pull: Annotated[bool, typer.Option("--pull", "-P", help="↓ Pull changes across repositories.")] = False,
     commit: Annotated[bool, typer.Option("--commit", "-c", help="💾 Commit changes across repositories.")] = False,
     push: Annotated[bool, typer.Option("--push", "-p", help="🚀 Push changes across repositories.")] = False,
 ) -> None:

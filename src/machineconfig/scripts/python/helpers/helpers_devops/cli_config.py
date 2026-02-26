@@ -188,7 +188,7 @@ def mount_device(
 
 
 def get_app():
-    config_apps = typer.Typer(help="⚙️ <c> configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
+    config_apps = typer.Typer(help="🔧 <c> configuration subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     config_apps.command("sync", no_args_is_help=True, help="🔗 <s> Sync dotfiles.")(create_links_export.main_from_parser)
     config_apps.command("s", no_args_is_help=True, help="Sync dotfiles.", hidden=True)(create_links_export.main_from_parser)
 
