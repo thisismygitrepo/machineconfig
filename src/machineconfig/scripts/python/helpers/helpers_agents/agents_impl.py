@@ -23,7 +23,7 @@ def _split_and_chunk_prompts(raw_material: str, separator: str, tasks_per_prompt
 def agents_create(
     agent: AGENTS,
     host: HOST,
-    model: str,
+    model: Optional[str],
     provider: Optional[PROVIDER],
     context: Optional[str],
     context_path: Optional[str],
@@ -41,6 +41,11 @@ def agents_create(
     from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_load_balancer import chunk_prompts
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
+    if job_name is None or job_name.strip() == "":
+        job_name_resolved: str = randstr(6)
+        print(f"No job name provided, generated random job name: {job_name_resolved}")
+    else:
+        job_name_resolved = job_name.strip()
 
     prompt_options = [prompt, prompt_path]
     provided_prompt = [opt for opt in prompt_options if opt is not None]
@@ -64,7 +69,10 @@ def agents_create(
             raise ValueError("Provided --context does not contain any non-empty task after splitting")
     else:
         if context_path is None:
-            context_path_resolved = Path(repo_root) / ".ai" / "todo"
+            if job_name is None:
+                context_path_resolved = Path(repo_root) / ".ai" / "todo"
+            else:
+                context_path_resolved = Path(repo_root) / ".ai" / "agents" / job_name_resolved / "context.md"
         else:
             context_path_resolved = Path(context_path).expanduser().resolve()
 
@@ -89,7 +97,7 @@ def agents_create(
 
     agent_selected = agent
     if agents_dir is None:
-        agents_dir_obj = Path(repo_root) / ".ai" / f"tmp_prompts/{job_name}_{randstr()}"
+        agents_dir_obj = Path(repo_root) / ".ai" / "agents" / job_name_resolved
     else:
         agents_dir_obj = Path(agents_dir).expanduser().resolve().absolute()
         if agents_dir_obj.exists():

@@ -47,7 +47,7 @@ class API_SPEC(TypedDict):
 
 class AI_SPEC(TypedDict):
     provider: Optional[PROVIDER]
-    model: str
+    model: Optional[str]
     agent: AGENTS
     machine: HOST
     api_spec: API_SPEC

@@ -35,7 +35,7 @@ def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
 
 
 def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, join_prompt_and_context: bool,
-                      machine: HOST, model: str, provider: Optional[PROVIDER], agent: AGENTS, *, job_name: str) -> None:
+                      machine: HOST, model: Optional[str], provider: Optional[PROVIDER], agent: AGENTS, *, job_name: str) -> None:
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)

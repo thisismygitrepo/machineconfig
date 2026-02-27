@@ -8,13 +8,13 @@ from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_type
 
 def agents_create(
     agent:        Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent type.")],
-    model:        Annotated[str, typer.Option(..., "--model", "-m", help="Model to use.")],
+    model:        Annotated[Optional[str], typer.Option(..., "--model", "-m", help="Model to use, agent will use its default otherwise.")] = None,
     provider:     Annotated[Optional[PROVIDER], typer.Option(..., "--provider", "-v", help="Provider to use (if agent support many)")] = None,
     host:         Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")] = "local",
     context:      Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context as a direct string. Mutually exclusive with --context-path.")] = None,
     context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
     separator:    Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = DEFAULT_SEAPRATOR,
-    agent_load:   Annotated[int, typer.Option(..., "--agent-load", "-l", help="Number of tasks per prompt")] = 13,
+    agent_load:   Annotated[int, typer.Option(..., "--agent-load", "-l", help="Number of tasks per prompt")] = 3,
     prompt:       Annotated[Optional[str], typer.Option(..., "--prompt", "-p", help="Prompt prefix as string")] = None,
     prompt_path:  Annotated[Optional[str], typer.Option(..., "--prompt-path", "-P", help="Path to prompt file")] = None,
     job_name:     Annotated[str, typer.Option(..., "--job-name", "-n", help="Job name")] = "AI_Agents",
@@ -31,7 +31,8 @@ def agents_create(
     except RuntimeError as e:
         typer.echo(str(e))
         raise typer.Exit(1) from e
-    
+
+
 def collect(
     agent_dir: Annotated[str, typer.Argument(..., help="Path to the agent directory containing the prompts folder")],
     output_path: Annotated[str, typer.Argument(..., help="Path to write the concatenated material files")],

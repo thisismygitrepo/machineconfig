@@ -11,7 +11,11 @@ def fire_gemini(ai_spec: AI_SPEC, prompt_path: Path, repo_root: Path) -> str:
     # if model is None:
     #     model_arg = ""
     # else:
-    model_arg = f"--model {shlex.quote(ai_spec['model'])}"
+    if ai_spec["model"] is not None:
+      # --model {shlex.quote(ai_spec['model'])} 
+      model_arg = f"--model {shlex.quote(ai_spec['model'])}"
+    else:
+      model_arg = ""
     # Need a real shell for the pipeline; otherwise '| gemini ...' is passed as args to 'cat'
     safe_path = shlex.quote(str(prompt_path))
     settings_dot_json = {
@@ -50,6 +54,6 @@ docker run -it --rm \
   -v "{repo_root}:/workspace/{repo_root.name}" \
   -w "/workspace/{repo_root.name}" \
   statistician/machineconfig-ai:latest  \
-  bash -c '. ~/.bashrc; export GEMINI_API_KEY="{api_key}"; gemini --model {shlex.quote(ai_spec['model'])} --yolo {prompt_path.relative_to(repo_root)}'
+  bash -c '. ~/.bashrc; export GEMINI_API_KEY="{api_key}"; gemini {model_arg} --yolo {prompt_path.relative_to(repo_root)}'
   """
     return cmd

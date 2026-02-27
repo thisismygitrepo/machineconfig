@@ -16,7 +16,8 @@ crush run {prompt_path}
             json_template = json_path.read_text(encoding="utf-8")
             api_key = ai_spec["api_spec"]["api_key"]
             json_filled = json_template.replace("{api_key}", api_key)
-            json_filled = json_filled.replace("{model}", ai_spec["model"])
+            if ai_spec["model"] is not None:
+                json_filled = json_filled.replace("{model}", ai_spec["model"])
             if ai_spec["provider"] == "google":
                 provider = "gemini"  # weird crush way of naming.
             else:

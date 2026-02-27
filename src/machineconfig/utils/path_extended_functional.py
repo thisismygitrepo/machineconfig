@@ -354,7 +354,7 @@ def with_name(
                 raise FileExistsError(f"❌ RENAMING failed. File `{destination}` already exists.")
             else:
                 if verbose:
-                    _print_message(f"⚠️ SKIPPED RENAMING {path_obj!r} ➡️ {destination!r} because FileExistsError and scrict=False policy.")
+                    _print_message(f"⚠️ SKIPPED RENAMING {path_obj!r} ➡️ {destination!r} because FileExistsError and strict=False policy.")
                 return path_obj if orig else destination
         path_obj.rename(destination)
         if verbose:
