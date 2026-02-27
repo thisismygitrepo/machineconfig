@@ -54,7 +54,7 @@ def _build_framework_config(repo_root: Path, framework: AGENTS, add_private_conf
     match framework:
         case "copilot":
             github_copilot.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
-        case "cursor":
+        case "cursor-agent":
             cursors.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "gemini":
             gemini.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
@@ -64,7 +64,7 @@ def _build_framework_config(repo_root: Path, framework: AGENTS, add_private_conf
             crush.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "cline":
             cline.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
-        case "qwen-code":
+        case "qwen":
             qwen_code.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "codex":
             codex.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
@@ -76,7 +76,7 @@ def _build_framework_config(repo_root: Path, framework: AGENTS, add_private_conf
             kilocode.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "auggie":
             auggie.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
-        case "warp":
+        case "warp-cli":
             warp.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)
         case "droid":
             droid.build_configuration(repo_root=repo_root, add_private_config=add_private_config, add_instructions=add_instructions)

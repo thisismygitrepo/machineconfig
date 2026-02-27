@@ -16,10 +16,10 @@ from typing import Literal, TypeAlias, TypedDict, Optional
 # Warp
 
 AGENTS: TypeAlias = Literal[
-    "cursor",
+    "cursor-agent",
     "gemini",
     "claude",
-    "qwen-code",
+    "qwen",
     "copilot",
     "codex",
     "crush",
@@ -28,7 +28,7 @@ AGENTS: TypeAlias = Literal[
     "kilocode",
     "cline",
     "auggie",
-    "warp",
+    "warp-cli",
     "droid",
 ]
 HOST: TypeAlias = Literal["local", "docker"]

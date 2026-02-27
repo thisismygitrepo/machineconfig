@@ -70,6 +70,38 @@ def _resolve_prompts_yaml_path(prompts_yaml_path: Optional[str]) -> Path:
     return Path.home() / "dotfiles" / "scripts" / "prompts" / "prompts.yaml"
 
 
+def _prompts_yaml_template() -> str:
+    return """# prompts.yaml used by `agents run`
+# Top-level keys show up in interactive selection.
+# Nested keys can be selected via --context-name with dot-path syntax (example: team.backend).
+# Values should be prompt/context text (plain strings or multiline `|` blocks).
+default: |
+  You are a helpful assistant.
+team:
+  backend: |
+    You are helping with backend engineering tasks.
+  frontend: |
+    You are helping with frontend engineering tasks.
+"""
+
+
+def _ensure_prompts_yaml_exists(yaml_path: Path) -> bool:
+    if yaml_path.exists():
+        if not yaml_path.is_file():
+            raise ValueError(f"prompts YAML path exists but is not a file: {yaml_path}")
+        return False
+    yaml_path.parent.mkdir(parents=True, exist_ok=True)
+    yaml_path.write_text(_prompts_yaml_template(), encoding="utf-8")
+    return True
+
+
+def _prompts_yaml_format_explanation(yaml_path: Path) -> str:
+    return f"""prompts YAML path: {yaml_path}
+Expected format:
+{_prompts_yaml_template().rstrip()}
+"""
+
+
 def _edit_prompts_yaml(yaml_path: Path) -> None:
     editor = shutil.which("hx")
     if editor is None:
@@ -101,8 +133,7 @@ def _resolve_context(context: Optional[str], context_path: Optional[str], prompt
         return context_file.read_text(encoding="utf-8")
 
     yaml_path = _resolve_prompts_yaml_path(prompts_yaml_path=prompts_yaml_path)
-    if not yaml_path.exists() or not yaml_path.is_file():
-        raise ValueError(f"prompts YAML file does not exist: {yaml_path}")
+    _ensure_prompts_yaml_exists(yaml_path=yaml_path)
 
     from machineconfig.utils.files.read import Read
     from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
@@ -160,6 +191,7 @@ def _print_prompt_file_preview(prompt_file: Path) -> None:
 def _build_agent_command(agent: AGENTS, prompt_file: Path) -> str:
     is_windows = system() == "Windows"
     prompt_file_q = _quote_for_shell(str(prompt_file), is_windows=is_windows)
+    agent_cli = cast(str, agent)
 
     if is_windows:
         prompt_content_expr = f"(Get-Content -Raw {prompt_file_q})"
@@ -168,24 +200,57 @@ def _build_agent_command(agent: AGENTS, prompt_file: Path) -> str:
 
     match agent:
         case "copilot":
-            return f"copilot -p {prompt_content_expr} --yolo"
+            return f"{agent_cli} -p {prompt_content_expr} --yolo"
         case "codex":
             if is_windows:
-                return f"Get-Content -Raw {prompt_file_q} | codex exec -"
-            return f"codex exec - < {prompt_file_q}"
+                return f"Get-Content -Raw {prompt_file_q} | {agent_cli} exec -"
+            return f"{agent_cli} exec - < {prompt_file_q}"
         case "gemini":
-            return f"gemini --yolo --prompt {prompt_file_q}"
+            return f"{agent_cli} --yolo --prompt {prompt_file_q}"
         case "crush":
-            return f"crush run {prompt_file_q}"
-        case _:
-            raise ValueError(f"Agent '{agent}' is not yet wired for direct run command. Supported: copilot, codex, gemini, crush")
+            return f"{agent_cli} run {prompt_file_q}"
+        case "claude":
+            return f"{agent_cli} -p {prompt_content_expr}"
+        case "qwen":
+            return f"{agent_cli} --yolo --prompt {prompt_file_q}"
+        case "q":
+            return f"{agent_cli} chat {prompt_content_expr}"
+        case "opencode":
+            return f"{agent_cli} run {prompt_content_expr}"
+        case "kilocode":
+            return f"{agent_cli} {prompt_content_expr}"
+        case "cline":
+            return f"{agent_cli} --yolo {prompt_content_expr}"
+        case "auggie":
+            return f"{agent_cli} --print {prompt_content_expr}"
+        case "warp-cli":
+            return f"{agent_cli} agent run --prompt {prompt_content_expr}"
+        case "droid":
+            return f"{agent_cli} exec -f {prompt_file_q}"
+        case "cursor-agent":
+            return f"{agent_cli} -p {prompt_content_expr} --output-format text"
 
 
-def run(prompt: Optional[str], agent: str, context: Optional[str], context_path: Optional[str], prompts_yaml_path: Optional[str], context_name: Optional[str], edit: bool) -> None:
+def run(
+    prompt: Optional[str],
+    agent: str,
+    context: Optional[str],
+    context_path: Optional[str],
+    prompts_yaml_path: Optional[str],
+    context_name: Optional[str],
+    edit: bool,
+    show_prompts_yaml_format: bool,
+) -> None:
     resolved_agent = _normalize_agent_name(agent)
+    yaml_path = _resolve_prompts_yaml_path(prompts_yaml_path=prompts_yaml_path)
+    if _ensure_prompts_yaml_exists(yaml_path=yaml_path):
+        import typer
+        typer.echo(f"Created prompts YAML template at: {yaml_path}")
     if edit:
-        yaml_path = _resolve_prompts_yaml_path(prompts_yaml_path=prompts_yaml_path)
         _edit_prompts_yaml(yaml_path=yaml_path)
+    if show_prompts_yaml_format:
+        import typer
+        typer.echo(_prompts_yaml_format_explanation(yaml_path=yaml_path))
     resolved_context = _resolve_context(context=context, context_path=context_path, prompts_yaml_path=prompts_yaml_path, context_name=context_name)
     prompt_text = prompt if prompt is not None else ""
     prompt_file = _make_prompt_file(prompt=prompt_text, context=resolved_context)
