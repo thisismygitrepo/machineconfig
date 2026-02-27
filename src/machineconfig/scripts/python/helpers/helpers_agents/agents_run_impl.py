@@ -49,41 +49,17 @@ def _print_prompt_file_preview(prompt_file: Path) -> None:
     )
 
 
-def _extract_function_source(function_name: str, module_path: Path) -> str:
-    import ast
-
-    source = module_path.read_text(encoding="utf-8")
-    parsed = ast.parse(source)
-    lines = source.splitlines()
-    for node in parsed.body:
-        if isinstance(node, ast.FunctionDef) and node.name == function_name:
-            start_line = node.lineno - 1
-            end_line = node.end_lineno
-            if end_line is None:
-                raise ValueError(f"Could not determine source range for function '{function_name}' in {module_path}")
-            return "\n".join(lines[start_line:end_line])
-    raise ValueError(f"Function '{function_name}' not found in {module_path}")
-
-
 def _make_create_helper_payload(
     user_prompt: str,
-    agents_create_source: str,
-    template_source: str,
     output_path: Optional[str],
-    agent: AGENTS,
 ) -> str:
     output_target = output_path if output_path is not None else "./.ai/<helper_name>.sh"
     return f"""You are generating a helper shell script for this repository.
 
 Goal:
-- Create a real `.sh` helper file under `./.ai/` that matches the user request.
-- The helper should be similar in style to the existing template.
-- The helper should call `agents create` and related commands as needed.
+- Create a real `.sh` helper file under `./.ai/` that helps user to run `agents create` big command.
+- Mark the helper executable (for example `chmod +x`).
 - Run the helper script after creating it.
-
-Execution model:
-- External generator agent (current agent running this prompt): `{agent}`.
-- Runtime agent for the generated layout/helper command: `{agent}`.
 
 User request:
 {user_prompt}
@@ -91,29 +67,13 @@ User request:
 Output path target:
 {output_target}
 
-Hard requirements:
-- The final helper file path MUST be inside `./.ai/` and MUST end with `.sh`.
-- Every `agents create` command in the generated helper MUST include `--agent {agent}`.
-- Do not only print script text; actually write the file to disk.
-- Mark the helper executable (for example `chmod +x`).
-- Execute the helper script in the repository.
-- Include command output (or a concise execution summary) in your final response.
 
 Implementation constraints:
-- Use the available options and semantics from the existing `agents_create` function shown below.
+- Please run `agents create --help` by yourself to understand the command line interface.
 - When user is not mentioning e.g. model, host, etc, then do not make assumptions. Just let the function use its defaults.
 - use default values from `agents_create` where applicable, but adapt as needed to fit the user prompt.
 - the signature of function clearly explains which kwargs have defaults and which ones must be passed.
 
-Reference: agents_create function source
-```python
-{agents_create_source}
-```
-
-Reference: existing template.sh
-```bash
-{template_source}
-```
 """
 
 
@@ -213,18 +173,9 @@ def create_helper(prompt: str, agent: AGENTS, output_path: Optional[str], show_p
     if not agents_module_path.exists() or not agents_module_path.is_file():
         raise ValueError(f"Could not locate agents module file: {agents_module_path}")
 
-    template_path = Path(__file__).parent / "templates" / "template.sh"
-    if not template_path.exists() or not template_path.is_file():
-        raise ValueError(f"Could not locate helper template file: {template_path}")
-
-    agents_create_source = _extract_function_source(function_name="agents_create", module_path=agents_module_path)
-    template_source = template_path.read_text(encoding="utf-8")
     generated_prompt = _make_create_helper_payload(
         user_prompt=prompt,
-        agents_create_source=agents_create_source,
-        template_source=template_source,
         output_path=output_path,
-        agent=agent,
     )
 
     prompt_file = _make_prompt_file(prompt=generated_prompt, context="")
