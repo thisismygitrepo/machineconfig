@@ -120,7 +120,7 @@ def run(
     agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch.")] = "copilot",
     context: Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context string. Mutually exclusive with --context-path.")] = None,
     context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to a context file. Mutually exclusive with --context.")] = None,
-    context_yaml_path: Annotated[Optional[str], typer.Option(..., "--prompts-yaml-path", "-y", help="YAML file used for interactive context selection fallback. Auto-created with commented template if missing.")] = None,
+    context_yaml_path: Annotated[Optional[str], typer.Option(..., "--context-yaml-path", "-y", help="YAML file used for interactive context selection fallback. Auto-created with commented template if missing.")] = None,
     context_name: Annotated[Optional[str], typer.Option(..., "--context-name", "-n", help="YAML section key (supports dot-path, e.g. 'team.backend'). Used with --prompts-yaml-path or default prompts YAML.")] = None,
     where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "custom", "c"], typer.Option(..., "--where", "-w", help="Where to look for prompts YAML files when --prompts-yaml-path is not provided.")] = "all",
     show_prompts_yaml_format: Annotated[bool, typer.Option(..., "--show-format", "-Y", help="Show prompts YAML format guidance and resolved file path. If no prompt/context input is provided, exits after showing it.")] = False,
