@@ -53,7 +53,7 @@ def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[
             prompt_path.write_text(prompt_prefix + f"""\nPlease only look @ {prompt_material_path.relative_to(repo_root)}. You don't need to do any other work beside the content of this material file.""", encoding="utf-8")
 
         agent_cmd_launch_path = prompt_root / AGENT_NAME_FORMATTER.format(idx=idx)  # e.g., agent_0_cmd.sh
-        random_sleep_time = random.uniform(0, 5)
+        random_sleep_time = random.uniform(0, 2)
         cmd_prefix = f"""#!/usr/bin/env bash
 
 echo "Using machine: {machine}, model: {model}, provider: {provider}, and agent: {agent}"
