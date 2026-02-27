@@ -2977,6 +2977,40 @@
       }
     },
     {
+      "appName": "agent-deck",
+      "repoURL": "https://github.com/asheshgoplani/agent-deck",
+      "doc": "Terminal UI for AI coding agents",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "agent-deck_{version}_linux_amd64.tar.gz",
+          "macos": "agent-deck_{version}_darwin_amd64.tar.gz",
+          "windows": null
+        },
+        "arm64": {
+          "linux": "agent-deck_{version}_linux_arm64.tar.gz",
+          "macos": "agent-deck_{version}_darwin_arm64.tar.gz",
+          "windows": null
+        }
+      }
+    },
+    {
+      "appName": "cagent",
+      "repoURL": "https://github.com/docker/cagent",
+      "doc": "Docker terminal coding agent",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": null,
+          "macos": null,
+          "windows": "cagent-windows-amd64.exe"
+        },
+        "arm64": {
+          "linux": null,
+          "macos": null,
+          "windows": "cagent-windows-arm64.exe"
+        }
+      }
+    },
+    {
       "appName": "openclaw",
       "repoURL": "CMD",
       "doc": "OpenClaw is a personal AI assistant you run on your own devices.",

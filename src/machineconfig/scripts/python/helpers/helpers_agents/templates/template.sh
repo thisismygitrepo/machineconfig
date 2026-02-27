@@ -12,10 +12,10 @@ AGENTS_DIR="$REPO_ROOT/.ai/agents/$JOB_NAME"
 rm -rfd "$AGENTS_DIR" || true
 
 agents create \
-    --agents gemini \
+    --agent codex \
     --host docker \
-    --model gemini-2.5-pro \
-    --provider google \
+    --model gpt-5.3-codex \
+    --provider openai \
     --agent-load 5 \
     --context-path $CONTEXT_PATH \
     --prompt-path $PROMPT_PATH \
@@ -29,6 +29,5 @@ sessions balance-load "$AGENTS_DIR/layout.json" \
     --output-path "$AGENTS_DIR/layout_balanced.json"
 
 sessions run "$AGENTS_DIR/layout_balanced.json" --kill-upon-completion
-
 
 # agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"

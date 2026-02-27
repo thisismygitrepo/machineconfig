@@ -6,7 +6,7 @@ from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_type
 
 
 def agents_create(
-    agent:        Annotated[AGENTS, typer.Option(..., "--agents", "-a", help="Agent type.")],
+    agent:        Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent type.")],
     model:        Annotated[str, typer.Option(..., "--model", "-m", help="Model to use.")],
     provider:     Annotated[Optional[PROVIDER], typer.Option(..., "--provider", "-v", help="Provider to use (if agent support many)")] = None,
     host:         Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")] = "local",
