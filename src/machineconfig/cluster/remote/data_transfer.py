@@ -1,62 +1,45 @@
-# """DS
-# """
+from __future__ import annotations
+
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from machineconfig.utils.ssh import SSH
+    from machineconfig.cluster.remote.file_manager import FileManager
+    from machineconfig.cluster.remote.models import RemoteMachineConfig
+    from machineconfig.cluster.remote.job_params import JobParams
 
 
-# from machineconfig.cluster.remote_machine import RemoteMachine, FileManager
+def transfer_sftp(ssh: SSH, config: RemoteMachineConfig, job_params: JobParams, file_manager: FileManager, data: list[str]) -> None:
+    mkdir_cmd = f"import os; os.makedirs(os.path.dirname(os.path.expanduser(r'{file_manager.shell_script_path}')), exist_ok=True)"
+    ssh.run_py_remotely(python_code=mkdir_cmd, uv_with=None, uv_project_dir=None, description="mkdir for shell script", verbose_output=False, strict_stderr=False, strict_return_code=False)
+    if config.copy_repo:
+        ssh.copy_from_here(source_path=job_params.repo_path_rh, target_rel2home=None, compress_with_zip=True, recursive=True, overwrite_existing=True)
+    for a_path in data:
+        is_dir = Path(a_path).expanduser().is_dir()
+        ssh.copy_from_here(source_path=a_path, target_rel2home=None, compress_with_zip=is_dir, recursive=is_dir, overwrite_existing=True)
+    ssh.copy_from_here(source_path=str(file_manager.job_root), target_rel2home=None, compress_with_zip=True, recursive=True, overwrite_existing=True)
 
 
-# class Submission:
-#     """Sends repo, data, root_dir and write execution command."""
-#     @staticmethod
-#     def transfer_sh(rm: RemoteMachine) -> None:
-#         print("🚀 Using transfer.sh to send data to remote machine.")
-#         cloud_download_py_script = "\n"
-#         # downloading repo, this takes place prior to pyscript (otherwise, its tool late as the library is loaded at the top of the pyscript already)
-#         if rm.config.copy_repo:
-#             tmp_file = PathExtended(rm.job_params.repo_path_rh).expanduser().zip_n_encrypt()
-#             cloud_download_py_script += f"print('Downloading `{tmp_file.collapseuser()}`.')\n"
-#             cloud_download_py_script += f"P(r'{tmp_file.share_on_cloud()}').download(folder=r'{P(rm.job_params.repo_path_rh).parent}').decrypt_n_unzip()\n"
-#             tmp_file.delete(sure=True)
-#         for _idx, item in enumerate(rm.data):
-#             cloud_download_py_script += f"P(r'{P(item).share_on_cloud()}').download(folder=r'{item.collapseuser().parent}')\n"
-#         # save cloud_download_script_py
-#         rm.file_manager.cloud_download_py_script_path.expanduser().write_text(cloud_download_py_script, encoding="utf-8")
-#         # modify and save shell_script to including running of cloud_download_py_script before job script.
-#         shell_file = rm.file_manager.shell_script_path.expanduser()
-#         shell_script = shell_file.read_text(encoding="utf-8").replace("# EXTRA-PLACEHOLDER-POST", f"cd ~; python {rm.file_manager.cloud_download_py_script_path.rel2home().as_posix()}")
-#         download_url = rm.file_manager.job_root.zip().share_on_cloud()
-#         target = rm.file_manager.job_root.rel2home().parent.joinpath(download_url.name).as_posix()
-#         tmp = f"cd ~; curl -o '{target}' '{download_url.as_url_str()}'; unzip '{target}' -d {rm.file_manager.job_root.rel2home().parent.as_posix()}"
-#         shell_script = tmp + shell_script
-#         with open(file=shell_file, mode='w', newline={"Windows": None, "Linux": "\n"}[rm.ssh.get_remote_machine()], encoding="utf-8") as file: file.write(shell_script)
-
-#     @staticmethod
-#     def cloud(rm: RemoteMachine) -> None:
-#         cloud = rm.config.cloud_name
-#         assert cloud is not None, "Cloud name is not specified in the config file. Please specify it in the config file."
-#         if rm.config.copy_repo: PathExtended(rm.job_params.repo_path_rh).to_cloud(cloud=cloud, rel2home=True, zip=True, encrypt=True)
-#         for x in rm.data: x.to_cloud(cloud=cloud, rel2home=True)
-#         downloads = '\n'.join([f"cloud_copy {cloud}: '{a_path.collapseuser().as_posix()} -r" for a_path in rm.data])
-#         if not rm.config.copy_repo: downloads += f"""\n cloud_copy {cloud}: {P(rm.job_params.repo_path_rh).collapseuser().as_posix()} -zer """
-#         downloads += f"\ncloud_copy {cloud}: {rm.file_manager.job_root} -zr"
-#         rm.file_manager.shell_script_path.expanduser().write_text(downloads + rm.file_manager.shell_script_path.expanduser().read_text(encoding="utf-8"), encoding='utf-8')  # newline={"Windows": None, "Linux": "\n"}[rm.ssh.get_remote_machine()]
-#         PathExtended(rm.file_manager.job_root).to_cloud(cloud=cloud, zip=True, rel2home=True)
-
-#     @staticmethod
-#     def sftp(rm: RemoteMachine) -> None:
-#         assert rm.ssh.sftp is not None, f"SFTP is not available for this machine `{rm.ssh}`. Consider using different `transfer_method` other than `sftp`."
-#         log_path_parent = f"P(r'{FileManager.shell_script_path_log}').expanduser().parent"
-#         rm.ssh.run_py(f"{log_path_parent}.mkdir(parents=True, exist_ok=True); P(r'{FileManager.shell_script_path_log}').expanduser().delete(sure=True).write_text(r'{rm.file_manager.shell_script_path.collapseuser().as_posix()}')", desc="Logging latest shell script path on remote.", verbose=False)
-#         if rm.config.copy_repo: rm.ssh.copy_from_here(rm.job_params.repo_path_rh, z=True, overwrite=True)
-#         for a_path in rm.data:
-#             rm.ssh.copy_from_here(
-#                 a_path,
-#                 z=True if PathExtended(a_path).is_dir() else False,
-#                 r=False,
-#                 overwrite=True,
-#             )
-#         rm.ssh.copy_from_here(rm.file_manager.job_root, z=True)
+def transfer_cloud(ssh: SSH, config: RemoteMachineConfig, job_params: JobParams, file_manager: FileManager, data: list[str]) -> None:
+    cloud = config.cloud_name
+    if cloud is None:
+        raise ValueError("cloud_name must be set for cloud transfer")
+    downloads: list[str] = []
+    if config.copy_repo:
+        downloads.append(f"rclone copy {cloud}:{_rel2home(job_params.repo_path_rh)} {job_params.repo_path_rh}")
+    for a_path in data:
+        downloads.append(f"rclone copy {cloud}:{_rel2home(a_path)} {a_path}")
+    downloads.append(f"rclone copy {cloud}:{_rel2home(str(file_manager.job_root))} {file_manager.job_root}")
+    download_cmd = "\n".join(downloads)
+    shell_path = file_manager.shell_script_path.expanduser()
+    existing = shell_path.read_text(encoding="utf-8") if shell_path.exists() else ""
+    shell_path.write_text(download_cmd + "\n" + existing, encoding="utf-8")
 
 
-# if __name__ == '__main__':
-#     pass
+def _rel2home(path_str: str) -> str:
+    p = Path(path_str).expanduser()
+    try:
+        return str(p.relative_to(Path.home()))
+    except ValueError:
+        return str(p)
