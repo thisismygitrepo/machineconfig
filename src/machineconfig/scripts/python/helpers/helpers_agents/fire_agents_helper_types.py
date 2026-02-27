@@ -35,6 +35,7 @@ HOST: TypeAlias = Literal["local", "docker"]
 PROVIDER: TypeAlias = Literal[
     "azure", "google", "aws", "openai", "anthropic", "openrouter", "xai"
 ]
+DEFAULT_SEAPRATOR = "\n@-@\n"
 
 
 class API_SPEC(TypedDict):

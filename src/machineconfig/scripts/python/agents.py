@@ -1,8 +1,9 @@
 """Agents management commands - lazy loading subcommands."""
 
+from pathlib import Path
 from typing import Optional, get_args, Annotated, Literal
 import typer
-from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER
+from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS, HOST, PROVIDER, DEFAULT_SEAPRATOR
 
 
 def agents_create(
@@ -12,7 +13,7 @@ def agents_create(
     host:         Annotated[HOST, typer.Option(..., "--host", "-h", help=f"Machine to run agents on. One of {', '.join(get_args(HOST))}")] = "local",
     context:      Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context as a direct string. Mutually exclusive with --context-path.")] = None,
     context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to the context file/folder, defaults to .ai/todo/")] = None,
-    separator:    Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = "\n",
+    separator:    Annotated[str, typer.Option(..., "--separator", "-s", help="Separator for context")] = DEFAULT_SEAPRATOR,
     agent_load:   Annotated[int, typer.Option(..., "--agent-load", "-l", help="Number of tasks per prompt")] = 13,
     prompt:       Annotated[Optional[str], typer.Option(..., "--prompt", "-p", help="Prompt prefix as string")] = None,
     prompt_path:  Annotated[Optional[str], typer.Option(..., "--prompt-path", "-P", help="Path to prompt file")] = None,
@@ -145,7 +146,7 @@ def create_context(
     prompt: Annotated[str, typer.Argument(help="Prompt text to send to the selected agent.")],
     job_name: Annotated[str, typer.Option(..., "--job-name", "-n", help="Job name used in ./.ai/agents/<jobName>/context.md output path.")],
     agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch.")] = "copilot",
-    separator: Annotated[str, typer.Option(..., "--separator", "-s", help="Separator between individual results in context.md. Supports escaped values like '\\n'.")] = "\n@-@\n",
+    separator: Annotated[str, typer.Option(..., "--separator", "-s", help="Separator between individual results in context.md. Supports escaped values like '\\n'.")] = DEFAULT_SEAPRATOR,
 ) -> None:
     """Run one prompt and ask the selected agent to persist a context file for the job."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import run as impl
@@ -170,11 +171,16 @@ def create_context(
             edit=False,
             show_prompts_yaml_format=False,
         )
-        separator_path = f"./.ai/agents/{job_name}/separator.txt"
-        with open(separator_path, "w", encoding="utf-8") as f:
-            f.write(separator)
+    except SystemExit as e:
+        exit_code = e.code if isinstance(e.code, int) else 0 if e.code is None else 1
+        if exit_code != 0:
+            raise
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
+
+    separator_path = Path(".ai") / "agents" / job_name / "separator.txt"
+    separator_path.parent.mkdir(parents=True, exist_ok=True)
+    separator_path.write_text(separator, encoding="utf-8")
 
 
 def create_helper(
