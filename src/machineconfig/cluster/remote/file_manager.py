@@ -8,14 +8,14 @@ import psutil
 from rich.console import Console
 
 from machineconfig.utils.accessories import pprint
-from machineconfig.utils.io import save_pickle, from_pickle
+from machineconfig.utils.io import save_json, read_json
 from machineconfig.cluster.remote.models import JOB_STATUS, MACHINE_TYPE, JobStatus
 
 console = Console()
 
-RUNNING_PATH = Path.home() / "tmp_results/remote_machines/file_manager/running_jobs.pkl"
-QUEUE_PATH = Path.home() / "tmp_results/remote_machines/file_manager/queued_jobs.pkl"
-HISTORY_PATH = Path.home() / "tmp_results/remote_machines/file_manager/history_jobs.pkl"
+RUNNING_PATH = Path.home() / "tmp_results/remote_machines/file_manager/running_jobs.json"
+QUEUE_PATH = Path.home() / "tmp_results/remote_machines/file_manager/queued_jobs.json"
+HISTORY_PATH = Path.home() / "tmp_results/remote_machines/file_manager/history_jobs.json"
 SHELL_SCRIPT_LOG_PATH = Path.home() / "tmp_results/remote_machines/file_manager/last_cluster_script.txt"
 DEFAULT_BASE = Path.home() / "tmp_results/remote_machines/jobs"
 
@@ -31,18 +31,25 @@ class FileManager:
         self.base_dir = base_path
         self.job_root = self.base_dir / f"queued/{self.job_id}"
 
-    def __getstate__(self) -> dict[str, object]:
-        return self.__dict__
-
-    def __setstate__(self, state: dict[str, object]) -> None:
-        self.__dict__ = state
+    def to_dict(self) -> dict[str, object]:
+        return {"remote_machine_type": self.remote_machine_type, "job_id": self.job_id, "max_simultaneous_jobs": self.max_simultaneous_jobs, "lock_resources": self.lock_resources, "submission_time": self.submission_time.isoformat(), "base_dir": str(self.base_dir), "job_root": str(self.job_root)}
 
     @staticmethod
-    def from_pickle_file(path: str | Path) -> "FileManager":
-        state = from_pickle(Path(path).expanduser())
+    def from_dict(d: dict[str, object]) -> "FileManager":
         fm = FileManager.__new__(FileManager)
-        fm.__setstate__(state)
+        fm.remote_machine_type = str(d["remote_machine_type"])  # type: ignore[assignment]
+        fm.job_id = str(d["job_id"])
+        fm.max_simultaneous_jobs = int(d["max_simultaneous_jobs"])  # type: ignore[arg-type]
+        fm.lock_resources = bool(d["lock_resources"])
+        fm.submission_time = datetime.fromisoformat(str(d["submission_time"]))
+        fm.base_dir = Path(str(d["base_dir"]))
+        fm.job_root = Path(str(d["job_root"]))
         return fm
+
+    @staticmethod
+    def from_json_file(path: str | Path) -> "FileManager":
+        data: dict[str, object] = read_json(Path(path).expanduser())
+        return FileManager.from_dict(data)
 
     @property
     def py_script_path(self) -> Path:
@@ -59,19 +66,19 @@ class FileManager:
 
     @property
     def kwargs_path(self) -> Path:
-        return self.job_root / "data/func_kwargs.pkl"
+        return self.job_root / "data/func_kwargs.json"
 
     @property
     def file_manager_path(self) -> Path:
-        return self.job_root / "data/file_manager.pkl"
+        return self.job_root / "data/file_manager.json"
 
     @property
     def remote_machine_path(self) -> Path:
-        return self.job_root / "data/remote_machine.pkl"
+        return self.job_root / "data/remote_machine.json"
 
     @property
     def remote_machine_config_path(self) -> Path:
-        return self.job_root / "data/remote_machine_config.pkl"
+        return self.job_root / "data/remote_machine_config.json"
 
     @property
     def execution_log_dir(self) -> Path:
@@ -151,15 +158,15 @@ class FileManager:
         else:
             print(f"Job {self.job_id} not in running file. File may be corrupt.")
         console.print(f"Resources released by `{self.job_id}`.")
-        save_pickle(obj=running_file, path=RUNNING_PATH, verbose=False)
+        _save_job_list(running_file, RUNNING_PATH)
         start_time_path = self.execution_log_dir.expanduser() / "start_time.txt"
         if start_time_path.exists():
             start_time = datetime.fromisoformat(start_time_path.read_text(encoding="utf-8").strip())
             end_time = datetime.now()
             hist_file = HISTORY_PATH
-            hist: list[dict[str, object]] = _load_pickle_or_default(hist_file, [])
-            hist.append({"job_id": self.job_id, "start_time": start_time, "end_time": end_time, "submission_time": self.submission_time})
-            save_pickle(obj=hist, path=hist_file, verbose=False)
+            hist: list[dict[str, str]] = _load_json_or_default(hist_file, [])
+            hist.append({"job_id": self.job_id, "start_time": start_time.isoformat(), "end_time": end_time.isoformat(), "submission_time": self.submission_time.isoformat()})
+            save_json(obj=hist, path=hist_file, indent=2, verbose=False)
 
     def get_resources_unlock_shell_cmd(self) -> str:
         collapsed = _collapse_user(RUNNING_PATH)
@@ -170,7 +177,7 @@ class FileManager:
         job_ids = [job.job_id for job in queue_file]
         if self.job_id not in job_ids:
             queue_file.append(job_status)
-            save_pickle(obj=queue_file, path=QUEUE_PATH, verbose=False)
+            _save_job_list(queue_file, QUEUE_PATH)
         return queue_file
 
     def _write_lock_file(self, job_status: JobStatus) -> None:
@@ -178,12 +185,12 @@ class FileManager:
         queue_file = _load_job_list(QUEUE_PATH)
         if job_status in queue_file:
             queue_file.remove(job_status)
-        save_pickle(obj=queue_file, path=QUEUE_PATH, verbose=False)
+        _save_job_list(queue_file, QUEUE_PATH)
         running_file = _load_job_list(RUNNING_PATH)
         if len(running_file) >= self.max_simultaneous_jobs:
             raise RuntimeError(f"Running jobs ({len(running_file)}) >= max ({self.max_simultaneous_jobs}). Should not write lock.")
         running_file.append(job_status)
-        save_pickle(obj=running_file, path=RUNNING_PATH, verbose=False)
+        _save_job_list(running_file, RUNNING_PATH)
 
 
 def _write_status(path: Path, status: str) -> None:
@@ -193,14 +200,19 @@ def _write_status(path: Path, status: str) -> None:
 def _load_job_list(path: Path) -> list[JobStatus]:
     if not path.exists():
         path.parent.mkdir(parents=True, exist_ok=True)
-        save_pickle(obj=[], path=path, verbose=False)
+        save_json(obj=[], path=path, verbose=False)
         return []
-    return from_pickle(path)
+    raw: list[dict[str, object]] = read_json(path)
+    return [JobStatus.from_dict(d) for d in raw]
 
 
-def _load_pickle_or_default[T](path: Path, default: T) -> T:
+def _save_job_list(jobs: list[JobStatus], path: Path) -> None:
+    save_json(obj=[j.to_dict() for j in jobs], path=path, indent=2, verbose=False)
+
+
+def _load_json_or_default[T](path: Path, default: T) -> T:
     if path.exists():
-        return from_pickle(path)
+        return read_json(path)  # type: ignore[return-value]
     return default
 
 
@@ -215,7 +227,7 @@ def _clean_dead_processes_from_list(jobs: list[JobStatus], path: Path) -> list[J
             print(f"Process pid={job.pid} for job `{job.job_id}` is dead, removing.")
             changed = True
     if changed:
-        save_pickle(obj=alive, path=path, verbose=False)
+        _save_job_list(alive, path)
     return alive
 
 

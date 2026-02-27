@@ -21,6 +21,19 @@ class JobParams:
     func_class: str | None
     func_name: str | None
 
+    def to_dict(self) -> dict[str, object]:
+        return {k: v for k, v in self.__dict__.items()}
+
+    @staticmethod
+    def from_dict(d: dict[str, object]) -> "JobParams":
+        return JobParams(
+            description=str(d.get("description", "")), ssh_repr=str(d.get("ssh_repr", "")), ssh_repr_remote=str(d.get("ssh_repr_remote", "")),
+            error_message=str(d.get("error_message", "")), session_name=str(d.get("session_name", "")), tab_name=str(d.get("tab_name", "")),
+            file_manager_path=str(d.get("file_manager_path", "")), repo_path_rh=str(d.get("repo_path_rh", "")),
+            file_path_rh=str(d.get("file_path_rh", "")), file_path_r=str(d.get("file_path_r", "")), func_module=str(d.get("func_module", "")),
+            func_class=str(d["func_class"]) if d.get("func_class") else None, func_name=str(d["func_name"]) if d.get("func_name") else None,
+        )
+
     @staticmethod
     def empty() -> "JobParams":
         return JobParams(repo_path_rh="", file_path_rh="", file_path_r="", func_module="", func_class=None, func_name=None, description="", ssh_repr="", ssh_repr_remote="", error_message="", session_name="", tab_name="", file_manager_path="")

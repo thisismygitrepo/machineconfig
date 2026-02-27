@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 import getpass
 import platform
@@ -10,7 +10,7 @@ from typing import Any
 
 from rich.console import Console
 
-from machineconfig.utils.io import save_pickle, read_ini, from_pickle
+from machineconfig.utils.io import save_json, read_ini, read_json
 from machineconfig.utils.source_of_truth import DEFAULTS_PATH
 from machineconfig.cluster.remote.models import JOB_STATUS, LogEntry
 
@@ -66,18 +66,18 @@ class CloudManager:
     def read_log(self) -> dict[JOB_STATUS, list[dict[str, object]]]:
         if not self.lock_claimed:
             self.claim_lock(first_call=True)
-        path = self.base_path.expanduser() / "logs.pkl"
+        path = self.base_path.expanduser() / "logs.json"
         if not path.exists():
             log: dict[JOB_STATUS, list[dict[str, object]]] = {"queued": [], "running": [], "completed": [], "failed": []}
             path.parent.mkdir(parents=True, exist_ok=True)
-            save_pickle(obj=log, path=path, verbose=False)
+            save_json(obj=log, path=path, indent=2, verbose=False)
             return log
-        return from_pickle(path)
+        return read_json(path)
 
     def write_log(self, log: dict[JOB_STATUS, list[dict[str, object]]]) -> None:
         if not self.lock_claimed:
             self.claim_lock(first_call=True)
-        save_pickle(obj=log, path=self.base_path.expanduser() / "logs.pkl", verbose=False)
+        save_json(obj=log, path=self.base_path.expanduser() / "logs.json", indent=2, verbose=False)
 
     def claim_lock(self, first_call: bool) -> None:
         if first_call:
@@ -167,11 +167,11 @@ class CloudManager:
         while len(self.running_jobs) < self.max_jobs and idx < len(log["queued"]):
             entry = LogEntry.from_dict(log["queued"][idx])
             job_path = self.base_path.expanduser() / f"jobs/{entry.name}"
-            rm_pkl = job_path / "data/remote_machine.pkl"
-            if not rm_pkl.exists():
+            rm_json = job_path / "data/remote_machine.json"
+            if not rm_json.exists():
                 idx += 1
                 continue
-            rm: RemoteMachine = from_pickle(rm_pkl)
+            rm: RemoteMachine = RemoteMachine.from_job_dir(job_path)
             if rm.config.allowed_remotes is not None and _this_machine() not in rm.config.allowed_remotes:
                 print(f"Job `{entry.name}` not allowed on this machine.")
                 idx += 1
@@ -201,7 +201,8 @@ class CloudManager:
                 self.write_log(log=log)
                 to_remove.append(rm.config.job_id)
         self.running_jobs = [rm for rm in self.running_jobs if rm.config.job_id not in to_remove]
-        save_pickle(obj=self.running_jobs, path=self.status_root / "running_jobs.pkl", verbose=False)
+        running_ids = [rm.config.job_id for rm in self.running_jobs]
+        save_json(obj=running_ids, path=self.status_root / "running_jobs.json", indent=2, verbose=False)
 
     def clean_interrupted_jobs(self, return_to_queue: bool) -> None:
         from machineconfig.cluster.remote.remote_machine import RemoteMachine
@@ -213,10 +214,10 @@ class CloudManager:
             if entry.run_machine != machine:
                 continue
             job_path = self.base_path.expanduser() / f"jobs/{entry.name}"
-            rm_pkl = job_path / "data/remote_machine.pkl"
-            if not rm_pkl.exists():
+            rm_json = job_path / "data/remote_machine.json"
+            if not rm_json.exists():
                 continue
-            rm: RemoteMachine = from_pickle(rm_pkl)
+            rm: RemoteMachine = RemoteMachine.from_job_dir(job_path)
             status = rm.file_manager.get_job_status(session_name=rm.job_params.session_name, tab_name=rm.job_params.tab_name)
             if status == "running":
                 self.running_jobs.append(rm)
@@ -255,10 +256,10 @@ class CloudManager:
             _sync_from_cloud(self.cloud, lock_path)
             lock_owner = lock_path.read_text(encoding="utf-8").strip() if lock_path.exists() else "None"
             self.console.print(f"Lock: {lock_owner}")
-            log_path = self.base_path.expanduser() / "logs.pkl"
+            log_path = self.base_path.expanduser() / "logs.json"
             _sync_from_cloud(self.cloud, log_path)
             if log_path.exists():
-                log: dict[str, list[dict[str, object]]] = from_pickle(log_path)
+                log: dict[str, list[dict[str, object]]] = read_json(log_path)
                 for status_name, entries in log.items():
                     self.console.rule(f"{status_name} ({len(entries)})")
                     display = entries[-10:]
@@ -279,10 +280,10 @@ def _prepare_servers_report(workers_root: Path) -> list[dict[str, object]]:
     if not workers_root.exists():
         return report
     for worker_dir in workers_root.iterdir():
-        running_pkl = worker_dir / "running_jobs.pkl"
-        if running_pkl.exists():
-            jobs = from_pickle(running_pkl)
-            mod_time = datetime.fromtimestamp(running_pkl.stat().st_mtime)
+        running_json = worker_dir / "running_jobs.json"
+        if running_json.exists():
+            jobs: list[str] = read_json(running_json)
+            mod_time = datetime.fromtimestamp(running_json.stat().st_mtime)
             last_update = datetime.now() - mod_time
         else:
             jobs = []

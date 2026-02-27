@@ -1,6 +1,6 @@
 EXECUTION_SCRIPT_TEMPLATE = r'''
 import os
-import pickle
+import json
 import platform
 import getpass
 from pathlib import Path
@@ -10,15 +10,15 @@ from rich.console import Console
 from rich.panel import Panel
 
 from machineconfig.utils.accessories import pprint
-from machineconfig.utils.io import from_pickle
+from machineconfig.utils.io import read_json
 from machineconfig.cluster.remote.models import WorkloadParams, JOB_STATUS
 from machineconfig.cluster.remote.job_params import JobParams
 from machineconfig.cluster.remote.file_manager import FileManager
 
 console = Console()
 
-params: JobParams = from_pickle(Path(r"{params_pickle_path}").expanduser())
-manager: FileManager = FileManager.from_pickle_file(r"{file_manager_pickle_path}")
+params: JobParams = JobParams.from_dict(read_json(Path(r"{params_json_path}").expanduser()))
+manager: FileManager = FileManager.from_json_file(r"{file_manager_json_path}")
 
 print("\n" + "=" * 80)
 manager.secure_resources()
@@ -31,7 +31,7 @@ log_dir.mkdir(parents=True, exist_ok=True)
 time_start_utc = datetime.now(timezone.utc)
 time_start_local = datetime.now()
 (log_dir / "start_time.txt").write_text(str(time_start_local), encoding="utf-8")
-func_kwargs: dict = from_pickle(manager.kwargs_path.expanduser())
+func_kwargs: dict = read_json(manager.kwargs_path.expanduser())
 
 print("\n" + "=" * 80)
 console.rule(title="EXECUTION START", style="bold red", characters="=")
@@ -71,7 +71,7 @@ else:
     print(f"JOB FAILED | id={{manager.job_id}} | duration={{delta}} | error={{params.error_message}}")
 (log_dir / "status.txt").write_text(job_status, encoding="utf-8")
 
-exec_times = {{"start_utc": time_start_utc, "end_utc": time_end_utc, "start_local": time_start_local, "end_local": time_end_local, "delta": delta, "submission_time": manager.submission_time, "wait_time": time_start_local - manager.submission_time}}
+exec_times = {{"start_utc": str(time_start_utc), "end_utc": str(time_end_utc), "start_local": str(time_start_local), "end_local": str(time_end_local), "delta": str(delta), "submission_time": str(manager.submission_time), "wait_time": str(time_start_local - manager.submission_time)}}
 pprint(exec_times, "Execution Times")
 
 ssh_repr_remote = params.ssh_repr_remote or f"{{getpass.getuser()}}@{{platform.node()}}"
@@ -85,10 +85,10 @@ console.rule(title="END OF EXECUTION SCRIPT", style="bold green", characters="="
 '''
 
 
-def render_execution_script(params_pickle_path: str, file_manager_pickle_path: str, execution_line: str, notification_block: str) -> str:
+def render_execution_script(params_json_path: str, file_manager_json_path: str, execution_line: str, notification_block: str) -> str:
     return EXECUTION_SCRIPT_TEMPLATE.format(
-        params_pickle_path=params_pickle_path,
-        file_manager_pickle_path=file_manager_pickle_path,
+        params_json_path=params_json_path,
+        file_manager_json_path=file_manager_json_path,
         execution_line=execution_line,
         notification_block=notification_block,
     )

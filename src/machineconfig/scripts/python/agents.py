@@ -117,7 +117,7 @@ def create_symlink_command(
 
 def run(
     prompt: Annotated[Optional[str], typer.Argument(help="Prompt text (optional positional argument). If omitted, an empty prompt is used.")] = None,
-    agent: Annotated[str, typer.Option(..., "--agent", "-a", help="Agent to launch. Alias 'copilit' resolves to 'copilot'.")] = "copilit",
+    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch.")] = "copilot",
     context: Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context string. Mutually exclusive with --context-path.")] = None,
     context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to a context file. Mutually exclusive with --context.")] = None,
     context_yaml_path: Annotated[Optional[str], typer.Option(..., "--prompts-yaml-path", "-y", help="YAML file used for interactive context selection fallback. Auto-created with commented template if missing.")] = None,
@@ -136,7 +136,7 @@ def run(
 
 def create_helper(
     prompt: Annotated[str, typer.Argument(help="Prompt describing the helper script to generate.")],
-    agent: Annotated[str, typer.Option(..., "--agent", "-a", help="Agent to launch. Alias 'copilit' resolves to 'copilot'.")],
+    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch.")],
     output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Optional target path the generated helper script should be written to.")] = None,
 ) -> None:
     """Generate a helper script via a selected agent using agents_create and template context."""

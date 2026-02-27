@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from typing import Callable
 from math import floor
@@ -10,7 +10,7 @@ from copy import deepcopy
 from rich.console import Console
 
 from machineconfig.utils.accessories import randstr, pprint
-from machineconfig.utils.io import save_pickle
+from machineconfig.utils.io import save_json, read_json
 from machineconfig.utils.ssh import SSH
 from machineconfig.cluster.remote.models import RemoteMachineConfig, WorkloadParams
 from machineconfig.cluster.remote.remote_machine import RemoteMachine
@@ -199,21 +199,52 @@ class Cluster:
             print(f"All results downloaded to {self.root_dir}")
 
     def _save(self) -> Path:
-        path = self.root_dir / "cluster.pkl"
+        path = self.root_dir / "cluster.json"
         path.parent.mkdir(parents=True, exist_ok=True)
-        state = self.__dict__.copy()
-        state["func"] = None
-        state["ssh_connections"] = []
-        save_pickle(obj=state, path=path, verbose=False)
+        state: dict[str, object] = {
+            "job_id": self.job_id, "root_dir": str(self.root_dir), "results_downloaded": self.results_downloaded,
+            "description": self.description, "func_kwargs": self.func_kwargs,
+            "machines_specs": [{"cpu": s.cpu, "ram": s.ram, "product": s.product, "cpu_norm": s.cpu_norm, "ram_norm": s.ram_norm, "product_norm": s.product_norm} for s in self.machines_specs],
+            "threads_per_machine": self.threads_per_machine,
+            "config": self.config.to_dict(),
+            "workload_params": [wl.to_dict() for wl in self.workload_params],
+            "machines": [m.to_dict() for m in self.machines],
+            "thread_load_calc": {"num_jobs": self.thread_load_calc.num_jobs, "load_criterion": self.thread_load_calc.load_criterion.name, "reference_specs": {"cpu": self.thread_load_calc.reference_specs.cpu, "ram": self.thread_load_calc.reference_specs.ram, "product": self.thread_load_calc.reference_specs.product, "cpu_norm": self.thread_load_calc.reference_specs.cpu_norm, "ram_norm": self.thread_load_calc.reference_specs.ram_norm, "product_norm": self.thread_load_calc.reference_specs.product_norm}},
+            "machine_load_calc": {"max_num": self.machine_load_calc.max_num, "load_criterion": self.machine_load_calc.load_criterion.name, "load_ratios": self.machine_load_calc.load_ratios},
+        }
+        save_json(obj=state, path=path, indent=2, verbose=False)
         return path
 
     @staticmethod
-    def load(job_id: str, base_dir: str | None) -> Cluster:
-        path = _get_cluster_path(job_id, base_dir) / "cluster.pkl"
-        from machineconfig.utils.io import from_pickle
-        state = from_pickle(path)
+    def load(job_id: str, base_dir: str | None) -> "Cluster":
+        path = _get_cluster_path(job_id, base_dir) / "cluster.json"
+        state: dict[str, object] = read_json(path)
         cluster = Cluster.__new__(Cluster)
-        cluster.__dict__ = state
+        cluster.job_id = str(state["job_id"])
+        cluster.root_dir = Path(str(state["root_dir"]))
+        cluster.results_downloaded = bool(state.get("results_downloaded", False))
+        cluster.description = str(state.get("description", ""))
+        cluster.func_kwargs = dict(state.get("func_kwargs") or {})  # type: ignore[arg-type]
+        cluster.func = None  # type: ignore[assignment]
+        cluster.ssh_connections = []
+        cluster.config = RemoteMachineConfig.from_dict(state["config"])  # type: ignore[arg-type]
+        cluster.workload_params = [WorkloadParams.from_dict(d) for d in state.get("workload_params", [])]  # type: ignore[union-attr]
+        cluster.machines_specs = [MachineSpecs(**d) for d in state.get("machines_specs", [])]  # type: ignore[arg-type]
+        cluster.threads_per_machine = list(state.get("threads_per_machine", []))  # type: ignore[arg-type]
+        cluster.machines = [RemoteMachine.from_dict(d) for d in state.get("machines", [])]  # type: ignore[union-attr]
+        tlc_raw = state.get("thread_load_calc", {})
+        if isinstance(tlc_raw, dict) and tlc_raw:
+            ref_raw = tlc_raw.get("reference_specs", {})
+            ref_specs = MachineSpecs(**ref_raw) if isinstance(ref_raw, dict) else MachineSpecs.from_local()
+            cluster.thread_load_calc = ThreadLoadCalculator(num_jobs=tlc_raw.get("num_jobs"), load_criterion=LoadCriterion[str(tlc_raw.get("load_criterion", "cpu"))], reference_specs=ref_specs)  # type: ignore[arg-type]
+        else:
+            cluster.thread_load_calc = ThreadLoadCalculator.default()
+        mlc_raw = state.get("machine_load_calc", {})
+        if isinstance(mlc_raw, dict) and mlc_raw:
+            cluster.machine_load_calc = MachineLoadCalculator(max_num=int(mlc_raw.get("max_num", 1000)), load_criterion=LoadCriterion[str(mlc_raw.get("load_criterion", "cpu"))])  # type: ignore[arg-type]
+            cluster.machine_load_calc.load_ratios = list(mlc_raw.get("load_ratios", []))  # type: ignore[arg-type]
+        else:
+            cluster.machine_load_calc = MachineLoadCalculator(max_num=1000, load_criterion=LoadCriterion.cpu)
         return cluster
 
 

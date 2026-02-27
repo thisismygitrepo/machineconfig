@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from typing import Callable
 from pathlib import Path
@@ -9,7 +9,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 
 from machineconfig.utils.accessories import randstr
-from machineconfig.utils.io import save_pickle
+from machineconfig.utils.io import save_json, read_json
 from machineconfig.utils.ssh import SSH
 from machineconfig.cluster.remote.models import RemoteMachineConfig, EmailParams, WorkloadParams, LogEntry
 from machineconfig.cluster.remote.job_params import JobParams
@@ -44,13 +44,30 @@ class RemoteMachine:
         ssh_repr = self.ssh.get_remote_repr(add_machine=True) if self.ssh else (self.config.ssh_host or "local")
         return f"RemoteMachine({ssh_repr})"
 
-    def __getstate__(self) -> dict[str, object]:
-        state = self.__dict__.copy()
-        state["ssh"] = None  # SSH connections are not picklable
-        return state
+    def to_dict(self) -> dict[str, object]:
+        return {"config": self.config.to_dict(), "job_params": self.job_params.to_dict(), "file_manager": self.file_manager.to_dict(), "kwargs": self.kwargs, "data": self.data, "submitted": self.submitted, "scripts_generated": self.scripts_generated, "results_downloaded": self.results_downloaded, "results_path": str(self.results_path) if self.results_path else None}
 
-    def __setstate__(self, state: dict[str, object]) -> None:
-        self.__dict__ = state
+    @staticmethod
+    def from_dict(d: dict[str, object]) -> "RemoteMachine":
+        rm = RemoteMachine.__new__(RemoteMachine)
+        rm.config = RemoteMachineConfig.from_dict(d["config"])  # type: ignore[arg-type]
+        rm.job_params = JobParams.from_dict(d["job_params"])  # type: ignore[arg-type]
+        rm.file_manager = FileManager.from_dict(d["file_manager"])  # type: ignore[arg-type]
+        rm.kwargs = dict(d.get("kwargs") or {})  # type: ignore[arg-type]
+        rm.data = list(d.get("data") or [])  # type: ignore[arg-type]
+        rm.submitted = bool(d.get("submitted", False))
+        rm.scripts_generated = bool(d.get("scripts_generated", False))
+        rm.results_downloaded = bool(d.get("results_downloaded", False))
+        rm.results_path = Path(str(d["results_path"])) if d.get("results_path") else None
+        rm.ssh = None
+        return rm
+
+    @staticmethod
+    def from_job_dir(job_dir: Path) -> "RemoteMachine":
+        data_dir = job_dir / "data"
+        rm_json = data_dir / "remote_machine.json"
+        d: dict[str, object] = read_json(rm_json)
+        return RemoteMachine.from_dict(d)
 
     def _ensure_ssh(self) -> SSH:
         if self.ssh is None:
@@ -85,14 +102,14 @@ class RemoteMachine:
             )
             notification_block = render_notification_block(email_params)
 
-        # Save params pickle first so the template can reference it
-        params_pickle_path = self.file_manager.job_root / "data/job_params.pkl"
-        params_pickle_path.parent.mkdir(parents=True, exist_ok=True)
-        save_pickle(obj=self.job_params, path=params_pickle_path, verbose=False)
+        # Save params JSON first so the template can reference it
+        params_json_path = self.file_manager.job_root / "data/job_params.json"
+        params_json_path.parent.mkdir(parents=True, exist_ok=True)
+        save_json(obj=self.job_params.to_dict(), path=params_json_path, indent=2, verbose=False)
 
         py_script = render_execution_script(
-            params_pickle_path=str(params_pickle_path),
-            file_manager_pickle_path=str(self.file_manager.file_manager_path),
+            params_json_path=str(params_json_path),
+            file_manager_json_path=str(self.file_manager.file_manager_path),
             execution_line=execution_line,
             notification_block=notification_block,
         )
@@ -109,11 +126,11 @@ class RemoteMachine:
         py_path.parent.mkdir(parents=True, exist_ok=True)
         py_path.write_text(py_script, encoding="utf-8")
 
-        # Save supporting data
-        save_pickle(obj=self.kwargs, path=self.file_manager.kwargs_path.expanduser(), verbose=False)
-        save_pickle(obj=self.file_manager.__getstate__(), path=self.file_manager.file_manager_path.expanduser(), verbose=False)
-        save_pickle(obj=self.config, path=self.file_manager.remote_machine_config_path.expanduser(), verbose=False)
-        save_pickle(obj=self, path=self.file_manager.remote_machine_path.expanduser(), verbose=False)
+        # Save supporting data as JSON
+        save_json(obj=self.kwargs, path=self.file_manager.kwargs_path.expanduser(), indent=2, verbose=False)
+        save_json(obj=self.file_manager.to_dict(), path=self.file_manager.file_manager_path.expanduser(), indent=2, verbose=False)
+        save_json(obj=self.config.to_dict(), path=self.file_manager.remote_machine_config_path.expanduser(), indent=2, verbose=False)
+        save_json(obj=self.to_dict(), path=self.file_manager.remote_machine_path.expanduser(), indent=2, verbose=False)
 
         log_dir = self.file_manager.execution_log_dir.expanduser()
         log_dir.mkdir(parents=True, exist_ok=True)

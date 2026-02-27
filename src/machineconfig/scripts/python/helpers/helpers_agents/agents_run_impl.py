@@ -1,6 +1,6 @@
 from pathlib import Path
 from platform import system
-from typing import Optional, cast, get_args
+from typing import Optional, cast
 import shlex
 from machineconfig.utils.accessories import randstr
 
@@ -13,17 +13,6 @@ from machineconfig.scripts.python.helpers.helpers_agents.agents_run_context impo
     resolve_prompts_yaml_paths,
 )
 from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS
-
-
-def _normalize_agent_name(agent: str) -> AGENTS:
-    raw = agent.strip().lower()
-    normalized = "copilot" if raw == "copilit" else raw
-    supported_agents = get_args(AGENTS)
-    if normalized not in supported_agents:
-        supported = ", ".join(supported_agents)
-        raise ValueError(f"Unsupported agent '{agent}'. Supported agents: {supported}")
-    return cast(AGENTS, normalized)
-
 
 def _quote_for_shell(value: str, is_windows: bool) -> str:
     if is_windows:
@@ -153,7 +142,7 @@ def build_agent_command(agent: AGENTS, prompt_file: Path) -> str:
 
 def run(
     prompt: Optional[str],
-    agent: str,
+    agent: AGENTS,
     context: Optional[str],
     context_path: Optional[str],
     prompts_yaml_path: Optional[str],
@@ -162,7 +151,6 @@ def run(
     edit: bool,
     show_prompts_yaml_format: bool,
 ) -> None:
-    resolved_agent = _normalize_agent_name(agent)
     yaml_locations = resolve_prompts_yaml_paths(prompts_yaml_path=prompts_yaml_path, where=where)
     created_yaml_paths: list[Path] = []
     for location_name, yaml_path in yaml_locations:
@@ -188,15 +176,13 @@ def run(
     prompt_text = prompt if prompt is not None else ""
     prompt_file = _make_prompt_file(prompt=prompt_text, context=resolved_context)
     _print_prompt_file_preview(prompt_file=prompt_file)
-    command_line = build_agent_command(agent=resolved_agent, prompt_file=prompt_file)
+    command_line = build_agent_command(agent=agent, prompt_file=prompt_file)
 
     from machineconfig.utils.code import exit_then_run_shell_script
     exit_then_run_shell_script(script=command_line, strict=False)
 
 
-def create_helper(prompt: str, agent: str, output_path: Optional[str]) -> None:
-    resolved_agent = _normalize_agent_name(agent)
-
+def create_helper(prompt: str, agent: AGENTS, output_path: Optional[str]) -> None:
     from machineconfig.utils.accessories import get_repo_root
 
     repo_root = get_repo_root(Path.cwd())
@@ -221,7 +207,7 @@ def create_helper(prompt: str, agent: str, output_path: Optional[str]) -> None:
     )
 
     prompt_file = _make_prompt_file(prompt=generated_prompt, context="")
-    command_line = build_agent_command(agent=resolved_agent, prompt_file=prompt_file)
+    command_line = build_agent_command(agent=agent, prompt_file=prompt_file)
 
     from machineconfig.utils.code import exit_then_run_shell_script
 

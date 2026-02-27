@@ -1,5 +1,5 @@
 from typing import Literal, TypeAlias
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, asdict
 from datetime import datetime, timedelta
 
 from machineconfig.utils.accessories import randstr
@@ -22,6 +22,13 @@ class WorkloadParams:
     idx: int
     jobs: int
     job_id: str
+
+    def to_dict(self) -> dict[str, object]:
+        return asdict(self)
+
+    @staticmethod
+    def from_dict(d: dict[str, object]) -> "WorkloadParams":
+        return WorkloadParams(idx_min=int(d["idx_min"]), idx_max=int(d["idx_max"]), idx_start=int(d["idx_start"]), idx_end=int(d["idx_end"]), idx=int(d["idx"]), jobs=int(d["jobs"]), job_id=str(d["job_id"]))  # type: ignore[arg-type]
 
     @property
     def save_suffix(self) -> str:
@@ -65,6 +72,13 @@ class JobStatus:
     status: Literal["locked", "unlocked"]
     submission_time: datetime
     start_time: datetime | None
+
+    def to_dict(self) -> dict[str, object]:
+        return {"pid": self.pid, "job_id": self.job_id, "status": self.status, "submission_time": self.submission_time.isoformat(), "start_time": self.start_time.isoformat() if self.start_time else None}
+
+    @staticmethod
+    def from_dict(d: dict[str, object]) -> "JobStatus":
+        return JobStatus(pid=int(d["pid"]), job_id=str(d["job_id"]), status=str(d["status"]), submission_time=datetime.fromisoformat(str(d["submission_time"])), start_time=datetime.fromisoformat(str(d["start_time"])) if d.get("start_time") else None)  # type: ignore[arg-type]
 
 
 @dataclass
@@ -142,6 +156,27 @@ class RemoteMachineConfig:
     lock_resources: bool = True
     max_simultaneous_jobs: int = 1
     workload_params: WorkloadParams | None = None
+
+    def to_dict(self) -> dict[str, object]:
+        d: dict[str, object] = asdict(self)
+        if self.workload_params is not None:
+            d["workload_params"] = self.workload_params.to_dict()
+        return d
+
+    @staticmethod
+    def from_dict(d: dict[str, object]) -> "RemoteMachineConfig":
+        wl_raw = d.get("workload_params")
+        wl = WorkloadParams.from_dict(wl_raw) if isinstance(wl_raw, dict) else None  # type: ignore[arg-type]
+        return RemoteMachineConfig(
+            job_id=str(d.get("job_id", "")), base_dir=str(d.get("base_dir", "~/tmp_results/remote_machines/jobs")), description=str(d.get("description", "")), ssh_host=str(d["ssh_host"]) if d.get("ssh_host") else None,
+            copy_repo=bool(d.get("copy_repo", False)), update_repo=bool(d.get("update_repo", False)), install_repo=bool(d.get("install_repo", False)), data=list(d.get("data", [])),  # type: ignore[arg-type]
+            transfer_method=str(d.get("transfer_method", "sftp")), cloud_name=str(d["cloud_name"]) if d.get("cloud_name") else None,  # type: ignore[assignment]
+            allowed_remotes=list(d["allowed_remotes"]) if d.get("allowed_remotes") else None,  # type: ignore[arg-type]
+            notify_upon_completion=bool(d.get("notify_upon_completion", False)), to_email=str(d["to_email"]) if d.get("to_email") else None, email_config_name=str(d["email_config_name"]) if d.get("email_config_name") else None,
+            launch_method=str(d.get("launch_method", "remotely")), kill_on_completion=bool(d.get("kill_on_completion", False)), interactive=bool(d.get("interactive", False)),  # type: ignore[assignment]
+            wrap_in_try_except=bool(d.get("wrap_in_try_except", False)), parallelize=bool(d.get("parallelize", False)), lock_resources=bool(d.get("lock_resources", True)), max_simultaneous_jobs=int(d.get("max_simultaneous_jobs", 1)),  # type: ignore[arg-type]
+            workload_params=wl,
+        )
 
     def __post_init__(self) -> None:
         if self.interactive and self.lock_resources:
