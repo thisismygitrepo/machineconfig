@@ -8,29 +8,71 @@ import subprocess
 PROMPTS_WHERE = Literal["all", "a", "private", "p", "public", "b", "library", "l", "custom", "c"]
 
 
+def _value_to_text(value: Any) -> str:
+    if isinstance(value, str):
+        return value
+    return json.dumps(value, ensure_ascii=False, indent=2)
+
+
+def _format_prompt_entry(value: Any) -> str:
+    if not isinstance(value, dict):
+        return _value_to_text(value)
+
+    ignored_keys = {"description", "desciption", "desc", "agent"}
+    filtered_items = [(str(key), item) for key, item in value.items() if str(key).lower() not in ignored_keys and item is not None]
+
+    # Preferred human-readable layout for common prompt schema.
+    prompt_text = None
+    directory_text = None
+    extras: list[tuple[str, Any]] = []
+    for key, item in filtered_items:
+        lowered = key.lower()
+        if lowered == "prompt":
+            prompt_text = _value_to_text(item).strip()
+            continue
+        if lowered == "directory":
+            if isinstance(item, str) and item.strip() != "":
+                directory_text = item.strip()
+            continue
+        extras.append((key, item))
+
+    sections: list[str] = []
+    if prompt_text is not None and prompt_text != "":
+        sections.append(prompt_text)
+    if directory_text is not None:
+        sections.append(f"Working directory: `{directory_text}`")
+    for key, item in extras:
+        pretty_key = key.replace("_", " ").strip().capitalize()
+        as_text = _value_to_text(item).strip()
+        if "\n" in as_text:
+            sections.append(f"{pretty_key}:\n{as_text}")
+        else:
+            sections.append(f"{pretty_key}: {as_text}")
+
+    if len(sections) > 0:
+        return "\n\n".join(sections)
+
+    return "No prompt content configured."
+
+
 def _extract_yaml_options(raw_data: Any) -> tuple[dict[str, str], dict[str, str]]:
     preview_map: dict[str, str] = {}
     context_map: dict[str, str] = {}
 
-    def _to_text(value: Any) -> str:
-        if isinstance(value, str):
-            return value
-        return json.dumps(value, ensure_ascii=False, indent=2)
-
     if isinstance(raw_data, dict):
         for key, value in raw_data.items():
             label = str(key)
-            as_text = _to_text(value)
+            as_text = _format_prompt_entry(value)
             preview_map[label] = as_text
             context_map[label] = as_text
     elif isinstance(raw_data, list):
         for idx, item in enumerate(raw_data):
             label = f"prompt_{idx + 1}"
-            as_text = _to_text(item)
+            as_text = _format_prompt_entry(item)
             preview_map[label] = as_text
             context_map[label] = as_text
     else:
-        as_text = _to_text(raw_data)
+        as_text = _format_prompt_entry(raw_data)
         preview_map["prompt_1"] = as_text
         context_map["prompt_1"] = as_text
 
@@ -47,9 +89,7 @@ def _resolve_context_name(raw_data: Any, context_name: str) -> str:
         cursor = cursor[segment]
     if cursor is None:
         raise ValueError(f"Context name '{context_name}' points to null in prompts YAML")
-    if isinstance(cursor, str):
-        return cursor
-    return json.dumps(cursor, ensure_ascii=False, indent=2)
+    return _format_prompt_entry(cursor)
 
 
 def _get_default_prompts_yaml_locations(where: PROMPTS_WHERE) -> list[tuple[str, Path]]:
