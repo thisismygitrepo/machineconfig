@@ -165,8 +165,7 @@ Hard requirements:
 
 Implementation constraints:
 - Use the available options and semantics from the existing `agents_create` function shown below.
-- Mirror structure and style from the existing template script while adapting behavior to the user request.
-- Keep the script practical for direct local execution.
+- When user is not mentioning e.g. model, host, etc, then do not make assumptions. Just let the function use its defaults.
 - use default values from `agents_create` where applicable, but adapt as needed to fit the user prompt.
 
 Reference: agents_create function source
