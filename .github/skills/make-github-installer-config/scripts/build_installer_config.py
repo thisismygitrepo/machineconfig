@@ -86,12 +86,12 @@ def main() -> None:
     failed_checks: list[str] = []
     for arch in ARCHES:
         for platform in PLATFORMS:
-            pattern = pattern_matrix[arch][platform]
-            if pattern is None:
+            selected_pattern: str | None = pattern_matrix[arch][platform]
+            if selected_pattern is None:
                 continue
-            exists: bool = file_exists_for_pattern(asset_names=latest_asset_names, pattern=pattern, latest_tag_name=latest_release.tag_name)
+            exists: bool = file_exists_for_pattern(asset_names=latest_asset_names, pattern=selected_pattern, latest_tag_name=latest_release.tag_name)
             if exists is False:
-                failed_checks.append(f"Missing latest asset for {arch}/{platform}: pattern='{pattern}' tag='{latest_release.tag_name}'")
+                failed_checks.append(f"Missing latest asset for {arch}/{platform}: pattern='{selected_pattern}' tag='{latest_release.tag_name}'")
 
     if strict_latest_check and len(failed_checks) > 0:
         raise RuntimeError("; ".join(failed_checks))
