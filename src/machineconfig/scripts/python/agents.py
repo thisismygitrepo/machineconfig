@@ -135,14 +135,15 @@ def run(
 
 
 def create_helper(
-    prompt: Annotated[str, typer.Argument(help="Prompt describing the helper script to generate.")],
-    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch.")],
+    prompt: Annotated[str, typer.Argument(help="Prompt describing the helper script. You may override the runtime agent with `target-agent: <agent>` (or `--agent <agent>` in prompt text). If omitted, runtime agent defaults to this command's `--agent`.")],
+    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="External generator agent to launch. It writes the helper script and is also the default runtime `agents create --agent` unless prompt text overrides it.")],
     output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Optional target path the generated helper script should be written to.")] = None,
+    show_payload: Annotated[bool, typer.Option(..., "--show-payload", "-s", help="Render the full prompt/context payload sent to the external generator using rich Markdown syntax.")] = False,
 ) -> None:
-    """Generate a helper script via a selected agent using agents_create and template context."""
+    """Generate a helper script via an external generator agent; runtime `agents create --agent` is optional in prompt and otherwise defaults to this command's `--agent`."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import create_helper as impl
     try:
-        impl(prompt=prompt, agent=agent, output_path=output_path)
+        impl(prompt=prompt, agent=agent, output_path=output_path, show_payload=show_payload)
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
 
@@ -160,8 +161,13 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_create.__doc__ = agents_full_help
     agents_app.command("create", no_args_is_help=True, help=agents_create.__doc__, short_help="<c> Create agents layout file, ready to run.")(agents_create)
     agents_app.command("c", no_args_is_help=True, help=agents_create.__doc__, hidden=True)(agents_create)
-    agents_app.command(name="create-helper", no_args_is_help=True, short_help="<h> Ask an agent to generate a helper script")(create_helper)
-    agents_app.command(name="h", no_args_is_help=True, hidden=True)(create_helper)
+    agents_app.command(
+        name="create-helper",
+        no_args_is_help=True,
+        help=create_helper.__doc__,
+        short_help="<h> Ask one agent to write helper script; runtime agent can be overridden in prompt",
+    )(create_helper)
+    agents_app.command(name="h", no_args_is_help=True, help=create_helper.__doc__, hidden=True)(create_helper)
     agents_app.command("collect", no_args_is_help=True, help=collect.__doc__, short_help="<T> Collect all agent materials into a single file.")(collect)
     agents_app.command("T", no_args_is_help=True, help=collect.__doc__, hidden=True)(collect)
     agents_app.command("make-template", no_args_is_help=False, help=make_agents_command_template.__doc__, short_help="<t> Create a template for fire agents")(make_agents_command_template)

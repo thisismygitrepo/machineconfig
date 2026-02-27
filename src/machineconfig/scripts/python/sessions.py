@@ -29,8 +29,15 @@ def run(
     max_tabs: Annotated[int, typer.Option(..., "--max-tabs-per-layout", "-T", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
     max_layouts: Annotated[int, typer.Option(..., "--max-parallel-layouts", "-P", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 25,
     backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "auto",
+    max_parallel_tabs: Annotated[Optional[int], typer.Option("--max-parallel-tabs", help="Enable dynamic tab scheduling and cap active tabs to this value.")] = None,
+    kill_finished_tabs: Annotated[bool, typer.Option("--kill-finished-tabs", help="Dynamic mode only: close each tab once its command is finished.")] = False,
+    poll_seconds: Annotated[float, typer.Option("--poll-seconds", help="Dynamic mode only: polling interval in seconds used to detect finished tabs.")] = 2.0,
+    all_file: Annotated[bool, typer.Option("--all-file", help="Dynamic mode only: merge tabs from all layouts in the file into one dynamic run.")] = False,
 ) -> None:
-    """Launch terminal sessions based on a layout configuration file."""
+    """Launch terminal sessions based on a layout configuration file.
+
+    Pass --max-parallel-tabs to enable dynamic tab scheduling.
+    """
     from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import run_layouts, find_layout_file, select_layout
     from pathlib import Path
     if layouts_file is not None:
@@ -42,8 +49,16 @@ def run(
         typer.echo(f"❌ Layouts file not found: {layouts_file_resolved}", err=True)
         raise typer.Exit(code=1)
 
-    if choose_layouts is None:
-        layouts_names_resolved: list[str] = []
+    dynamic_all_file_mode = max_parallel_tabs is not None and all_file
+    if dynamic_all_file_mode:
+        if choose_layouts is not None:
+            print("Note: --choose-layouts is ignored when --all-file is set in dynamic mode.")
+        if choose_tabs is not None:
+            print("Note: --choose-tabs is ignored when --all-file is set in dynamic mode.")
+        layouts_names_resolved = []
+        choose_layouts_interactively = False
+    elif choose_layouts is None:
+        layouts_names_resolved = []
         choose_layouts_interactively = False
     elif choose_layouts == "":
         layouts_names_resolved = []
@@ -58,7 +73,7 @@ def run(
         select_interactively=choose_layouts_interactively,
     )
 
-    if choose_tabs is not None:
+    if choose_tabs is not None and not dynamic_all_file_mode:
         from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
 
         all_layouts = select_layout(layouts_json_file=str(layouts_file_resolved), selected_layouts_names=[], select_interactively=False)
@@ -111,6 +126,15 @@ def run(
         custom_layout: LayoutConfig = {"layoutName": "custom-tabs", "layoutTabs": merged_tabs}
         layouts_selected = [custom_layout]
 
+    if dynamic_all_file_mode:
+        merged_tabs = [tab for layout in layouts_selected for tab in layout["layoutTabs"]]
+        if len(merged_tabs) == 0:
+            raise ValueError("No tabs found across all layouts in the selected file.")
+        layouts_selected = [{"layoutName": "all-layouts-dynamic", "layoutTabs": merged_tabs}]
+
+    if all_file and max_parallel_tabs is None:
+        raise ValueError("--all-file is only supported with --max-parallel-tabs.")
+
     if subsitute_home:
         from machineconfig.utils.schemas.layouts.layout_types import substitute_home, LayoutConfig
         layouts_modified: list["LayoutConfig"] = []
@@ -144,21 +168,46 @@ def run(
         case _:
             typer.echo(f"Error: Unsupported backend '{backend}'.", err=True)
             raise typer.Exit(code=1)
-    if parallel_layouts is not None and parallel_layouts <= 0:
-        raise ValueError("--parallel-layouts must be a positive integer.")
-    if parallel_layouts is None and len(layouts_selected) > max_layouts:
-        raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
-    if parallel_layouts is not None and parallel_layouts > max_layouts:
-        raise ValueError(f"--parallel-layouts value {parallel_layouts} exceeds --max-parallel-layouts limit {max_layouts}.")
-    for a_layout in layouts_selected:
-        if len(a_layout["layoutTabs"]) > max_tabs:
-            raise ValueError(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
-
     try:
-        run_layouts(
-        sleep_inbetween=sleep_inbetween, monitor=monitor, parallel_layouts=parallel_layouts, kill_upon_completion=kill_upon_completion,
-        layouts_selected=layouts_selected,
-        backend=backend_resolved)
+        if max_parallel_tabs is not None:
+            from machineconfig.scripts.python.helpers.helpers_sessions.sessions_dynamic import run_dynamic as run_dynamic_impl
+
+            if parallel_layouts is not None:
+                raise ValueError("--parallel-layouts is not supported with --max-parallel-tabs dynamic mode.")
+            if backend in {"windows-terminal", "wt"}:
+                raise ValueError("Dynamic mode does not support windows-terminal; use --backend zellij, tmux, or auto.")
+            if len(layouts_selected) != 1:
+                raise ValueError(
+                    f"Dynamic mode expects exactly one selected layout. Got {len(layouts_selected)}. "
+                    "Select one layout with --choose-layouts or pass --all-file."
+                )
+            if monitor:
+                print("Note: --monitor is implicit in dynamic mode.")
+            if kill_upon_completion:
+                print("Note: --kill-upon-completion is ignored in dynamic mode; use --kill-finished-tabs instead.")
+
+            run_dynamic_impl(
+                layout=layouts_selected[0],
+                max_parallel_tabs=max_parallel_tabs,
+                kill_finished_tabs=kill_finished_tabs,
+                backend=backend,
+                poll_seconds=poll_seconds,
+            )
+        else:
+            if parallel_layouts is not None and parallel_layouts <= 0:
+                raise ValueError("--parallel-layouts must be a positive integer.")
+            if parallel_layouts is None and len(layouts_selected) > max_layouts:
+                raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
+            if parallel_layouts is not None and parallel_layouts > max_layouts:
+                raise ValueError(f"--parallel-layouts value {parallel_layouts} exceeds --max-parallel-layouts limit {max_layouts}.")
+            for a_layout in layouts_selected:
+                if len(a_layout["layoutTabs"]) > max_tabs:
+                    raise ValueError(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
+
+            run_layouts(
+                sleep_inbetween=sleep_inbetween, monitor=monitor, parallel_layouts=parallel_layouts, kill_upon_completion=kill_upon_completion,
+                layouts_selected=layouts_selected,
+                backend=backend_resolved)
     except ValueError as e:
         typer.echo(str(e))
         raise typer.Exit(1) from e
@@ -174,54 +223,26 @@ def run_dynamic(
     backend: Annotated[Literal["zellij", "z", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer to use")] = "auto",
     poll_seconds: Annotated[float, typer.Option(..., "--poll-seconds", "-s", help="Polling interval in seconds used to detect finished tabs.")] = 2.0,
 ) -> None:
-    """Run one layout dynamically: keep at most N tabs active and start new tabs as soon as one finishes."""
-    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import find_layout_file, select_layout
-    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_dynamic import run_dynamic as impl
-    from pathlib import Path
-    if layouts_file is not None:
-        layouts_file_resolved = Path(find_layout_file(layout_path=layouts_file))
-    else:
-        layouts_file_resolved = Path.home().joinpath("dotfiles/machineconfig/layouts.json")
-
-    if not layouts_file_resolved.exists():
-        typer.echo(ctx.get_help())
-        typer.echo(f"❌ Layouts file not found: {layouts_file_resolved}", err=True)
-        raise typer.Exit(code=1)
-
-    if choose_layouts is None:
-        layouts_names_resolved: list[str] = []
-        choose_layouts_interactively = False
-    elif choose_layouts == "":
-        layouts_names_resolved = []
-        choose_layouts_interactively = True
-    else:
-        layouts_names_resolved = [name.strip() for name in choose_layouts.split(",") if name.strip()]
-        choose_layouts_interactively = False
-
-    layouts_selected = select_layout(
-        layouts_json_file=str(layouts_file_resolved),
-        selected_layouts_names=layouts_names_resolved,
-        select_interactively=choose_layouts_interactively,
+    """Deprecated alias for `run --max-parallel-tabs`."""
+    typer.echo("Warning: `run-dynamic` is deprecated; use `run --max-parallel-tabs ...`.", err=True)
+    run(
+        ctx=ctx,
+        layouts_file=layouts_file,
+        choose_layouts=choose_layouts,
+        choose_tabs=None,
+        sleep_inbetween=1.0,
+        monitor=False,
+        parallel_layouts=None,
+        kill_upon_completion=False,
+        subsitute_home=subsitute_home,
+        max_tabs=25,
+        max_layouts=25,
+        backend=backend,
+        max_parallel_tabs=max_parallel_tabs,
+        kill_finished_tabs=kill_finished_tabs,
+        poll_seconds=poll_seconds,
+        all_file=False,
     )
-    if len(layouts_selected) != 1:
-        raise ValueError(f"run_dynamic expects exactly one selected layout, got {len(layouts_selected)}.")
-
-    selected_layout = layouts_selected[0]
-    if subsitute_home:
-        from machineconfig.utils.schemas.layouts.layout_types import substitute_home
-        selected_layout["layoutTabs"] = substitute_home(tabs=selected_layout["layoutTabs"])
-
-    try:
-        impl(
-            layout=selected_layout,
-            max_parallel_tabs=max_parallel_tabs,
-            kill_finished_tabs=kill_finished_tabs,
-            backend=backend,
-            poll_seconds=poll_seconds,
-        )
-    except ValueError as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(1) from e
 
 
 def attach_to_session(
@@ -293,7 +314,7 @@ def get_app() -> typer.Typer:
     layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="<r> Run the selected layout(s)")(run)
     layouts_app.command("r", no_args_is_help=True, help=run.__doc__, hidden=True)(run)
 
-    layouts_app.command("run-dynamic", no_args_is_help=True, help=run_dynamic.__doc__, short_help="<d> Run one layout with dynamic tab scheduling")(run_dynamic)
+    layouts_app.command("run-dynamic", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
     layouts_app.command("d", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
 
     layouts_app.command("attach", no_args_is_help=False, help=attach_to_session.__doc__, short_help="<a> Attach to a Zellij session")(attach_to_session)

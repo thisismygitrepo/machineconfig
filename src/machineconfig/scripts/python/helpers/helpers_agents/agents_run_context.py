@@ -92,6 +92,33 @@ def _resolve_context_name(raw_data: Any, context_name: str) -> str:
     return _format_prompt_entry(cursor)
 
 
+def _collect_context_name_candidates(raw_data: Any, prefix: str = "") -> dict[str, str]:
+    candidates: dict[str, str] = {}
+    if not isinstance(raw_data, dict):
+        return candidates
+
+    for key, value in raw_data.items():
+        part = str(key).strip()
+        if part == "":
+            continue
+        dotted_key = f"{prefix}.{part}" if prefix else part
+        if value is None:
+            continue
+
+        if isinstance(value, dict):
+            # Allow selecting dictionaries that contain concrete fields (not only nested namespaces).
+            if any(not isinstance(child, dict) for child in value.values()):
+                candidates[dotted_key] = _format_prompt_entry(value)
+            nested_candidates = _collect_context_name_candidates(raw_data=value, prefix=dotted_key)
+            for nested_key, nested_value in nested_candidates.items():
+                candidates[nested_key] = nested_value
+            continue
+
+        candidates[dotted_key] = _format_prompt_entry(value)
+
+    return candidates
+
+
 def _get_default_prompts_yaml_locations(where: PROMPTS_WHERE) -> list[tuple[str, Path]]:
     from machineconfig.utils.source_of_truth import PRIVATE_SCRIPTS_ROOT, PUBLIC_SCRIPTS_ROOT, LIBRARY_SCRIPTS_ROOT
     from machineconfig.scripts.python.helpers.helpers_search.script_help import get_custom_roots
@@ -199,14 +226,44 @@ def resolve_context(context: Optional[str], context_path: Optional[str], prompts
         raise ValueError(f"No prompts YAML files found for --where '{where}'. Searched: {searched}")
 
     if context_name is not None:
+        found_context = None
         for _, yaml_path in existing_yaml_locations:
             yaml_data = Read.yaml(yaml_path)
             try:
-                return _resolve_context_name(raw_data=yaml_data, context_name=context_name)
+                found_context = _resolve_context_name(raw_data=yaml_data, context_name=context_name)
+                break
             except ValueError:
                 pass
+        if found_context is not None:
+            return found_context
+
+        fuzzy_preview_map: dict[str, str] = {}
+        fuzzy_context_map: dict[str, str] = {}
+        for location_name, yaml_path in existing_yaml_locations:
+            yaml_data = Read.yaml(yaml_path)
+            context_candidates = _collect_context_name_candidates(raw_data=yaml_data)
+            for candidate_name, candidate_preview in context_candidates.items():
+                label = f"{location_name}.{candidate_name}" if where in ("all", "a") else candidate_name
+                if label in fuzzy_preview_map:
+                    label = f"{label}@{yaml_path.name}"
+                fuzzy_preview_map[label] = candidate_preview
+                fuzzy_context_map[label] = candidate_preview
+
         searched = ", ".join(str(yaml_path) for _, yaml_path in existing_yaml_locations)
-        raise ValueError(f"Context name '{context_name}' was not found in prompts YAML files: {searched}")
+        if len(fuzzy_preview_map) == 0:
+            raise ValueError(f"Context name '{context_name}' was not found in prompts YAML files: {searched}")
+
+        import typer
+        typer.echo(f"Context name '{context_name}' was not found. Opening interactive fuzzy selector...")
+        chosen_key = choose_from_dict_with_preview(
+            options_to_preview_mapping=fuzzy_preview_map,
+            extension="yaml",
+            multi=False,
+            preview_size_percent=45.0,
+        )
+        if chosen_key is None:
+            raise ValueError(f"Context name '{context_name}' was not found in prompts YAML files: {searched} (interactive selection canceled)")
+        return fuzzy_context_map[chosen_key]
 
     preview_map: dict[str, str] = {}
     context_map: dict[str, str] = {}

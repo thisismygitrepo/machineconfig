@@ -10822,56 +10822,6 @@
               "return": "None"
             },
             "doc": "Generate checklist with Python and shell script files in the repository filtered by pattern."
-          },
-          {
-            "kind": "command",
-            "name": "make-symlinks",
-            "help": "",
-            "source": {
-              "file": "src/machineconfig/scripts/python/agents.py",
-              "module": "machineconfig.scripts.python.agents",
-              "callable": "create_symlink_command"
-            },
-            "short_help": "<s> Create symlinks to the current repo in ~/code_copies/",
-            "aliases": [
-              {
-                "name": "s",
-                "hidden": true
-              }
-            ],
-            "typer": {
-              "no_args_is_help": true
-            },
-            "signature": {
-              "raw_lines": [
-                "def create_symlink_command(",
-                "    num: Annotated[int, typer.Argument(help=\"Number of symlinks to create (1-5).\")] = 5,",
-                ") -> None:",
-                "    \"\"\"Create symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}.\"\"\"",
-                "    from machineconfig.scripts.python.ai.utils.generate_files import create_symlink_command as impl",
-                "    impl(num=num)"
-              ],
-              "name": "create_symlink_command",
-              "parameters": [
-                {
-                  "name": "num",
-                  "kind": "positional_or_keyword",
-                  "type": "int",
-                  "default": 5,
-                  "required": false,
-                  "annotation_raw": "Annotated[int, typer.Argument(help='Number of symlinks to create (1-5).')]",
-                  "typer": {
-                    "kind": "argument",
-                    "param_decls": [],
-                    "long_flags": [],
-                    "short_flags": [],
-                    "help": "Number of symlinks to create (1-5)."
-                  }
-                }
-              ],
-              "return": "None"
-            },
-            "doc": "Create symlinks to repo_root at ~/code_copies/${repo_name}_copy_{i}."
           }
         ],
         "command_context_settings": {
