@@ -134,6 +134,49 @@ def run(
         raise typer.BadParameter(str(e)) from e
 
 
+def _decode_separator(separator: str) -> str:
+    try:
+        return bytes(separator, "utf-8").decode("unicode_escape")
+    except UnicodeDecodeError:
+        return separator
+
+
+def create_context(
+    prompt: Annotated[str, typer.Argument(help="Prompt text to send to the selected agent.")],
+    job_name: Annotated[str, typer.Option(..., "--job-name", "-n", help="Job name used in ./.ai/agents/<jobName>/context.md output path.")],
+    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch.")] = "copilot",
+    separator: Annotated[str, typer.Option(..., "--separator", "-s", help="Separator between individual results in context.md. Supports escaped values like '\\n'.")] = "\n@-@\n",
+) -> None:
+    """Run one prompt and ask the selected agent to persist a context file for the job."""
+    from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import run as impl
+
+    normalized_separator = _decode_separator(separator=separator)
+    separator_for_prompt = normalized_separator.encode("unicode_escape").decode("ascii")
+    appended_instruction = (
+        f"Please store the results in ./.ai/agents/{job_name}/context.md (overwrite) and "
+        f'within that file make sure to use "{separator_for_prompt}" to separate the individual results.'
+    )
+    full_prompt = f"{prompt}\n\n{appended_instruction}"
+
+    try:
+        impl(
+            prompt=full_prompt,
+            agent=agent,
+            context="",
+            context_path=None,
+            prompts_yaml_path=None,
+            context_name=None,
+            where="all",
+            edit=False,
+            show_prompts_yaml_format=False,
+        )
+        separator_path = f"./.ai/agents/{job_name}/separator.txt"
+        with open(separator_path, "w", encoding="utf-8") as f:
+            f.write(separator)
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
+
+
 def create_helper(
     prompt: Annotated[str, typer.Argument(help="Prompt describing the helper script.")],
     agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch for helper generation and for runtime `agents create --agent` in the generated helper.")],
@@ -180,6 +223,8 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_app.command(name="s", no_args_is_help=True, hidden=True)(create_symlink_command)
     agents_app.command(name="run-prompt", no_args_is_help=True, short_help="<r> Run one prompt via selected agent")(run)
     agents_app.command(name="r", no_args_is_help=True, hidden=True)(run)
+    agents_app.command(name="create-context", no_args_is_help=True, short_help="<x> Run prompt and ask agent to persist context")(create_context)
+    agents_app.command(name="x", no_args_is_help=True, hidden=True)(create_context)
     return agents_app
 
 
