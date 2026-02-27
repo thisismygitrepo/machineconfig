@@ -95,6 +95,7 @@ dev = [
     "ipdb>=0.13.13",
     "ipykernel>=7.1.0",
     "ipython>=9.7.0",
+    "kaleido>=1.2.0",
     "marimo>=0.18.3",
     "matplotlib>=3.10.7",
     "mkdocs>=1.6.1",

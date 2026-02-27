@@ -1039,6 +1039,23 @@
       }
     },
     {
+      "appName": "semtools",
+      "repoURL": "https://github.com/run-llama/semtools",
+      "doc": "Semantic search and document parsing tools for the command line",
+      "fileNamePattern": {
+        "amd64": {
+          "linux": "semtools-x86_64-unknown-linux-gnu.tar.gz",
+          "macos": null,
+          "windows": "semtools-x86_64-pc-windows-msvc.zip"
+        },
+        "arm64": {
+          "linux": "semtools-aarch64-unknown-linux-gnu.tar.gz",
+          "macos": "semtools-aarch64-apple-darwin.tar.gz",
+          "windows": "semtools-aarch64-pc-windows-msvc.zip"
+        }
+      }
+    },
+    {
       "appName": "ast-grep",
       "repoURL": "https://github.com/ast-grep/ast-grep",
       "doc": "🔍 grep for code - search and rewrite code with ASTs",

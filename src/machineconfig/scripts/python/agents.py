@@ -115,6 +115,21 @@ def create_symlink_command(
     impl(num=num)
 
 
+def run(
+    prompt: Annotated[str, typer.Argument(..., help="Prompt text (required positional argument).")],
+    agent: Annotated[str, typer.Option(..., "--agent", "-a", help="Agent to launch. Alias 'copilit' resolves to 'copilot'.")] = "copilit",
+    context: Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context string. Mutually exclusive with --context-path.")] = None,
+    context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to a context file. Mutually exclusive with --context.")] = None,
+    prompts_yaml_path: Annotated[Optional[str], typer.Option(..., "--prompts-yaml-path", "-y", help="YAML file used for interactive context selection fallback.")] = None,
+) -> None:
+    """Run one prompt via selected agent."""
+    from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import run as impl
+    try:
+        impl(prompt=prompt, agent=agent, context=context, context_path=context_path, prompts_yaml_path=prompts_yaml_path)
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
+
+
 def get_app() -> typer.Typer:
     agents_app = typer.Typer(help="🤖 AI Agents management subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
     sep = "\n"
@@ -138,6 +153,8 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_app.command("d", no_args_is_help=True, hidden=True)(make_todo_files)
     agents_app.command(name="make-symlinks", no_args_is_help=True, short_help="<s> Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
     agents_app.command(name="s", no_args_is_help=True, hidden=True)(create_symlink_command)
+    agents_app.command(name="run", no_args_is_help=True, short_help="<r> Run one prompt via selected agent")(run)
+    agents_app.command(name="r", no_args_is_help=True, hidden=True)(run)
     return agents_app
 
 
