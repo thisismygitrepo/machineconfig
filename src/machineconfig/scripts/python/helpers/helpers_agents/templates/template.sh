@@ -28,6 +28,5 @@ sessions balance-load "$AGENTS_DIR/layout.json" \
     --threshold-type number \
     --output-path "$AGENTS_DIR/layout_balanced.json"
 
-sessions run --layouts-file "$AGENTS_DIR/layout_balanced.json" --kill-upon-completion
-
-# agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"
+echo """Please run like this `sessions run --layouts-file "$AGENTS_DIR/layout_balanced.json" --kill-upon-completion`"""
+echo """Then, do this `agents collect $AGENTS_DIR "$REPO_ROOT/.ai/agents/$JOB_NAME/collected.txt"` """

@@ -66,13 +66,14 @@ def _extract_function_source(function_name: str, module_path: Path) -> str:
 
 
 def _make_create_helper_payload(user_prompt: str, agents_create_source: str, template_source: str, output_path: Optional[str]) -> str:
-    output_target = output_path if output_path is not None else "(no explicit output path provided by user)"
+    output_target = output_path if output_path is not None else "./.ai/<helper_name>.sh"
     return f"""You are generating a helper shell script for this repository.
 
 Goal:
-- Produce a shell script similar in style to the existing template.
-- The script should be aligned to the user request.
-- The script should call `agents create` and related commands as needed.
+- Create a real `.sh` helper file under `./.ai/` that matches the user request.
+- The helper should be similar in style to the existing template.
+- The helper should call `agents create` and related commands as needed.
+- Run the helper script after creating it.
 
 User request:
 {user_prompt}
@@ -80,10 +81,18 @@ User request:
 Output path target:
 {output_target}
 
-Constraints:
+Hard requirements:
+- The final helper file path MUST be inside `./.ai/` and MUST end with `.sh`.
+- Do not only print script text; actually write the file to disk.
+- Mark the helper executable (for example `chmod +x`).
+- Execute the helper script in the repository.
+- Include command output (or a concise execution summary) in your final response.
+
+Implementation constraints:
 - Use the available options and semantics from the existing `agents_create` function shown below.
 - Mirror structure and style from the existing template script while adapting behavior to the user request.
-- Return only the final script content.
+- Keep the script practical for direct local execution.
+- use default values from `agents_create` where applicable, but adapt as needed to fit the user prompt.
 
 Reference: agents_create function source
 ```python
