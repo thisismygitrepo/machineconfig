@@ -1,6 +1,6 @@
 """Sessions management commands - lazy loading subcommands."""
 
-from typing import Optional, Literal, Annotated
+from typing import Optional, Literal, Annotated, cast
 import typer
 
 
@@ -39,6 +39,7 @@ def run(
     Pass --max-parallel-tabs to enable dynamic tab scheduling.
     """
     from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import run_layouts, find_layout_file, select_layout
+    from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig, substitute_home
     from pathlib import Path
     if layouts_file is not None:
         layouts_file_resolved = Path(find_layout_file(layout_path=layouts_file))
@@ -67,16 +68,18 @@ def run(
         layouts_names_resolved = [name.strip() for name in choose_layouts.split(",") if name.strip()]
         choose_layouts_interactively = False
 
-    layouts_selected = select_layout(
+    layouts_selected: list[LayoutConfig] = select_layout(
         layouts_json_file=str(layouts_file_resolved),
         selected_layouts_names=layouts_names_resolved,
         select_interactively=choose_layouts_interactively,
     )
 
     if choose_tabs is not None and not dynamic_all_file_mode:
-        from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig
-
-        all_layouts = select_layout(layouts_json_file=str(layouts_file_resolved), selected_layouts_names=[], select_interactively=False)
+        all_layouts: list[LayoutConfig] = select_layout(
+            layouts_json_file=str(layouts_file_resolved),
+            selected_layouts_names=[],
+            select_interactively=False,
+        )
         allowed_layout_names = {layout["layoutName"] for layout in layouts_selected}
         flat_tab_refs: list[tuple[str, int, TabConfig]] = []
         for layout in all_layouts:
@@ -130,17 +133,20 @@ def run(
         merged_tabs = [tab for layout in layouts_selected for tab in layout["layoutTabs"]]
         if len(merged_tabs) == 0:
             raise ValueError("No tabs found across all layouts in the selected file.")
-        layouts_selected = [{"layoutName": "all-layouts-dynamic", "layoutTabs": merged_tabs}]
+        dynamic_layout: LayoutConfig = {"layoutName": "all-layouts-dynamic", "layoutTabs": merged_tabs}
+        layouts_selected = [dynamic_layout]
 
     if all_file and max_parallel_tabs is None:
         raise ValueError("--all-file is only supported with --max-parallel-tabs.")
 
     if subsitute_home:
-        from machineconfig.utils.schemas.layouts.layout_types import substitute_home, LayoutConfig
-        layouts_modified: list["LayoutConfig"] = []
+        layouts_modified: list[LayoutConfig] = []
         for a_layout in layouts_selected:
-            a_layout["layoutTabs"] = substitute_home(tabs=a_layout["layoutTabs"])
-            layouts_modified.append(a_layout)
+            layout_modified: LayoutConfig = {
+                "layoutName": a_layout["layoutName"],
+                "layoutTabs": substitute_home(tabs=a_layout["layoutTabs"]),
+            }
+            layouts_modified.append(layout_modified)
         layouts_selected = layouts_modified
     import platform
     backend_resolved: Literal["zellij", "windows-terminal", "tmux"]
@@ -186,11 +192,12 @@ def run(
             if kill_upon_completion:
                 print("Note: --kill-upon-completion is ignored in dynamic mode; use --kill-finished-tabs instead.")
 
+            dynamic_backend = cast(Literal["zellij", "z", "tmux", "t", "auto", "a"], backend)
             run_dynamic_impl(
                 layout=layouts_selected[0],
                 max_parallel_tabs=max_parallel_tabs,
                 kill_finished_tabs=kill_finished_tabs,
-                backend=backend,
+                backend=dynamic_backend,
                 poll_seconds=poll_seconds,
             )
         else:
@@ -211,38 +218,6 @@ def run(
     except ValueError as e:
         typer.echo(str(e))
         raise typer.Exit(1) from e
-
-
-def run_dynamic(
-    ctx: typer.Context,
-    max_parallel_tabs: Annotated[int, typer.Option(..., "--max-parallel-tabs", "-p", help="How many tabs to run at the same time.")],
-    kill_finished_tabs: Annotated[bool, typer.Option(..., "--kill-finished-tabs", "-k", help="Close each tab once its command is finished.")] = False,
-    layouts_file: Annotated[Optional[str], typer.Option(..., "--layouts-file", "-f", help="Path to the layout.json file")] = None,
-    choose_layouts: Annotated[Optional[str], typer.Option(..., "--choose-layouts", "-c", help="Comma separated layout names. Pass empty string to select layouts interactively.")] = None,
-    subsitute_home: Annotated[bool, typer.Option(..., "--substitute-home", "-H", help="Substitute ~ and $HOME in layout file with actual home directory path")] = False,
-    backend: Annotated[Literal["zellij", "z", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer to use")] = "auto",
-    poll_seconds: Annotated[float, typer.Option(..., "--poll-seconds", "-s", help="Polling interval in seconds used to detect finished tabs.")] = 2.0,
-) -> None:
-    """Deprecated alias for `run --max-parallel-tabs`."""
-    typer.echo("Warning: `run-dynamic` is deprecated; use `run --max-parallel-tabs ...`.", err=True)
-    run(
-        ctx=ctx,
-        layouts_file=layouts_file,
-        choose_layouts=choose_layouts,
-        choose_tabs=None,
-        sleep_inbetween=1.0,
-        monitor=False,
-        parallel_layouts=None,
-        kill_upon_completion=False,
-        subsitute_home=subsitute_home,
-        max_tabs=25,
-        max_layouts=25,
-        backend=backend,
-        max_parallel_tabs=max_parallel_tabs,
-        kill_finished_tabs=kill_finished_tabs,
-        poll_seconds=poll_seconds,
-        all_file=False,
-    )
 
 
 def attach_to_session(
@@ -313,9 +288,6 @@ def get_app() -> typer.Typer:
 
     layouts_app.command("run", no_args_is_help=True, help=run.__doc__, short_help="<r> Run the selected layout(s)")(run)
     layouts_app.command("r", no_args_is_help=True, help=run.__doc__, hidden=True)(run)
-
-    layouts_app.command("run-dynamic", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
-    layouts_app.command("d", no_args_is_help=True, help=run_dynamic.__doc__, hidden=True)(run_dynamic)
 
     layouts_app.command("attach", no_args_is_help=False, help=attach_to_session.__doc__, short_help="<a> Attach to a Zellij session")(attach_to_session)
     layouts_app.command("a", no_args_is_help=False, help=attach_to_session.__doc__, hidden=True)(attach_to_session)
