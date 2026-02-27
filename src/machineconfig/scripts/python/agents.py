@@ -116,16 +116,18 @@ def create_symlink_command(
 
 
 def run(
-    prompt: Annotated[str, typer.Argument(..., help="Prompt text (required positional argument).")],
+    prompt: Annotated[Optional[str], typer.Argument(help="Prompt text (optional positional argument). If omitted, an empty prompt is used.")] = None,
     agent: Annotated[str, typer.Option(..., "--agent", "-a", help="Agent to launch. Alias 'copilit' resolves to 'copilot'.")] = "copilit",
     context: Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context string. Mutually exclusive with --context-path.")] = None,
     context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to a context file. Mutually exclusive with --context.")] = None,
-    prompts_yaml_path: Annotated[Optional[str], typer.Option(..., "--prompts-yaml-path", "-y", help="YAML file used for interactive context selection fallback.")] = None,
+    context_yaml_path: Annotated[Optional[str], typer.Option(..., "--prompts-yaml-path", "-y", help="YAML file used for interactive context selection fallback.")] = None,
+    context_name: Annotated[Optional[str], typer.Option(..., "--context-name", "-n", help="YAML section key (supports dot-path, e.g. 'team.backend'). Used with --prompts-yaml-path or default prompts YAML.")] = None,
+    edit: Annotated[bool, typer.Option(..., "--edit", "-e", help="Open prompts YAML in an editor before running (hx preferred, nano fallback). ")] = False,
 ) -> None:
     """Run one prompt via selected agent."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import run as impl
     try:
-        impl(prompt=prompt, agent=agent, context=context, context_path=context_path, prompts_yaml_path=prompts_yaml_path)
+        impl(prompt=prompt, agent=agent, context=context, context_path=context_path, prompts_yaml_path=context_yaml_path, context_name=context_name, edit=edit)
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
 
