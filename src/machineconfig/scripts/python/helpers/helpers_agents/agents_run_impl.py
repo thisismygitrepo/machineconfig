@@ -1,12 +1,17 @@
 from pathlib import Path
 from platform import system
-from typing import Any, Optional, cast, get_args
-import json
+from typing import Optional, cast, get_args
 import shlex
-import shutil
-import subprocess
 from machineconfig.utils.accessories import randstr
 
+from machineconfig.scripts.python.helpers.helpers_agents.agents_run_context import (
+    PROMPTS_WHERE,
+    edit_prompts_yaml,
+    ensure_prompts_yaml_exists,
+    prompts_yaml_format_explanation,
+    resolve_context,
+    resolve_prompts_yaml_paths,
+)
 from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS
 
 
@@ -18,139 +23,6 @@ def _normalize_agent_name(agent: str) -> AGENTS:
         supported = ", ".join(supported_agents)
         raise ValueError(f"Unsupported agent '{agent}'. Supported agents: {supported}")
     return cast(AGENTS, normalized)
-
-
-def _extract_yaml_options(raw_data: Any) -> tuple[dict[str, str], dict[str, str]]:
-    preview_map: dict[str, str] = {}
-    context_map: dict[str, str] = {}
-
-    def _to_text(value: Any) -> str:
-        if isinstance(value, str):
-            return value
-        return json.dumps(value, ensure_ascii=False, indent=2)
-
-    if isinstance(raw_data, dict):
-        for key, value in raw_data.items():
-            label = str(key)
-            as_text = _to_text(value)
-            preview_map[label] = as_text
-            context_map[label] = as_text
-    elif isinstance(raw_data, list):
-        for idx, item in enumerate(raw_data):
-            label = f"prompt_{idx + 1}"
-            as_text = _to_text(item)
-            preview_map[label] = as_text
-            context_map[label] = as_text
-    else:
-        as_text = _to_text(raw_data)
-        preview_map["prompt_1"] = as_text
-        context_map["prompt_1"] = as_text
-
-    return preview_map, context_map
-
-
-def _resolve_context_name(raw_data: Any, context_name: str) -> str:
-    cursor: Any = raw_data
-    for segment in (part.strip() for part in context_name.split(".")):
-        if segment == "":
-            continue
-        if not isinstance(cursor, dict) or segment not in cursor:
-            raise ValueError(f"Context name '{context_name}' was not found in prompts YAML")
-        cursor = cursor[segment]
-    if cursor is None:
-        raise ValueError(f"Context name '{context_name}' points to null in prompts YAML")
-    if isinstance(cursor, str):
-        return cursor
-    return json.dumps(cursor, ensure_ascii=False, indent=2)
-
-
-def _resolve_prompts_yaml_path(prompts_yaml_path: Optional[str]) -> Path:
-    if prompts_yaml_path is not None:
-        return Path(prompts_yaml_path).expanduser().resolve()
-    return Path.home() / "dotfiles" / "scripts" / "prompts" / "prompts.yaml"
-
-
-def _prompts_yaml_template() -> str:
-    return """# prompts.yaml used by `agents run`
-# Top-level keys show up in interactive selection.
-# Nested keys can be selected via --context-name with dot-path syntax (example: team.backend).
-# Values should be prompt/context text (plain strings or multiline `|` blocks).
-default: |
-  You are a helpful assistant.
-team:
-  backend: |
-    You are helping with backend engineering tasks.
-  frontend: |
-    You are helping with frontend engineering tasks.
-"""
-
-
-def _ensure_prompts_yaml_exists(yaml_path: Path) -> bool:
-    if yaml_path.exists():
-        if not yaml_path.is_file():
-            raise ValueError(f"prompts YAML path exists but is not a file: {yaml_path}")
-        return False
-    yaml_path.parent.mkdir(parents=True, exist_ok=True)
-    yaml_path.write_text(_prompts_yaml_template(), encoding="utf-8")
-    return True
-
-
-def _prompts_yaml_format_explanation(yaml_path: Path) -> str:
-    return f"""prompts YAML path: {yaml_path}
-Expected format:
-{_prompts_yaml_template().rstrip()}
-"""
-
-
-def _edit_prompts_yaml(yaml_path: Path) -> None:
-    editor = shutil.which("hx")
-    if editor is None:
-        editor = shutil.which("nano")
-    if editor is None:
-        raise ValueError("No supported editor found. Install 'hx' or 'nano', or run without --edit")
-
-    yaml_path.parent.mkdir(parents=True, exist_ok=True)
-    result = subprocess.run([editor, str(yaml_path)], check=False)
-    if result.returncode != 0:
-        raise RuntimeError(f"Editor exited with status code {result.returncode}")
-
-
-def _resolve_context(context: Optional[str], context_path: Optional[str], prompts_yaml_path: Optional[str], context_name: Optional[str]) -> str:
-    if context is not None and context_path is not None:
-        raise ValueError("Provide only one of --context or --context-path")
-    if context_name is not None and context_path is not None:
-        raise ValueError("Provide only one of --context-name or --context-path")
-    if context_name is not None and context is not None:
-        raise ValueError("Provide only one of --context-name or --context")
-
-    if context is not None:
-        return context
-
-    if context_path is not None:
-        context_file = Path(context_path).expanduser().resolve()
-        if not context_file.exists() or not context_file.is_file():
-            raise ValueError(f"--context-path must point to an existing file: {context_file}")
-        return context_file.read_text(encoding="utf-8")
-
-    yaml_path = _resolve_prompts_yaml_path(prompts_yaml_path=prompts_yaml_path)
-    _ensure_prompts_yaml_exists(yaml_path=yaml_path)
-
-    from machineconfig.utils.files.read import Read
-    from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
-
-    yaml_data = Read.yaml(yaml_path)
-
-    if context_name is not None:
-        return _resolve_context_name(raw_data=yaml_data, context_name=context_name)
-
-    preview_map, context_map = _extract_yaml_options(yaml_data)
-    if len(preview_map) == 0:
-        raise ValueError(f"No prompt entries found in {yaml_path}")
-
-    chosen_key = choose_from_dict_with_preview(options_to_preview_mapping=preview_map, extension="yaml", multi=False, preview_size_percent=45.0)
-    if chosen_key is None:
-        raise SystemExit(1)
-    return context_map[chosen_key]
 
 
 def _quote_for_shell(value: str, is_windows: bool) -> str:
@@ -238,20 +110,33 @@ def run(
     context_path: Optional[str],
     prompts_yaml_path: Optional[str],
     context_name: Optional[str],
+    where: PROMPTS_WHERE,
     edit: bool,
     show_prompts_yaml_format: bool,
 ) -> None:
     resolved_agent = _normalize_agent_name(agent)
-    yaml_path = _resolve_prompts_yaml_path(prompts_yaml_path=prompts_yaml_path)
-    if _ensure_prompts_yaml_exists(yaml_path=yaml_path):
+    yaml_locations = resolve_prompts_yaml_paths(prompts_yaml_path=prompts_yaml_path, where=where)
+    created_yaml_paths: list[Path] = []
+    for location_name, yaml_path in yaml_locations:
+        # Keep previous behavior: always scaffold the default private path when available.
+        should_create = prompts_yaml_path is not None or location_name == "private"
+        if should_create and ensure_prompts_yaml_exists(yaml_path=yaml_path):
+            created_yaml_paths.append(yaml_path)
+    if len(created_yaml_paths) > 0:
         import typer
-        typer.echo(f"Created prompts YAML template at: {yaml_path}")
+        for created_yaml_path in created_yaml_paths:
+            typer.echo(f"Created prompts YAML template at: {created_yaml_path}")
     if edit:
-        _edit_prompts_yaml(yaml_path=yaml_path)
+        editable_locations = [(name, path) for name, path in yaml_locations if path.exists() and path.is_file()]
+        for _, yaml_path in editable_locations:
+            edit_prompts_yaml(yaml_path=yaml_path)
     if show_prompts_yaml_format:
         import typer
-        typer.echo(_prompts_yaml_format_explanation(yaml_path=yaml_path))
-    resolved_context = _resolve_context(context=context, context_path=context_path, prompts_yaml_path=prompts_yaml_path, context_name=context_name)
+        typer.echo(prompts_yaml_format_explanation(yaml_paths=yaml_locations))
+    has_explicit_context = context is not None or context_path is not None or context_name is not None
+    if (edit or show_prompts_yaml_format) and prompt is None and not has_explicit_context:
+        return
+    resolved_context = resolve_context(context=context, context_path=context_path, prompts_yaml_path=prompts_yaml_path, context_name=context_name, where=where)
     prompt_text = prompt if prompt is not None else ""
     prompt_file = _make_prompt_file(prompt=prompt_text, context=resolved_context)
     _print_prompt_file_preview(prompt_file=prompt_file)

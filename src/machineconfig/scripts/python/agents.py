@@ -122,13 +122,14 @@ def run(
     context_path: Annotated[Optional[str], typer.Option(..., "--context-path", "-C", help="Path to a context file. Mutually exclusive with --context.")] = None,
     context_yaml_path: Annotated[Optional[str], typer.Option(..., "--prompts-yaml-path", "-y", help="YAML file used for interactive context selection fallback. Auto-created with commented template if missing.")] = None,
     context_name: Annotated[Optional[str], typer.Option(..., "--context-name", "-n", help="YAML section key (supports dot-path, e.g. 'team.backend'). Used with --prompts-yaml-path or default prompts YAML.")] = None,
-    show_prompts_yaml_format: Annotated[bool, typer.Option(..., "--show-prompts-yaml-format", "-Y", help="Show prompts YAML format guidance and resolved file path before running.")] = False,
-    edit: Annotated[bool, typer.Option(..., "--edit", "-e", help="Open prompts YAML in an editor before running (hx preferred, nano fallback). ")] = False,
+    where: Annotated[Literal["all", "a", "private", "p", "public", "b", "library", "l", "custom", "c"], typer.Option(..., "--where", "-w", help="Where to look for prompts YAML files when --prompts-yaml-path is not provided.")] = "all",
+    show_prompts_yaml_format: Annotated[bool, typer.Option(..., "--show-format", "-Y", help="Show prompts YAML format guidance and resolved file path. If no prompt/context input is provided, exits after showing it.")] = False,
+    edit: Annotated[bool, typer.Option(..., "--edit", "-e", help="Open prompts YAML in an editor (hx preferred, nano fallback). If no prompt/context input is provided, exits after editing.")] = False,
 ) -> None:
     """Run one prompt via selected agent."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import run as impl
     try:
-        impl(prompt=prompt, agent=agent, context=context, context_path=context_path, prompts_yaml_path=context_yaml_path, context_name=context_name, edit=edit, show_prompts_yaml_format=show_prompts_yaml_format)
+        impl(prompt=prompt, agent=agent, context=context, context_path=context_path, prompts_yaml_path=context_yaml_path, context_name=context_name, where=where, edit=edit, show_prompts_yaml_format=show_prompts_yaml_format)
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
 

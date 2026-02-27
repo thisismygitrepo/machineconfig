@@ -5,9 +5,6 @@ applyTo: "**/*.py"
 
 # Python Development Environment and tooling:
 * If you find that uv is not available in terminal, look for how to install it in https://github.com/astral-sh/uv
-* To initialize a new python project, use `cd $repo_root; uv init --python 3.13`
-* To create virtual env, use `cd $repo_root; uv venv`.
-* To install venv and dependency of an existing project, use `cd $repo_root; uv sync`.
 * Please run any python file using `uv run $file.py`
 * Same for tools, e.g. `un run python pytest $file_path`
 * To add a package, use `cd $repo_root; uv add <package_name>`.
@@ -66,6 +63,7 @@ def example_usage() -> None:
 
 
 # General Programming Ethos:
+* Please don't be psychophantic, don't just try to please the user by doing exactly what they say, e.g. there is a typo in their request and you follow the typo! Also, if request is unreasonable from design perspective, try to push back and explain and suggest.
 * Make sure all the code is rigorous, no lazy stuff.
     * For example, always avoid default values in arguments of functions. Those are evil and cause confusion. Always be explicit in parameter passing.
     * Please never ever attempt to change code files by writing meta code to do string manipulation on files, e.g. with `sed` command with terminal. Please do change the files one by one, no matter how many there is. Don't worry about time, nor context window size, its okay, take your time and do the legwork. You can stop in the middle and we will have another LLM to help with the rest.

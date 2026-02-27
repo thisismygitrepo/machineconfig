@@ -7,8 +7,8 @@ from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_type
 
 
 def _build_generic_agent_command(agent: AGENTS, prompt_path: Path) -> str:
-    from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import _build_agent_command
-    return _build_agent_command(agent=agent, prompt_file=prompt_path)
+    from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import build_agent_command
+    return build_agent_command(agent=agent, prompt_file=prompt_path)
 
 
 def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
