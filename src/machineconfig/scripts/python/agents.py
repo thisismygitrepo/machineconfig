@@ -135,12 +135,12 @@ def run(
 
 
 def create_helper(
-    prompt: Annotated[str, typer.Argument(help="Prompt describing the helper script. You may override the runtime agent with `target-agent: <agent>` (or `--agent <agent>` in prompt text). If omitted, runtime agent defaults to this command's `--agent`.")],
-    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="External generator agent to launch. It writes the helper script and is also the default runtime `agents create --agent` unless prompt text overrides it.")],
+    prompt: Annotated[str, typer.Argument(help="Prompt describing the helper script.")],
+    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch for helper generation and for runtime `agents create --agent` in the generated helper.")],
     output_path: Annotated[Optional[str], typer.Option(..., "--output-path", "-o", help="Optional target path the generated helper script should be written to.")] = None,
     show_payload: Annotated[bool, typer.Option(..., "--show-payload", "-s", help="Render the full prompt/context payload sent to the external generator using rich Markdown syntax.")] = False,
 ) -> None:
-    """Generate a helper script via an external generator agent; runtime `agents create --agent` is optional in prompt and otherwise defaults to this command's `--agent`."""
+    """Generate a helper script via an external generator agent."""
     from machineconfig.scripts.python.helpers.helpers_agents.agents_run_impl import create_helper as impl
     try:
         impl(prompt=prompt, agent=agent, output_path=output_path, show_payload=show_payload)
@@ -165,7 +165,7 @@ AGENT options: {', '.join(get_args(AGENTS))}
         name="create-helper",
         no_args_is_help=True,
         help=create_helper.__doc__,
-        short_help="<h> Ask one agent to write helper script; runtime agent can be overridden in prompt",
+        short_help="<h> Ask one agent to write helper script",
     )(create_helper)
     agents_app.command(name="h", no_args_is_help=True, help=create_helper.__doc__, hidden=True)(create_helper)
     agents_app.command("collect", no_args_is_help=True, help=collect.__doc__, short_help="<T> Collect all agent materials into a single file.")(collect)

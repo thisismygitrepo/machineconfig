@@ -1,6 +1,6 @@
 """Sessions management commands - lazy loading subcommands."""
 
-from typing import Optional, Literal, Annotated, cast
+from typing import Optional, Literal, Annotated
 import typer
 
 
@@ -42,186 +42,25 @@ def run(
 
     Pass --max-parallel-tabs to enable dynamic tab scheduling.
     """
-    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_impl import run_layouts, find_layout_file, select_layout
-    from machineconfig.utils.schemas.layouts.layout_types import LayoutConfig, TabConfig, substitute_home
-    from pathlib import Path
-    if layouts_file is not None:
-        layouts_file_resolved = Path(find_layout_file(layout_path=layouts_file))
-    else:
-        layouts_file_resolved = Path.home().joinpath("dotfiles/machineconfig/layouts.json")
-    if not layouts_file_resolved.exists():
-        typer.echo(ctx.get_help())
-        typer.echo(f"❌ Layouts file not found: {layouts_file_resolved}", err=True)
-        raise typer.Exit(code=1)
-
-    dynamic_all_file_mode = max_parallel_tabs is not None and all_file
-    if dynamic_all_file_mode:
-        if choose_layouts is not None:
-            print("Note: --choose-layouts is ignored when --all-file is set in dynamic mode.")
-        if choose_tabs is not None:
-            print("Note: --choose-tabs is ignored when --all-file is set in dynamic mode.")
-        layouts_names_resolved = []
-        choose_layouts_interactively = False
-    elif choose_layouts is None:
-        layouts_names_resolved = []
-        choose_layouts_interactively = False
-    elif choose_layouts == "":
-        layouts_names_resolved = []
-        choose_layouts_interactively = True
-    else:
-        layouts_names_resolved = [name.strip() for name in choose_layouts.split(",") if name.strip()]
-        choose_layouts_interactively = False
-
-    layouts_selected: list[LayoutConfig] = select_layout(
-        layouts_json_file=str(layouts_file_resolved),
-        selected_layouts_names=layouts_names_resolved,
-        select_interactively=choose_layouts_interactively,
+    from machineconfig.scripts.python.helpers.helpers_sessions.sessions_cli_run import run_cli as impl
+    impl(
+        ctx=ctx,
+        layouts_file=layouts_file,
+        choose_layouts=choose_layouts,
+        choose_tabs=choose_tabs,
+        sleep_inbetween=sleep_inbetween,
+        parallel_layouts=parallel_layouts,
+        max_tabs=max_tabs,
+        max_layouts=max_layouts,
+        backend=backend,
+        max_parallel_tabs=max_parallel_tabs,
+        poll_seconds=poll_seconds,
+        kill_finished_tabs=kill_finished_tabs,
+        all_file=all_file,
+        monitor=monitor,
+        kill_upon_completion=kill_upon_completion,
+        subsitute_home=subsitute_home,
     )
-
-    if choose_tabs is not None and not dynamic_all_file_mode:
-        all_layouts: list[LayoutConfig] = select_layout(
-            layouts_json_file=str(layouts_file_resolved),
-            selected_layouts_names=[],
-            select_interactively=False,
-        )
-        allowed_layout_names = {layout["layoutName"] for layout in layouts_selected}
-        flat_tab_refs: list[tuple[str, int, TabConfig]] = []
-        for layout in all_layouts:
-            for tab_index, tab in enumerate(layout["layoutTabs"]):
-                flat_tab_refs.append((layout["layoutName"], tab_index, tab))
-
-        selected_tab_refs: set[tuple[str, int]] = set()
-        if choose_tabs == "":
-            import json
-            from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
-
-            options_to_preview_mapping: dict[str, str] = {}
-            key_to_ref: dict[str, tuple[str, int]] = {}
-            for layout_name, tab_index, tab in flat_tab_refs:
-                option_key = f"{layout_name}::{tab.get('tabName', f'tab#{tab_index + 1}')}[{tab_index}]"
-                options_to_preview_mapping[option_key] = json.dumps({"layoutName": layout_name, "tabIndex": tab_index, "tab": tab}, indent=4)
-                key_to_ref[option_key] = (layout_name, tab_index)
-            chosen_keys = choose_from_dict_with_preview(options_to_preview_mapping=options_to_preview_mapping, extension="json", multi=True, preview_size_percent=40)
-            selected_tab_refs = {key_to_ref[key] for key in chosen_keys}
-        else:
-            tab_tokens = [token.strip() for token in choose_tabs.split(",") if token.strip()]
-            for token in tab_tokens:
-                if "::" in token:
-                    layout_name_token, tab_name_token = token.split("::", 1)
-                    token_matches = {
-                        (layout_name, tab_index)
-                        for layout_name, tab_index, tab in flat_tab_refs
-                        if layout_name == layout_name_token and tab.get("tabName", "") == tab_name_token
-                    }
-                else:
-                    token_matches = {
-                        (layout_name, tab_index)
-                        for layout_name, tab_index, tab in flat_tab_refs
-                        if tab.get("tabName", "") == token
-                    }
-                if len(token_matches) == 0:
-                    raise ValueError(f"Tab selector '{token}' matched no tabs.")
-                selected_tab_refs.update(token_matches)
-
-        merged_tabs = [
-            tab
-            for layout_name, tab_index, tab in flat_tab_refs
-            if layout_name in allowed_layout_names and (layout_name, tab_index) in selected_tab_refs
-        ]
-        if len(merged_tabs) == 0:
-            raise ValueError("No tabs were selected in the chosen layouts.")
-        custom_layout: LayoutConfig = {"layoutName": "custom-tabs", "layoutTabs": merged_tabs}
-        layouts_selected = [custom_layout]
-
-    if dynamic_all_file_mode:
-        merged_tabs = [tab for layout in layouts_selected for tab in layout["layoutTabs"]]
-        if len(merged_tabs) == 0:
-            raise ValueError("No tabs found across all layouts in the selected file.")
-        dynamic_layout: LayoutConfig = {"layoutName": "all-layouts-dynamic", "layoutTabs": merged_tabs}
-        layouts_selected = [dynamic_layout]
-
-    if all_file and max_parallel_tabs is None:
-        raise ValueError("--all-file is only supported with --max-parallel-tabs.")
-
-    if subsitute_home:
-        layouts_modified: list[LayoutConfig] = []
-        for a_layout in layouts_selected:
-            layout_modified: LayoutConfig = {
-                "layoutName": a_layout["layoutName"],
-                "layoutTabs": substitute_home(tabs=a_layout["layoutTabs"]),
-            }
-            layouts_modified.append(layout_modified)
-        layouts_selected = layouts_modified
-    import platform
-    backend_resolved: Literal["zellij", "windows-terminal", "tmux"]
-    match backend:
-        case "windows-terminal" | "wt":
-            if platform.system().lower() != "windows":
-                typer.echo("Error: Windows Terminal layouts can only be started on Windows systems.", err=True)
-                raise typer.Exit(code=1)
-            backend_resolved = "windows-terminal"
-        case "tmux" | "t":
-            if platform.system().lower() == "windows":
-                typer.echo("Error: tmux is not supported on Windows.", err=True)
-                raise typer.Exit(code=1)
-            backend_resolved = "tmux"
-        case "zellij" | "z":
-            if platform.system().lower() == "windows":
-                typer.echo("Error: Zellij is not supported on Windows.", err=True)
-                raise typer.Exit(code=1)
-            backend_resolved = "zellij"
-        case "auto" | "a":
-            if platform.system().lower() == "windows":
-                backend_resolved = "windows-terminal"
-            else:
-                backend_resolved = "zellij"
-        case _:
-            typer.echo(f"Error: Unsupported backend '{backend}'.", err=True)
-            raise typer.Exit(code=1)
-    try:
-        if max_parallel_tabs is not None:
-            from machineconfig.scripts.python.helpers.helpers_sessions.sessions_dynamic import run_dynamic as run_dynamic_impl
-
-            if parallel_layouts is not None:
-                raise ValueError("--parallel-layouts is not supported with --max-parallel-tabs dynamic mode.")
-            if backend in {"windows-terminal", "wt"}:
-                raise ValueError("Dynamic mode does not support windows-terminal; use --backend zellij, tmux, or auto.")
-            if len(layouts_selected) != 1:
-                raise ValueError(
-                    f"Dynamic mode expects exactly one selected layout. Got {len(layouts_selected)}. "
-                    "Select one layout with --choose-layouts or pass --all-file."
-                )
-            if monitor:
-                print("Note: --monitor is implicit in dynamic mode.")
-            if kill_upon_completion:
-                print("Note: --kill-upon-completion is ignored in dynamic mode; use --kill-finished-tabs instead.")
-
-            dynamic_backend = cast(Literal["zellij", "z", "tmux", "t", "auto", "a"], backend)
-            run_dynamic_impl(
-                layout=layouts_selected[0],
-                max_parallel_tabs=max_parallel_tabs,
-                kill_finished_tabs=kill_finished_tabs,
-                backend=dynamic_backend,
-                poll_seconds=poll_seconds,
-            )
-        else:
-            if parallel_layouts is not None and parallel_layouts <= 0:
-                raise ValueError("--parallel-layouts must be a positive integer.")
-            if parallel_layouts is None and len(layouts_selected) > max_layouts:
-                raise ValueError(f"Number of layouts {len(layouts_selected)} exceeds the maximum allowed {max_layouts}. Please adjust your layout file.")
-            if parallel_layouts is not None and parallel_layouts > max_layouts:
-                raise ValueError(f"--parallel-layouts value {parallel_layouts} exceeds --max-parallel-layouts limit {max_layouts}.")
-            for a_layout in layouts_selected:
-                if len(a_layout["layoutTabs"]) > max_tabs:
-                    raise ValueError(f"Layout '{a_layout.get('layoutName', 'Unnamed')}' has {len(a_layout['layoutTabs'])} tabs which exceeds the max of {max_tabs}.")
-
-            run_layouts(
-                sleep_inbetween=sleep_inbetween, monitor=monitor, parallel_layouts=parallel_layouts, kill_upon_completion=kill_upon_completion,
-                layouts_selected=layouts_selected,
-                backend=backend_resolved)
-    except ValueError as e:
-        typer.echo(str(e))
-        raise typer.Exit(1) from e
 
 
 def attach_to_session(
@@ -287,6 +126,96 @@ def create_from_function(
     impl(num_process=num_process, path=path, function=function)
 
 
+def summarize(
+    layout_path: Annotated[str, typer.Argument(..., help="Path to the layout.json file")],
+) -> None:
+    """Summarize a layout file with counts for layouts and tabs."""
+    import json
+    from pathlib import Path
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
+    from machineconfig.utils.io import remove_c_style_comments
+
+    console = Console()
+    layout_path_obj = Path(layout_path).expanduser().absolute()
+
+    if not layout_path_obj.exists():
+        console.print(
+            Panel(
+                f"❌ Layout file not found:\n{layout_path_obj}",
+                title="Error",
+                border_style="red",
+            )
+        )
+        raise typer.Exit(code=1)
+
+    json_str = layout_path_obj.read_text(encoding="utf-8")
+    try:
+        layout_file = json.loads(json_str)
+    except Exception:
+        try:
+            layout_file = json.loads(remove_c_style_comments(json_str))
+        except Exception as e:
+            console.print(
+                Panel(
+                    f"❌ Failed to parse JSON file:\n{layout_path_obj}\n\n{e}",
+                    title="Error",
+                    border_style="red",
+                )
+            )
+            raise typer.Exit(code=1) from e
+
+    if not isinstance(layout_file, dict):
+        console.print(Panel("❌ Layout file root must be a JSON object.", title="Error", border_style="red"))
+        raise typer.Exit(code=1)
+
+    layouts_raw = layout_file.get("layouts")
+    if not isinstance(layouts_raw, list):
+        console.print(Panel("❌ Missing or invalid 'layouts' array.", title="Error", border_style="red"))
+        raise typer.Exit(code=1)
+
+    rows: list[tuple[int, str, int]] = []
+    total_tabs = 0
+    for index, a_layout in enumerate(layouts_raw, start=1):
+        if isinstance(a_layout, dict):
+            layout_name = str(a_layout.get("layoutName", f"layout#{index}"))
+            layout_tabs = a_layout.get("layoutTabs")
+            tab_count = len(layout_tabs) if isinstance(layout_tabs, list) else 0
+        else:
+            layout_name = f"invalid-layout#{index}"
+            tab_count = 0
+        rows.append((index, layout_name, tab_count))
+        total_tabs += tab_count
+
+    total_layouts = len(rows)
+    avg_tabs = (total_tabs / total_layouts) if total_layouts > 0 else 0.0
+    version = str(layout_file.get("version", "unknown"))
+
+    summary_lines = [
+        f"[bold]File:[/bold] {layout_path_obj}",
+        f"[bold]Version:[/bold] {version}",
+        f"[bold]Layouts:[/bold] {total_layouts}",
+        f"[bold]Tabs:[/bold] {total_tabs}",
+        f"[bold]Avg tabs/layout:[/bold] {avg_tabs:.2f}",
+    ]
+    if rows:
+        max_row = max(rows, key=lambda row: row[2])
+        min_row = min(rows, key=lambda row: row[2])
+        summary_lines.append(f"[bold]Max tabs layout:[/bold] {max_row[1]} ({max_row[2]})")
+        summary_lines.append(f"[bold]Min tabs layout:[/bold] {min_row[1]} ({min_row[2]})")
+
+    console.print(Panel("\n".join(summary_lines), title="[bold blue]Layout Summary[/bold blue]", border_style="blue"))
+
+    table = Table(title=f"[bold cyan]Layouts ({total_layouts})[/bold cyan]")
+    table.add_column("#", justify="right")
+    table.add_column("Layout Name", style="white")
+    table.add_column("Tabs", justify="right", style="green")
+    for index, layout_name, tab_count in rows:
+        table.add_row(str(index), layout_name, str(tab_count))
+    console.print(table)
+
+
 def get_app() -> typer.Typer:
     layouts_app = typer.Typer(help="Layouts management subcommands", no_args_is_help=True, add_help_option=True, add_completion=False)
 
@@ -304,6 +233,9 @@ def get_app() -> typer.Typer:
 
     layouts_app.command("create-template", no_args_is_help=False, help=create_template.__doc__, short_help="<t> Create a layout template file")(create_template)
     layouts_app.command("t", no_args_is_help=False, help=create_template.__doc__, hidden=True)(create_template)
+
+    layouts_app.command("summarize", no_args_is_help=True, help=summarize.__doc__, short_help="<s> Summarize a layout file")(summarize)
+    layouts_app.command("s", no_args_is_help=True, help=summarize.__doc__, hidden=True)(summarize)
     return layouts_app
 
 
@@ -313,4 +245,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    pass
+    main()

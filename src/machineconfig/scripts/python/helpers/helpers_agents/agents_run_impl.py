@@ -1,7 +1,6 @@
 from pathlib import Path
 from platform import system
-from typing import Optional, cast, get_args
-import re
+from typing import Optional, cast
 import shlex
 from machineconfig.utils.accessories import randstr
 
@@ -14,67 +13,6 @@ from machineconfig.scripts.python.helpers.helpers_agents.agents_run_context impo
     resolve_prompts_yaml_paths,
 )
 from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_helper_types import AGENTS
-
-_AGENT_CHOICES: tuple[str, ...] = tuple(cast(tuple[str, ...], get_args(AGENTS)))
-_AGENT_LOOKUP: dict[str, AGENTS] = {name.lower(): cast(AGENTS, name) for name in _AGENT_CHOICES}
-_AGENT_ALTERNATION = "|".join(sorted((re.escape(name) for name in _AGENT_CHOICES if name != "q"), key=len, reverse=True))
-_AGENT_MENTION_PATTERN = re.compile(rf"(?<![a-z0-9-])({_AGENT_ALTERNATION})(?![a-z0-9-])", flags=re.IGNORECASE)
-_EXPLICIT_AGENT_PATTERNS = (
-    re.compile(r"(?:target|runtime|inner|layout)\s*[-_ ]*agent\s*[:=]\s*([a-z0-9-]+)", flags=re.IGNORECASE),
-    re.compile(r"(?:--agent|-a)\s*(?:=|\s+)([a-z0-9-]+)", flags=re.IGNORECASE),
-)
-
-
-def _normalize_agent_token(raw_value: str) -> Optional[AGENTS]:
-    token = raw_value.strip().strip("`'\".,;:()[]{}").lower()
-    return _AGENT_LOOKUP.get(token)
-
-
-def _dedupe_agents(values: list[AGENTS]) -> list[AGENTS]:
-    deduped: list[AGENTS] = []
-    seen: set[str] = set()
-    for value in values:
-        if value in seen:
-            continue
-        deduped.append(value)
-        seen.add(value)
-    return deduped
-
-
-def _extract_target_agent_from_prompt(user_prompt: str, default_agent: AGENTS) -> AGENTS:
-    explicit_mentions: list[AGENTS] = []
-    for pattern in _EXPLICIT_AGENT_PATTERNS:
-        for match in pattern.finditer(user_prompt):
-            resolved = _normalize_agent_token(match.group(1))
-            if resolved is not None:
-                explicit_mentions.append(resolved)
-    explicit_candidates = _dedupe_agents(explicit_mentions)
-    if len(explicit_candidates) == 1:
-        return explicit_candidates[0]
-    if len(explicit_candidates) > 1:
-        choices = ", ".join(explicit_candidates)
-        raise ValueError(
-            f"Prompt specifies multiple runtime agents ({choices}). "
-            "Use exactly one explicit marker like `target-agent: codex`.",
-        )
-
-    mentioned_agents: list[AGENTS] = []
-    for match in _AGENT_MENTION_PATTERN.finditer(user_prompt):
-        resolved = _normalize_agent_token(match.group(1))
-        if resolved is not None:
-            mentioned_agents.append(resolved)
-    mention_candidates = _dedupe_agents(mentioned_agents)
-    if len(mention_candidates) == 1:
-        return mention_candidates[0]
-    if len(mention_candidates) == 0:
-        return default_agent
-
-    choices = ", ".join(mention_candidates)
-    raise ValueError(
-        f"Prompt mentions multiple runtime agents ({choices}). "
-        "Disambiguate with `target-agent: <agent>`.",
-    )
-
 
 def _quote_for_shell(value: str, is_windows: bool) -> str:
     if is_windows:
@@ -132,8 +70,7 @@ def _make_create_helper_payload(
     agents_create_source: str,
     template_source: str,
     output_path: Optional[str],
-    generator_agent: AGENTS,
-    target_agent: AGENTS,
+    agent: AGENTS,
 ) -> str:
     output_target = output_path if output_path is not None else "./.ai/<helper_name>.sh"
     return f"""You are generating a helper shell script for this repository.
@@ -145,9 +82,8 @@ Goal:
 - Run the helper script after creating it.
 
 Execution model:
-- External generator agent (current agent running this prompt): `{generator_agent}`.
-- Runtime agent for the generated layout/helper command (prompt override if present, otherwise default): `{target_agent}`.
-- Do not use `{generator_agent}` for `agents create --agent` unless it equals `{target_agent}`.
+- External generator agent (current agent running this prompt): `{agent}`.
+- Runtime agent for the generated layout/helper command: `{agent}`.
 
 User request:
 {user_prompt}
@@ -157,7 +93,7 @@ Output path target:
 
 Hard requirements:
 - The final helper file path MUST be inside `./.ai/` and MUST end with `.sh`.
-- Every `agents create` command in the generated helper MUST include `--agent {target_agent}`.
+- Every `agents create` command in the generated helper MUST include `--agent {agent}`.
 - Do not only print script text; actually write the file to disk.
 - Mark the helper executable (for example `chmod +x`).
 - Execute the helper script in the repository.
@@ -167,6 +103,7 @@ Implementation constraints:
 - Use the available options and semantics from the existing `agents_create` function shown below.
 - When user is not mentioning e.g. model, host, etc, then do not make assumptions. Just let the function use its defaults.
 - use default values from `agents_create` where applicable, but adapt as needed to fit the user prompt.
+- the signature of function clearly explains which kwargs have defaults and which ones must be passed.
 
 Reference: agents_create function source
 ```python
@@ -282,14 +219,12 @@ def create_helper(prompt: str, agent: AGENTS, output_path: Optional[str], show_p
 
     agents_create_source = _extract_function_source(function_name="agents_create", module_path=agents_module_path)
     template_source = template_path.read_text(encoding="utf-8")
-    target_agent = _extract_target_agent_from_prompt(user_prompt=prompt, default_agent=agent)
     generated_prompt = _make_create_helper_payload(
         user_prompt=prompt,
         agents_create_source=agents_create_source,
         template_source=template_source,
         output_path=output_path,
-        generator_agent=agent,
-        target_agent=target_agent,
+        agent=agent,
     )
 
     prompt_file = _make_prompt_file(prompt=generated_prompt, context="")
