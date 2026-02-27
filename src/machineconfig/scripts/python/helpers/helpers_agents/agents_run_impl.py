@@ -60,7 +60,55 @@ def _print_prompt_file_preview(prompt_file: Path) -> None:
     )
 
 
-def _build_agent_command(agent: AGENTS, prompt_file: Path) -> str:
+def _extract_function_source(function_name: str, module_path: Path) -> str:
+    import ast
+
+    source = module_path.read_text(encoding="utf-8")
+    parsed = ast.parse(source)
+    lines = source.splitlines()
+    for node in parsed.body:
+        if isinstance(node, ast.FunctionDef) and node.name == function_name:
+            start_line = node.lineno - 1
+            end_line = node.end_lineno
+            if end_line is None:
+                raise ValueError(f"Could not determine source range for function '{function_name}' in {module_path}")
+            return "\n".join(lines[start_line:end_line])
+    raise ValueError(f"Function '{function_name}' not found in {module_path}")
+
+
+def _make_create_helper_payload(user_prompt: str, agents_create_source: str, template_source: str, output_path: Optional[str]) -> str:
+    output_target = output_path if output_path is not None else "(no explicit output path provided by user)"
+    return f"""You are generating a helper shell script for this repository.
+
+Goal:
+- Produce a shell script similar in style to the existing template.
+- The script should be aligned to the user request.
+- The script should call `agents create` and related commands as needed.
+
+User request:
+{user_prompt}
+
+Output path target:
+{output_target}
+
+Constraints:
+- Use the available options and semantics from the existing `agents_create` function shown below.
+- Mirror structure and style from the existing template script while adapting behavior to the user request.
+- Return only the final script content.
+
+Reference: agents_create function source
+```python
+{agents_create_source}
+```
+
+Reference: existing template.sh
+```bash
+{template_source}
+```
+"""
+
+
+def build_agent_command(agent: AGENTS, prompt_file: Path) -> str:
     is_windows = system() == "Windows"
     prompt_file_q = _quote_for_shell(str(prompt_file), is_windows=is_windows)
     agent_cli = cast(str, agent)
@@ -140,7 +188,41 @@ def run(
     prompt_text = prompt if prompt is not None else ""
     prompt_file = _make_prompt_file(prompt=prompt_text, context=resolved_context)
     _print_prompt_file_preview(prompt_file=prompt_file)
-    command_line = _build_agent_command(agent=resolved_agent, prompt_file=prompt_file)
+    command_line = build_agent_command(agent=resolved_agent, prompt_file=prompt_file)
 
     from machineconfig.utils.code import exit_then_run_shell_script
+    exit_then_run_shell_script(script=command_line, strict=False)
+
+
+def create_helper(prompt: str, agent: str, output_path: Optional[str]) -> None:
+    resolved_agent = _normalize_agent_name(agent)
+
+    from machineconfig.utils.accessories import get_repo_root
+
+    repo_root = get_repo_root(Path.cwd())
+    if repo_root is None:
+        raise ValueError("Could not determine repository root from current working directory")
+
+    agents_module_path = repo_root / "src" / "machineconfig" / "scripts" / "python" / "agents.py"
+    if not agents_module_path.exists() or not agents_module_path.is_file():
+        raise ValueError(f"Could not locate agents module file: {agents_module_path}")
+
+    template_path = Path(__file__).parent / "templates" / "template.sh"
+    if not template_path.exists() or not template_path.is_file():
+        raise ValueError(f"Could not locate helper template file: {template_path}")
+
+    agents_create_source = _extract_function_source(function_name="agents_create", module_path=agents_module_path)
+    template_source = template_path.read_text(encoding="utf-8")
+    generated_prompt = _make_create_helper_payload(
+        user_prompt=prompt,
+        agents_create_source=agents_create_source,
+        template_source=template_source,
+        output_path=output_path,
+    )
+
+    prompt_file = _make_prompt_file(prompt=generated_prompt, context="")
+    command_line = build_agent_command(agent=resolved_agent, prompt_file=prompt_file)
+
+    from machineconfig.utils.code import exit_then_run_shell_script
+
     exit_then_run_shell_script(script=command_line, strict=False)
