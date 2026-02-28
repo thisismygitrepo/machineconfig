@@ -252,8 +252,8 @@ def get_app():
     nw_apps.command(name="receive", no_args_is_help=True, hidden=False, help="📁 <rx> receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
     nw_apps.command(name="rx", no_args_is_help=True, hidden=True, help="📁 [rx] receive files to here.")(machineconfig.scripts.python.helpers.helpers_devops.cli_share_file.share_file_receive)
 
-    nw_apps.command(name="share-temp-file", help="🌡 <T> Share a file via temp.sh")(cli_share_temp.upload_file)
-    nw_apps.command(name="T", help="Share a file via temp.sh", hidden=True)(cli_share_temp.upload_file)
+    nw_apps.command(name="share-temp-file", help="🌡 <T> Share a file via temp.sh", no_args_is_help=True)(cli_share_temp.upload_file)
+    nw_apps.command(name="T", help="Share a file via temp.sh", hidden=True, no_args_is_help=True)(cli_share_temp.upload_file)
 
     nw_apps.add_typer(cli_ssh.get_app(), name="ssh", help="🔐 <S> SSH subcommands")
     nw_apps.add_typer(cli_ssh.get_app(), name="S", help="SSH subcommands", hidden=True)

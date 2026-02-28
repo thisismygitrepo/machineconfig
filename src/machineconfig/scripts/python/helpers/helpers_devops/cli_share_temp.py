@@ -44,6 +44,7 @@ def _upload_file_handle(file_name: str, file_handle: object, content_type: str |
 def upload_file(
 	file_path: Annotated[Path, typer.Argument(..., exists=True, dir_okay=False, readable=True)],
 ) -> None:
+	"""Upload a file to temp.sh (unsecure) and print the resulting URL. Use '-' as the file path to read from stdin."""
 	try:
 		with file_path.open("rb") as file_handle:
 			url = _upload_file_handle(file_name=file_path.name, file_handle=file_handle, content_type=None)

@@ -53,7 +53,7 @@ def share_terminal(
     ssl_key: Annotated[Optional[str], typer.Option("--ssl-key", "-K", help="SSL key file path")] = None,
     ssl_ca: Annotated[Optional[str], typer.Option("--ssl-ca", "-A", help="SSL CA file path for client certificate verification")] = None,
     over_internet: Annotated[bool, typer.Option("--over-internet", "-i", help="Expose the terminal over the internet using ngrok")] = False,
-    install_missing_dependencies: Annotated[bool, typer.Option("--install-missing-dependencies", "-D", help="Install missing dependencies", show_default=False)] = False,
+    install_missing_dependencies: Annotated[bool, typer.Option("--install-dep", "-D", help="Install missing dependencies", show_default=False)] = False,
 
 ) -> None:
     if install_missing_dependencies:

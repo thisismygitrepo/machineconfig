@@ -5615,7 +5615,7 @@
                     "    ssl_key: Annotated[Optional[str], typer.Option(\"--ssl-key\", \"-K\", help=\"SSL key file path\")] = None,",
                     "    ssl_ca: Annotated[Optional[str], typer.Option(\"--ssl-ca\", \"-A\", help=\"SSL CA file path for client certificate verification\")] = None,",
                     "    over_internet: Annotated[bool, typer.Option(\"--over-internet\", \"-i\", help=\"Expose the terminal over the internet using ngrok\")] = False,",
-                    "    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-missing-dependencies\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
+                    "    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-dep\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
                     "",
                     ") -> None:",
                     "    if install_missing_dependencies:",
@@ -5946,15 +5946,15 @@
                       "type": "bool",
                       "default": false,
                       "required": false,
-                      "annotation_raw": "Annotated[bool, typer.Option('--install-missing-dependencies', '-D', help='Install missing dependencies', show_default=False)]",
+                      "annotation_raw": "Annotated[bool, typer.Option('--install-dep', '-D', help='Install missing dependencies', show_default=False)]",
                       "typer": {
                         "kind": "option",
                         "param_decls": [
-                          "--install-missing-dependencies",
+                          "--install-dep",
                           "-D"
                         ],
                         "long_flags": [
-                          "--install-missing-dependencies"
+                          "--install-dep"
                         ],
                         "short_flags": [
                           "-D"
@@ -5996,7 +5996,7 @@
                     "    bind_address: Annotated[str, typer.Option(\"--bind\", \"-a\", help=\"Address to bind the server to\")] = \"0.0.0.0\",",
                     "    over_internet: Annotated[bool, typer.Option(\"--over-internet\", \"-i\", help=\"Expose the share server over the internet using ngrok\")] = False,",
                     "    backend: Annotated[str, typer.Option(\"--backend\", \"-b\", help=\"Backend to use: filebrowser (default), miniserve, qrcp, or easy-sharing\")] = \"miniserve\",",
-                    "    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-missing-dependencies\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
+                    "    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-dep\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
                     "",
                     ") -> None:",
                     "    from machineconfig.utils.installer_utils.installer_cli import install_if_missing",
@@ -6243,15 +6243,15 @@
                       "type": "bool",
                       "default": false,
                       "required": false,
-                      "annotation_raw": "Annotated[bool, typer.Option('--install-missing-dependencies', '-D', help='Install missing dependencies', show_default=False)]",
+                      "annotation_raw": "Annotated[bool, typer.Option('--install-dep', '-D', help='Install missing dependencies', show_default=False)]",
                       "typer": {
                         "kind": "option",
                         "param_decls": [
-                          "--install-missing-dependencies",
+                          "--install-dep",
                           "-D"
                         ],
                         "long_flags": [
-                          "--install-missing-dependencies"
+                          "--install-dep"
                         ],
                         "short_flags": [
                           "-D"
@@ -6290,7 +6290,7 @@
                     "                    text: Annotated[str | None, typer.Option(\"--text\", \"-t\", help=\"Send some text\")] = None,",
                     "                    qrcode: Annotated[bool, typer.Option(\"--qrcode\", \"--qr\", help=\"Show receive code as a qrcode\")] = False,",
                     "                    backend: Annotated[Literal[\"wormhole\", \"w\", \"croc\", \"c\"], typer.Option(\"--backend\", \"-b\", help=\"Backend to use\")] = \"croc\",",
-                    "                    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-missing-dependencies\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
+                    "                    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-dep\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
                     "                    ) -> None:",
                     "    \"\"\"Send a file using croc with relay server.\"\"\"",
                     "    import platform",
@@ -6473,15 +6473,15 @@
                       "type": "bool",
                       "default": false,
                       "required": false,
-                      "annotation_raw": "Annotated[bool, typer.Option('--install-missing-dependencies', '-D', help='Install missing dependencies', show_default=False)]",
+                      "annotation_raw": "Annotated[bool, typer.Option('--install-dep', '-D', help='Install missing dependencies', show_default=False)]",
                       "typer": {
                         "kind": "option",
                         "param_decls": [
-                          "--install-missing-dependencies",
+                          "--install-dep",
                           "-D"
                         ],
                         "long_flags": [
-                          "--install-missing-dependencies"
+                          "--install-dep"
                         ],
                         "short_flags": [
                           "-D"
@@ -6516,7 +6516,7 @@
                 "signature": {
                   "raw_lines": [
                     "def share_file_receive(code_args: Annotated[list[str], typer.Argument(help=\"Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'\")],",
-                    "    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-missing-dependencies\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
+                    "    install_missing_dependencies: Annotated[bool, typer.Option(\"--install-dep\", \"-D\", help=\"Install missing dependencies\", show_default=False)] = False,",
                     "    ) -> None:",
                     "    \"\"\"Receive a file using croc with relay server.",
                     "Usage examples:",
@@ -6628,15 +6628,15 @@
                       "type": "bool",
                       "default": false,
                       "required": false,
-                      "annotation_raw": "Annotated[bool, typer.Option('--install-missing-dependencies', '-D', help='Install missing dependencies', show_default=False)]",
+                      "annotation_raw": "Annotated[bool, typer.Option('--install-dep', '-D', help='Install missing dependencies', show_default=False)]",
                       "typer": {
                         "kind": "option",
                         "param_decls": [
-                          "--install-missing-dependencies",
+                          "--install-dep",
                           "-D"
                         ],
                         "long_flags": [
-                          "--install-missing-dependencies"
+                          "--install-dep"
                         ],
                         "short_flags": [
                           "-D"

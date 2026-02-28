@@ -4,7 +4,7 @@ from typing import Annotated, Literal
 
 
 def share_file_receive(code_args: Annotated[list[str], typer.Argument(help="Receive code or relay command. Examples: '7121-donor-olympic-bicycle' or '--relay 10.17.62.206:443 7121-donor-olympic-bicycle'")],
-    install_missing_dependencies: Annotated[bool, typer.Option("--install-missing-dependencies", "-D", help="Install missing dependencies", show_default=False)] = False,
+    install_missing_dependencies: Annotated[bool, typer.Option("--install-dep", "-D", help="Install missing dependencies", show_default=False)] = False,
     ) -> None:
     """Receive a file using croc with relay server.
 Usage examples:
@@ -100,7 +100,7 @@ def share_file_send(path: Annotated[str, typer.Argument(help="Path to the file o
                     text: Annotated[str | None, typer.Option("--text", "-t", help="Send some text")] = None,
                     qrcode: Annotated[bool, typer.Option("--qrcode", "--qr", help="Show receive code as a qrcode")] = False,
                     backend: Annotated[Literal["wormhole", "w", "croc", "c"], typer.Option("--backend", "-b", help="Backend to use")] = "croc",
-                    install_missing_dependencies: Annotated[bool, typer.Option("--install-missing-dependencies", "-D", help="Install missing dependencies", show_default=False)] = False,
+                    install_missing_dependencies: Annotated[bool, typer.Option("--install-dep", "-D", help="Install missing dependencies", show_default=False)] = False,
                     ) -> None:
     """Send a file using croc with relay server."""
     import platform

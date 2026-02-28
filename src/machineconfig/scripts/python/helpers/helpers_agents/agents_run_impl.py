@@ -49,38 +49,6 @@ def _print_prompt_file_preview(prompt_file: Path) -> None:
     )
 
 
-def _make_create_helper_payload(
-    user_prompt: str,
-    output_path: Optional[str],
-) -> str:
-    output_target = output_path if output_path is not None else "./.ai/agents/<job_name>"
-    return f"""You are generating a helper shell script for this repository.
-
-Goal:
-- Create a real `.sh` in {output_target} that helps user to run `agents create` big command.
-- Ignore other existing files there, make a unique name for this job.
-- Mark the helper executable (for example `chmod +x`).
-- Run the helper script after creating it.
-
-User request:
-{user_prompt}
-
-Implementation constraints:
-- Please run `agents create --help` by yourself to understand the command line interface.
-- When user is not mentioning e.g. model, host, etc, then do not make assumptions. Just let the function use its defaults.
-- use default values from `agents_create` where applicable, but adapt as needed to fit the user prompt.
-- the signature of function clearly explains which kwargs have defaults and which ones must be passed.
-- The script is effectively 1-line launcher, you are not allowed to write more than that.
-should look like this:
-agents create \
-    --arg1 value1 \
-    --arg2 value2 \
-    --arg3 value3
-etc
-
-"""
-
-
 def build_agent_command(agent: AGENTS, prompt_file: Path) -> str:
     is_windows = system() == "Windows"
     prompt_file_q = _quote_for_shell(str(prompt_file), is_windows=is_windows)
@@ -163,30 +131,4 @@ def run(
     command_line = build_agent_command(agent=agent, prompt_file=prompt_file)
 
     from machineconfig.utils.code import exit_then_run_shell_script
-    exit_then_run_shell_script(script=command_line, strict=False)
-
-
-def create_helper(prompt: str, agent: AGENTS, output_path: Optional[str], show_payload: bool = False) -> None:
-    from machineconfig.utils.accessories import get_repo_root
-
-    repo_root = get_repo_root(Path.cwd())
-    if repo_root is None:
-        raise ValueError("Could not determine repository root from current working directory")
-
-    agents_module_path = repo_root / "src" / "machineconfig" / "scripts" / "python" / "agents.py"
-    if not agents_module_path.exists() or not agents_module_path.is_file():
-        raise ValueError(f"Could not locate agents module file: {agents_module_path}")
-
-    generated_prompt = _make_create_helper_payload(
-        user_prompt=prompt,
-        output_path=output_path,
-    )
-
-    prompt_file = _make_prompt_file(prompt=generated_prompt, context="")
-    if show_payload:
-        _print_prompt_file_preview(prompt_file=prompt_file)
-    command_line = build_agent_command(agent=agent, prompt_file=prompt_file)
-
-    from machineconfig.utils.code import exit_then_run_shell_script
-
     exit_then_run_shell_script(script=command_line, strict=False)
