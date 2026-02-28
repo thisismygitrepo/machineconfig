@@ -31,7 +31,7 @@ def agents_create(
     agent_load: int,
     prompt: Optional[str],
     prompt_path: Optional[str],
-    job_name: str,
+    job_name: Optional[str],
     join_prompt_and_context: bool,
     output_path: Optional[str],
     agents_dir: Optional[str],
@@ -41,11 +41,31 @@ def agents_create(
     from machineconfig.scripts.python.helpers.helpers_agents.fire_agents_load_balancer import chunk_prompts
     from machineconfig.utils.accessories import get_repo_root, randstr
     import json
-    if job_name is None or job_name.strip() == "":
-        job_name_resolved: str = randstr(6)
-        print(f"No job name provided, generated random job name: {job_name_resolved}")
+
+    repo_root = get_repo_root(Path.cwd())
+    if repo_root is None:
+        raise RuntimeError("💥 Could not determine the repository root. Please run this script from within a git repository.")
+    print(f"Operating @ {repo_root}")
+
+    if agents_dir is None:
+        if job_name is None:
+            job_name_resolved = randstr(6)
+        else:
+            job_name_resolved = job_name.strip()
+        agents_dir_obj = Path(repo_root) / ".ai" / "agents" / job_name_resolved
     else:
-        job_name_resolved = job_name.strip()
+        agents_dir_obj = Path(agents_dir).expanduser().resolve().absolute()
+        if job_name is not None:
+            agents_dir_obj = agents_dir_obj / job_name
+            job_name_resolved = job_name.strip()
+        else:
+            job_name_resolved = agents_dir_obj.name
+        if agents_dir_obj.exists():
+            import shutil
+            shutil.rmtree(agents_dir_obj)
+    del job_name
+    del agents_dir
+
 
     prompt_options = [prompt, prompt_path]
     provided_prompt = [opt for opt in prompt_options if opt is not None]
@@ -57,11 +77,6 @@ def agents_create(
     if len(provided_context) > 1:
         raise ValueError("Provide at most one of --context or --context-path")
 
-    repo_root = get_repo_root(Path.cwd())
-    if repo_root is None:
-        raise RuntimeError("💥 Could not determine the repository root. Please run this script from within a git repository.")
-
-    print(f"Operating @ {repo_root}")
 
     if context is not None:
         prompt_material_re_splitted = _split_and_chunk_prompts(raw_material=context, separator=separator, tasks_per_prompt=agent_load)
@@ -69,13 +84,9 @@ def agents_create(
             raise ValueError("Provided --context does not contain any non-empty task after splitting")
     else:
         if context_path is None:
-            if job_name is None:
-                context_path_resolved = Path(repo_root) / ".ai" / "todo"
-            else:
-                context_path_resolved = Path(repo_root) / ".ai" / "agents" / job_name_resolved / "context.md"
+            context_path_resolved = agents_dir_obj / "context.md"
         else:
             context_path_resolved = Path(context_path).expanduser().resolve()
-
         if not context_path_resolved.exists():
             raise ValueError(f"Path does not exist: {context_path_resolved}")
 
@@ -96,13 +107,6 @@ def agents_create(
         prompt_prefix = cast(str, prompt)
 
     agent_selected = agent
-    if agents_dir is None:
-        agents_dir_obj = Path(repo_root) / ".ai" / "agents" / job_name_resolved
-    else:
-        agents_dir_obj = Path(agents_dir).expanduser().resolve().absolute()
-        if agents_dir_obj.exists():
-            import shutil
-            shutil.rmtree(agents_dir_obj)
     prep_agent_launch(
         repo_root=repo_root,
         agents_dir=agents_dir_obj,
@@ -113,7 +117,7 @@ def agents_create(
         agent=agent_selected,
         model=model,
         provider=provider,
-        job_name=job_name,
+        job_name=job_name_resolved,
     )
     layoutfile = get_agents_launch_layout(session_root=agents_dir_obj)
 
@@ -242,3 +246,9 @@ def init_config(
     total_elapsed = perf_counter() - started_at
     print(f"[init-config] add_ai_configs finished in {add_configs_elapsed:.3f}s")
     print(f"[init-config] Completed in {total_elapsed:.3f}s")
+
+
+# def main() -> None:
+#     a = 2
+#     del a
+#     print(a)

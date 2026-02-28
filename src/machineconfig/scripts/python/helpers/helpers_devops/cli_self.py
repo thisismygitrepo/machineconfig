@@ -99,7 +99,7 @@ def install(copy_assets: Annotated[bool, typer.Option("--copy-assets/--no-assets
             export: Annotated[bool, typer.Option("--export", "-e", help="Export the installation files to get an offline image")] = False,
             interactive_config: Annotated[bool, typer.Option("--interactive", "-i", help="🤖 INTERACTIVE configuration of machine after installation")] = False,
             ):
-    """📋 CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates."""
+    """📋 CLONE machienconfig locally for nightly updates."""
     if export:
         from machineconfig.utils.installer_utils import installer_offline
         installer_offline.export()
@@ -217,8 +217,8 @@ def get_app():
     cli_app.command(name= "t",            no_args_is_help=False, hidden=True)(init)
     cli_app.command(name= "status",      no_args_is_help=False, help="📊 <s> STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.")(status)
     cli_app.command(name= "s",           no_args_is_help=False, help="STATUS of machine, shell profile, apps, symlinks, dotfiles, etc.", hidden=True)(status)
-    cli_app.command(name= "install",     no_args_is_help=False, help="📋 <i> CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.")(install)
-    cli_app.command(name= "i",           no_args_is_help=False, help="CLONE machienconfig locally and incorporate to shell profile for faster execution and nightly updates.", hidden=True)(install)
+    cli_app.command(name= "install",     no_args_is_help=False, help="📋 <i> CLONE machienconfig locally for nightly updates.")(install)
+    cli_app.command(name= "i",           no_args_is_help=False, help="CLONE machienconfig locally for nightly updates.", hidden=True)(install)
 
     # src\machineconfig\utils\installer_utils\installer_offline.py
     # from machineconfig.utils.installer_utils import installer_offline
