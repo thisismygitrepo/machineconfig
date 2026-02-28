@@ -22,7 +22,6 @@ Machineconfig provides several command-line tools for different purposes.
 |---------|-------------|
 | `agents` | AI agent utilities |
 | `croshell` | Cross-shell utilities |
-| `ftpx` | FTP/SFTP utilities |
 | `terminal` | Terminal configuration |
 | `msearch` | Search utilities |
 | `utils` | General utilities |

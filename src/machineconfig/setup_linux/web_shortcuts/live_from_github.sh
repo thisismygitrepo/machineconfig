@@ -11,7 +11,7 @@ alias d='wrap_in_shell_script mcfg devops'
 alias c='wrap_in_shell_script mcfg cloud'
 alias a='wrap_in_shell_script mcfg agents'
 alias ss='wrap_in_shell_script mcfg sessions'
-alias fx='wrap_in_shell_script mcfg ftpx'
+alias fx='wrap_in_shell_script mcfg cloud ftpx'
 alias f='wrap_in_shell_script mcfg fire'
 alias rr='wrap_in_shell_script mcfg croshell'
 alias u='wrap_in_shell_script mcfg utils'
@@ -22,7 +22,7 @@ alias devops='mcfg devops'
 alias cloud='mcfg cloud'
 alias agents='mcfg agents'
 alias sessions='mcfg sessions'
-alias ftpx='mcfg ftpx'
+alias ftpx='mcfg cloud ftpx'
 alias fire='mcfg fire'
 alias croshell='mcfg croshell'
 alias utils='mcfg utils'
@@ -31,4 +31,3 @@ alias msearch='mcfg msearch'
 
 
 echo "mcfg command aliases are now defined in this shell session."
-

@@ -44,19 +44,6 @@ def fire(
               PathExport=PathExport, git_pull=git_pull, watch=watch)
 
 
-def ftpx(
-    source: Annotated[str, typer.Argument(help="Source path (machine:path)")],
-    target: Annotated[str, typer.Argument(help="Target path (machine:path)")],
-    recursive: Annotated[bool, typer.Option("--recursive", "-r", help="Send recursively.")] = False,
-    zipFirst: Annotated[bool, typer.Option("--zipFirst", "-z", help="Zip before sending.")] = False,
-    cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
-    overwrite_existing: Annotated[bool, typer.Option("--overwrite-existing", "-o", help="Overwrite existing files on remote when sending from local to remote.")] = False,
-) -> None:
-    """File transfer utility though SSH."""
-    from machineconfig.scripts.python.ftpx import ftpx as ftpx_impl
-    ftpx_impl(source=source, target=target, recursive=recursive, zipFirst=zipFirst, cloud=cloud, overwrite_existing=overwrite_existing)
-
-
 def croshell(
     path: Annotated[Optional[str], typer.Argument(help="path of file to read.")] = None,
     project_path: Annotated[Optional[str], typer.Option("--project", "-p", help="specify uv project to use")] = None,
@@ -118,8 +105,6 @@ def get_app() -> typer.Typer:
 
     app.command(name="fire", help="<f> Fire and manage jobs", no_args_is_help=False, context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
     app.command(name="f", hidden=True, no_args_is_help=False, context_settings={"allow_extra_args": True, "allow_interspersed_args": False})(fire)
-    app.command("ftpx", no_args_is_help=True, help="[ff] File transfer utility though SSH")(ftpx)
-    app.command("ff", no_args_is_help=True, hidden=True)(ftpx)
     app.command("croshell", no_args_is_help=False, help="<r> Cross-shell command execution")(croshell)
     app.command("r", no_args_is_help=False, hidden=True)(croshell)
 

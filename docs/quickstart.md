@@ -88,7 +88,6 @@ After installation, you have access to these commands:
 | `fire` | Fire-based job execution |
 | `agents` | AI agent utilities |
 | `croshell` | Cross-shell utilities |
-| `ftpx` | FTP/SFTP utilities |
 | `terminal` | Terminal configuration |
 | `msearch` | Search utilities |
 

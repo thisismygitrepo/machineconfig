@@ -59,6 +59,19 @@ def mount(
     mount_main(cloud=cloud, destination=destination, network=network, backend=backend, interactive=interactive)
 
 
+def ftpx(
+    source: Annotated[str, typer.Argument(help="Source path (machine:path)")],
+    target: Annotated[str, typer.Argument(help="Target path (machine:path)")],
+    recursive: Annotated[bool, typer.Option("--recursive", "-r", help="Send recursively.")] = False,
+    zipFirst: Annotated[bool, typer.Option("--zipFirst", "-z", help="Zip before sending.")] = False,
+    cloud: Annotated[bool, typer.Option("--cloud", "-c", help="Transfer through the cloud.")] = False,
+    overwrite_existing: Annotated[bool, typer.Option("--overwrite-existing", "-o", help="Overwrite existing files on remote when sending from local to remote.")] = False,
+) -> None:
+    """📦 File transfer utility through SSH."""
+    from machineconfig.scripts.python.ftpx import ftpx as ftpx_impl
+    ftpx_impl(source=source, target=target, recursive=recursive, zipFirst=zipFirst, cloud=cloud, overwrite_existing=overwrite_existing)
+
+
 def get_app() -> typer.Typer:
     app = typer.Typer(add_completion=False, no_args_is_help=True, help="☁ Cloud management commands")
 
@@ -70,6 +83,9 @@ def get_app() -> typer.Typer:
 
     app.command(name="mount", no_args_is_help=True, short_help="🔗 <m> Mount cloud storage services as local drives.")(mount)
     app.command(name="m", no_args_is_help=True, hidden=True)(mount)
+
+    app.command(name="ftpx", no_args_is_help=True, short_help="📦 <f> File transfer utility through SSH.")(ftpx)
+    app.command(name="f", no_args_is_help=True, hidden=True)(ftpx)
 
     return app
 
