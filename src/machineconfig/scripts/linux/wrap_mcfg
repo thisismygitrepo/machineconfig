@@ -28,11 +28,11 @@ wrap_in_shell_script() {
     bat --style=full --theme=OneHalfDark --paging=never "$OP_PROGRAM_PATH"
     # printf "%b\n" "${GREEN}▶ Running...${RESET}"
     . "$OP_PROGRAM_PATH"
-    status=$?
-    # if [[ $status -eq 0 ]]; then
+    local exit_code=$?
+    # if [[ $exit_code -eq 0 ]]; then
       # printf "%b\n" "${GREEN}✅ '${command}' execution completed.${RESET}"
     # else
-      # printf "%b\n" "${YELLOW}⚠️  Program exited with status ${status}${RESET}"
+      # printf "%b\n" "${YELLOW}⚠️  Program exited with status ${exit_code}${RESET}"
     # fi
   else
     echo " "
