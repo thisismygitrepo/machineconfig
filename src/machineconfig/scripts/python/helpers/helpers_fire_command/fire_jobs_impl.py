@@ -12,8 +12,6 @@ def route(args: FireJobArgs, fire_args: str) -> None:
     """Route execution based on args configuration."""
     from machineconfig.utils.path_helper import get_choice_file
     from machineconfig.utils.accessories import get_repo_root, randstr
-
-    # print(f"Gathering files to choose from in {args.path}...")
     choice_file = get_choice_file(args.path, suffixes=None)
     repo_root = get_repo_root(choice_file)
     print(f"💾 Selected file: {choice_file}.\nRepo root: {repo_root}")

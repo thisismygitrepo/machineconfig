@@ -12,7 +12,34 @@ from machineconfig.profile.create_links_export import REPO_LOOSE
 
 LIBRARY_BACKUP_PATH = LIBRARY_ROOT.joinpath("profile/mapper_data.toml")
 USER_BACKUP_PATH = Path.home().joinpath("dotfiles/machineconfig/mapper_data.toml")
-DEFAULT_BACKUP_HEADER = "# User-defined backup configuration\n# Created by `devops data register`\n"
+DEFAULT_BACKUP_HEADER = """# User-defined backup configuration
+# Created by `devops data register`
+#
+# File structure:
+# - Top-level tables are groups (for example: [dotfiles], [history], [secrets]).
+# - Each entry inside a group is one backup item.
+#
+# Entry format:
+# item_name = {
+#   path_local = "~/path/to/local/file_or_directory",
+#   path_cloud = "^",          # "^" lets machineconfig deduce a remote path from path_local
+#   encrypt = true,            # true/false
+#   zip = false,               # true/false
+#   rel2home = true,           # true: path_local is interpreted relative to your home dir
+#   os = "any"                 # any | linux | darwin | windows | comma-separated list
+# }
+#
+# Selection behavior:
+# - `devops data sync` filters entries by the current OS using the `os` field.
+# - You can target entries as:
+#   - group name: "dotfiles"
+#   - specific item: "dotfiles.bashrc"
+#   - all entries: "all"
+#
+# Example:
+# [example_group]
+# sample_item = { path_local = "~/.config/example", path_cloud = "^", encrypt = true, zip = true, rel2home = true, os = "linux,darwin" }
+"""
 VALID_OS = {"any", "windows", "linux", "darwin"}
 
 

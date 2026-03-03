@@ -67,7 +67,7 @@ def fire(
         raise e from e
     except Exception as e:
         import sys
-        print(f"❌ Error: {e}", file=sys.stderr)
+        print(f"❌ fire_jobs Error: {e}", file=sys.stderr)
         sys.exit(1)
 
 

@@ -1,5 +1,6 @@
-
 import typer
+import shutil
+import subprocess
 from typing import Annotated, Optional, Literal
 from machineconfig.profile.create_links_export import REPO_LOOSE
 
@@ -49,6 +50,49 @@ def register_data(
     typer.echo(f"{action} backup entry '{entry_name}' in {backup_path}")
 
 
+def edit_data(
+    editor: Annotated[
+        Literal["nano", "hx", "code"],
+        typer.Option("--editor", "-e", help="📝 Editor to open the backup config file."),
+    ] = "hx",
+    repo: Annotated[
+        Literal["library", "l", "user", "u"],
+        typer.Option("--repo", "-r", help="📁 Which backup configuration file to edit: 'user' or 'library'."),
+    ] = "user",
+) -> None:
+    from machineconfig.profile.create_links_export import REPO_MAP
+    from machineconfig.scripts.python.helpers.helpers_devops.backup_config import (
+        LIBRARY_BACKUP_PATH,
+        USER_BACKUP_PATH,
+        DEFAULT_BACKUP_HEADER,
+    )
+
+    repo_key = REPO_MAP[repo]
+    if repo_key == "user":
+        file_path = USER_BACKUP_PATH
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        if not file_path.exists():
+            file_path.write_text(DEFAULT_BACKUP_HEADER, encoding="utf-8")
+    else:
+        file_path = LIBRARY_BACKUP_PATH
+        if not file_path.exists():
+            msg = typer.style("Error: ", fg=typer.colors.RED) + f"Library backup file not found: {file_path}"
+            typer.echo(msg)
+            raise typer.Exit(code=1)
+
+    editor_bin = shutil.which(editor)
+    if editor_bin is None:
+        msg = typer.style("Error: ", fg=typer.colors.RED) + f"Editor '{editor}' is not available on PATH."
+        typer.echo(msg)
+        raise typer.Exit(code=1)
+
+    result = subprocess.run([editor_bin, str(file_path)], check=False)
+    if result.returncode != 0:
+        msg = typer.style("Error: ", fg=typer.colors.RED) + f"Editor exited with status code {result.returncode}."
+        typer.echo(msg)
+        raise typer.Exit(code=result.returncode)
+
+
 def get_app() -> typer.Typer:
     app = typer.Typer(
         name="data",
@@ -67,5 +111,9 @@ def get_app() -> typer.Typer:
     app.command(name="register", no_args_is_help=True, hidden=False, help="📝 <r> Register a new backup entry in user backup.toml.")(register_data)
 
     app.command(name="r", no_args_is_help=True, hidden=True)(register_data)
+
+    app.command(name="edit", no_args_is_help=False, hidden=False, help="✏️ <e> Open backup configuration file in nano, hx, or code.")(edit_data)
+
+    app.command(name="e", no_args_is_help=False, hidden=True)(edit_data)
 
     return app
