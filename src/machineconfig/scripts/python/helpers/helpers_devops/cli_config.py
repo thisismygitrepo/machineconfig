@@ -194,6 +194,7 @@ def get_app():
 
     config_apps.command("register", no_args_is_help=True, help="🔗 <r> Register dotfiles agains user mapper.toml")(dotfile_module.register_dotfile)
     config_apps.command("r", no_args_is_help=True,  hidden=True)(dotfile_module.register_dotfile)
+    config_apps.command("edit", no_args_is_help=False, help="✏️ <E> Open dotfiles mapper.toml in nano, hx, or code.")(dotfile_module.edit_dotfile)
 
     config_apps.command("export-dotfiles", no_args_is_help=True, help="🔗 <e> Export dotfiles for migration to new machine.")(dotfile_module.export_dotfiles)
     config_apps.command("e", no_args_is_help=True, help="Export dotfiles for migration to new machine.", hidden=True)(dotfile_module.export_dotfiles)

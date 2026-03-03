@@ -65,7 +65,13 @@ def clone(directory: Annotated[str, typer.Argument(help="📁 Directory containi
             print("❌ No repos.json specifications found in backup directories.")
             return
         from machineconfig.utils.options import choose_from_options
-        chosen_files = choose_from_options(options=[str(p) for p in results_public + results_private], msg="Select a repos.json specification to clone from:", multi=True, tv=True)
+        chosen_files = choose_from_options(
+            options=[str(p) for p in results_public + results_private],
+            msg="Select a repos.json specification to clone from:",
+            multi=True,
+            tv=True,
+            preview="bat",
+        )
         if chosen_files is None or len(chosen_files) == 0:
             print("❓ Selection cancelled. No repositories were cloned.")
             return
@@ -265,8 +271,8 @@ def config_linters(
 def get_app():
     repos_apps = typer.Typer(help="📁 <r> Manage development repositories", no_args_is_help=True, add_help_option=True, add_completion=False)
 
-    repos_apps.command(name="sync", help="📥 <s> Clone repositories described by a repos.json specification")(clone)
-    repos_apps.command(name="s", help="Clone repositories described by a repos.json specification", hidden=True)(clone)
+    repos_apps.command(name="sync", help="📥 <s> Clone repositories described by a repos.json specification", no_args_is_help=True)(clone)
+    repos_apps.command(name="s", help="Clone repositories described by a repos.json specification", hidden=True, no_args_is_help=True)(clone)
 
     repos_apps.command(name="register", help="📝 <r> Record repositories into a repos.json specification")(capture)
     repos_apps.command(name="r", help="Record repositories into a repos.json specification", hidden=True)(capture)

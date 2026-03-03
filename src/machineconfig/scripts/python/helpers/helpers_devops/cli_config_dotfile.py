@@ -4,12 +4,15 @@
 from typing import Annotated, Literal, Optional
 from machineconfig.profile.create_links_export import ON_CONFLICT_LOOSE, ON_CONFLICT_MAPPER, METHOD_LOOSE, METHOD_MAP
 from pathlib import Path
+import shutil
+import subprocess
 import typer
 
 from machineconfig.utils.source_of_truth import CONFIG_ROOT
 from machineconfig.utils.path_extended import PathExtended
 BACKUP_ROOT_PRIVATE = Path.home().joinpath("dotfiles/machineconfig/mapper/files")
 BACKUP_ROOT_PUBLIC = Path(CONFIG_ROOT).joinpath("dotfiles/mapper")
+DEFAULT_DOTFILE_MAPPER_HEADER = "# User-defined config file mappings\n# Created by `d c` CLI tool\n\n"
 
 
 
@@ -20,7 +23,7 @@ def _write_to_user_mapper(section: str, entry_name: str, original_path: Path, se
     if mapper_path.exists():
         content = mapper_path.read_text(encoding="utf-8")
     else:
-        content = "# User-defined config file mappings\n# Created by `d c` CLI tool\n\n"
+        content = DEFAULT_DOTFILE_MAPPER_HEADER
     home = Path.home()
     original_str = f"~/{original_path.relative_to(home)}" if original_path.is_relative_to(home) else original_path.as_posix()
     self_managed_str = f"~/{self_managed_path.relative_to(home)}" if self_managed_path.is_relative_to(home) else self_managed_path.as_posix()
@@ -161,6 +164,45 @@ def register_dotfile(
     console.print(Panel("\n".join(["✅ Symbolic link created successfully!", "🔄 Add the following snippet to mapper.toml to persist this mapping:",]), title="Symlink Created", border_style="green", padding=(1, 2),))
     if record:
         record_mapping(orig_path=orig_path, new_path=new_path, method=method, section=section, os_filter=os_filter)
+
+
+def edit_dotfile(
+    editor: Annotated[
+        Literal["nano", "hx", "code"],
+        typer.Option("--editor", "-e", help="📝 Editor to open the dotfiles mapper file."),
+    ] = "hx",
+    repo: Annotated[
+        Literal["library", "l", "user", "u"],
+        typer.Option("--repo", "-r", help="📁 Which mapper file to edit: 'user' or 'library'."),
+    ] = "user",
+) -> None:
+    from machineconfig.profile.create_links_export import REPO_MAP
+    from machineconfig.profile.create_links import LIBRARY_MAPPER_PATH, USER_MAPPER_PATH
+
+    repo_key = REPO_MAP[repo]
+    if repo_key == "user":
+        file_path = USER_MAPPER_PATH
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        if not file_path.exists():
+            file_path.write_text(DEFAULT_DOTFILE_MAPPER_HEADER, encoding="utf-8")
+    else:
+        file_path = LIBRARY_MAPPER_PATH
+        if not file_path.exists():
+            msg = typer.style("Error: ", fg=typer.colors.RED) + f"Library mapper file not found: {file_path}"
+            typer.echo(msg)
+            raise typer.Exit(code=1)
+
+    editor_bin = shutil.which(editor)
+    if editor_bin is None:
+        msg = typer.style("Error: ", fg=typer.colors.RED) + f"Editor '{editor}' is not available on PATH."
+        typer.echo(msg)
+        raise typer.Exit(code=1)
+
+    result = subprocess.run([editor_bin, str(file_path)], check=False)
+    if result.returncode != 0:
+        msg = typer.style("Error: ", fg=typer.colors.RED) + f"Editor exited with status code {result.returncode}."
+        typer.echo(msg)
+        raise typer.Exit(code=result.returncode)
 
 
 def export_dotfiles(
