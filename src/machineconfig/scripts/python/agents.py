@@ -117,7 +117,7 @@ def create_symlink_command(
     impl(num=num)
 
 
-def run(
+def run_prompt(
     prompt: Annotated[Optional[str], typer.Argument(help="Prompt text (optional positional argument). If omitted, an empty prompt is used.")] = None,
     agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to launch.")] = "copilot",
     context: Annotated[Optional[str], typer.Option(..., "--context", "-c", help="Context string. Mutually exclusive with --context-path.")] = None,
@@ -134,6 +134,21 @@ def run(
         impl(prompt=prompt, agent=agent, context=context, context_path=context_path, prompts_yaml_path=context_yaml_path, context_name=context_name, where=where, edit=edit, show_prompts_yaml_format=show_prompts_yaml_format)
     except ValueError as e:
         raise typer.BadParameter(str(e)) from e
+
+def add_skill(
+    skill_name: Annotated[str, typer.Argument(help="Name of the skill to add.")],
+    # description: Annotated[str, typer.Argument(help="Description of the skill.")],
+    agent: Annotated[AGENTS, typer.Option(..., "--agent", "-a", help="Agent to add the skill to.")] = "copilot",
+):
+    opensource_skills = {
+        "agent-browser": "bunx skills add vercel-labs/agent-browser",
+    }
+    if skill_name in opensource_skills:
+        from machineconfig.utils.code import exit_then_run_shell_script
+        command = opensource_skills[skill_name]
+        exit_then_run_shell_script(command, strict=False)
+    else:
+        typer.echo(f"Skill '{skill_name}' is not recognized. Please provide a valid skill name.")
 
 
 def _decode_separator(separator: str) -> str:
@@ -207,10 +222,12 @@ AGENT options: {', '.join(get_args(AGENTS))}
     agents_app.command("g", no_args_is_help=True, help=init_config.__doc__, hidden=True)(init_config)
     agents_app.command("make-todo", no_args_is_help=True, short_help="<d> Generate a markdown file listing all Python files in the repo")(make_todo_files)
     agents_app.command("d", no_args_is_help=True, hidden=True)(make_todo_files)
-    agents_app.command(name="make-symlinks", no_args_is_help=True, short_help="<s> Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
-    agents_app.command(name="s", no_args_is_help=True, hidden=True)(create_symlink_command)
-    agents_app.command(name="run-prompt", no_args_is_help=True, short_help="<r> Run one prompt via selected agent")(run)
-    agents_app.command(name="r", no_args_is_help=True, hidden=True)(run)
+    agents_app.command(name="make-symlinks", no_args_is_help=True, short_help="<l> Create symlinks to the current repo in ~/code_copies/")(create_symlink_command)
+    agents_app.command(name="l", no_args_is_help=True, hidden=True)(create_symlink_command)
+    agents_app.command(name="run-prompt", no_args_is_help=True, short_help="<r> Run one prompt via selected agent")(run_prompt)
+    agents_app.command(name="r", no_args_is_help=True, hidden=True)(run_prompt)
+    agents_app.command(name="add-skill", no_args_is_help=True, short_help="<s> Add a skill to an agent")(add_skill)
+    agents_app.command(name="s", no_args_is_help=True, hidden=True)(add_skill)
     return agents_app
 
 
