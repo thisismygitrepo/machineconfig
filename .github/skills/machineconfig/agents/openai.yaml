@@ -1,0 +1,4 @@
+interface:
+  display_name: "Machineconfig"
+  short_description: "Use machineconfig CLI and library"
+  default_prompt: "Teach and use direct machineconfig commands through nested Typer apps."
