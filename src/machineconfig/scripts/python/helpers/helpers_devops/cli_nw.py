@@ -189,7 +189,13 @@ def vscode_share(
     accept = "--accept-server-license-terms"
     name_part = f"--name {name}" if name else ""
     extra = extra_args or ""
-    match action:
+    action_normalized = {
+        "r": "run",
+        "i": "install-service",
+        "u": "uninstall-service",
+        "l": "share-local",
+    }.get(action, action)
+    match action_normalized:
         case "run" | "r":
             cmd = f"code tunnel {name_part} {accept} {extra}".strip()
             desc = "Run a one-off VS Code tunnel (foreground)"
@@ -208,11 +214,11 @@ def vscode_share(
             cmd = f"code serve-web {accept} {host_part} {server_base_path_part} {extra}".strip()
             desc = "Run local VS Code web server (serve-web)"
         case _:
-            print(f"Unknown action: {action}")
+            print(f"Unknown action: {action_normalized}")
             return
     from machineconfig.utils.code import print_code, exit_then_run_shell_script
     print_code(cmd, lexer="bash", desc=desc)
-    if action == "share-local":
+    if action_normalized == "share-local":
         from machineconfig.scripts.python.helpers.helpers_devops.cli_nw_vscode_share import print_serve_web_urls
 
         print_serve_web_urls(cmd, folder_path=directory)
