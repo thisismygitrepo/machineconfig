@@ -178,6 +178,7 @@ def vscode_share(
     name: Annotated[str | None, typer.Option("--name", "-n", help="Name for tunnel/service actions (run, install-service)")] = None,
     path: Annotated[str | None, typer.Option("--path", "-p", help="Server base path for local web mode (share-local)")] = None,
     host: Annotated[str | None, typer.Option("--host", "-h", help="Host for local web mode (share-local), e.g. 0.0.0.0")] = None,
+    directory: Annotated[str | None, typer.Option("--dir", "-d", help="Folder to open in local web mode (share-local), defaults to the current working directory")] = None,
     extra_args: Annotated[str | None, typer.Option("--extra-args", "-e", help="Extra args to append to the generated VS Code command")] = None,
 ) -> None:
     """🧑‍💻 Share workspace using VS Code CLI ("code tunnel" / "code serve-web")
@@ -199,8 +200,12 @@ def vscode_share(
         cmd = "code tunnel service uninstall"
         desc = "Uninstall code tunnel service"
     elif action == "share-local":
+        from machineconfig.scripts.python.helpers.helpers_devops.cli_nw_vscode_share import ensure_without_connection_token, resolve_share_local_folder
+
         host_part = f"--host {host}" if host else ""
         server_base_path_part = f"--server-base-path {path}" if path else ""
+        directory = resolve_share_local_folder(directory)
+        extra = ensure_without_connection_token(extra)
         cmd = f"code serve-web {accept} {host_part} {server_base_path_part} {extra}".strip()
         desc = "Run local VS Code web server (serve-web)"
     else:
@@ -209,6 +214,12 @@ def vscode_share(
 
     from machineconfig.utils.code import print_code, exit_then_run_shell_script
     print_code(cmd, lexer="bash", desc=desc)
+    if action == "share-local":
+        from machineconfig.scripts.python.helpers.helpers_devops.cli_nw_vscode_share import print_serve_web_urls
+
+        print_serve_web_urls(cmd, folder_path=directory)
+        exit_then_run_shell_script(cmd)
+        return
 
     if typer.confirm("Do you want to run the above command now?", default=False):
         exit_then_run_shell_script(cmd)
