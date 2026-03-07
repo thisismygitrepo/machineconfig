@@ -179,7 +179,14 @@ def get_machine_specs(hardware: Annotated[bool, typer.Option(..., "--hardware", 
     import socket
     import os
 
-    distro = subprocess.run(command, shell=True, capture_output=True, text=True, check=True).stdout.strip()
+    distro = "Unknown"
+    try:
+        distro_process = subprocess.run(command, shell=True, capture_output=True, text=True, check=False)
+        detected_distro = distro_process.stdout.strip()
+        if distro_process.returncode == 0 and detected_distro:
+            distro = detected_distro
+    except OSError:
+        pass
     system = platform.system()
     if system not in {"Windows", "Linux", "Darwin"}:
         system = "Linux"
