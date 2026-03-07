@@ -10,6 +10,8 @@ def _split_and_chunk_prompts(raw_material: str, separator: str, tasks_per_prompt
     prompts = [piece for piece in raw_material.split(separator) if piece.strip() != ""]
     if not prompts:
         return []
+    if tasks_per_prompt <= 0:
+        raise ValueError("--agent-load must be a positive integer")
     if tasks_per_prompt >= len(prompts):
         print("No need to chunk prompts, as tasks_per_prompt >= total prompts.", f"({tasks_per_prompt} >= {len(prompts)})")
         return prompts
@@ -45,6 +47,13 @@ def agents_create(
     repo_root = get_repo_root(Path.cwd())
     if repo_root is None:
         raise RuntimeError("💥 Could not determine the repository root. Please run this script from within a git repository.")
+
+    if agent == "codex":
+        if provider is None:
+            provider = "openai"
+        elif provider != "openai":
+            raise ValueError("Codex agent only works with openai provider.")
+
     print(f"Operating @ {repo_root}")
 
     if agents_dir is None:
@@ -93,11 +102,27 @@ def agents_create(
         if context_path_resolved.is_file():
             prompt_material_re_splitted = chunk_prompts(context_path_resolved, tasks_per_prompt=agent_load, joiner=separator)
         elif context_path_resolved.is_dir():
-            files = [f for f in context_path_resolved.rglob("*") if f.is_file()]
+            files = sorted(
+                (f for f in context_path_resolved.rglob("*") if f.is_file()),
+                key=lambda path: str(path.relative_to(context_path_resolved)),
+            )
             if not files:
                 raise ValueError(f"No files found in directory: {context_path_resolved}")
-            concatenated = separator.join(f.read_text(encoding="utf-8") for f in files)
-            prompt_material_re_splitted = [concatenated]
+            file_materials = [f.read_text(encoding="utf-8") for f in files]
+            non_empty_materials = [material for material in file_materials if material.strip() != ""]
+            if not non_empty_materials:
+                raise ValueError(f"All files in directory are empty: {context_path_resolved}")
+            if agent_load <= 0:
+                raise ValueError("--agent-load must be a positive integer")
+            if agent_load >= len(non_empty_materials):
+                print("No need to chunk prompts, as tasks_per_prompt >= total prompts.", f"({agent_load} >= {len(non_empty_materials)})")
+                prompt_material_re_splitted = non_empty_materials
+            else:
+                print(f"Chunking {len(non_empty_materials)} directory files into groups of {agent_load} rows/tasks each.")
+                prompt_material_re_splitted = [
+                    separator.join(non_empty_materials[idx : idx + agent_load])
+                    for idx in range(0, len(non_empty_materials), agent_load)
+                ]
         else:
             raise ValueError(f"Path is neither file nor directory: {context_path_resolved}")
 

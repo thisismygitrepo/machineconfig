@@ -11,12 +11,13 @@ def _build_generic_agent_command(agent: AGENTS, prompt_path: Path) -> str:
     return build_agent_command(agent=agent, prompt_file=prompt_path)
 
 
-def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
+def get_api_keys(provider: PROVIDER, *, silent_if_missing: bool = False) -> list[API_SPEC]:
     from machineconfig.utils.io import read_ini
     api_key_path = Path.home().joinpath(f"dotfiles/creds/llm/{provider}/api_keys.ini")
     res: list[API_SPEC] = []
     if not api_key_path.exists() or not api_key_path.is_file():
-        print(f"No API key file found for provider {provider} at expected location: {api_key_path}. Returning empty API key list.")
+        if not silent_if_missing:
+            print(f"No API key file found for provider {provider} at expected location: {api_key_path}. Returning empty API key list.")
         return res
     config = read_ini(api_key_path)
     for a_section_name in list(config.sections()):
@@ -36,6 +37,12 @@ def get_api_keys(provider: PROVIDER) -> list[API_SPEC]:
 
 def prep_agent_launch(repo_root: Path, agents_dir: Path, prompts_material: list[str], prompt_prefix: str, join_prompt_and_context: bool,
                       machine: HOST, model: Optional[str], provider: Optional[PROVIDER], agent: AGENTS, *, job_name: str) -> None:
+    if agent == "codex":
+        if provider is None:
+            provider = "openai"
+        elif provider != "openai":
+            raise ValueError("Codex agent only works with openai provider.")
+
     agents_dir.mkdir(parents=True, exist_ok=True)
     prompt_folder = agents_dir / "prompts"
     prompt_folder.mkdir(parents=True, exist_ok=True)
@@ -103,8 +110,7 @@ sleep 0.1
                 from machineconfig.scripts.python.helpers.helpers_agents.agentic_frameworks.fire_copilot import fire_copilot
                 cmd = fire_copilot(ai_spec=ai_spec, prompt_path=prompt_path, repo_root=repo_root)
             case "codex":
-                assert provider == "openai", "Codex agent only works with openai provider."
-                api_keys = get_api_keys(provider="openai")
+                api_keys = get_api_keys(provider="openai", silent_if_missing=True)
                 api_spec = api_keys[idx % len(api_keys)] if len(api_keys) > 0 else API_SPEC(api_key=None, api_name="", api_label="", api_account="")
                 ai_spec: AI_SPEC = AI_SPEC(provider=provider, model=model, agent=agent, machine=machine, api_spec=api_spec)
                 from machineconfig.scripts.python.helpers.helpers_agents.agentic_frameworks.fire_codex import fire_codex
