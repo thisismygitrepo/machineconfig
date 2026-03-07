@@ -13,7 +13,7 @@ import subprocess
 from typing import Optional
 
 
-PACAKGE_MANAGERS = ["bun", "npm", "pip", "uv", "winget", "powershell", "irm", "brew", "curl", "sudo"]
+PACAKGE_MANAGERS = ["bun", "npm", "pip", "uv", "winget", "powershell", "irm", "brew", "curl", "sudo", "cargo"]
 
 
 class Installer:

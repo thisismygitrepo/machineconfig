@@ -5,7 +5,7 @@ import ast
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 
 REPO_ROOT = Path(__file__).resolve().parents[5]
@@ -708,7 +708,7 @@ def parse_registration(
     )
 
 
-def registration_name(args: list[ast.AST], kwargs: dict[str, Any]) -> str | None:
+def registration_name(args: Sequence[ast.AST], kwargs: dict[str, Any]) -> str | None:
     if "name" in kwargs and isinstance(kwargs["name"], str):
         return kwargs["name"]
     if args:
@@ -815,6 +815,8 @@ def evaluate_expr(
     if isinstance(expr, ast.Dict):
         result: dict[str, Any] = {}
         for key, value in zip(expr.keys, expr.values, strict=True):
+            if key is None:
+                return Unresolved(ast.unparse(expr))
             key_value = evaluate_expr(key, module_info, env, function_docs)
             if isinstance(key_value, Unresolved) or not isinstance(key_value, str):
                 return Unresolved(ast.unparse(expr))
