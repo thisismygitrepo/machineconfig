@@ -23,7 +23,7 @@ applyTo: "**/*.py"
 * Use `Any` type only if absoloutely necessary.
 * Please use `# type: ignore blah blah`, to silence any warning from pyright or other linters and type checkers, but only when necessary. Otherwise, listen to them and adjust accordingly, or use cast from typing.
 * Use typeddict, dataclasses and literals when necessary to avoid blackbox str or dict[str, str] etc.
-* ALL functions / methods etc must clearly indicate the return type.
+* ALL functions / methods etc must clearly indicate the return type in signature, even if its None.
 * Do not leave dangling imports or variables unused, prefix their name with underscore if necessary to undicate they are unused.
 * Please prefer to use absolute imports, avoid relatives when possible.
 * Use triple quotes and triple double quotes f-strings for string formatting and avoid when possible all goofy escaping when interpolation.
@@ -49,9 +49,9 @@ def example_usage() -> None:
     result = fallible_function(2, 3)
     match result:
         case Success():  # Correct
-            print("Addition succeeded.")
-        case Failure():  # <--- Looks wrong, because no variable passed, but its correct, it works like this in python3.11+
-            # Now this only matches if result IS a Failure instance
+            print("Addition succeeded, and the result is:", result.value)
+        case Failure():  # <--- Looks wrong, because no argument is passed, but its correct, it works like this in python3.11+
+            # Now this only matches if result is instance of `Failure` class.
             print("Addition failed.")
             print(f"Reason: {result.reason}, Message: {result.message}")
             q = result.reason
@@ -71,6 +71,7 @@ def example_usage() -> None:
 * Please avoid writing README files and avoid docstring and comments in code unless absolutely necessary. Use clear naming conventions instead of documenting.
 * Always prefer to functional style of programming over OOP.
 * When passing arguments or constructing dicts or lists or tuples, avoid breaking lines too much, try to use ~ 150 characters per line before breaking to new one.
+* Please avoid making files longer ~ 200 lines or so, always cosider breaking to meaningful self-contained nicely related modules.
 
 # Privacy:
 * No matter what, never ever open/read/write/list anything under ~/dotfiles
