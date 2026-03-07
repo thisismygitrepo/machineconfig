@@ -4,13 +4,12 @@ applyTo: "**/*.py"
 ---
 
 # Python Development Environment and tooling:
-* If you find that uv is not available in terminal, look for how to install it in https://github.com/astral-sh/uv
 * Please run any python file using `uv run $file.py`
 * Same for tools, e.g. `un run python pytest $file_path`
 * To add a package, use `cd $repo_root; uv add <package_name>`.
     * Please never mention versions of package, so uv will bring the latest.
     * On this note, I have to say that I am seriously concerned about AI using very outdated coding style.
-        * Use python 3.13 syntax features.
+        * Use python 3.13 & 3.14 syntax features.
         * Use modern standards, e.g. Path from pathlib.
 * Never touch `pyproject.toml` manually, this file is strictly managed by `uv` tool on your behalf.
 * If you are writing a test or any temporary script for discovering or undestanding something as an intermediate step, then,
