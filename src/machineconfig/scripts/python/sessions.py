@@ -27,7 +27,7 @@ def run(
     max_tabs: Annotated[int, typer.Option(..., "--max-tabs-per-layout", "-T", help="A Sanity checker that throws an error if any layout exceeds the maximum number of tabs to launch.")] = 25,
 
     max_layouts: Annotated[int, typer.Option(..., "--max-parallel-layouts", "-P", help="A Sanity checker that throws an error if the total number of *parallel layouts exceeds this number.")] = 25,
-    backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "auto",
+    backend: Annotated[Literal["zellij", "z", "windows-terminal", "wt", "tmux", "t", "auto", "a"], typer.Option(..., "--backend", "-b", help="Backend terminal multiplexer or emulator to use")] = "tmux",
     max_parallel_tabs: Annotated[Optional[int], typer.Option("--max-parallel-tabs", help="Enable dynamic tab scheduling and cap active tabs to this value.")] = None,
     poll_seconds: Annotated[float, typer.Option("--poll-seconds", help="Dynamic mode only: polling interval in seconds used to detect finished tabs.")] = 2.0,
 
