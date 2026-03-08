@@ -83,7 +83,9 @@ class Unresolved:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate cli_graph.json from Typer source.")
+    parser = argparse.ArgumentParser(
+        description="Generate cli_graph.json from Typer source."
+    )
     parser.add_argument(
         "--output",
         "-o",
@@ -94,7 +96,9 @@ def main() -> None:
     args = parser.parse_args()
 
     payload = build_cli_graph()
-    args.output.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.output.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     print(f"Wrote {args.output}")
 
 
@@ -203,7 +207,9 @@ def choose_primary(registrations: list[Registration]) -> Registration:
     return visible[0] if visible else registrations[0]
 
 
-def build_aliases(registrations: list[Registration], primary: Registration) -> list[dict[str, Any]]:
+def build_aliases(
+    registrations: list[Registration], primary: Registration
+) -> list[dict[str, Any]]:
     aliases: list[dict[str, Any]] = []
     for reg in registrations:
         if reg is primary:
@@ -219,11 +225,15 @@ def build_aliases(registrations: list[Registration], primary: Registration) -> l
     return aliases
 
 
-def build_group_node(app_model: AppModel, reg: Registration, aliases: list[dict[str, Any]]) -> dict[str, Any]:
+def build_group_node(
+    app_model: AppModel, reg: Registration, aliases: list[dict[str, Any]]
+) -> dict[str, Any]:
     module_info = app_model.module_info
     child_ref = resolve_group_target(reg, module_info)
     if child_ref is None:
-        raise RuntimeError(f"Could not resolve group target for {module_info.module}:{reg.name}")
+        raise RuntimeError(
+            f"Could not resolve group target for {module_info.module}:{reg.name}"
+        )
 
     child_model = load_app_model(child_ref)
     node: dict[str, Any] = {
@@ -248,7 +258,9 @@ def build_group_node(app_model: AppModel, reg: Registration, aliases: list[dict[
     return node
 
 
-def build_group_source(app_model: AppModel, reg: Registration, child_ref: AppRef) -> dict[str, Any]:
+def build_group_source(
+    app_model: AppModel, reg: Registration, child_ref: AppRef
+) -> dict[str, Any]:
     source: dict[str, Any] = {
         "file": app_model.module_info.relative_path(),
         "module": app_model.ref.module,
@@ -275,15 +287,21 @@ def group_doc_value(reg: Registration, module_info: ModuleInfo) -> str | None:
     return ast.get_docstring(function_info)
 
 
-def build_command_node(app_model: AppModel, reg: Registration, aliases: list[dict[str, Any]]) -> dict[str, Any]:
+def build_command_node(
+    app_model: AppModel, reg: Registration, aliases: list[dict[str, Any]]
+) -> dict[str, Any]:
     resolved = resolve_callable(reg.target_expr, app_model.module_info)
     if resolved is None:
-        raise RuntimeError(f"Could not resolve command target for {app_model.ref.module}:{reg.name}")
+        raise RuntimeError(
+            f"Could not resolve command target for {app_model.ref.module}:{reg.name}"
+        )
 
     function_module = load_module(resolved.module)
     function_info = function_module.functions.get(resolved.callable_name)
     if function_info is None:
-        raise RuntimeError(f"Could not find callable {resolved.module}.{resolved.callable_name}")
+        raise RuntimeError(
+            f"Could not find callable {resolved.module}.{resolved.callable_name}"
+        )
 
     doc = ast.get_docstring(function_info)
     node: dict[str, Any] = {
@@ -298,7 +316,9 @@ def build_command_node(app_model: AppModel, reg: Registration, aliases: list[dic
         "signature": build_signature(function_module, function_info),
     }
 
-    short_help = reg.short_help if isinstance(reg.short_help, str) and reg.short_help else None
+    short_help = (
+        reg.short_help if isinstance(reg.short_help, str) and reg.short_help else None
+    )
     if short_help is not None:
         node["short_help"] = short_help
 
@@ -348,7 +368,9 @@ def find_dispatch_target(resolved: ResolvedCallable) -> AppRef | None:
         inner = node.func
         if not isinstance(inner, ast.Call):
             continue
-        child_ref = resolve_child_app_ref(inner, module_info, local_modules=local_modules, local_names=local_names)
+        child_ref = resolve_child_app_ref(
+            inner, module_info, local_modules=local_modules, local_names=local_names
+        )
         if child_ref is not None:
             return child_ref
     return None
@@ -364,19 +386,29 @@ def resolve_child_app_ref(
     if not isinstance(expr, ast.Call):
         return None
 
-    resolved = resolve_callable(expr.func, module_info, local_modules=local_modules, local_names=local_names)
+    resolved = resolve_callable(
+        expr.func, module_info, local_modules=local_modules, local_names=local_names
+    )
     if resolved is None or resolved.callable_name != "get_app":
         return None
     return AppRef(module=resolved.module, factory=resolved.callable_name)
 
 
-def build_signature(module_info: ModuleInfo, function_info: ast.FunctionDef) -> dict[str, Any]:
+def build_signature(
+    module_info: ModuleInfo, function_info: ast.FunctionDef
+) -> dict[str, Any]:
     parameters = build_parameters(function_info)
     raw_lines = [
         line.rstrip("\n")
-        for line in module_info.lines[function_info.lineno - 1 : function_info.end_lineno]
+        for line in module_info.lines[
+            function_info.lineno - 1 : function_info.end_lineno
+        ]
     ]
-    return_type = ast.unparse(function_info.returns) if function_info.returns is not None else None
+    return_type = (
+        ast.unparse(function_info.returns)
+        if function_info.returns is not None
+        else None
+    )
 
     signature: dict[str, Any] = {
         "raw_lines": raw_lines,
@@ -393,24 +425,36 @@ def build_parameters(function_info: ast.FunctionDef) -> list[dict[str, Any]]:
     args = function_info.args
 
     positional = list(args.posonlyargs) + list(args.args)
-    positional_defaults = [None] * (len(positional) - len(args.defaults)) + list(args.defaults)
+    positional_defaults = [None] * (len(positional) - len(args.defaults)) + list(
+        args.defaults
+    )
 
     for arg, default in zip(positional, positional_defaults, strict=True):
-        parameters.append(build_parameter(arg=arg, default=default, kind="positional_or_keyword"))
+        parameters.append(
+            build_parameter(arg=arg, default=default, kind="positional_or_keyword")
+        )
 
     if args.vararg is not None:
-        parameters.append(build_parameter(arg=args.vararg, default=None, kind="var_positional"))
+        parameters.append(
+            build_parameter(arg=args.vararg, default=None, kind="var_positional")
+        )
 
     for arg, default in zip(args.kwonlyargs, args.kw_defaults, strict=True):
-        parameters.append(build_parameter(arg=arg, default=default, kind="keyword_only"))
+        parameters.append(
+            build_parameter(arg=arg, default=default, kind="keyword_only")
+        )
 
     if args.kwarg is not None:
-        parameters.append(build_parameter(arg=args.kwarg, default=None, kind="var_keyword"))
+        parameters.append(
+            build_parameter(arg=args.kwarg, default=None, kind="var_keyword")
+        )
 
     return parameters
 
 
-def build_parameter(*, arg: ast.arg, default: ast.AST | None, kind: str) -> dict[str, Any]:
+def build_parameter(
+    *, arg: ast.arg, default: ast.AST | None, kind: str
+) -> dict[str, Any]:
     annotation = arg.annotation
     annotation_raw = ast.unparse(annotation) if annotation is not None else None
     param_type = extract_param_type(annotation)
@@ -444,7 +488,9 @@ def extract_param_type(annotation: ast.AST | None) -> str | None:
 def extract_typer_info(annotation: ast.AST | None) -> dict[str, Any] | None:
     if annotation is None:
         return None
-    if not (isinstance(annotation, ast.Subscript) and is_name(annotation.value, "Annotated")):
+    if not (
+        isinstance(annotation, ast.Subscript) and is_name(annotation.value, "Annotated")
+    ):
         return None
 
     elements = annotation_elements(annotation)
@@ -463,7 +509,11 @@ def extract_typer_info(annotation: ast.AST | None) -> dict[str, Any] | None:
         if args and not isinstance(args[0], ast.Constant | ast.JoinedStr):
             default_value = serialize_expr(args[0])
             args = args[1:]
-        elif args and isinstance(args[0], ast.Constant) and not isinstance(args[0].value, str):
+        elif (
+            args
+            and isinstance(args[0], ast.Constant)
+            and not isinstance(args[0].value, str)
+        ):
             default_value = serialize_expr(args[0])
             args = args[1:]
 
@@ -561,11 +611,12 @@ def load_app_model(ref: AppRef) -> AppModel:
     return model
 
 
-def extract_app_model(module_info: ModuleInfo, function_info: ast.FunctionDef, ref: AppRef) -> AppModel:
+def extract_app_model(
+    module_info: ModuleInfo, function_info: ast.FunctionDef, ref: AppRef
+) -> AppModel:
     env: dict[str, Any] = {}
     function_docs = {
-        name: ast.get_docstring(func)
-        for name, func in module_info.functions.items()
+        name: ast.get_docstring(func) for name, func in module_info.functions.items()
     }
     app_configs: dict[str, dict[str, Any]] = {}
     registrations: list[Registration] = []
@@ -582,9 +633,13 @@ def extract_app_model(module_info: ModuleInfo, function_info: ast.FunctionDef, r
                 for target in statement.targets:
                     if isinstance(target, ast.Name):
                         if is_typer_ctor(value):
-                            app_configs[target.id] = evaluate_typer_config(value, module_info, env, function_docs)
+                            app_configs[target.id] = evaluate_typer_config(
+                                value, module_info, env, function_docs
+                            )
                         else:
-                            env[target.id] = evaluate_expr(value, module_info, env, function_docs)
+                            env[target.id] = evaluate_expr(
+                                value, module_info, env, function_docs
+                            )
                     elif (
                         isinstance(target, ast.Attribute)
                         and target.attr == "__doc__"
@@ -596,18 +651,26 @@ def extract_app_model(module_info: ModuleInfo, function_info: ast.FunctionDef, r
                         )
                 continue
 
-            if isinstance(statement, ast.AnnAssign) and isinstance(statement.target, ast.Name):
+            if isinstance(statement, ast.AnnAssign) and isinstance(
+                statement.target, ast.Name
+            ):
                 value = statement.value
                 if value is None:
                     continue
                 if is_typer_ctor(value):
-                    app_configs[statement.target.id] = evaluate_typer_config(value, module_info, env, function_docs)
+                    app_configs[statement.target.id] = evaluate_typer_config(
+                        value, module_info, env, function_docs
+                    )
                 else:
-                    env[statement.target.id] = evaluate_expr(value, module_info, env, function_docs)
+                    env[statement.target.id] = evaluate_expr(
+                        value, module_info, env, function_docs
+                    )
                 continue
 
             if isinstance(statement, ast.If):
-                decision = evaluate_condition(statement.test, module_info, env, function_docs)
+                decision = evaluate_condition(
+                    statement.test, module_info, env, function_docs
+                )
                 if decision is True:
                     process_statements(statement.body)
                 elif decision is False:
@@ -641,10 +704,18 @@ def extract_app_model(module_info: ModuleInfo, function_info: ast.FunctionDef, r
     if app_var is None and app_configs:
         app_var = next(iter(app_configs))
     if app_var is None:
-        raise RuntimeError(f"Could not identify Typer app variable in {ref.module}.{ref.factory}")
+        raise RuntimeError(
+            f"Could not identify Typer app variable in {ref.module}.{ref.factory}"
+        )
 
     app_config = app_configs.get(app_var, {})
-    return AppModel(ref=ref, module_info=module_info, app_var=app_var, app_config=app_config, registrations=registrations)
+    return AppModel(
+        ref=ref,
+        module_info=module_info,
+        app_var=app_var,
+        app_config=app_config,
+        registrations=registrations,
+    )
 
 
 def parse_registration(
@@ -720,11 +791,7 @@ def registration_name(args: Sequence[ast.AST], kwargs: dict[str, Any]) -> str | 
 
 def registration_typer_config(kwargs: dict[str, Any]) -> dict[str, Any]:
     excluded = {"name", "help", "short_help", "hidden", "context_settings"}
-    return {
-        key: value
-        for key, value in kwargs.items()
-        if key not in excluded
-    }
+    return {key: value for key, value in kwargs.items() if key not in excluded}
 
 
 def evaluate_typer_config(
@@ -804,11 +871,20 @@ def evaluate_expr(
         return "".join(parts)
 
     if isinstance(expr, ast.List):
-        return [simplify_value(evaluate_expr(item, module_info, env, function_docs), fallback=ast.unparse(item)) for item in expr.elts]
+        return [
+            simplify_value(
+                evaluate_expr(item, module_info, env, function_docs),
+                fallback=ast.unparse(item),
+            )
+            for item in expr.elts
+        ]
 
     if isinstance(expr, ast.Tuple):
         return tuple(
-            simplify_value(evaluate_expr(item, module_info, env, function_docs), fallback=ast.unparse(item))
+            simplify_value(
+                evaluate_expr(item, module_info, env, function_docs),
+                fallback=ast.unparse(item),
+            )
             for item in expr.elts
         )
 
@@ -820,7 +896,10 @@ def evaluate_expr(
             key_value = evaluate_expr(key, module_info, env, function_docs)
             if isinstance(key_value, Unresolved) or not isinstance(key_value, str):
                 return Unresolved(ast.unparse(expr))
-            result[key_value] = simplify_value(evaluate_expr(value, module_info, env, function_docs), fallback=ast.unparse(value))
+            result[key_value] = simplify_value(
+                evaluate_expr(value, module_info, env, function_docs),
+                fallback=ast.unparse(value),
+            )
         return result
 
     if isinstance(expr, ast.Attribute):
@@ -846,7 +925,10 @@ def evaluate_expr(
         return not bool(value)
 
     if isinstance(expr, ast.BoolOp):
-        values = [evaluate_expr(value, module_info, env, function_docs) for value in expr.values]
+        values = [
+            evaluate_expr(value, module_info, env, function_docs)
+            for value in expr.values
+        ]
         if any(isinstance(value, Unresolved) for value in values):
             return Unresolved(ast.unparse(expr))
         if isinstance(expr.op, ast.And):
@@ -854,7 +936,11 @@ def evaluate_expr(
         if isinstance(expr.op, ast.Or):
             return any(bool(value) for value in values)
 
-    if isinstance(expr, ast.Compare) and len(expr.ops) == 1 and len(expr.comparators) == 1:
+    if (
+        isinstance(expr, ast.Compare)
+        and len(expr.ops) == 1
+        and len(expr.comparators) == 1
+    ):
         left = evaluate_expr(expr.left, module_info, env, function_docs)
         right = evaluate_expr(expr.comparators[0], module_info, env, function_docs)
         if isinstance(left, Unresolved) or isinstance(right, Unresolved):
@@ -891,7 +977,11 @@ def evaluate_call(
             return tuple(value)
         return Unresolved(ast.unparse(expr))
 
-    if isinstance(expr.func, ast.Attribute) and expr.func.attr == "join" and len(expr.args) == 1:
+    if (
+        isinstance(expr.func, ast.Attribute)
+        and expr.func.attr == "join"
+        and len(expr.args) == 1
+    ):
         base = evaluate_expr(expr.func.value, module_info, env, function_docs)
         value = evaluate_expr(expr.args[0], module_info, env, function_docs)
         if isinstance(base, str) and not isinstance(value, Unresolved):
@@ -901,7 +991,11 @@ def evaluate_call(
                 return base.join(str(item) for item in value)
         return Unresolved(ast.unparse(expr))
 
-    if isinstance(expr.func, ast.Attribute) and expr.func.attr == "home" and is_name(expr.func.value, "Path"):
+    if (
+        isinstance(expr.func, ast.Attribute)
+        and expr.func.attr == "home"
+        and is_name(expr.func.value, "Path")
+    ):
         if expr.args or expr.keywords:
             return Unresolved(ast.unparse(expr))
         return Path.home()
@@ -974,7 +1068,9 @@ def evaluate_module_assignment(module_info: ModuleInfo, expr: ast.AST) -> Any:
 
 def literal_values(expr: ast.Subscript) -> list[Any]:
     slice_value = expr.slice
-    values = list(slice_value.elts) if isinstance(slice_value, ast.Tuple) else [slice_value]
+    values = (
+        list(slice_value.elts) if isinstance(slice_value, ast.Tuple) else [slice_value]
+    )
     result: list[Any] = []
     for value in values:
         if isinstance(value, ast.Constant):
@@ -1033,7 +1129,11 @@ def load_module(module: str) -> ModuleInfo:
             for target in statement.targets:
                 if isinstance(target, ast.Name):
                     info.assignments[target.id] = statement.value
-        elif isinstance(statement, ast.AnnAssign) and isinstance(statement.target, ast.Name) and statement.value is not None:
+        elif (
+            isinstance(statement, ast.AnnAssign)
+            and isinstance(statement.target, ast.Name)
+            and statement.value is not None
+        ):
             info.assignments[statement.target.id] = statement.value
 
     MODULE_CACHE[module] = info
@@ -1119,7 +1219,9 @@ def dotted_name(expr: ast.AST) -> str | None:
     return None
 
 
-def collect_local_imports(function_info: ast.FunctionDef) -> tuple[dict[str, str], dict[str, tuple[str, str]]]:
+def collect_local_imports(
+    function_info: ast.FunctionDef,
+) -> tuple[dict[str, str], dict[str, tuple[str, str]]]:
     imported_modules: dict[str, str] = {}
     imported_names: dict[str, tuple[str, str]] = {}
 

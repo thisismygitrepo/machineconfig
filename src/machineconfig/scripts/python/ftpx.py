@@ -14,7 +14,18 @@ def ftpx(
 ) -> None:
     """File transfer utility through SSH."""
     from machineconfig.scripts.python.helpers.helpers_network.ftpx_impl import ftpx as impl
-    impl(source=source, target=target, recursive=recursive, zipFirst=zipFirst, cloud=cloud, overwrite_existing=overwrite_existing)
+    try:
+        impl(source=source, target=target, recursive=recursive, zipFirst=zipFirst, cloud=cloud, overwrite_existing=overwrite_existing)
+    except ValueError as e:
+        raise typer.BadParameter(str(e)) from e
+    except RuntimeError as e:
+        message = str(e).strip()
+        if message.startswith("SSH Error: "):
+            message = message.removeprefix("SSH Error: ").strip()
+        if "source `" in message and " does not exist!" in message:
+            raise typer.BadParameter(message, param_hint="source") from e
+        typer.echo(f"Error: {message}", err=True)
+        raise typer.Exit(code=1) from e
 
 
 def main() -> None:
