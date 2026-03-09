@@ -2080,7 +2080,8 @@ Use <code>--on-conflict</code> to choose behavior when a target session already 
 </span></code></pre></div>
 <hr />
 <h2 id="run-aoe">run-aoe<a class="headerlink" href="#run-aoe" title="Permanent link">&para;</a></h2>
-<p>Launch selected layout tabs through <a href="https://github.com/njbrake/agent-of-empires">agent-of-empires</a>.</p>
+<p>Launch selected layout tabs through <a href="https://github.com/njbrake/agent-of-empires">agent-of-empires</a>.
+<code>run-aoe</code> detects the installed AoE <abbr title="Command Line Interface">CLI</abbr> shape and adapts to both the older <code>--agent/--prompt</code> flow and newer AoE releases that use <code>--cmd/--cmd-override/--extra-args</code>.</p>
 <p>The mapping is:</p>
 <ul>
 <li><code>layoutName</code> -&gt; <code>aoe add --group</code></li>
@@ -2101,23 +2102,23 @@ Use <code>--on-conflict</code> to choose behavior when a target session already 
 <tbody>
 <tr>
 <td><code>--model</code></td>
-<td>Model name forwarded to <code>aoe add --model</code></td>
+<td>Model name forwarded to the underlying AoE/agent <abbr title="Command Line Interface">CLI</abbr> when supported</td>
 </tr>
 <tr>
 <td><code>--agent</code></td>
-<td>Agent name forwarded to <code>aoe add --agent</code> (defaults to <code>codex</code>)</td>
+<td>AoE tool/agent name (defaults to <code>codex</code>)</td>
 </tr>
 <tr>
 <td><code>--provider</code></td>
-<td>Provider forwarded to <code>aoe add --provider</code></td>
+<td>Provider forwarded to the underlying AoE/agent <abbr title="Command Line Interface">CLI</abbr> when supported</td>
 </tr>
 <tr>
 <td><code>--sandbox</code></td>
-<td>Convenience flag that becomes <code>aoe add --args --sandbox &lt;value&gt;</code></td>
+<td>Convenience flag forwarded to the launched agent <abbr title="Command Line Interface">CLI</abbr> as <code>--sandbox &lt;value&gt;</code> when supported</td>
 </tr>
 <tr>
 <td><code>--yolo</code></td>
-<td>Convenience flag that becomes <code>aoe add --args --yolo</code></td>
+<td>Enables AoE/agent YOLO mode when supported</td>
 </tr>
 <tr>
 <td><code>--tab-command-mode</code></td>
@@ -2129,7 +2130,7 @@ Use <code>--on-conflict</code> to choose behavior when a target session already 
 </tr>
 <tr>
 <td><code>--force</code></td>
-<td>Forward <code>--force</code> to <code>aoe add</code></td>
+<td>Forward force/overwrite to AoE when supported</td>
 </tr>
 </tbody>
 </table>
@@ -2137,7 +2138,7 @@ Use <code>--on-conflict</code> to choose behavior when a target session already 
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Treat each tab command as the initial prompt</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sessions<span class="w"> </span>run-aoe<span class="w"> </span>--layouts-file<span class="w"> </span>layout.json<span class="w"> </span>--model<span class="w"> </span>gpt-5-codex<span class="w"> </span>--sandbox<span class="w"> </span>workspace-write<span class="w"> </span>--yolo
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Use existing tab commands as aoe --cmd overrides instead</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Use existing tab commands as agent-command overrides instead</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sessions<span class="w"> </span>run-aoe<span class="w"> </span>--layouts-file<span class="w"> </span>layout.json<span class="w"> </span>--tab-command-mode<span class="w"> </span>cmd
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Preview the generated aoe commands</span>
