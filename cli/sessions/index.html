@@ -1966,7 +1966,8 @@
 </table>
 <hr />
 <h2 id="run">run<a class="headerlink" href="#run" title="Permanent link">&para;</a></h2>
-<p>Launch terminal sessions based on a layout configuration file.</p>
+<p>Launch terminal sessions based on a layout configuration file.
+Use <code>--on-conflict</code> to choose behavior when a target session already exists (<code>skip</code>, <code>restart</code>, <code>rename</code>).</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sessions<span class="w"> </span>run<span class="w"> </span>LAYOUT_PATH<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </span></code></pre></div>
 <p><strong>Options:</strong></p>
@@ -2005,6 +2006,11 @@
 <td>Launch multiple layouts in parallel</td>
 </tr>
 <tr>
+<td><code>--on-conflict</code></td>
+<td><code>-o</code></td>
+<td>Conflict policy for existing sessions: <code>skip</code>, <code>restart</code>, <code>rename</code></td>
+</tr>
+<tr>
 <td><code>--kill-upon-completion</code></td>
 <td><code>-k</code></td>
 <td>Kill sessions when done (requires --monitor)</td>
@@ -2039,8 +2045,11 @@
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Monitor and kill upon completion</span>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>sessions<span class="w"> </span>run<span class="w"> </span>layouts.json<span class="w"> </span>--monitor<span class="w"> </span>--kill-upon-completion
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># Run in parallel</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>sessions<span class="w"> </span>run<span class="w"> </span>layouts.json<span class="w"> </span>--parallel
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># Restart existing session names and relaunch</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>sessions<span class="w"> </span>run<span class="w"> </span>layouts.json<span class="w"> </span>--on-conflict<span class="w"> </span>restart
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># Run in parallel</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>sessions<span class="w"> </span>run<span class="w"> </span>layouts.json<span class="w"> </span>--parallel
 </span></code></pre></div>
 <hr />
 <h2 id="create-template">create-template<a class="headerlink" href="#create-template" title="Permanent link">&para;</a></h2>
