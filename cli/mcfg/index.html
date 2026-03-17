@@ -846,6 +846,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -983,82 +987,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#commands" class="md-nav__link">
+  <a href="#available-commands" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commands
+        Available commands
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Commands">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#shell" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        shell
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dotfiles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dotfiles
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        define
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#links" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        links
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#how-to-use-it" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Examples
+        How to use it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
       
     </span>
   </a>
@@ -1145,6 +1099,62 @@
     
   
     sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    utils
   
 
     
@@ -1794,82 +1804,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#commands" class="md-nav__link">
+  <a href="#available-commands" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Commands
+        Available commands
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Commands">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#shell" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        shell
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#config" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        config
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dotfiles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dotfiles
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#define" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        define
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#links" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        links
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#how-to-use-it" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Examples
+        How to use it
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes
       
     </span>
   </a>
@@ -1916,136 +1876,76 @@
 
 
 <h1 id="mcfg">mcfg<a class="headerlink" href="#mcfg" title="Permanent link">&para;</a></h1>
-<p>The main entry point for Machineconfig operations.</p>
+<p><code>mcfg</code> is the compatibility and umbrella entrypoint for Machineconfig. It is not the old monolithic command tree documented in earlier versions.</p>
+<p><code>machineconfig</code> points to the same dispatcher.</p>
 <hr />
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mcfg<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
 </span></code></pre></div>
+<p>The current help surface is intentionally shallow: <code>mcfg</code> routes you into the main app families, and those families own the detailed subcommands.</p>
 <hr />
-<h2 id="commands">Commands<a class="headerlink" href="#commands" title="Permanent link">&para;</a></h2>
-<h3 id="shell">shell<a class="headerlink" href="#shell" title="Permanent link">&para;</a></h3>
-<p>Configure shell profile with aliases and integrations.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mcfg<span class="w"> </span>shell<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</span></code></pre></div>
-<p><strong>Options:</strong></p>
+<h2 id="available-commands">Available commands<a class="headerlink" href="#available-commands" title="Permanent link">&para;</a></h2>
+<p>Current <code>mcfg --help</code> exposes:</p>
 <table>
 <thead>
 <tr>
-<th>Option</th>
-<th>Description</th>
+<th>Command</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>--shell</code></td>
-<td>Target shell (bash, zsh, fish, nu, pwsh)</td>
+<td><code>devops</code></td>
+<td>DevOps-related commands</td>
 </tr>
 <tr>
-<td><code>--backup</code></td>
-<td>Backup existing config first</td>
+<td><code>cloud</code></td>
+<td>Cloud management commands</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td>Session and layout management</td>
+</tr>
+<tr>
+<td><code>agents</code></td>
+<td>AI agent management commands</td>
+</tr>
+<tr>
+<td><code>utils</code></td>
+<td>Utility commands</td>
+</tr>
+<tr>
+<td><code>fire</code></td>
+<td>Fire and manage jobs</td>
+</tr>
+<tr>
+<td><code>croshell</code></td>
+<td>Cross-shell command execution</td>
 </tr>
 </tbody>
 </table>
+<p><code>msearch</code> remains available as a direct entrypoint, but it is invoked separately as <code>msearch</code>, not through <code>mcfg --help</code>.</p>
 <hr />
-<h3 id="config">config<a class="headerlink" href="#config" title="Permanent link">&para;</a></h3>
-<p>Apply configuration for various tools.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>mcfg<span class="w"> </span>config<span class="w"> </span><span class="o">[</span>TOOL<span class="o">]</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+<h2 id="how-to-use-it">How to use it<a class="headerlink" href="#how-to-use-it" title="Permanent link">&para;</a></h2>
+<p>Use <code>mcfg</code> when you want a single compatibility command:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mcfg<span class="w"> </span>devops<span class="w"> </span>--help
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>mcfg<span class="w"> </span>devops<span class="w"> </span>config<span class="w"> </span>shell<span class="w"> </span>--help
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>mcfg<span class="w"> </span>cloud<span class="w"> </span>--help
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>mcfg<span class="w"> </span>sessions<span class="w"> </span>--help
 </span></code></pre></div>
-<p><strong>Supported Tools:</strong></p>
+<p>Or call the direct entrypoints instead:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>devops<span class="w"> </span>--help
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>cloud<span class="w"> </span>--help
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sessions<span class="w"> </span>--help
+</span></code></pre></div>
+<p>Both <code>mcfg ...</code> and <code>machineconfig ...</code> dispatch to the same current app surface.</p>
+<hr />
+<h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>helix</code> - Helix editor</li>
-<li><code>alacritty</code> - Alacritty terminal</li>
-<li><code>wezterm</code> - WezTerm terminal</li>
-<li><code>vscode</code> - Visual Studio Code</li>
-<li><code>lvim</code> - LunarVim</li>
+<li><code>mcfg</code> does not currently expose old standalone sections such as <code>shell</code>, <code>config</code>, <code>dotfiles</code>, <code>define</code>, or <code>links</code>.</li>
+<li>Configuration and dotfiles workflows now live primarily under <code>devops config ...</code>.</li>
+<li>Data backup and retrieval workflows now live under <code>devops data ...</code>.</li>
 </ul>
-<p><strong>Example:</strong></p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>mcfg<span class="w"> </span>config<span class="w"> </span>helix
-</span></code></pre></div>
-<hr />
-<h3 id="dotfiles">dotfiles<a class="headerlink" href="#dotfiles" title="Permanent link">&para;</a></h3>
-<p>Manage dotfiles synchronization.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>mcfg<span class="w"> </span>dotfiles<span class="w"> </span><span class="o">[</span>SUBCOMMAND<span class="o">]</span>
-</span></code></pre></div>
-<p><strong>Subcommands:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Subcommand</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>init</code></td>
-<td>Initialize dotfiles repository</td>
-</tr>
-<tr>
-<td><code>sync</code></td>
-<td>Sync dotfiles from repository</td>
-</tr>
-<tr>
-<td><code>push</code></td>
-<td>Push local changes to repository</td>
-</tr>
-<tr>
-<td><code>backup</code></td>
-<td>Backup current dotfiles</td>
-</tr>
-<tr>
-<td><code>restore</code></td>
-<td>Restore from backup</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h3 id="define">define<a class="headerlink" href="#define" title="Permanent link">&para;</a></h3>
-<p>Generate installation scripts for new machines.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>mcfg<span class="w"> </span>define<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
-</span></code></pre></div>
-<p>Outputs a script that can bootstrap machineconfig on a new machine.</p>
-<hr />
-<h3 id="links">links<a class="headerlink" href="#links" title="Permanent link">&para;</a></h3>
-<p>Manage symbolic links for configuration files.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>mcfg<span class="w"> </span>links<span class="w"> </span><span class="o">[</span>SUBCOMMAND<span class="o">]</span>
-</span></code></pre></div>
-<p><strong>Subcommands:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Subcommand</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>create</code></td>
-<td>Create symbolic links</td>
-</tr>
-<tr>
-<td><code>remove</code></td>
-<td>Remove symbolic links</td>
-</tr>
-<tr>
-<td><code>list</code></td>
-<td>List managed links</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Setup shell with all integrations</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>mcfg<span class="w"> </span>shell
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># Apply helix editor configuration</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>mcfg<span class="w"> </span>config<span class="w"> </span>helix
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="c1"># Sync dotfiles from repository</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>mcfg<span class="w"> </span>dotfiles<span class="w"> </span>sync
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c1"># Create symlinks for configs</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>mcfg<span class="w"> </span>links<span class="w"> </span>create
-</span></code></pre></div>
 
 
 

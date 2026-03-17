@@ -846,6 +846,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1002,6 +1006,62 @@
     
   
     sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    utils
   
 
     
@@ -1640,10 +1700,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#available-commands" class="md-nav__link">
+  <a href="#direct-entrypoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Available Commands
+        Direct entrypoints
       
     </span>
   </a>
@@ -1651,10 +1711,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#additional-commands" class="md-nav__link">
+  <a href="#compatibility-entrypoints" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Additional Commands
+        Compatibility entrypoints
       
     </span>
   </a>
@@ -1665,7 +1725,7 @@
   <a href="#getting-help" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Getting Help
+        Getting help
       
     </span>
   </a>
@@ -1673,49 +1733,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#command-structure" class="md-nav__link">
+  <a href="#command-model" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Command Structure
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Command Structure">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Examples
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#global-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Global Options
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#shell-completion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shell Completion
+        Command model
       
     </span>
   </a>
@@ -1762,149 +1783,115 @@
 
 
 <h1 id="cli-reference"><abbr title="Command Line Interface">CLI</abbr> Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h1>
-<p>Machineconfig provides several command-line tools for different purposes.</p>
+<p>Machineconfig currently exposes a set of direct <abbr title="Command Line Interface">CLI</abbr> entrypoints. For day-to-day use and scripting, prefer those direct commands over older all-in-one command trees.</p>
 <hr />
-<h2 id="available-commands">Available Commands<a class="headerlink" href="#available-commands" title="Permanent link">&para;</a></h2>
+<h2 id="direct-entrypoints">Direct entrypoints<a class="headerlink" href="#direct-entrypoints" title="Permanent link">&para;</a></h2>
+<p>These commands are defined in <code>pyproject.toml</code> and reflected in the current <abbr title="Command Line Interface">CLI</abbr> map:</p>
 <table>
 <thead>
 <tr>
 <th>Command</th>
-<th>Description</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>devops</code></td>
+<td>Package installation, configuration, data, repo, network, and self-management workflows</td>
+</tr>
+<tr>
+<td><a href="cloud/"><code>cloud</code></a></td>
+<td>Cloud sync, copy, mount, and <abbr title="File Transfer Protocol">FTP</abbr>-over-<abbr title="Secure Shell">SSH</abbr> helpers</td>
+</tr>
+<tr>
+<td><a href="sessions/"><code>sessions</code></a></td>
+<td>Session and layout management</td>
+</tr>
+<tr>
+<td><a href="agents/"><code>agents</code></a></td>
+<td>AI agent utilities</td>
+</tr>
+<tr>
+<td><a href="utils/"><code>utils</code></a></td>
+<td>General-purpose utilities</td>
+</tr>
+<tr>
+<td><a href="fire/"><code>fire</code></a></td>
+<td>Fire job runner</td>
+</tr>
+<tr>
+<td><code>croshell</code></td>
+<td>Cross-shell execution helper</td>
+</tr>
+<tr>
+<td><code>msearch</code></td>
+<td>Search helper entrypoint</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="compatibility-entrypoints">Compatibility entrypoints<a class="headerlink" href="#compatibility-entrypoints" title="Permanent link">&para;</a></h2>
+<p><code>mcfg</code> and <code>machineconfig</code> still exist, but they act as umbrella dispatch commands rather than a full standalone command tree.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><a href="mcfg/"><code>mcfg</code></a></td>
-<td>Main entry point - configuration and setup</td>
+<td>Compatibility wrapper that dispatches to the main app families</td>
 </tr>
 <tr>
-<td><a href="devops/"><code>devops</code></a></td>
-<td>DevOps operations and package management</td>
-</tr>
-<tr>
-<td><a href="cloud/"><code>cloud</code></a></td>
-<td>Cloud provider and data sync operations</td>
-</tr>
-<tr>
-<td><a href="sessions/"><code>sessions</code></a></td>
-<td>Terminal session management</td>
-</tr>
-<tr>
-<td><a href="fire/"><code>fire</code></a></td>
-<td>Fire-based job execution</td>
+<td><code>machineconfig</code></td>
+<td>Same dispatcher as <code>mcfg</code></td>
 </tr>
 </tbody>
 </table>
+<p>Today, <code>mcfg --help</code> and <code>machineconfig --help</code> expose these top-level command groups:</p>
+<ul>
+<li><code>devops</code></li>
+<li><code>cloud</code></li>
+<li><code>sessions</code></li>
+<li><code>agents</code></li>
+<li><code>utils</code></li>
+<li><code>fire</code></li>
+<li><code>croshell</code></li>
+</ul>
+<p><code>msearch</code> is a separate direct entrypoint and is not listed by <code>mcfg --help</code>.</p>
 <hr />
-<h2 id="additional-commands">Additional Commands<a class="headerlink" href="#additional-commands" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>Command</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>agents</code></td>
-<td>AI agent utilities</td>
-</tr>
-<tr>
-<td><code>croshell</code></td>
-<td>Cross-shell utilities</td>
-</tr>
-<tr>
-<td><code>terminal</code></td>
-<td>Terminal configuration</td>
-</tr>
-<tr>
-<td><code>msearch</code></td>
-<td>Search utilities</td>
-</tr>
-<tr>
-<td><code>utils</code></td>
-<td>General utilities</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
-<p>Every command supports <code>--help</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mcfg<span class="w"> </span>--help
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>devops<span class="w"> </span>--help
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>cloud<span class="w"> </span>sync<span class="w"> </span>--help
+<h2 id="getting-help">Getting help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
+<p>Use <code>--help</code> on the direct command you want to explore:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>devops<span class="w"> </span>--help
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>devops<span class="w"> </span>install<span class="w"> </span>--help
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>devops<span class="w"> </span>config<span class="w"> </span>shell<span class="w"> </span>--help
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>devops<span class="w"> </span>config<span class="w"> </span>sync<span class="w"> </span>--help
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>devops<span class="w"> </span>data<span class="w"> </span>sync<span class="w"> </span>--help
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>cloud<span class="w"> </span>--help
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>sessions<span class="w"> </span>--help
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>agents<span class="w"> </span>--help
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>utils<span class="w"> </span>--help
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>msearch<span class="w"> </span>--help
+</span></code></pre></div>
+<p>If you prefer the compatibility wrapper, these routes are equivalent:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mcfg<span class="w"> </span>devops<span class="w"> </span>--help
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>machineconfig<span class="w"> </span>sessions<span class="w"> </span>--help
 </span></code></pre></div>
 <hr />
-<h2 id="command-structure">Command Structure<a class="headerlink" href="#command-structure" title="Permanent link">&para;</a></h2>
-<p>Most commands follow this pattern:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">command</span><span class="w"> </span><span class="o">[</span>subcommand<span class="o">]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span><span class="w"> </span><span class="o">[</span>arguments<span class="o">]</span>
+<h2 id="command-model">Command model<a class="headerlink" href="#command-model" title="Permanent link">&para;</a></h2>
+<p>The current docs follow this model:</p>
+<ol>
+<li>Start from a direct entrypoint such as <code>devops</code> or <code>sessions</code>.</li>
+<li>Drill into nested apps with <code>--help</code>.</li>
+<li>Use <code>mcfg</code> or <code>machineconfig</code> only when you specifically want the umbrella dispatcher.</li>
+</ol>
+<p>For example:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>devops<span class="w"> </span>config<span class="w"> </span>--help
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>devops<span class="w"> </span>data<span class="w"> </span>--help
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sessions<span class="w"> </span>--help
 </span></code></pre></div>
-<h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Main command with subcommand</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>devops<span class="w"> </span>install<span class="w"> </span>ripgrep
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Command with options</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>cloud<span class="w"> </span>sync<span class="w"> </span>--dry-run<span class="w"> </span>~/data<span class="w"> </span>remote:backup
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Command with flags</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>sessions<span class="w"> </span>list<span class="w"> </span>--all
-</span></code></pre></div>
-<hr />
-<h2 id="global-options">Global Options<a class="headerlink" href="#global-options" title="Permanent link">&para;</a></h2>
-<p>These options are available for most commands:</p>
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--help</code></td>
-<td>Show help message</td>
-</tr>
-<tr>
-<td><code>--version</code></td>
-<td>Show version</td>
-</tr>
-<tr>
-<td><code>--verbose</code></td>
-<td>Enable verbose output</td>
-</tr>
-<tr>
-<td><code>--quiet</code></td>
-<td>Suppress output</td>
-</tr>
-<tr>
-<td><code>--dry-run</code></td>
-<td>Preview without making changes</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="shell-completion">Shell Completion<a class="headerlink" href="#shell-completion" title="Permanent link">&para;</a></h2>
-<p>Enable shell completion for better <abbr title="Command Line Interface">CLI</abbr> experience:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="shell-completion-bash" name="__tabbed_1" type="radio" /><input id="shell-completion-zsh" name="__tabbed_1" type="radio" /><input id="shell-completion-fish" name="__tabbed_1" type="radio" /><input id="shell-completion-powershell" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="shell-completion-bash">Bash</label><label for="shell-completion-zsh">Zsh</label><label for="shell-completion-fish">Fish</label><label for="shell-completion-powershell">PowerShell</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>mcfg<span class="w"> </span>--install-completion<span class="w"> </span>bash<span class="k">)</span><span class="s2">&quot;</span>
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>mcfg<span class="w"> </span>--install-completion<span class="w"> </span>zsh<span class="k">)</span><span class="s2">&quot;</span>
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-fish highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>mcfg --install-completion <span class="nb">fish</span> <span class="o">|</span> <span class="nb">source</span>
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-powershell highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">mcfg</span> <span class="p">-</span><span class="n">-install-completion</span> <span class="n">powershell</span> <span class="p">|</span> <span class="nb">Out-String</span> <span class="p">|</span> <span class="nb">Invoke-Expression</span>
-</span></code></pre></div>
-</div>
-</div>
-</div>
 
 
 

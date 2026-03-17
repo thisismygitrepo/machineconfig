@@ -53,6 +53,10 @@
          <lastmod>2026-03-17</lastmod>
     </url>
     <url>
+         <loc>https://thisismygitrepo.github.io/machineconfig/cli/agents/</loc>
+         <lastmod>2026-03-17</lastmod>
+    </url>
+    <url>
          <loc>https://thisismygitrepo.github.io/machineconfig/cli/cloud/</loc>
          <lastmod>2026-03-17</lastmod>
     </url>
@@ -70,6 +74,10 @@
     </url>
     <url>
          <loc>https://thisismygitrepo.github.io/machineconfig/cli/sessions/</loc>
+         <lastmod>2026-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://thisismygitrepo.github.io/machineconfig/cli/utils/</loc>
          <lastmod>2026-03-17</lastmod>
     </url>
     <url>

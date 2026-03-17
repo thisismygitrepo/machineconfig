@@ -847,6 +847,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1002,6 +1006,62 @@
     
   
     sessions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="cli/agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="cli/utils/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    utils
   
 
     
@@ -1642,10 +1702,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#your-cross-platform-stack-manager" class="md-nav__link">
+  <a href="#cross-platform-cli-for-machine-setup-and-maintenance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Your Cross-Platform Stack Manager
+        Cross-platform CLI for machine setup and maintenance
       
     </span>
   </a>
@@ -1653,10 +1713,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-machineconfig" class="md-nav__link">
+  <a href="#what-you-get" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Machineconfig?
+        What you get
       
     </span>
   </a>
@@ -1664,10 +1724,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-install" class="md-nav__link">
+  <a href="#install-and-verify" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Install
+        Install and verify
       
     </span>
   </a>
@@ -1675,21 +1735,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#feature-overview" class="md-nav__link">
+  <a href="#good-first-commands" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Feature Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#one-line-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        One-Line Setup
+        Good first commands
       
     </span>
   </a>
@@ -1745,135 +1794,108 @@
 
 <div align="center">
 <h1 id="machineconfig"><strong>Machineconfig</strong><a class="headerlink" href="#machineconfig" title="Permanent link">&para;</a></h1>
-<h3 id="your-cross-platform-stack-manager">Your Cross-Platform Stack Manager<a class="headerlink" href="#your-cross-platform-stack-manager" title="Permanent link">&para;</a></h3>
+<h3 id="cross-platform-cli-for-machine-setup-and-maintenance">Cross-platform <abbr title="Command Line Interface">CLI</abbr> for machine setup and maintenance<a class="headerlink" href="#cross-platform-cli-for-machine-setup-and-maintenance" title="Permanent link">&para;</a></h3>
 <p><a href="https://pypi.org/project/machineconfig/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/machineconfig.svg" /></a>
 <a href="https://pypi.org/project/machineconfig/"><img alt="Python versions" src="https://img.shields.io/pypi/pyversions/machineconfig.svg" /></a>
 <a href="https://github.com/thisismygitrepo/machineconfig/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/thisismygitrepo/machineconfig.svg" /></a>
 <a href="https://github.com/thisismygitrepo/machineconfig/commits"><img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/thisismygitrepo/machineconfig" /></a></p>
-<hr />
-<p><strong>Machineconfig</strong> is a swiss-army knife <abbr title="Command Line Interface">CLI</abbr> tool — a <em>Package Manager</em>, <em>Configuration Manager</em>, <em>Automation Tool</em>, <em>Dotfiles Manager</em>, <em>Data Solution</em>, and <em>Code Manager</em>, all rolled into one seamless cross-platform experience.</p>
-<p><a class="md-button md-button--primary" href="installation/">Get Started</a>
+<p>Machineconfig installs as both umbrella commands (<code>mcfg</code>, <code>machineconfig</code>) and direct entrypoints for each command family.</p>
+<p><a class="md-button md-button--primary" href="installation/">Install with uv</a>
+<a class="md-button" href="quickstart/">Quickstart</a>
 <a class="md-button" href="https://github.com/thisismygitrepo/machineconfig">View on GitHub</a></p>
 </div>
 <hr />
-<h2 id="why-machineconfig">Why Machineconfig?<a class="headerlink" href="#why-machineconfig" title="Permanent link">&para;</a></h2>
-<p>Setting up a new machine, <abbr title="Virtual Machine">VM</abbr>, or Docker container often involves navigating complex dependency chains:</p>
-<pre class="mermaid"><code>flowchart TD
-    A["Need to setup my dev environment"] --&gt; B["Need tool X (e.g., yadm)"]
-    B --&gt; C["Requires git"]
-    C --&gt; D["Requires package manager (e.g., brew)"]
-    D --&gt; E["Requires curl"]
-    E --&gt; F["Requires network setup / system update"]
-    F --&gt; G["Requires system configuration access"]
-    G --&gt; H["Finally ready to start!"]</code></pre>
-<p><strong>Machineconfig</strong> eliminates this complexity by providing a unified tool that:</p>
-<ul>
-<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 10.96a.985.985 0 0 1-.37-1.37L3.13 7c.11-.2.28-.34.47-.42l7.83-4.4c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.19.1.35.26.44.46l1.45 2.52c.28.48.11 1.09-.36 1.36l-1 .58v4.96c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-5.54c-.3.17-.68.18-1 0m10-6.81v6.7l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-3.22l-5 2.9c-.33.18-.7.17-1 .01v3.69zm-5.15-2.55 6.28-3.63-.58-1.01-6.28 3.63z"/></svg></span> <strong>Manages packages</strong> across all platforms</li>
-<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg></span> <strong>Configures systems</strong> automatically</li>
-<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 0 1-6-6c0-1 .25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12a8 8 0 0 0 8 8v3l4-4-4-4m0-11V1L8 5l4 4V6a6 6 0 0 1 6 6c0 1-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12a8 8 0 0 0-8-8"/></svg></span> <strong>Syncs dotfiles</strong> seamlessly</li>
-<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 17.5c0 .89.18 1.73.5 2.5h-7c-1.5 0-2.81-.5-3.89-1.57C1.54 17.38 1 16.09 1 14.58q0-1.95 1.17-3.48C3.34 9.57 4 9.43 5.25 9.15c.42-1.53 1.25-2.77 2.5-3.72S10.42 4 12 4c1.95 0 3.6.68 4.96 2.04S19 9.05 19 11h.1c-3.4.23-6.1 3.05-6.1 6.5m6-4V12l-2.25 2.25L19 16.5V15a2.5 2.5 0 0 1 2.5 2.5c0 .4-.09.78-.26 1.12l1.09 1.09c.42-.63.67-1.39.67-2.21 0-2.21-1.79-4-4-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5c0-.4.09-.78.26-1.12l-1.09-1.09c-.42.63-.67 1.39-.67 2.21 0 2.21 1.79 4 4 4V23l2.25-2.25L19 18.5z"/></svg></span> <strong>Handles data</strong> backup and sync</li>
-<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5 2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg></span> <strong>Automates</strong> repetitive tasks</li>
-</ul>
-<hr />
-<h2 id="quick-install">Quick Install<a class="headerlink" href="#quick-install" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="quick-install-linux--macos" name="__tabbed_1" type="radio" /><input id="quick-install-windows" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="quick-install-linux--macos">Linux / macOS</label><label for="quick-install-windows">Windows</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh<span class="w">  </span><span class="c1"># Skip if UV installed</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.14<span class="w"> </span>machineconfig
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-powershell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">ByPass</span> <span class="n">-c</span> <span class="s2">&quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">uv</span> <span class="n">tool</span> <span class="n">install</span> <span class="p">-</span><span class="n">-upgrade</span> <span class="p">-</span><span class="n">-python</span> <span class="n">3</span><span class="p">.</span><span class="n">14</span> <span class="n">machineconfig</span>
-</span></code></pre></div>
-</div>
-</div>
-</div>
-<hr />
-<h2 id="feature-overview">Feature Overview<a class="headerlink" href="#feature-overview" title="Permanent link">&para;</a></h2>
+<h2 id="what-you-get">What you get<a class="headerlink" href="#what-you-get" title="Permanent link">&para;</a></h2>
+<p>Machineconfig is organized around direct <abbr title="Command Line Interface">CLI</abbr> families:</p>
 <table>
 <thead>
 <tr>
-<th>Category</th>
-<th>Comparable Tools</th>
-<th>Description</th>
+<th>Command</th>
+<th>What it covers</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Package Manager</strong></td>
-<td><code>winget</code>, <code>apt</code>, <code>brew</code>, <code>nix</code></td>
-<td>Installs and manages software packages</td>
+<td><code>devops</code></td>
+<td>Package installs, repos, config, data, self-management, networking, scripted execution</td>
 </tr>
 <tr>
-<td><strong>Configuration Manager</strong></td>
-<td><code>Ansible</code>, <code>Chef</code>, <code>Puppet</code></td>
-<td>Configures system-level preferences</td>
+<td><code>cloud</code></td>
+<td>Syncing, copying, mounting, and <abbr title="Secure Shell">SSH</abbr> file transfer workflows</td>
 </tr>
 <tr>
-<td><strong>Automation Tool</strong></td>
-<td><code>Airflow</code>, <code>Prefect</code>, <code>Dagster</code></td>
-<td>Automates pipelines and orchestration</td>
+<td><code>sessions</code></td>
+<td>Launching, attaching to, killing, templating, and summarizing session layouts</td>
 </tr>
 <tr>
-<td><strong>Dotfiles Manager</strong></td>
-<td><code>chezmoi</code>, <code>yadm</code>, <code>GNU Stow</code></td>
-<td>Synchronizes personal configs</td>
+<td><code>agents</code></td>
+<td>Generating agent configs, templates, prompts, symlinks, and skills</td>
 </tr>
 <tr>
-<td><strong>Data Solution</strong></td>
-<td><code>rclone</code>, <code>rsync</code></td>
-<td>Handles backups and file sync</td>
+<td><code>utils</code></td>
+<td>Process, environment, project, file, PDF, and database helpers</td>
 </tr>
 <tr>
-<td><strong>Code Manager</strong></td>
-<td><code>Vault</code>, <code>strong-box</code></td>
-<td>Manages secrets and credentials</td>
+<td><code>fire</code>, <code>croshell</code>, <code>msearch</code></td>
+<td>Standalone helper entrypoints</td>
 </tr>
 </tbody>
 </table>
+<p>The umbrella commands dispatch into the current top-level apps. Treat the direct entrypoints as the primary interface; do not expect the old <code>mcfg shell/config/dotfiles/...</code> layout.</p>
 <hr />
-<h2 id="one-line-setup">One-Line Setup<a class="headerlink" href="#one-line-setup" title="Permanent link">&para;</a></h2>
-<p>Get your entire development environment configured with a single command:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="one-line-setup-linux--macos" name="__tabbed_2" type="radio" /><input id="one-line-setup-windows" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="one-line-setup-linux--macos">Linux / macOS</label><label for="one-line-setup-windows">Windows</label></div>
+<h2 id="install-and-verify">Install and verify<a class="headerlink" href="#install-and-verify" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="install-and-verify-linux--macos" name="__tabbed_1" type="radio" /><input id="install-and-verify-windows" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="install-and-verify-linux--macos">Linux / macOS</label><label for="install-and-verify-windows">Windows</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>.<span class="w"> </span>&lt;<span class="o">(</span>curl<span class="w"> </span>-L<span class="w"> </span>bit.ly/cfglinux<span class="o">)</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.13<span class="w"> </span>machineconfig
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>mcfg<span class="w"> </span>--help
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>devops<span class="w"> </span>--help
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-powershell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">irm </span><span class="n">bit</span><span class="p">.</span><span class="n">ly</span><span class="p">/</span><span class="n">cfgwindows</span> <span class="p">|</span> <span class="nb">iex</span>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">powershell</span> <span class="n">-ExecutionPolicy</span> <span class="n">ByPass</span> <span class="n">-c</span> <span class="s2">&quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">uv</span> <span class="n">tool</span> <span class="n">install</span> <span class="p">-</span><span class="n">-upgrade</span> <span class="p">-</span><span class="n">-python</span> <span class="n">3</span><span class="p">.</span><span class="n">13</span> <span class="n">machineconfig</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">mcfg</span> <span class="p">-</span><span class="n">-help</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">devops</span> <span class="p">-</span><span class="n">-help</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
-<p>This interactive installer guides you through setting up your complete stack in minutes.</p>
+<hr />
+<h2 id="good-first-commands">Good first commands<a class="headerlink" href="#good-first-commands" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>mcfg<span class="w"> </span>--help
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>devops<span class="w"> </span>--help
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>devops<span class="w"> </span>config<span class="w"> </span>shell
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>devops<span class="w"> </span>install<span class="w"> </span>--interactive
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>devops<span class="w"> </span>config<span class="w"> </span>sync<span class="w"> </span>--help
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>devops<span class="w"> </span>data<span class="w"> </span>sync<span class="w"> </span>--help
+</span></code></pre></div>
 <hr />
 <div class="grid cards">
 <ul>
 <li>
 <p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27zM5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83s-2.05.78-2.83 0m-5.66 7.07-1.41-1.41zM6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22zM2 22h1.41l4.77-4.76-1.42-1.41L2 20.59zm0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76z"/></svg></span> <strong>Getting Started</strong></p>
 <hr />
-<p>Install machineconfig and set up your first configuration</p>
+<p>Install Machineconfig and verify the active command surface.</p>
 <p><a href="installation/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Installation</a></p>
 </li>
 <li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg></span> <strong>User Guide</strong></p>
+<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 5.5a2 2 0 0 0 2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 0 2 2m-3.6 13.9 1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3A7.3 7.3 0 0 0 22 13v-2c-1.76.03-3.4-.89-4.3-2.4l-1-1.6c-.36-.6-1-1-1.7-1-.3 0-.5.1-.8.1L9 8.3V13h2V9.6l1.8-.7-1.6 8.1-4.9-1-.4 2zM4 9a1 1 0 0 1-1-1 1 1 0 0 1 1-1h3v2zm1-4a1 1 0 0 1-1-1 1 1 0 0 1 1-1h5v2zm-2 8a1 1 0 0 1-1-1 1 1 0 0 1 1-1h4v2z"/></svg></span> <strong>Quickstart</strong></p>
 <hr />
-<p>Learn how to use all of machineconfig's features</p>
-<p><a href="guide/overview/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> User Guide</a></p>
+<p>Follow a short path through help, shell setup, install, and sync commands.</p>
+<p><a href="quickstart/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Quickstart</a></p>
 </li>
 <li>
 <p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 19V7H4v12zm0-16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm-7 14v-2h5v2zm-3.42-4L5.57 9H8.4l3.3 3.3c.39.39.39 1.03 0 1.42L8.42 17H5.59z"/></svg></span> <strong><abbr title="Command Line Interface">CLI</abbr> Reference</strong></p>
 <hr />
-<p>Complete reference for all <abbr title="Command Line Interface">CLI</abbr> commands</p>
+<p>Browse the full command reference.</p>
 <p><a href="cli/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> <abbr title="Command Line Interface">CLI</abbr> Reference</a></p>
 </li>
 <li>
 <p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 7H5a2 2 0 0 0-2 2v8h2v-4h2v4h2V9a2 2 0 0 0-2-2m0 4H5V9h2m7-2h-4v10h2v-4h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2m0 4h-2V9h2m6 0v6h1v2h-4v-2h1V9h-1V7h4v2Z"/></svg></span> <strong><abbr title="Application Programming Interface">API</abbr> Reference</strong></p>
 <hr />
-<p>Detailed <abbr title="Application Programming Interface">API</abbr> documentation for developers</p>
+<p>Explore the Python <abbr title="Application Programming Interface">API</abbr> and internals.</p>
 <p><a href="api/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> <abbr title="Application Programming Interface">API</abbr> Reference</a></p>
 </li>
 </ul>
