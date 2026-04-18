@@ -1,51 +1,120 @@
 # Paths, Files, and Config
 
-The paths-and-files layer is where `machineconfig` behaves most like an "ops utility belt". It combines a path abstraction used heavily in existing integrations with small serialization helpers for JSON, INI, pickle, and encrypted blobs.
+This part of the utility API is the filesystem and configuration layer that current Machineconfig code actually uses. The relevant modules today are:
 
-The most important modules here are `machineconfig.utils.path_extended` and `machineconfig.utils.io`.
+| Module | Role |
+| --- | --- |
+| `machineconfig.utils.path_core` | Core path operations such as copy, move, delete, symlink, download, temp-path creation, and safe naming |
+| `machineconfig.utils.path_helper` | File resolution and interactive path selection helpers |
+| `machineconfig.utils.path_reference` | Resolve package-relative asset paths from imported modules |
+| `machineconfig.utils.ve` | `.ve.yaml` and `.venv` discovery helpers |
+| `machineconfig.utils.io` | JSON / INI / pickle IO plus GPG-backed file encryption helpers |
+
+Older wording around `PathExtended` has been removed here because the current repo centers these modules instead.
 
 ---
 
-## PathExtended at a glance
+## `path_core`
 
-`PathExtended` is a `pathlib.Path` subclass with many convenience methods for path mutation and file operations. It remains common in existing `machineconfig` consumers, especially where scripts need terse, chainable filesystem operations.
+`machineconfig.utils.path_core` is the current low-level path toolbox.
 
-### Common operations
+Key functions:
 
-| Method | What it does |
+| Function | Current behavior |
 | --- | --- |
-| `delete(sure, verbose)` | Deletes a file or directory after an explicit confirmation flag |
-| `move(...)` | Moves a file or directory, with overwrite and content-only options |
-| `copy(...)` | Copies files or directories and can return either the destination or the original object |
-| `download(...)` | Downloads a URL-like path to a destination folder |
-| `append(...)` | Produces a new filename by appending a suffix or generated token |
-| `with_name(..., inplace=...)` | Renames or retitles a path with optional in-place mutation |
+| `resolve()` | Resolve a path with optional non-strict fallback |
+| `validate_name()` | Sanitize arbitrary strings for filenames |
+| `timestamp()` | Create filename-safe timestamp strings |
+| `collapseuser()` | Rewrite a home-prefixed absolute path back to `~` |
+| `delete_path()` | Delete a file, symlink, or directory tree |
+| `with_name()` | Compute or perform a rename |
+| `move()` | Move a file or directory, optionally by `folder`, `name`, or explicit `path` |
+| `copy()` | Copy files or directories, with overwrite and `content=True` support |
+| `symlink_to()` | Create a symlink, with Windows elevation handling when needed |
+| `download()` | Download a URL to a local file, inferring the output filename when possible |
+| `tmp()`, `tmpdir()`, `tmpfile()` | Create temp paths under `~/tmp_results` |
 
-### Supporting helpers
+Two behaviors worth knowing:
 
-| Helper | Purpose |
-| --- | --- |
-| `validate_name()` | Sanitizes arbitrary strings for filenames |
-| `timestamp()` | Produces timestamp strings that are safe for filenames |
-
-!!! note
-    `PathExtended` is still worth knowing if you work in the existing codebase or in downstream repos. For brand-new code you can mix it with regular `pathlib.Path` when that keeps things simpler.
+- `copy(..., content=True)` and `move(..., content=True)` act on the children of a directory instead of the directory root itself
+- `download()` tries `Content-Disposition`, then the final URL, then the original URL before falling back to a sanitized filename
 
 ---
 
-## Serialization helpers
+## `path_helper`
 
-`machineconfig.utils.io` handles the formats that show up repeatedly in `machineconfig` workflows:
+`machineconfig.utils.path_helper` is the higher-level file chooser used by commands like `fire` and `croshell`.
 
-| Function | Purpose |
+Current responsibilities:
+
+- `sanitize_path()` remaps pasted home-directory paths across Linux, macOS, and Windows conventions when needed
+- `find_scripts()` and `match_file_name()` search for matching files under a root
+- `search_for_files_of_interest()` recursively collects candidate files with suffix filtering
+- `get_choice_file()` combines all of that into one path-resolution flow
+
+`get_choice_file()` currently:
+
+- accepts explicit absolute paths directly
+- optionally treats relative paths as relative to a provided search root
+- defaults suffix filtering by OS when you do not provide one
+- recursively searches directories and prompts the user when multiple candidates exist
+
+---
+
+## `path_reference`
+
+`machineconfig.utils.path_reference` is the small bridge between Python modules and package data files.
+
+Use it when a helper module stores shell scripts or other assets next to its Python file:
+
+- `get_path_reference_path(module, path_reference)` returns the absolute path
+- `get_path_reference_library_relative_path(module, path_reference)` returns the path relative to `LIBRARY_ROOT`
+
+This is the mechanism used by the current `seek` text-search helpers to load platform-specific shell scripts.
+
+---
+
+## `ve`
+
+`machineconfig.utils.ve` handles the lightweight project metadata that Machineconfig uses to discover environments and cloud defaults.
+
+Key pieces:
+
+- `read_default_cloud_config()` returns the built-in cloud defaults
+- `get_ve_path_and_ipython_profile()` walks upward from a path looking for `.ve.yaml`, then falls back to `.venv`
+- `get_ve_activate_line()` builds the platform-specific activation command
+
+Current `.ve.yaml` lookup behavior:
+
+- reads `specs.ve_path` when present
+- reads `specs.ipy_profile` when present
+- falls back to a sibling `.venv`
+- stops early once both values are found
+
+---
+
+## `io`
+
+`machineconfig.utils.io` covers the serialization and encryption helpers used by the current codebase.
+
+Main helpers:
+
+| Function or class | Purpose |
 | --- | --- |
-| `save_json()` / `read_json()` | Persist and read structured JSON data |
-| `save_ini()` / `read_ini()` | Work with INI-style configuration files |
-| `save_pickle()` / `from_pickle()` | Store and restore Python objects |
-| `remove_c_style_comments()` | Strip `//` and `/* */` comments before parsing |
-| `encrypt()` / `decrypt()` | Encrypt and decrypt bytes with a key or password |
+| `save_json()` / `read_json()` | Persist and read JSON |
+| `save_ini()` / `read_ini()` | Persist and read INI files |
+| `save_pickle()` / `from_pickle()` | Persist and restore Python objects |
+| `remove_c_style_comments()` | Strip `//` and `/* ... */` comments while preserving URLs |
+| `encrypt_file_symmetric()` / `decrypt_file_symmetric()` | GPG symmetric encryption using loopback passphrase mode |
+| `encrypt_file_asymmetric()` / `decrypt_file_asymmetric()` | GPG public-key encryption and decryption |
+| `GpgCommandError` | Rich error wrapper for failed GPG subprocess calls |
 
-These functions are used for config files, remote-job metadata, installer data, cached artifacts, and lightweight credentials handling.
+Current GPG behavior:
+
+- `build_gpg_environment()` populates `GPG_TTY` when possible
+- symmetric helpers stream the password through stdin with `--pinentry-mode loopback`
+- asymmetric helpers use `--default-recipient-self`
+- `GpgCommandError` includes the command, exit code, stdout, stderr, and a tailored hint when it can infer one
 
 ---
 
@@ -54,42 +123,59 @@ These functions are used for config files, remote-job metadata, installer data, 
 ```python
 from pathlib import Path
 
-from machineconfig.utils.accessories import get_repo_root
-from machineconfig.utils.io import read_ini, read_json, save_ini, save_json
+from machineconfig.utils.io import read_ini, save_json
+from machineconfig.utils.path_core import tmpfile, validate_name
+from machineconfig.utils.path_helper import get_choice_file
+from machineconfig.utils.ve import get_ve_path_and_ipython_profile
 
-config_path = save_json(
-    {"workers": 8, "queue": "jobs"},
-    Path("tmp/config.json"),
-    indent=2,
-)
-config = read_json(config_path)
+target_path = tmpfile(name=validate_name("example config"), suffix=".json")
+save_json({"workers": 8, "queue": "jobs"}, target_path, indent=2)
 
-ini_path = save_ini(
-    "tmp/redis.ini",
-    {"default": {"host": "localhost", "port": 6379}},
-)
-redis_ini = read_ini(Path(ini_path))
+choice = get_choice_file(path=str(target_path), suffixes={".json"}, search_root=None)
+ve_path, ipy_profile = get_ve_path_and_ipython_profile(Path(choice))
 
-print(config)
-print(redis_ini["default"]["host"])
-print(get_repo_root(Path.cwd()))
+print(choice)
+print(ve_path, ipy_profile)
+print(read_ini(Path("settings.ini")) if Path("settings.ini").exists() else "no ini file")
 ```
 
 ---
 
-## How to think about this layer
+## API reference
 
-If `ve.py` helps a tool discover *where* to run, the path and IO helpers help it decide *what files* to read, write, copy, rename, encrypt, or ship around. That is why this layer appears in:
+## Path Core
 
-- wallet and credential readers
-- source-of-truth config loaders
-- remote job metadata files
-- lightweight cache serialization
-- script-generation flows that create temporary artifacts
+::: machineconfig.utils.path_core
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
 
----
+## Path Helper
 
-## IO API reference
+::: machineconfig.utils.path_helper
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Path Reference
+
+::: machineconfig.utils.path_reference
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Virtual Environment Helpers
+
+::: machineconfig.utils.ve
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## IO
 
 ::: machineconfig.utils.io
     options:

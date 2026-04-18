@@ -1,8 +1,8 @@
 # Remote Execution and Networking
 
-The remote-execution layer packages a Python function or script, generates the shell and Python artifacts required to run it elsewhere, transfers those artifacts, fires the job on a target machine, and provides helpers for checking status and downloading results.
+The remote layer packages a callable or script into job artifacts, writes the shell and Python wrappers needed to execute it elsewhere, transfers those artifacts, launches the job, and syncs status and results back to the local machine.
 
-It also includes lower-level SSH and networking utilities that show up in remote or multi-machine workflows.
+It also includes lower-level SSH and networking helpers that are reused outside the job runner.
 
 ---
 
@@ -13,12 +13,13 @@ graph LR
     A[RemoteMachineConfig] --> B[RemoteMachine]
     B --> C[JobParams]
     B --> D[FileManager]
-    B --> E[generate_scripts()]
-    E --> F[submit()]
-    F --> G[SSH / transfer]
-    G --> H[fire()]
-    H --> I[check_job_status()]
-    I --> J[download_results()]
+    B --> E[render_execution_script]
+    B --> F[transfer_sftp / transfer_cloud]
+    F --> G[fire()]
+    G --> H[check_job_status()]
+    H --> I[download_results()]
+
+    J[distribute.Cluster] --> B
 ```
 
 ---
@@ -27,47 +28,73 @@ graph LR
 
 | Module | Responsibility |
 | --- | --- |
-| `machineconfig.cluster.remote.models` | Dataclasses and typed aliases for job status, workload splits, transfer mode, and remote-machine config |
-| `machineconfig.cluster.remote.job_params` | Normalizes a callable or script path into importable execution metadata |
-| `machineconfig.cluster.remote.file_manager` | Defines the on-disk job layout, lock files, logs, and helper paths |
-| `machineconfig.cluster.remote.remote_machine` | High-level orchestration object for generating, submitting, firing, and collecting jobs |
-| `machineconfig.utils.ssh` | SSH transport, remote command execution, SFTP, and remote machine inspection |
-| `machineconfig.scripts.python.helpers.helpers_network.address` | Public IP lookup, local IPv4 enumeration, best-LAN-address selection |
-| `machineconfig.scripts.python.helpers.helpers_network.address_switch` | Public IP rotation flow built around `warp-cli` |
+| `machineconfig.cluster.remote.models` | Dataclasses and aliases such as `RemoteMachineConfig`, `WorkloadParams`, `JobStatus`, and `ExecutionTimings` |
+| `machineconfig.cluster.remote.job_params` | Converts a callable or script path into import and execution metadata |
+| `machineconfig.cluster.remote.file_manager` | Defines the job-root layout, status files, and resource-lock bookkeeping |
+| `machineconfig.cluster.remote.remote_machine` | High-level orchestration for generating, submitting, firing, checking, and downloading jobs |
+| `machineconfig.cluster.remote.data_transfer` | SFTP and cloud-transfer helpers used by `RemoteMachine.submit()` |
+| `machineconfig.cluster.remote.execution_script` | Template renderer for the generated Python wrapper |
+| `machineconfig.cluster.remote.distribute` | Multi-host distribution utilities built around `RemoteMachine` |
+| `machineconfig.utils.ssh` | SSH transport, remote Python execution, remote shell execution, and file copy helpers |
+| `machineconfig.scripts.python.helpers.helpers_network.address` | Public-IP lookup and local IPv4 selection |
+| `machineconfig.scripts.python.helpers.helpers_network.address_switch` | Public-IP rotation flow based on `warp-cli` |
 
 ---
 
 ## `RemoteMachineConfig`
 
-`RemoteMachineConfig` is the central description of how a job should run.
+`RemoteMachineConfig` is the typed job description consumed by `RemoteMachine`.
 
 ### Important fields
 
 | Field | Purpose |
 | --- | --- |
-| `job_id` | Stable identifier for the job folder and log files |
+| `job_id` | Stable identifier used in job directories and status files |
 | `base_dir` | Root directory for generated job artifacts |
-| `ssh_host` | SSH config alias or hostname for the target machine |
+| `description` | Free-form description copied into job metadata |
+| `ssh_host` | SSH config alias or `user@host[:port]` target |
+| `copy_repo`, `update_repo`, `install_repo` | Repo setup policy before the generated Python wrapper runs |
+| `data` | Extra files or directories to transfer alongside the job |
 | `transfer_method` | `sftp` or `cloud` |
 | `cloud_name` | Required when `transfer_method="cloud"` |
-| `copy_repo`, `update_repo`, `install_repo` | Control repo setup on the target |
-| `notify_upon_completion`, `to_email`, `email_config_name` | Completion-notification settings |
-| `parallelize` and `workload_params` | Split callable execution into multiple worker chunks |
-| `lock_resources`, `max_simultaneous_jobs` | Concurrency control for the target machine |
+| `notify_upon_completion`, `to_email`, `email_config_name` | Email notification controls |
+| `launch_method` | `remotely` or `cloud_manager` |
+| `interactive` | Runs the generated Python wrapper with `python -i` instead of `python` |
+| `wrap_in_try_except` | Wraps the generated execution line in a try/except block |
+| `parallelize`, `workload_params` | Split a callable into `ProcessPoolExecutor` work units |
+| `lock_resources`, `max_simultaneous_jobs` | File-manager locking policy for the target machine |
 
-`WorkloadParams` complements this by describing how a large workload should be sliced into job ranges.
+Important current validation rules:
+
+- `cloud_name` must be set for cloud transfers
+- enabling notifications auto-fills `to_email` and `email_config_name` from defaults when they were not passed explicitly
+
+---
+
+## `JobParams`
+
+`JobParams` is the normalized execution payload used by the generated Python wrapper.
+
+### Source forms
+
+- `JobParams.from_script(path)` for script files
+- `JobParams.from_callable(func)` for importable functions and bound methods
+
+Current constraints:
+
+- callables defined in `__main__` are rejected
+- `<run_path>` callables are rewritten from their `__file__`
+- `get_execution_line()` emits different code for plain calls, workload-aware calls, and `parallelize=True` splits
 
 ---
 
 ## `RemoteMachine`
 
-`RemoteMachine` accepts either:
+`RemoteMachine` accepts one of three inputs:
 
 - a script path
-- an importable callable
+- a function
 - a bound method
-
-and turns that into a runnable remote job.
 
 ### Typical usage
 
@@ -97,23 +124,26 @@ job.run(run=True, show_scripts=False)
 
 | Method | Purpose |
 | --- | --- |
-| `generate_scripts()` | Write the job's shell script, Python wrapper, kwargs JSON, and metadata JSON |
-| `show_scripts()` | Display the generated shell and Python source |
-| `submit()` | Transfer artifacts to the target using the configured transfer method |
-| `fire(run)` | Launch the generated command locally or remotely |
-| `run(run, show_scripts)` | End-to-end wrapper over generate -> submit -> fire |
-| `check_job_status()` | Sync logs back, inspect status markers, and discover the results folder |
-| `download_results(target)` | Retrieve results once the job is complete |
-| `delete_remote_results()` | Remove remote output after collection |
+| `generate_scripts()` | Writes `job_params.json`, the generated Python wrapper, the shell launcher, kwargs JSON, and config JSON |
+| `show_scripts()` | Prints the generated shell and Python sources with Rich |
+| `submit()` | Transfers the job root with SFTP or prepends cloud-download commands to the shell launcher |
+| `fire(run)` | Launches the generated shell script locally or through SSH |
+| `run(run, show_scripts)` | Calls generate -> optional show -> submit -> fire |
+| `check_job_status()` | Syncs remote logs when needed and resolves the results directory once the job finishes |
+| `download_results(target)` | Downloads the resolved results path |
+| `delete_remote_results()` | Deletes the remote results directory |
+| `submit_to_cloud()` | Expands one cloud-managed job into multiple `RemoteMachine` instances with split workloads |
 
-!!! note
-    If you pass a callable, it must come from an importable module. The current `JobParams.from_callable()` rejects functions defined as `__main__`.
+Current behavior worth knowing:
+
+- the `run` flag accepted by `fire()` and `run()` is currently not used to suppress launch; those methods still fire the job
+- direct `RemoteMachine(...)` construction initializes `FileManager` with `remote_machine_type="Linux"`, so the default generated launcher is the Unix shell variant
 
 ---
 
-## File layout and locking
+## Generated file layout
 
-`FileManager` gives the remote-job system a stable directory shape. A generated job typically looks like this:
+`FileManager` gives each job a stable directory shape under `{base_dir}/queued/{job_id}/`:
 
 ```text
 {base_dir}/queued/{job_id}/
@@ -129,66 +159,88 @@ job.run(run=True, show_scripts=False)
 │   └── cluster_script.sh
 └── logs/
     ├── status.txt
+    ├── pid.txt
     ├── start_time.txt
     ├── end_time.txt
+    ├── error_message.txt
     └── results_folder_path.txt
 ```
 
-It also manages:
+`FileManager` also owns the queue, running, and history JSON files under `~/tmp_results/remote_machines/file_manager/`.
 
-- queue and running-job tracking JSON files
-- resource locking for machines with limited concurrency
-- history files for completed jobs
+---
+
+## Resource locking and status
+
+When `lock_resources=True`, `FileManager.secure_resources()` uses shared JSON files to enforce `max_simultaneous_jobs`.
+
+The current behavior is:
+
+- waiting jobs are added to `queued_jobs.json`
+- active jobs are tracked in `running_jobs.json`
+- completed jobs append timing data to `history_jobs.json`
+- blocked jobs sleep in 10-minute intervals while waiting for a slot
+
+`get_job_status()` reads `logs/status.txt`, verifies the recorded PID with `psutil`, and marks a supposedly running job as failed if its process is gone or no longer matches the job id.
+
+---
+
+## Cluster distribution
+
+`machineconfig.cluster.remote.distribute.Cluster` is the multi-host wrapper around `RemoteMachine`.
+
+It:
+
+- opens SSH connections to all requested hosts
+- samples remote CPU and RAM
+- computes workload splits with `MachineLoadCalculator`
+- creates one `RemoteMachine` per host
+- submits and fires those remote jobs
+
+This is the path to use when the same callable should be partitioned across several machines instead of sent to just one host.
 
 ---
 
 ## SSH helper
 
-`machineconfig.utils.ssh.SSH` is the lower-level transport used by remote jobs and other operational flows.
+`machineconfig.utils.ssh.SSH` is the lower-level transport used by the remote layer.
 
-It can:
+`SSH.from_config_file(host)` first tries `~/.ssh/config`; if no matching entry exists, it falls back to parsing `user@host[:port]` syntax. The class opens:
 
-- resolve hosts through `~/.ssh/config`
-- open an SSH connection with Paramiko
-- open an SFTP channel when available
-- run remote commands
-- display local and remote machine specs side-by-side
+- a Paramiko SSH client
+- an SFTP channel when possible
+- a cached view of local and remote machine specs
 
-A common entrypoint is:
+Representative operations include:
 
-```python
-from machineconfig.utils.ssh import SSH
-
-ssh = SSH.from_config_file(host="gpu-box")
-```
+- `run_shell_cmd_on_remote(...)`
+- `run_py_remotely(...)`
+- `copy_from_here(...)`
+- `copy_to_here(...)`
+- `send_ssh_key()`
+- `restart_computer()`
 
 ---
 
-## Networking helper entrypoints
-
-Some remote workflows need address discovery rather than full job submission.
+## Networking helpers
 
 ### `helpers_network.address`
 
-Useful functions include:
-
-- `get_public_ip_address()`
-- `get_all_ipv4_addresses()`
-- `select_lan_ipv4(prefer_vpn)`
+- `get_public_ip_address()` installs `ipinfo` if needed, then shells out to `ipinfo myip --json`
+- `get_all_ipv4_addresses()` returns `(interface, ip)` tuples for every local IPv4 address
+- `select_lan_ipv4(prefer_vpn)` scores active interfaces and prefers physical RFC1918 LAN addresses
 
 ### `helpers_network.address_switch`
 
-`switch_public_ip_address(max_trials, wait_seconds, target_ip_addresses)` automates a public-IP rotation flow using `warp-cli` and repeated `ipinfo` checks.
-
-These modules live under `scripts/python/helpers` because they are also exposed through CLI flows, but they are still useful as library entrypoints.
+`switch_public_ip_address(max_trials, wait_seconds, target_ip_addresses)` installs `warp-cli` if needed, deletes the current WARP registration, registers a new one, reconnects, and repeatedly checks the public IP until it changes or matches a requested target list.
 
 ---
 
 ## See also
 
-- [Sessions](sessions.md) for the backend managers that actually host launched jobs
-- [Layouts](layouts.md) for the typed tab and layout schema used by session-oriented flows
-- [CLI Terminal Reference](../../cli/terminal.md) for the user-facing command layer
+- [Sessions](sessions.md) for the backends that host launched work
+- [Layouts](layouts.md) for the tab and layout schema used by terminal-oriented flows
+- [CLI Terminal Reference](../../cli/terminal.md) for the end-user command layer
 
 ---
 
@@ -221,6 +273,14 @@ These modules live under `scripts/python/helpers` because they are also exposed 
 ## Remote machine
 
 ::: machineconfig.cluster.remote.remote_machine
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Cluster distributor
+
+::: machineconfig.cluster.remote.distribute
     options:
       show_root_heading: true
       show_source: false

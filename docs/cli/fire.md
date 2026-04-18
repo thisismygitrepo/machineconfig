@@ -1,444 +1,151 @@
 # fire
 
-Python Fire-based job execution system for running scripts and functions directly from the command line.
+`fire` resolves a file, directory, or partial script name, then builds an execution command around Python Fire, plain Python, IPython, Streamlit, Jupyter, Marimo, shell sourcing, or direct executable launch.
 
 ---
 
 ## Usage
 
 ```bash
-fire [PATH] [FUNCTION] [OPTIONS] [ARGS]...
+fire [OPTIONS] [PATH] [FUNCTION]
 ```
 
----
-
-## Overview
-
-The `fire` command provides a flexible interface for executing Python scripts and functions directly from the command line. Built on top of [Python Fire](https://github.com/google/python-fire), it extends the standard functionality with:
-
-- **Multiple execution modes**: Interactive (IPython), debug (pudb/ipdb), module, and script modes
-- **Notebook integration**: Convert and run scripts in Jupyter, Marimo, or Streamlit
-- **Remote execution**: Run on remote machines or submit to cloud compute
-- **Development tools**: File watching, git integration, and virtual environment support
-- **Terminal multiplexing**: Run in background Zellij tabs
-
----
-
-## Quick Start
-
-```bash
-# Run main module
-fire script.py
-
-# Run specific function
-fire script.py my_function
-
-# Run with arguments
-fire script.py process --input data.csv --output result.json
-
-# Choose function interactively (with fuzzy search)
-fire script.py -c
-```
-
----
-
-## Command Reference
-
-### Arguments
+## Arguments
 
 | Argument | Description |
-|----------|-------------|
-| `PATH` | Path to Python file, shell script, or executable (default: `.`) |
-| `FUNCTION` | Function name to execute (optional) |
-
-### Execution Modes
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--script` | `-s` | Launch as a plain Python script (without Fire) |
-| `--module` | `-m` | Launch as a Python module (`python -m`) |
-| `--interactive` | `-i` | Run interactively using IPython with your profile |
-| `--debug` | `-d` | Enable debug mode (pudb on Linux/Mac, ipdb on Windows) |
-| `--optimized` | `-O` | Run with Python optimizations (`python -OO`) |
-| `--choose-function` | `-c` | Interactively choose a function using fuzzy finder |
-
-### Virtual Environment
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--ve` | `-v` | Specify virtual environment name to use |
-
-### Notebook & Web Apps
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--jupyter` | `-j` | Open script in Jupyter Lab |
-| `--marimo` | `-M` | Convert and open in Marimo notebook |
-| `--streamlit` | `-S` | Run as Streamlit web app with QR code display |
-| `--environment` | `-E` | Server binding: `ip`, `localhost`, `hostname`, or custom URL |
-
-### Remote & Background Execution
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--remote` | `-R` | Launch on a remote machine |
-| `--submit-to-cloud` | `-C` | Submit job to cloud compute |
-| `--zellij-tab` | `-z` | Run in a new Zellij tab with given name |
-| `--cmd` | `-B` | Create a cmd fire command for async launch (Windows) |
-
-### Development Tools
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--watch` | `-w` | Watch file for changes and auto-restart (uses watchexec) |
-| `--loop` | `-l` | Infinite loop - restart after completion or interruption |
-| `--git-pull` | `-g` | Pull git repository before running |
-
-### Path Management
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--root-repo` | `-r` | Resolve relative paths and recursive search from the git repository root |
-| `--holdDirectory` | `-D` | Stay in current directory (don't cd to script location) |
-| `--PathExport` | `-P` | Add repository root to `PYTHONPATH` |
+| --- | --- |
+| `PATH` | Path to the file to run, or a directory / partial name that can be resolved interactively |
+| `FUNCTION` | Optional Python function name |
 
 ---
 
-## Supported File Types
+## Current execution flags
 
-| Extension | Behavior |
-|-----------|----------|
-| `.py` | Python scripts - can run as Fire, module, or script |
-| `.sh` | Shell scripts - source directly |
-| `.ps1` | PowerShell scripts - source directly |
-| (none) | Executables - run directly |
+| Area | Flags |
+| --- | --- |
+| General execution | `--script`, `--module`, `--interactive`, `--debug`, `--optimized`, `--frozen` |
+| Function selection | `--choose-function` |
+| Notebook and app launch | `--jupyter`, `--marimo`, `--streamlit`, `--environment` |
+| Shell and background helpers | `--zellij-tab`, `--cmd`, `--loop`, `--watch`, `--git-pull` |
+| Path and repo handling | `--root-repo`, `--holdDirectory`, `--PathExport` |
+| Remote or cloud launch | `--remote`, `--submit-to-cloud` |
+| Exposed but currently inert in routing | `--ve` |
 
 ---
 
-## Examples
+## Passing function arguments
 
-### Basic Execution
+The current Typer wrapper keeps extra Fire arguments in the pass-through segment after `--`.
+
+Use this form:
 
 ```bash
-# Run the main module (equivalent to `python -m fire script.py`)
-fire script.py
-
-# Run a specific function
-fire my_jobs.py cleanup
-
-# Run function with keyword arguments
-fire my_jobs.py cleanup --days 30 --dry-run
-
-# Run function with positional arguments
-fire my_jobs.py process data.csv result.json
+fire jobs.py run -- --limit=2 --dry-run
 ```
 
-### Interactive Function Selection
-
-When you have a file with multiple functions, use `-c` to get an interactive fuzzy finder:
+Not this:
 
 ```bash
-fire utils.py -c
+fire jobs.py run --limit=2
 ```
 
-This parses the file, extracts all functions with their docstrings and arguments, and presents them for selection. If the selected function has parameters without defaults, you'll be prompted to enter values.
+That extra `--` matters because the wrapper parses its own options first, then forwards the remaining raw arguments into the generated Python Fire command.
 
-### Debug Mode
+---
+
+## Current path resolution
+
+`fire` does not require an exact filename up front.
+
+- if `PATH` is a file, it uses it directly
+- if `PATH` is a directory, it recursively scans for candidate scripts and asks you to choose
+- if `PATH` does not exist, it searches for a matching filename or partial path
+- `--root-repo` changes that search root to the git repository root of the current working directory
+
+Supported target types in the current route:
+
+| Target | Behavior |
+| --- | --- |
+| `.py` | Build a Python, IPython, Streamlit, Jupyter, or Marimo command |
+| `.sh` / `.ps1` | Source the script |
+| no suffix | Execute directly |
+
+---
+
+## Function selection
+
+`--choose-function` behaves differently by file type:
+
+- for Python files, it parses top-level functions and offers a `RUN AS MAIN` option
+- for shell files, it offers non-comment, non-empty, non-`echo` lines and writes the selected lines into a temporary script
+
+For Python files, when you choose a function and did not already pass kwargs, the helper prompts for argument values based on the parsed signature.
+
+Examples:
 
 ```bash
-# Debug with pudb (Linux/Mac) or ipdb (Windows)
-fire buggy_script.py -d
-
-# Debug a specific function interactively
-fire utils.py -c -d
+fire tools.py -c
+fire tools.py cleanup -- --days=30
 ```
 
-When combining `-c` (choose function) with `-d` (debug), fire creates a temporary script that imports your module and calls the selected function, then launches the debugger on that script.
+---
 
-### IPython Interactive Mode
+## Notebook and app modes
 
-```bash
-# Launch in IPython with your profile
-fire utils.py -i
+`--marimo`:
 
-# Useful for exploring modules interactively
-fire data_utils.py -i
-```
+- checks whether the selected file is already a valid marimo notebook
+- if not, converts it into a temporary notebook under `~/tmp_results/tmp_scripts/marimo/...`
+- launches `marimo edit --host 0.0.0.0`
 
-This uses your IPython profile from the virtual environment if available.
+`--streamlit`:
 
-### Notebook Integration
+- reads `.streamlit/config.toml` beside the file, or from the parent app directory when the file lives under `pages/`
+- uses the configured port when present, otherwise `8501`
+- prints QR codes and LAN / hostname / localhost URLs
+- launches `streamlit run --server.address 0.0.0.0 --server.headless true`
 
-#### Marimo
+`--jupyter` launches JupyterLab against the selected file or generated notebook context.
 
-```bash
-# Convert Python script to Marimo notebook and open
-fire analysis.py -M
-```
-
-The script is converted to a Marimo notebook in a temporary directory and opened with `marimo edit`.
-
-#### Jupyter
+Examples:
 
 ```bash
-# Open in Jupyter Lab
+fire dashboard.py -S -E localhost
+fire notebook.py -M
 fire analysis.py -j
 ```
 
-#### Streamlit
+---
+
+## Interactive and development helpers
+
+- `--interactive` launches IPython and currently discovers the IPython profile from the nearest `.ve.yaml`; it falls back to `default`.
+- `--watch` prefixes the final command with `watchexec --restart --exts py,sh,ps1`.
+- `--git-pull` runs `git -C <script-dir> pull` first.
+- `--PathExport` prepends a shell snippet that appends the repo root to `PYTHONPATH`.
+- `--zellij-tab` writes the command into a temp script and opens it in a new Zellij tab.
+- `--loop` reruns after completion or interruption.
+
+Examples:
 
 ```bash
-# Run as Streamlit app
-fire dashboard.py -S
-
-# Specify server binding
-fire dashboard.py -S -E localhost
-fire dashboard.py -S -E ip        # Use LAN IP
-fire dashboard.py -S -E hostname  # Use machine hostname
-fire dashboard.py -S -E myserver.example.com
-```
-
-Streamlit mode automatically:
-
-- Detects `.streamlit/config.toml` configuration
-- Displays QR codes for easy mobile access
-- Shows URLs for LAN IP, hostname, and localhost
-
-### Background & Parallel Execution
-
-#### Zellij Tab
-
-```bash
-# Run in a new Zellij tab named "DataSync"
-fire sync_job.py -z "DataSync"
-
-# Long-running process in background
-fire monitor.py check -z "Monitor" -l
-```
-
-#### Loop Mode
-
-```bash
-# Restart script after completion (useful for daemons)
-fire watcher.py -l
-
-# Combined with watch for development
-fire server.py run -l
-```
-
-### Development Workflow
-
-```bash
-# Watch for changes and auto-restart
-fire server.py run -w
-
-# Pull latest code before running
-fire deploy.py release -g
-
-# Export repo root to PYTHONPATH for imports
-fire nested/deep/script.py -P
-
-# Resolve from the repository root even when launched from a subdirectory
-fire scripts/task.py -r
-```
-
-### Module Mode
-
-```bash
-# Run as Python module (useful for packages)
-fire src/mypackage/cli.py -m
-
-# This translates to: python -m mypackage.cli
-```
-
-### Virtual Environments
-
-```bash
-# Use a specific virtual environment
-fire analysis.py process -v myenv
-
-# All execution happens via `uv run --project`
-```
-
-### Cloud Submission
-
-```bash
-# Submit to cloud compute
-fire heavy_compute.py train -C
-
-# This uses machineconfig's cloud job submission system
+fire src/app.py serve -- --host=0.0.0.0 --port=8000
+fire src/app.py -i
+fire src/app.py -w -g
+fire nested/tool.py -r -P
 ```
 
 ---
 
-## Writing Fire-Compatible Scripts
+## Notes
 
-### Basic Function
-
-```python
-# jobs.py
-
-def greet(name: str, greeting: str = "Hello"):
-    """Greet someone.
-    
-    Args:
-        name: Person's name
-        greeting: Greeting phrase
-    """
-    print(f"{greeting}, {name}!")
-```
-
-```bash
-fire jobs.py greet --name Alice
-# Output: Hello, Alice!
-
-fire jobs.py greet --name Bob --greeting "Welcome"
-# Output: Welcome, Bob!
-```
-
-### Multiple Functions
-
-```python
-# data_jobs.py
-
-def download(url: str, output: str = "data.csv"):
-    """Download data from URL."""
-    import httpx
-    response = httpx.get(url)
-    Path(output).write_bytes(response.content)
-    print(f"Downloaded to {output}")
-
-def process(input_file: str, output_file: str, format: str = "csv"):
-    """Process data file.
-    
-    Args:
-        input_file: Path to input file
-        output_file: Path to output file
-        format: Output format (csv, json, parquet)
-    """
-    import polars as pl
-    df = pl.read_csv(input_file)
-    # ... processing ...
-    getattr(df, f"write_{format}")(output_file)
-
-def cleanup(days: int = 7, dry_run: bool = False):
-    """Clean up old files.
-    
-    Args:
-        days: Delete files older than this many days
-        dry_run: Preview without deleting
-    """
-    from pathlib import Path
-    import time
-    
-    cutoff = time.time() - (days * 86400)
-    for f in Path("/tmp").iterdir():
-        if f.stat().st_mtime < cutoff:
-            if dry_run:
-                print(f"Would delete: {f}")
-            else:
-                f.unlink()
-```
-
-```bash
-# Run specific functions
-fire data_jobs.py download --url "https://example.com/data.csv"
-fire data_jobs.py process data.csv output.json --format json
-fire data_jobs.py cleanup --days 14 --dry-run
-
-# Choose interactively
-fire data_jobs.py -c
-```
-
-### Script with Main Block
-
-```python
-# analysis.py
-"""Data analysis script for quarterly reports."""
-
-import polars as pl
-
-def load_data():
-    return pl.read_csv("data.csv")
-
-def analyze():
-    df = load_data()
-    print(df.describe())
-
-if __name__ == "__main__":
-    analyze()
-```
-
-```bash
-# Run as main (executes __main__ block)
-fire analysis.py
-
-# Or select specific function
-fire analysis.py analyze
-fire analysis.py -c  # Shows "RUN AS MAIN" option plus all functions
-```
+- `--ve` is still exposed in the CLI help, but the current route implementation does not use it when building the command. Environment discovery currently comes from repo-root handling and `.ve.yaml` / `.venv` discovery instead.
+- `mcfg fire` and `machineconfig fire` route into the same command family, but `fire --help` is the best source for the direct entrypoint's full option surface.
 
 ---
 
-## How It Works
-
-1. **Path Resolution**: Resolves the given path, optionally from the repository root with `--root-repo`, and detects the repository root
-2. **Command Building**: Constructs the appropriate `uv run` command based on options
-3. **Execution**: Launches the script via shell with all modifiers applied
-
-The command uses `uv run --project <repo_root>` to ensure proper dependency resolution from `pyproject.toml`.
-
----
-
-## Tips & Best Practices
-
-### Docstrings Matter
-
-Write good docstrings - they appear in the interactive function chooser:
-
-```python
-def my_function(arg1: str, arg2: int = 10):
-    """Short description shown in chooser.
-    
-    Longer description with details.
-    
-    Args:
-        arg1: Description of arg1
-        arg2: Description of arg2
-    """
-```
-
-### Type Hints for Argument Parsing
-
-Fire uses type hints to convert command-line strings:
-
-```python
-def process(count: int, ratio: float, enabled: bool = True):
-    ...
-```
+## Getting help
 
 ```bash
-fire script.py process --count 5 --ratio 0.5 --enabled false
+fire --help
 ```
-
-### Combining Options
-
-Options can be combined for powerful workflows:
-
-```bash
-# Debug with git pull and path export
-fire feature.py test -d -g -P
-
-# Watch in loop with specific environment
-fire server.py run -w -l -E localhost
-```
-
----
-
-## See Also
-
-- [Python Fire Documentation](https://github.com/google/python-fire)
-- [Marimo](https://marimo.io/) - Reactive Python notebooks
-- [Streamlit](https://streamlit.io/) - Python web apps
-- [watchexec](https://github.com/watchexec/watchexec) - File watcher used by `--watch`
-- [pudb](https://documen.tician.de/pudb/) - Python debugger used by `--debug`

@@ -1,11 +1,13 @@
 # Jobs and Installer APIs
 
-The `machineconfig.jobs` package is where curated installer metadata and setup flows live. In practice, most direct usage here comes from the installer subsystem.
+`machineconfig.jobs` is mostly the data and asset layer for the installer system. It ships:
 
-There are two complementary ways these APIs show up:
+- the installer catalog JSON
+- package-group definitions
+- platform-specific install scripts
+- security-check helpers
 
-- directly, when you want to inspect package groups or use the installer catalog
-- indirectly, when higher-level helpers call into the installer layer through guards like `install_if_missing()`
+The runtime installation engine that consumes those assets lives under `machineconfig.utils.installer_utils`.
 
 ---
 
@@ -13,50 +15,64 @@ There are two complementary ways these APIs show up:
 
 | Area | What it provides | Main modules |
 | --- | --- | --- |
-| Package groups | Named collections of tools for common machine setups | `machineconfig.jobs.installer.package_groups` |
-| Installer catalog | Per-tool install metadata and routing across package managers | `machineconfig.jobs.installer.*` |
-| Security checks | Verification and reporting helpers used around installation | `machineconfig.jobs.installer.checks.*` |
-| Per-tool scripts | Python installers for tools that need custom flows | `machineconfig.jobs.installer.python_scripts.*` |
+| Package groups | Named collections of apps such as `termabc`, `agents`, `dev`, and `db-cli` | `machineconfig.jobs.installer.package_groups` |
+| Installer catalog assets | `installer_data.json` path references and packaged installer scripts | `machineconfig.jobs.installer`, `machineconfig.jobs.installer.python_scripts.*`, `machineconfig.jobs.installer.linux_scripts.*`, `machineconfig.jobs.installer.powershell_scripts.*` |
+| Installer runtime | CLI entrypoints, installer selection, bulk install orchestration, direct URL install | `machineconfig.utils.installer_utils.*` |
+| Typed installer schema | Platform names, architecture names, install requests, install results | `machineconfig.utils.schemas.installer.installer_types` |
+| Security checks | Scan and reporting helpers for installed tools | `machineconfig.jobs.installer.checks.*` |
 
 ---
 
 ## Package groups
 
-Machineconfig defines curated package groups for common use cases:
+The current `PACKAGE_GROUP2NAMES` keys are:
 
-| Group | Description |
-| --- | --- |
-| `gui` | Essential GUI applications |
-| `agents` | AI and coding-assistant tools |
-| `termabc` | Terminal essentials and shell tooling |
-| `dev` | Broader development environment packages |
-| `sysabc` | Core system helpers |
+- `sysabc`
+- `shell`
+- `search`
+- `sys-monitor`
+- `code-analysis`
+- `termabc`
+- `dev`
+- `dev-utils`
+- `eye`
+- `agents`
+- `terminal`
+- `browsers`
+- `editors`
+- `db-all`
+- `db-cli`
+- `db-desktop`
+- `db-web`
+- `db-tui`
+- `media`
+- `gui`
+- `nw`
+- `file-sharing`
+- `productivity`
 
-### Example
+Example:
 
 ```python
 from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
 
-print(PACKAGE_GROUP2NAMES.keys())
 print(PACKAGE_GROUP2NAMES["agents"])
+print(PACKAGE_GROUP2NAMES["termabc"])
 ```
 
 ---
 
-## Relationship to utility helpers
+## Relationship to the installer helpers
 
-The low-level helper:
+The runtime path looks like this:
 
-```python
-from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-```
+1. `jobs/installer/installer_data.json` defines the catalog.
+2. `jobs/installer/package_groups.py` defines named bundles.
+3. `machineconfig.utils.installer_utils.installer_runner.get_installers()` filters that catalog for the current OS, architecture, and optional groups.
+4. `machineconfig.utils.installer_utils.installer_class.Installer` resolves and executes one install target.
+5. `machineconfig.utils.installer_utils.installer_cli` exposes the higher-level CLI-style entrypoints.
 
-is often used inside other utility or networking modules before they invoke an external CLI. The full installer catalog and package-manager logic still lives here in `jobs.installer`.
-
-So a good rule of thumb is:
-
-- use `install_if_missing()` when you just need a guard before continuing
-- use the installer docs when you want to understand or extend the actual installation pipeline
+So this section documents both the packaged job assets and the installer APIs that consume them.
 
 ---
 
@@ -64,15 +80,16 @@ So a good rule of thumb is:
 
 ```text
 jobs/installer/
-├── checks/              # Security and reporting helpers
-├── linux_scripts/       # Linux shell installers
-├── powershell_scripts/  # Windows PowerShell installers
-├── python_scripts/      # Custom Python installers for specific tools
-└── package_groups.py    # Named tool bundles
+├── installer_data.json     # Catalog of installer definitions
+├── package_groups.py       # Named package bundles
+├── checks/                 # Security and reporting helpers
+├── linux_scripts/          # Linux and macOS shell installers
+├── powershell_scripts/     # Windows PowerShell installers
+└── python_scripts/         # Custom Python installers
 ```
 
 ---
 
 ## Next page
 
-Continue to the [Installer reference](installer.md) for the detailed catalog, data model, package groups, and per-tool installer behavior.
+Continue to the [Installer reference](installer.md) for the current data model, install strategies, group handling, and callable entrypoints.

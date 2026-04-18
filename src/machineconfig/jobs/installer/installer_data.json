@@ -321,7 +321,7 @@
         "arm64": {
           "linux": "mprocs-{version}-linux-aarch64-musl.tar.gz",
           "darwin": "mprocs-{version}-darwin-aarch64.tar.gz",
-          "windows": "mprocs-{version}-windows-x86_64.zip"
+          "windows": null
         }
       }
     },
@@ -1484,14 +1484,14 @@
       "doc": "📥 Command-line program to download videos from YouTube and other sites. By https://github.com/ytdl-org/youtube-dl",
       "fileNamePattern": {
         "amd64": {
-          "linux": "https://yt-dl.org/downloads/latest/youtube-dl",
-          "darwin": "https://yt-dl.org/downloads/latest/youtube-dl",
-          "windows": "https://yt-dl.org/latest/youtube-dl.exe"
+          "linux": "https://github.com/ytdl-org/youtube-dl/releases/latest/download/youtube-dl",
+          "darwin": "https://github.com/ytdl-org/youtube-dl/releases/latest/download/youtube-dl",
+          "windows": "https://github.com/ytdl-org/youtube-dl/releases/latest/download/youtube-dl.exe"
         },
         "arm64": {
-          "linux": "https://yt-dl.org/downloads/latest/youtube-dl",
-          "darwin": "https://yt-dl.org/downloads/latest/youtube-dl",
-          "windows": "https://yt-dl.org/latest/youtube-dl.exe"
+          "linux": "https://github.com/ytdl-org/youtube-dl/releases/latest/download/youtube-dl",
+          "darwin": "https://github.com/ytdl-org/youtube-dl/releases/latest/download/youtube-dl",
+          "windows": "https://github.com/ytdl-org/youtube-dl/releases/latest/download/youtube-dl.exe"
         }
       }
     },
@@ -1828,12 +1828,12 @@
         "amd64": {
           "linux": "dbgate-{version}-linux_x64.tar.gz",
           "darwin": "dbgate-{version}-mac_x64.zip",
-          "windows": "dbgate-windows-latest.zip"
+          "windows": "dbgate-{version}-win_x64.zip"
         },
         "arm64": {
           "linux": "dbgate-{version}-linux_arm64.AppImage",
           "darwin": "dbgate-{version}-mac_arm64.zip",
-          "windows": "dbgate-windows-latest-arm64.exe"
+          "windows": "dbgate-{version}-win_arm64.exe"
         }
       }
     },
@@ -1953,12 +1953,12 @@
       "fileNamePattern": {
         "amd64": {
           "linux": "duckdb_cli-linux-amd64.zip",
-          "darwin": "duckdb_cli-osx-universal.zip",
+          "darwin": "duckdb_cli-osx-amd64.zip",
           "windows": "duckdb_cli-windows-amd64.zip"
         },
         "arm64": {
           "linux": "duckdb_cli-linux-arm64.zip",
-          "darwin": "duckdb_cli-osx-universal.zip",
+          "darwin": "duckdb_cli-osx-arm64.zip",
           "windows": "duckdb_cli-windows-arm64.zip"
         }
       }
@@ -2481,7 +2481,7 @@
         "arm64": {
           "linux": "miniserve-{version}-aarch64-unknown-linux-musl",
           "darwin": "miniserve-{version}-aarch64-apple-darwin",
-          "windows": "miniserve-{version}-aarch64-pc-windows-msvc.exe"
+          "windows": null
         }
       }
     },
@@ -2713,9 +2713,9 @@
           "windows": "gitcs_windows_amd64.exe"
         },
         "arm64": {
-          "linux": "gitcs_linux_386",
+          "linux": null,
           "darwin": null,
-          "windows": "gitcs_windows_386.exe"
+          "windows": null
         }
       }
     },
@@ -4220,12 +4220,12 @@
       "doc": "⚡ Lightning-fast code editor written in Rust",
       "fileNamePattern": {
         "amd64": {
-          "linux": null,
+          "linux": "https://github.com/lapce/lapce/releases/latest/download/lapce-linux-amd64.tar.gz",
           "windows": "winget install --no-upgrade --name \"Lapce\" --Id \"Lapce.Lapce\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "darwin": null
         },
         "arm64": {
-          "linux": null,
+          "linux": "https://github.com/lapce/lapce/releases/latest/download/lapce-linux-arm64.tar.gz",
           "windows": "winget install --no-upgrade --name \"Lapce\" --Id \"Lapce.Lapce\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
           "darwin": null
         }

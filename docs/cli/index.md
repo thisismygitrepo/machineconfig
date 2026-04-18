@@ -1,61 +1,64 @@
 # CLI Reference
 
-Machineconfig currently exposes a set of direct CLI entrypoints. For day-to-day use and scripting, prefer those direct commands over older all-in-one command trees.
+Machineconfig currently exposes two entry styles:
+
+- standalone commands such as `devops`, `fire`, and `seek`
+- umbrella wrappers: `mcfg` and `machineconfig`
+
+For day-to-day use, prefer the standalone command when you already know which tool you want. Use `mcfg` or `machineconfig` when you want one top-level CLI that routes into the same command tree.
 
 ---
 
-## Direct entrypoints
-
-These commands are defined in `pyproject.toml` and reflected in the current CLI map:
+## Standalone entrypoints
 
 | Command | Purpose |
-|---------|---------|
-| [`devops`](devops.md) | Package installation, configuration, data, repo, network, and self-management workflows |
+| --- | --- |
+| [`devops`](devops.md) | Package installation, repo automation, config sync, data sync, self-management, networking, and script execution |
 | [`terminal`](terminal.md) | Terminal session and layout management |
-| [`agents`](agents.md) | AI agent utilities |
-| [`utils`](utils.md) | General-purpose utilities |
-| [`croshell`](croshell.md) | Cross-shell execution helper |
-| [`seek`](seek.md) | Search helper entrypoint |
-| [`fire`](fire.md) | Fire job runner |
-| [`cloud`](cloud.md) | Cloud sync, copy, mount, and FTP-over-SSH helpers |
+| [`agents`](agents.md) | AI agent scaffolding, MCP catalog installs, prompt runs, and parallel agent workflows |
+| [`utils`](utils.md) | General-purpose utility commands |
+| [`croshell`](croshell.md) | Cross-shell launcher built around `uv run` backends |
+| [`seek`](seek.md) | Interactive search across files, text matches, and symbols |
+| [`fire`](fire.md) | File, function, notebook, and app runner |
+| [`cloud`](cloud.md) | Cloud sync, copy, mount, and SSH transfer helpers |
+
+---
+
+## Umbrella entrypoints
+
+`mcfg` and `machineconfig` are lazy-loading wrappers around the same top-level command families:
+
+```bash
+mcfg --help
+machineconfig --help
+mcfg devops --help
+machineconfig agents --help
+```
+
+The wrappers currently expose:
+
+- `devops`
+- `cloud`
+- `terminal`
+- `agents`
+- `utils`
+- `seek`
+- `fire`
+- `croshell`
+
+For the full command-specific flag surface, check the standalone command as well, for example `fire --help` or `seek --help`.
 
 ---
 
 ## Getting help
 
-Use `--help` on the direct command you want to explore:
-
 ```bash
 devops --help
-devops install --help
-devops config terminal --help
-devops config sync --help
-devops data sync --help
-terminal --help
 agents --help
-utils --help
+cloud --help
 croshell --help
+fire --help
 seek --help
-fire --help
-cloud --help
-```
-
----
-
-## Command model
-
-The current docs follow this model:
-
-1. Start from a direct entrypoint such as `devops` or `terminal`.
-2. Drill into nested apps with `--help`.
-3. Use standalone helpers like `fire`, `cloud`, and `seek` directly.
-
-For example:
-
-```bash
-devops config --help
-devops data --help
-terminal --help
-fire --help
-cloud --help
+mcfg --help
+machineconfig --help
 ```

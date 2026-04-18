@@ -1,8 +1,9 @@
 # Environment and Project Wiring
 
-Many `machineconfig` integrations start with one question: "what environment should this project run in?" The environment helpers answer that by discovering project-local virtualenvs, optional IPython profiles, and cloud sync metadata from a lightweight convention file.
+The environment helpers in `machineconfig` live in `machineconfig.utils.ve`. They answer two practical questions:
 
-The core API for that lives in `machineconfig.utils.ve`.
+- which virtualenv should this project use?
+- does the project declare an IPython profile or cloud-sync metadata in `.ve.yaml`?
 
 ---
 
@@ -10,25 +11,28 @@ The core API for that lives in `machineconfig.utils.ve`.
 
 | API | Responsibility |
 | --- | --- |
-| `FILE_NAME` | The project config filename used for environment discovery: `.ve.yaml` |
-| `CLOUD` | Typed structure for cloud-sync metadata such as cloud name, root, encryption, and sharing flags |
-| `VE_YAML` | Typed structure for the overall `.ve.yaml` document |
-| `read_default_cloud_config()` | Returns the default `CLOUD` structure used as a baseline |
-| `get_ve_path_and_ipython_profile(init_path)` | Walks upward from a path to discover virtualenv and optional IPython profile |
-| `get_ve_activate_line(ve_root)` | Builds a platform-appropriate shell activation command |
+| `FILE_NAME` | The project-level config file name: `.ve.yaml` |
+| `CLOUD` | Typed cloud metadata for keys such as `cloud`, `root`, `encrypt`, `share`, and `overwrite` |
+| `VE_SPECS` | Typed `specs` block containing `ve_path` and optional `ipy_profile` |
+| `VE_YAML` | Typed top-level structure for `.ve.yaml` |
+| `read_default_cloud_config()` | Returns the default `CLOUD` payload used by callers as a baseline |
+| `get_ve_path_and_ipython_profile(init_path)` | Walks upward from a path and resolves virtualenv plus optional IPython profile |
+| `get_ve_activate_line(ve_root)` | Builds the platform-specific shell line that activates a virtualenv |
 
 ---
 
 ## Discovery model
 
-`get_ve_path_and_ipython_profile()` walks upward through parent directories and looks for two things:
+`get_ve_path_and_ipython_profile(init_path)` walks through `init_path` and its parents.
 
-1. A `.ve.yaml` file, which can declare a specific virtualenv path and IPython profile.
-2. A `.venv` directory, which acts as a fallback virtualenv location.
+At each directory it:
 
-The search stops early once both a virtualenv path and an IPython profile have been found.
+1. Reads `.ve.yaml` if present.
+2. Pulls `specs.ve_path` into the result when available.
+3. Pulls `specs.ipy_profile` into the result when available.
+4. Falls back to a local `.venv` directory only if no `ve_path` has been found yet.
 
-That makes the API useful for tools that need to "attach" themselves to whatever environment a project already expects, instead of re-deriving that configuration from scratch.
+The walk stops as soon as both values are known, otherwise it continues to the filesystem root. The function returns a tuple of `(ve_path, ipy_profile)` where either element may be `None`. It also prints progress and warning messages while it searches.
 
 ---
 
@@ -52,6 +56,19 @@ cloud:
   overwrite: false
 ```
 
+The `cloud` section is typed by `CLOUD` and is available to callers that want lightweight per-project sync metadata. Environment discovery itself only needs the `specs` block.
+
+---
+
+## Activation lines
+
+`get_ve_activate_line(ve_root)` returns:
+
+- `. {ve_root}/bin/activate` on Linux and macOS
+- `. $HOME/<relative-path>/Scripts/activate.ps1` on Windows
+
+The Windows branch rewrites the expanded virtualenv path to a `$HOME/.../Scripts/activate.ps1` PowerShell source line.
+
 ---
 
 ## Example usage
@@ -68,26 +85,13 @@ from machineconfig.utils.ve import (
 project_path = Path.cwd()
 ve_path, ipy_profile = get_ve_path_and_ipython_profile(project_path)
 
-print(f"Config file name: {FILE_NAME}")
-print(f"Virtualenv: {ve_path}")
-print(f"IPython profile: {ipy_profile}")
+print(FILE_NAME)
+print(ve_path)
+print(ipy_profile)
 
 if ve_path is not None:
     print(get_ve_activate_line(ve_path))
 ```
-
----
-
-## Where this shows up in practice
-
-This layer is useful whenever a project wants to:
-
-- keep a machine-local virtualenv path in a checked-in convention file
-- discover an IPython startup profile without hard-coding it in every script
-- attach cloud-related metadata to the same project-level config
-- generate activation commands for local or remote shell sessions
-
-That is why it appears in machine-orchestration, layout generation, and shared helper modules across downstream repos.
 
 ---
 

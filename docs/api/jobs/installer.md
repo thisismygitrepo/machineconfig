@@ -1,872 +1,380 @@
 # Installer Module
 
-The `installer` subpackage is a comprehensive cross-platform package installation system that provides unified installation capabilities across Linux, macOS, and Windows.
+The installer system is split across two layers:
+
+- `machineconfig.jobs.installer` for packaged data and install scripts
+- `machineconfig.utils.installer_utils` for the runtime engine
+
+This page documents the runtime behavior that the current code exposes.
 
 ---
 
-## Quick Start
+## Core data model
 
-```bash
-# Install a single package
-devops install btop
+The typed schema lives in `machineconfig.utils.schemas.installer.installer_types`.
 
-# Install multiple packages
-devops install btop,fd,bat,rg
-
-# Install a package group
-devops install termabc --group
-
-# Interactive package selection (with TV/fzf interface)
-devops install --interactive
-```
-
-![Quick Start walkthrough](../../assets/quick_start.png)
-
-You can also use `devops self config` for an interactive way of running these quick start commands.
-
----
-
-## Architecture Overview
-
-The installer system consists of several interconnected components:
-
-```mermaid
-flowchart TB
-    subgraph CLI["CLI Layer"]
-        A[devops install] --> B[main_installer_cli]
-    end
-    
-    subgraph Core["Core Engine"]
-        B --> C{Installation Mode}
-        C -->|Single/Multiple| D[install_clis]
-        C -->|Group| E[install_group]
-        C -->|Interactive| F[install_interactively]
-    end
-    
-    subgraph Installer["Installer Class"]
-        D --> G[Installer]
-        E --> H[install_bulk]
-        F --> G
-        H --> G
-        G --> I{repoURL Type}
-    end
-    
-    subgraph Methods["Installation Methods"]
-        I -->|CMD| J[Package Manager / Script / URL]
-        I -->|GitHub URL| K[GitHub Release Download]
-        J --> L[Shell Command]
-        J --> M[Python Script]
-        J --> N[Direct URL]
-        K --> O[binary_download]
-        O --> P[get_github_release]
-    end
-    
-    subgraph Platform["Platform Handler"]
-        L --> Q{Platform}
-        M --> Q
-        N --> Q
-        P --> Q
-        Q -->|Windows| R[find_move_delete_windows]
-        Q -->|Linux/macOS| S[find_move_delete_linux]
-    end
-    
-    subgraph Post["Post-Install"]
-        R --> T[Version Tracking]
-        S --> T
-        T --> U[INSTALL_VERSION_ROOT]
-    end
-```
-
----
-
-## Installation Methods
-
-The installer supports multiple installation strategies based on the `repoURL` field in the installer data:
-
-### Method 1: Package Manager Commands (`repoURL: "CMD"`)
-
-When `repoURL` is `"CMD"`, the `fileNamePattern` contains the actual installation command or script reference.
-
-#### Shell Commands
-
-Direct package manager commands:
-
-```json
-{
-  "appName": "git",
-  "repoURL": "CMD",
-  "doc": "Distributed version control system",
-  "fileNamePattern": {
-    "amd64": {
-      "linux": "sudo nala install git",
-      "windows": "winget install --no-upgrade --name \"Git\" --Id \"Git.Git\" --source winget --scope user --accept-package-agreements --accept-source-agreements",
-      "darwin": "brew install git"
-    }
-  }
-}
-```
-
-**Supported Package Managers:**
-
-| Platform | Package Managers |
-|----------|-----------------|
-| Linux | `apt`, `nala`, `snap`, `cargo`, `pip`, `npm`, `bun` |
-| macOS | `brew`, `cargo`, `pip`, `npm`, `bun` |
-| Windows | `winget`, `scoop`, `cargo`, `pip`, `npm`, `bun` |
-
-#### Python Scripts (`.py`)
-
-For complex installations requiring custom logic:
-
-```json
-{
-  "appName": "yazi",
-  "repoURL": "CMD",
-  "fileNamePattern": {
-    "amd64": {
-      "linux": "yazi.py",
-      "windows": "yazi.py",
-      "darwin": "yazi.py"
-    }
-  }
-}
-```
-
-The Python script must implement a `main(installer_data: InstallerData, version: Optional[str])` function.
-
-#### Shell Scripts (`.sh`)
-
-For Linux/macOS platform-specific installations:
-
-```json
-{
-  "appName": "brave",
-  "repoURL": "CMD",
-  "fileNamePattern": {
-    "amd64": {
-      "linux": "brave.sh"
-    }
-  }
-}
-```
-
-#### PowerShell Scripts (`.ps1`)
-
-For Windows-specific installations:
-
-```json
-{
-  "fileNamePattern": {
-    "amd64": {
-      "windows": "install_fonts.ps1"
-    }
-  }
-}
-```
-
-#### Direct URLs
-
-Direct download URLs for pre-built binaries:
-
-```json
-{
-  "appName": "speedtest",
-  "repoURL": "CMD",
-  "fileNamePattern": {
-    "amd64": {
-      "linux": "https://install.speedtest.net/app/cli/ookla-speedtest-1.2.0-linux-x86_64.tgz"
-    }
-  }
-}
-```
-
-### Method 2: GitHub Releases (`repoURL: "https://github.com/..."`)
-
-Automatic download from GitHub releases with version pattern matching:
-
-```json
-{
-  "appName": "btop",
-  "repoURL": "https://github.com/aristocratos/btop",
-  "doc": "Resource monitor for Linux, FreeBSD and MacOS",
-  "fileNamePattern": {
-    "amd64": {
-      "linux": "btop-x86_64-linux-musl.tbz",
-      "darwin": null,
-      "windows": null
-    },
-    "arm64": {
-      "linux": "btop-aarch64-linux-musl.tbz"
-    }
-  }
-}
-```
-
-**Version Templating:**
-
-Use `{version}` placeholder for version-specific filenames:
-
-```json
-{
-  "fileNamePattern": {
-    "amd64": {
-      "linux": "mprocs-{version}-linux-x86_64-musl.tar.gz"
-    }
-  }
-}
-```
-
-The system automatically:
-
-1. Fetches the latest release from GitHub API
-2. Extracts the version tag (e.g., `v0.6.4`)
-3. Replaces `{version}` in the pattern
-4. Downloads the matching asset
-
----
-
-## InstallerData Schema
-
-The core data structure for package definitions:
+### `InstallerData`
 
 ```python
-class InstallerData(TypedDict):
-    appName: str                    # Display name (also used for executable lookup)
-    doc: str                        # Description shown in interactive mode
-    repoURL: str                    # "CMD" or GitHub repository URL
-    fileNamePattern: dict[          # Platform-specific installation patterns
-        CPU_ARCHITECTURES,          # "amd64" | "arm64"
-        dict[
-            OPERATING_SYSTEMS,      # "windows" | "linux" | "darwin"
-            Optional[str]           # Installation pattern or None if unsupported
-        ]
-    ]
-```
-
-**Field Details:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `appName` | `str` | Package identifier. Lowercase version becomes the executable name |
-| `doc` | `str` | Description displayed during interactive selection |
-| `repoURL` | `str` | Either `"CMD"` for command-based install or a GitHub URL |
-| `fileNamePattern` | `dict` | Nested dict mapping arch -> os -> installation pattern |
-
-**Architecture Values:**
-
-- `amd64`: Intel/AMD 64-bit (x86_64)
-- `arm64`: ARM 64-bit (aarch64)
-
-**Operating System Values:**
-
-- `windows`: Microsoft Windows
-- `linux`: Linux distributions
-- `darwin`: macOS (Darwin)
-
----
-
-## Installer Class
-
-The main installation orchestrator:
-
-```python
-from machineconfig.utils.installer_utils.installer_class import Installer
 from machineconfig.utils.schemas.installer.installer_types import InstallerData
 
 installer_data: InstallerData = {
     "appName": "fd",
-    "repoURL": "https://github.com/sharkdp/fd",
+    "license": "MIT",
     "doc": "A simple, fast and user-friendly alternative to find",
+    "repoURL": "https://github.com/sharkdp/fd",
     "fileNamePattern": {
         "amd64": {
             "linux": "fd-v{version}-x86_64-unknown-linux-musl.tar.gz",
             "windows": "fd-v{version}-x86_64-pc-windows-msvc.zip",
-            "darwin": "fd-v{version}-x86_64-apple-darwin.tar.gz"
+            "darwin": "fd-v{version}-x86_64-apple-darwin.tar.gz",
         },
         "arm64": {
             "linux": "fd-v{version}-aarch64-unknown-linux-musl.tar.gz",
+            "windows": None,
             "darwin": "fd-v{version}-aarch64-apple-darwin.tar.gz",
-            "windows": None
-        }
-    }
+        },
+    },
 }
-
-installer = Installer(installer_data)
 ```
 
-### Methods
+Fields:
 
-#### `install(version: Optional[str]) -> None`
+| Field | Meaning |
+| --- | --- |
+| `appName` | Display name and base executable name |
+| `license` | License label stored in the installer catalog |
+| `doc` | Description used in interactive selection |
+| `repoURL` | `"CMD"` for command / script driven installs, or a GitHub repository URL |
+| `fileNamePattern` | `arch -> os -> installer value` mapping |
 
-Main installation method. Handles all installation strategies.
+### Other types
+
+| Type | Purpose |
+| --- | --- |
+| `InstallerDataFiles` | Shape of `installer_data.json` |
+| `InstallRequest` | `{version: str | None, update: bool}` |
+| `InstallationResult` | Typed union of `skipped`, `same_version`, `updated`, and `failed` results |
+| `CPU_ARCHITECTURES` | `"amd64"` or `"arm64"` |
+| `OPERATING_SYSTEMS` | `"windows"`, `"linux"`, or `"darwin"` |
+
+Helpers:
+
+- `get_os_name()`
+- `get_normalized_arch()`
+
+---
+
+## How installers are resolved
+
+`machineconfig.utils.installer_utils.installer_runner.get_installers()` loads the catalog from:
+
+- `machineconfig.jobs.installer.INSTALLER_DATA_PATH_REFERENCE`
+- resolved through `machineconfig.utils.path_reference.get_path_reference_path(...)`
+
+It then filters by:
+
+- current OS
+- current architecture
+- optional package-group list
+
+Example:
 
 ```python
-installer.install(version=None)      # Install latest
-installer.install(version="v9.0.0")  # Install specific version
-```
-
-#### `install_robust(version: Optional[str]) -> str`
-
-Wrapped installation with error handling. Returns status message.
-
-```python
-status = installer.install_robust(version=None)
-# Returns: "fd updated from v8.7.0 -> v9.0.0"
-# Or: "fd, same version: v9.0.0"
-# Or: "Failed to install `fd` with error: ..."
-```
-
-#### `binary_download(version: Optional[str]) -> tuple[PathExtended, str]`
-
-Downloads and extracts the binary without installing.
-
-```python
-extracted_path, version = installer.binary_download(version=None)
-# extracted_path: PathExtended to extracted files
-# version: Actual version string (e.g., "v9.0.0")
-```
-
-#### `get_github_release(repo_url: str, version: Optional[str]) -> tuple[Optional[str], Optional[str]]`
-
-Retrieves download URL and version from GitHub API.
-
-```python
-download_url, version = installer.get_github_release(
-    repo_url="https://github.com/sharkdp/fd",
-    version=None  # or specific version
+from machineconfig.utils.installer_utils.installer_runner import get_installers
+from machineconfig.utils.schemas.installer.installer_types import (
+    get_normalized_arch,
+    get_os_name,
 )
-```
 
-#### `get_description() -> str`
-
-Returns formatted description for interactive selection.
-
-```python
-desc = installer.get_description()
-# "fd           ✅ A simple, fast and user-friendly alternative to find"
-```
-
----
-
-## Package Groups
-
-Pre-defined collections of related packages for bulk installation.
-
-### Available Groups
-
-| Group | Description | Package Count |
-|-------|-------------|---------------|
-| `sysabc` | System essentials (package managers, build tools) | 1 (meta-package) |
-| `termabc` | Terminal power tools (40+ tools) | ~60 |
-| `gui` | GUI applications (browsers, editors) | 3 |
-| `dev` | Full development environment | ~80 |
-| `dev-utils` | Development utilities | 4 |
-| `term-eye-candy` | Terminal visual enhancements | 4 |
-| `agents` | AI/LLM coding assistants | 15+ |
-| `terminal-emulator` | Terminal emulators | 6 |
-| `shell` | Shell enhancements | 9 |
-| `browsers` | Web browsers | 6 |
-| `code-editors` | Code editors and IDEs | 3 |
-| `code-analysis` | Code analysis and Git tools | 14 |
-| `db` | Database tools | 8 |
-| `media` | Media players | 5 |
-| `file-sharing` | File sharing and cloud tools | 17 |
-| `productivity` | Productivity tools | 12 |
-| `sys-monitor` | System monitors | 11 |
-| `search` | File search and navigation | 22 |
-
-### Group Contents
-
-#### `agents` - AI/LLM Coding Assistants
-
-```
-aider, aichat, copilot, gemini, crush, opencode-ai, chatgpt, mods, q, 
-qwen-code, cursor-cli, droid, kilocode, cline, auggie
-```
-
-#### `termabc` - Terminal Essentials
-
-Combines: `code-analysis` + `sys-monitor` + `shell` + `search`
-
-```
-# Code Analysis
-nano, lazygit, onefetch, gitcs, lazydocker, hyperfine, kondo, tokei, 
-navi, tealdeer, gitui, delta, gh, watchexec, jq
-
-# System Monitors
-btop, btm, ntop, procs, bandwhich, ipinfo, sniffnet, cpufetch, 
-fastfetch, topgrade, speedtest
-
-# Shell Enhancements
-zellij, mprocs, mcfly, atuin, starship, gotty, ttyd, rclone, cb
-
-# Search & File Tools
-nerdfont, fd, fzf, tv, broot, rg, rga, ugrep, ouch, pistol, bat, viu,
-yazi, tere, lsd, zoxide, diskonaut, dua, dust, cpz, rmz
-```
-
-#### `terminal-emulator` - Terminal Emulators
-
-```
-Alacritty, Wezterm, warp, vtm, edex-ui, extraterm, nushell
-```
-
-#### `code-editors` - Code Editors
-
-```
-code (VS Code), Cursor, lvim (LunarVim)
-```
-
-#### `db` - Database Tools
-
-```
-SqliteBrowser, sqlite3, redis, redis-cli, postgresql-client, duckdb, 
-DBeaver, rainfrog
-```
-
-### Installing Groups
-
-```bash
-# Install terminal essentials
-devops install termabc --group
-devops install termabc -g
-
-# Install AI assistants
-devops install agents -g
-
-# Install full dev environment
-devops install dev -g
-```
-
----
-
-## Custom Python Installers
-
-For packages requiring complex installation logic, custom Python scripts are provided in `jobs/installer/python_scripts/`.
-
-### Available Custom Installers
-
-| Package | Script | Description |
-|---------|--------|-------------|
-| `alacritty` | `alacritty.py` | Terminal emulator with theme setup |
-| `brave` | `brave.py` | Brave browser with platform-specific methods |
-| `boxes` | `boxes.py` | ASCII box drawing tool (Windows binary) |
-| `bypass_paywall` | `bypass_paywall.py` | Chrome extension for bypassing paywalls |
-| `cloudflare_warp_cli` | `cloudflare_warp_cli.py` | Cloudflare WARP VPN client |
-| `code` | `code.py` | VS Code with official installation scripts |
-| `cursor` | `cursor.py` | Cursor IDE (AppImage on Linux, exe on Windows) |
-| `dubdb_adbc` | `dubdb_adbc.py` | DuckDB ADBC library |
-| `espanso` | `espanso.py` | Text expander with Wayland/X11 detection |
-| `gh` | `gh.py` | GitHub CLI with Copilot extension |
-| `goes` | `goes.py` | Gorilla (natural language to API) |
-| `hx` | `hx.py` | Helix editor with runtime and LSP setup |
-| `lvim` | `lvim.py` | LunarVim with official installer |
-| `nerdfont` | `nerdfont.py` | Nerd Fonts (cross-platform) |
-| `redis` | `redis.py` | Redis server |
-| `sysabc` | `sysabc.py` | System essentials meta-installer |
-| `wezterm` | `wezterm.py` | WezTerm terminal emulator |
-| `winget` | `winget.py` | Windows Package Manager bootstrap |
-| `yazi` | `yazi.py` | File manager with plugins and flavors |
-
-### Custom Installer Interface
-
-All custom installers follow this pattern:
-
-```python
-from typing import Optional
-from machineconfig.utils.schemas.installer.installer_types import InstallerData
-
-def main(installer_data: InstallerData, version: Optional[str]) -> None:
-    """
-    Main entry point for custom installation.
-    
-    Args:
-        installer_data: The installer configuration from installer_data.json
-        version: Specific version to install, or None for latest
-    """
-    # Platform detection
-    import platform
-    system = platform.system()  # "Windows", "Linux", "Darwin"
-    
-    # Installation logic...
-```
-
-### Example: Helix Editor Installer
-
-The `hx.py` installer demonstrates a complex installation:
-
-1. Downloads from GitHub releases
-2. Extracts executable, runtime, and contrib directories
-3. Installs grammar files for supported languages
-4. Handles Windows and Unix paths differently
-
-```python
-# Supported languages for grammar installation
-LANGUAGES_SUPPORTED = ["python", "nu", "bash", "lua", "powershell"]
-
-def main(installer_data: InstallerData, version: Optional[str], install_lib: bool = True):
-    # Download binary
-    downloaded, _version = inst.binary_download(version=version)
-    
-    # Install executable
-    hx_file.move(folder=target_bin_path, overwrite=True)
-    
-    # Install runtime (selectively for supported languages)
-    if install_lib:
-        for child in runtime.iterdir():
-            if child.name == "grammars":
-                for lang in LANGUAGES_SUPPORTED:
-                    lang_file = child.joinpath(f"{lang}.so")
-                    if lang_file.exists():
-                        lang_file.copy(folder=target_runtime.joinpath("grammars"))
-```
-
----
-
-## Platform-Specific Behavior
-
-### Installation Paths
-
-| Platform | Binary Path | Config Path |
-|----------|-------------|-------------|
-| Windows | `%LOCALAPPDATA%\Microsoft\WindowsApps` | `%APPDATA%` |
-| Linux | `~/.local/bin` | `~/.config` |
-| macOS | `/usr/local/bin` | `~/.config` |
-
-### Executable Handling
-
-**Windows:**
-```python
-def find_move_delete_windows(downloaded_file_path, tool_name, delete, rename_to):
-    # Finds .exe in downloaded archive
-    # Moves to WindowsApps directory
-    # Handles renaming if needed
-```
-
-**Linux/macOS:**
-```python
-def find_move_delete_linux(downloaded, tool_name, delete, rename_to):
-    # Finds binary in extracted archive
-    # Sets executable permissions (chmod 777)
-    # Uses sudo for /usr/local/bin
-    # Moves to installation path
-```
-
----
-
-## Version Tracking
-
-Installed versions are tracked in `~/.config/machineconfig/install_versions/`:
-
-```
-~/.config/machineconfig/install_versions/
-├── btop
-├── fd
-├── rg
-└── yazi
-```
-
-Each file contains the installed version string.
-
-### Checking Installation Status
-
-```python
-from machineconfig.utils.installer_utils.installer_locator_utils import check_if_installed_already
-
-verdict, current_ver, new_ver = check_if_installed_already(
-    exe_name="fd",
-    version="v9.0.0",
-    use_cache=False
-)
-# verdict: "✅ Up to date" | "❌ Outdated" | "⚠️ NotInstalled"
-```
-
----
-
-## Bulk Installation
-
-Install multiple packages in parallel:
-
-```python
-from machineconfig.utils.installer_utils.installer_runner import install_bulk, get_installers
-from machineconfig.utils.schemas.installer.installer_types import get_os_name, get_normalized_arch
-
-# Get all installers for current platform
 installers = get_installers(
     os=get_os_name(),
     arch=get_normalized_arch(),
-    which_cats=["termabc"]  # or None for all
-)
-
-# Install with parallel processing
-install_bulk(
-    installers_data=installers,
-    safe=False,
-    jobs=10,      # Parallel workers
-    fresh=False   # Don't clear version cache
+    which_cats=["termabc"],
 )
 ```
 
 ---
 
-## VirusTotal Integration
+## Installation strategies
 
-The `checks` submodule provides security scanning for installed binaries.
+`Installer._install_from_value()` supports four current strategies.
 
-### Scanning Workflow
+### 1. Package-manager commands
 
-```mermaid
-flowchart LR
-    A[Get Installed Apps] --> B[Scan with VirusTotal]
-    B --> C[Generate Report]
-    C --> D[CSV + Markdown Output]
-```
+If the resolved installer value starts with a known package-manager token such as `brew`, `cargo`, `winget`, `uv`, `pip`, `npm`, `bun`, `curl`, `sudo`, or `powershell`, the installer executes that shell command directly.
 
-### Usage
+This is also the path used for entries whose `repoURL` is `"CMD"` and whose platform value is a raw command string.
+
+### 2. Script installers
+
+If the resolved installer value ends in:
+
+- `.sh`
+- `.ps1`
+- `.py`
+
+the installer searches the packaged installer assets under `machineconfig.jobs.installer` and runs the matching script.
+
+Current Python installer scripts are expected to expose:
 
 ```python
-from machineconfig.jobs.installer.checks.check_installations import main
-
-# Run full scan
-main()
-# Outputs:
-#   - ~/.config/machineconfig/profile/records/{platform}/apps_metadata_report.csv
-#   - ~/.config/machineconfig/profile/records/{platform}/apps_engine_results_report.csv
+main(installer_data: InstallerData, version: str | None, update: bool)
 ```
 
-### Configuration
+Extra parameters are allowed only if they are optional.
 
-VirusTotal API token must be stored at:
-```
-~/dotfiles/creds/tokens/virustotal
-```
+### 3. Direct binary or archive URLs
 
-### Report Format
+If the resolved installer value is an `http://` or `https://` URL, the installer downloads it to `~/tmp_results/tmp_installers`, decompresses supported archives, and then moves the resulting executable or `.deb` package into place.
 
-```text
-apps_metadata_report.csv
-app_name,version,scan_time,app_path,app_url,scan_summary_available,notes
+### 4. GitHub releases
 
-apps_engine_results_report.csv
-app_name,engine_name,engine_category,engine_result
-```
+If `repoURL` is a GitHub repository URL, `Installer.get_github_release()` fetches release metadata and matches a release asset against the current platform's `fileNamePattern`.
+
+Current matching behavior includes:
+
+- `{version}` substitution with the resolved tag name
+- fallback checks for `v`-prefixed versus unprefixed versions
+- hyphen / underscore filename variants before the install fails
 
 ---
 
-## CLI Reference
+## `Installer`
 
-### `devops install`
+`machineconfig.utils.installer_utils.installer_class.Installer` is the per-package orchestrator.
 
-Main installation command.
+### Main methods
 
-```bash
-devops install [OPTIONS] [WHICH]
+| Method | Purpose |
+| --- | --- |
+| `get_description()` | Builds the interactive display label and includes a `check_tool_exists()` status mark |
+| `install(version)` | Installs one tool without the typed `InstallRequest` wrapper |
+| `install_requested(install_request)` | Installs one tool using `InstallRequest` |
+| `install_robust(install_request)` | Returns a typed `InstallationResult` instead of raising install failures to the caller |
+| `binary_download(version)` | Downloads and extracts the selected asset without final installation |
+| `get_github_release(repo_url, version)` | Returns the selected asset URL and resolved version tag |
+
+### Example
+
+```python
+from machineconfig.utils.installer_utils.installer_class import Installer
+from machineconfig.utils.schemas.installer.installer_types import InstallRequest
+
+installer = Installer(installer_data)
+result = installer.install_robust(
+    install_request=InstallRequest(version=None, update=False),
+)
+
+print(result["kind"])
 ```
 
-**Arguments:**
+`install_robust()` currently returns one of these result shapes:
 
-| Argument | Description |
-|----------|-------------|
-| `WHICH` | Comma-separated package names or group name |
-
-**Options:**
-
-| Option | Short | Description |
-|--------|-------|-------------|
-| `--group` | `-g` | Treat `WHICH` as a group name |
-| `--interactive` | `-i` | Interactive selection mode |
-
-**Examples:**
-
-```bash
-# Single package
-devops install btop
-
-# Multiple packages
-devops install btop,fd,bat,rg,fzf
-
-# Package group
-devops install termabc -g
-
-# Interactive mode (with fzf/TV interface)
-devops install -i
-
-# Install from GitHub URL directly
-devops install https://github.com/sharkdp/fd
-
-# Install from direct binary URL
-devops install https://example.com/tool-v1.0-linux-amd64.tar.gz
-```
-
-### Interactive Mode Features
-
-When using `--interactive`:
-
-1. Shows all available packages with installation status (✅/❌)
-2. Displays package descriptions
-3. Allows multi-select with TV/fzf interface
-4. Groups are prefixed with 📦 for easy identification
+- `{"kind": "skipped", ...}`
+- `{"kind": "same_version", ...}`
+- `{"kind": "updated", ...}`
+- `{"kind": "failed", ...}`
 
 ---
 
-## Adding New Packages
+## CLI-style entrypoints
 
-### Step 1: Edit `installer_data.json`
+These helpers live in `machineconfig.utils.installer_utils.installer_cli`.
 
-```json
-{
-  "appName": "mytool",
-  "repoURL": "https://github.com/user/mytool",
-  "doc": "Description of what mytool does",
-  "fileNamePattern": {
-    "amd64": {
-      "linux": "mytool-{version}-linux-amd64.tar.gz",
-      "windows": "mytool-{version}-windows-amd64.zip",
-      "darwin": "mytool-{version}-darwin-amd64.tar.gz"
-    },
-    "arm64": {
-      "linux": "mytool-{version}-linux-arm64.tar.gz",
-      "windows": null,
-      "darwin": "mytool-{version}-darwin-arm64.tar.gz"
-    }
-  }
-}
-```
-
-### Step 2: Add to Package Groups (Optional)
-
-Edit `jobs/installer/package_groups.py`:
+### `main_installer_cli(...)`
 
 ```python
-PACKAGES_DEV_UTILS = [
-    "devcontainer",
-    "rust-analyzer",
-    "mytool",  # Add here
-]
-```
-
-### Step 3: Create Custom Installer (If Needed)
-
-For complex installations, create `jobs/installer/python_scripts/mytool.py`:
-
-```python
-from typing import Optional
-from machineconfig.utils.schemas.installer.installer_types import InstallerData
-
-def main(installer_data: InstallerData, version: Optional[str]) -> None:
-    # Custom installation logic
-    pass
-```
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-**Package not found:**
-```
-❌ 'mypackage' was not found.
-🤔 Did you mean one of these?
-```
-
-The system uses fuzzy matching to suggest alternatives.
-
-**GitHub rate limit:**
-```
-🚫 Rate limit exceeded
-```
-
-Wait 60 minutes or authenticate with a GitHub token.
-
-**Permission denied on Linux:**
-```
-❌ MOVING executable failed
-```
-
-The installer uses `sudo` for `/usr/local/bin`. Ensure sudo access.
-
-**Windows execution policy:**
-```
-Script execution is disabled
-```
-
-Run: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-
-### Debug Mode
-
-Check installed versions cache:
-```bash
-ls ~/.config/machineconfig/install_versions/
-cat ~/.config/machineconfig/install_versions/btop
-```
-
-Clear version cache for fresh install:
-```python
-from machineconfig.utils.installer_utils.installer_runner import install_bulk
-install_bulk(installers, fresh=True)  # Clears cache
-```
-
----
-
-## API Reference
-
-### Core Functions
-
-```python
-# Main CLI entry point
 from machineconfig.utils.installer_utils.installer_cli import main_installer_cli
 
-# Install specific packages
-from machineconfig.utils.installer_utils.installer_cli import install_clis
-install_clis(clis_names=["btop", "fd", "bat"])
-
-# Install package group
-from machineconfig.utils.installer_utils.installer_cli import install_group
-install_group(package_group="termabc")
-
-# Interactive installation
-from machineconfig.utils.installer_utils.installer_cli import install_interactively
-install_interactively()
-
-# Install if not present
-from machineconfig.utils.installer_utils.installer_cli import install_if_missing
-install_if_missing("git")  # Returns True if available after call
-```
-
-### Utility Functions
-
-```python
-# Check if tool exists
-from machineconfig.utils.installer_utils.installer_locator_utils import check_tool_exists
-exists = check_tool_exists("fd")
-
-# Get all installers for platform
-from machineconfig.utils.installer_utils.installer_runner import get_installers
-installers = get_installers(os="linux", arch="amd64", which_cats=None)
-
-# Get installed CLI apps
-from machineconfig.utils.installer_utils.installer_runner import get_installed_cli_apps
-apps = get_installed_cli_apps()
-
-# Install from GitHub URL
-from machineconfig.utils.installer_utils.install_from_url import install_from_github_url
-install_from_github_url("https://github.com/user/repo")
-
-# Install from binary URL
-from machineconfig.utils.installer_utils.install_from_url import install_from_binary_url
-install_from_binary_url("https://example.com/tool.tar.gz")
-```
-
-### Type Definitions
-
-```python
-from machineconfig.utils.schemas.installer.installer_types import (
-    InstallerData,           # Package definition
-    InstallerDataFiles,      # installer_data.json structure
-    CPU_ARCHITECTURES,       # "amd64" | "arm64"
-    OPERATING_SYSTEMS,       # "windows" | "linux" | "darwin"
-    get_os_name,             # Get current OS
-    get_normalized_arch,     # Get current architecture
+main_installer_cli(
+    which="fd,bat,rg",
+    group=False,
+    interactive=False,
+    update=False,
+    version=None,
 )
 ```
+
+Parameters:
+
+| Parameter | Meaning |
+| --- | --- |
+| `which` | Comma-separated app names, group names, or URLs |
+| `group` | Treat `which` as package-group names |
+| `interactive` | Launch interactive selection instead of parsing `which` |
+| `update` | Allow reinstall or upgrade when supported |
+| `version` | Request a specific version or tag when supported |
+
+### Other entrypoints
+
+| Helper | Purpose |
+| --- | --- |
+| `install_interactively(install_request)` | Shows package groups plus installers, with JSON previews when `tv` is available |
+| `install_group(package_group, install_request)` | Resolves a named package group and installs every matching catalog entry |
+| `install_clis(clis_names, install_request)` | Installs explicit catalog names, GitHub URLs, or direct binary URLs |
+| `install_if_missing(which, binary_name, verbose)` | Convenience guard that returns `True` if the tool exists or becomes installable |
+
+Interactive mode currently:
+
+- lists package groups first, prefixed with `📦`
+- lists installer options using `Installer.get_description()`
+- uses `choose_from_dict_with_preview()` when `tv` exists
+- falls back to `choose_from_options()` otherwise
+
+---
+
+## Package groups
+
+The installer runtime consumes the groups defined in `machineconfig.jobs.installer.package_groups.PACKAGE_GROUP2NAMES`.
+
+Current group names:
+
+- `sysabc`
+- `shell`
+- `search`
+- `sys-monitor`
+- `code-analysis`
+- `termabc`
+- `dev`
+- `dev-utils`
+- `eye`
+- `agents`
+- `terminal`
+- `browsers`
+- `editors`
+- `db-all`
+- `db-cli`
+- `db-desktop`
+- `db-web`
+- `db-tui`
+- `media`
+- `gui`
+- `nw`
+- `file-sharing`
+- `productivity`
+
+Example:
+
+```python
+from machineconfig.jobs.installer.package_groups import PACKAGE_GROUP2NAMES
+
+print(PACKAGE_GROUP2NAMES["agents"])
+```
+
+---
+
+## Bulk installation
+
+`machineconfig.utils.installer_utils.installer_runner.install_bulk()` is the multi-package entrypoint.
+
+```python
+from machineconfig.utils.installer_utils.installer_runner import install_bulk
+from machineconfig.utils.schemas.installer.installer_types import InstallRequest
+
+install_bulk(
+    installers_data=installers,
+    install_request=InstallRequest(version=None, update=False),
+    safe=False,
+    jobs=10,
+    fresh=False,
+)
+```
+
+Current behavior:
+
+- the first installer runs serially
+- the remaining installers run through `joblib.Parallel`
+- `fresh=True` clears the version cache first
+- a Rich summary is rendered after the batch finishes
+
+---
+
+## Direct URL installers
+
+Two URL-oriented helpers are exposed separately:
+
+```python
+from machineconfig.utils.installer_utils.install_from_url import (
+    install_from_binary_url,
+    install_from_github_url,
+)
+```
+
+### `install_from_github_url(github_url)`
+
+- fetches the latest release
+- lets the user choose a release asset interactively
+- downloads, extracts, and installs it
+- records the resolved version in the install-version cache
+
+### `install_from_binary_url(binary_url)`
+
+- downloads a binary or archive directly
+- extracts and installs it
+- records `"latest"` in the install-version cache
+
+---
+
+## Version tracking and install paths
+
+Current constants come from `machineconfig.utils.source_of_truth`:
+
+| Constant | Current path |
+| --- | --- |
+| `INSTALL_VERSION_ROOT` | `~/.config/machineconfig/cli_tools_installers/versions` |
+| `INSTALL_TMP_DIR` | `~/tmp_results/tmp_installers` |
+| `LINUX_INSTALL_PATH` | `~/.local/bin` |
+| `WINDOWS_INSTALL_PATH` | `~/AppData/Local/Microsoft/WindowsApps` |
+
+Each installed tool gets a version marker file under `INSTALL_VERSION_ROOT`.
+
+---
+
+## Security checks
+
+Security and reporting helpers live under `machineconfig.jobs.installer.checks.*`. They are part of the installer subsystem, but they are not on the main install path described above. Use them when you need auditing or reporting around already installed tools rather than installation itself.
+
+---
+
+## API reference
+
+## Installer CLI helpers
+
+::: machineconfig.utils.installer_utils.installer_cli
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Installer runner
+
+::: machineconfig.utils.installer_utils.installer_runner
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Installer class
+
+::: machineconfig.utils.installer_utils.installer_class
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Install from URL helpers
+
+::: machineconfig.utils.installer_utils.install_from_url
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Installer schema
+
+::: machineconfig.utils.schemas.installer.installer_types
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source

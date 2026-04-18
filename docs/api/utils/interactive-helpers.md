@@ -1,60 +1,71 @@
 # Interactive Helpers and Notifications
 
-This part of the API is the human-facing side of `machineconfig`: small helpers for IDs and formatting, interactive selection for CLIs, and notification utilities for sending results outward.
+This slice of the utility API covers the parts of Machineconfig that talk directly to a person: small formatting helpers, interactive pickers, and email / HTML notification helpers.
 
-These modules appear inside application logic just as often as they appear in CLI code.
-
----
-
-## Main modules
+The current modules are:
 
 | Module | Purpose |
 | --- | --- |
-| `machineconfig.utils.accessories` | General helpers such as random names, list splitting, timeframe splitting, rich formatting, and repo-root discovery |
-| `machineconfig.utils.options` | Interactive option selection with plain prompts or optional Television-based selection |
-| `machineconfig.utils.options_utils.tv_options` | Preview-driven selection over a mapping of names to content |
-| `machineconfig.utils.notifications` | Markdown-to-HTML conversion and SMTP-based email delivery |
+| `machineconfig.utils.accessories` | Small shared helpers such as random strings, list/timeframe splitting, rich formatting, and git-root discovery |
+| `machineconfig.utils.options` | Terminal choice helpers, plus cloud and SSH selectors |
+| `machineconfig.utils.options_utils.tv_options` | Preview-based selection from a mapping of names to payloads |
+| `machineconfig.utils.notifications` | Markdown-to-HTML rendering plus SMTP email sending |
 
 ---
 
-## Small but frequently used helpers
+## `accessories`
 
-`machineconfig.utils.accessories` provides a collection of helpers that show up everywhere:
+Frequently used helpers from `machineconfig.utils.accessories` include:
 
-- `randstr()` for generated identifiers or random noun-style names
-- `split_list()` for dividing work into chunks
-- `split_timeframe()` for slicing a time interval into fixed pieces
-- `pprint()`, `get_repr()`, and `human_friendly_dict()` for readable output
-- `get_repo_root()` for locating the current repository root from a path
+- `randstr()` for random tokens or noun-style names
+- `split_list()` for chunking lists by size or number of buckets
+- `split_timeframe()` for splitting a UTC interval into fixed windows
+- `pprint()`, `get_repr()`, and `human_friendly_dict()` for human-readable output
+- `get_repo_root()` for locating the git repository root from a `Path`
 
-These functions are small on their own, but they become the glue between higher-level workflows.
+These are intentionally small, but they show up throughout the CLI and helper layers.
 
 ---
 
-## Interactive selection flows
+## `choose_from_options`
 
-`choose_from_options()` gives you a single entrypoint for:
+`machineconfig.utils.options.choose_from_options()` is the main interactive picker.
 
-- numbered prompt selection
-- optional defaults
-- single or multi-select behavior
-- Television-backed selection when `tv=True`
-- preview integration through `preview="bat"`
+Current behavior:
 
-`choose_from_dict_with_preview()` is useful when you have a mapping from names to content and want the user to choose while previewing the underlying payload.
+- accepts any iterable of options
+- supports a numbered prompt fallback
+- can use Television when `tv=True` and `tv` is installed
+- supports `preview="bat"` for Television-backed previews
+- accepts an optional default item
+- allows custom string input when `custom_input=True`
 
-### Example
+Two implementation details matter in practice:
+
+- the default must already be present in the option list
+- multi-select is primarily implemented through the Television path; the plain prompt fallback still behaves like a single-choice prompt
+
+Other exported helpers in the same module:
+
+- `choose_cloud_interactively()` runs `rclone listremotes` and lets the user choose a remote
+- `get_ssh_hosts()` parses `~/.ssh/config` with Paramiko
+- `choose_ssh_host()` builds a Television-backed picker on top of that SSH host list
+
+Example:
 
 ```python
-from machineconfig.utils.options import choose_from_options
+from machineconfig.utils.options import choose_from_options, choose_ssh_host
 from machineconfig.utils.options_utils.tv_options import choose_from_dict_with_preview
 
 target = choose_from_options(
     options=["local", "remote", "cloud"],
-    msg="Select a target environment",
+    msg="Select a target",
     multi=False,
     tv=True,
+    preview=None,
 )
+
+ssh_host = choose_ssh_host(multi=False)
 
 preview_choice = choose_from_dict_with_preview(
     {
@@ -67,24 +78,49 @@ preview_choice = choose_from_dict_with_preview(
 )
 
 print(target)
+print(ssh_host)
 print(preview_choice)
 ```
 
 ---
 
+## Preview selection
+
+`machineconfig.utils.options_utils.tv_options.choose_from_dict_with_preview()` is the lower-level preview helper used by AST search, semantic search, and other payload-preview flows.
+
+It takes:
+
+- a mapping from option label to preview content
+- an optional extension hint
+- `multi=True` or `False`
+- a preview size percentage
+
+The implementation dispatches to Windows- or Unix-specific Television helpers.
+
+---
+
 ## Notifications
 
-`machineconfig.utils.notifications.Email` wraps a simple SMTP-based workflow:
+`machineconfig.utils.notifications` currently exposes three main layers:
 
-- load email settings from a local INI file
-- optionally convert Markdown bodies into HTML
-- send a message
-- close the connection cleanly
+- `download_to_memory()` for fetching a remote asset into memory
+- `md2html()` for turning Markdown into HTML through Rich's HTML exporter
+- `Email` for SMTP-based email sending
 
-That makes it a natural fit for job-completion notices, summary reports, and operational alerts.
+Current `Email` behavior:
+
+- `Email.get_source_of_truth()` reads config from `~/dotfiles/machineconfig/emails.ini`
+- `Email.__init__()` opens either an SSL or TLS SMTP connection based on the config
+- `send_message()` appends an automation footer and optionally converts Markdown to HTML
+- `send_and_close()` requires a `config_name`; `config_name=None` currently raises `NotImplementedError`
+
+Example:
 
 ```python
-from machineconfig.utils.notifications import Email
+from machineconfig.utils.notifications import Email, md2html
+
+html = md2html("# Report\nAll tasks finished.")
+print(html[:120])
 
 Email.send_and_close(
     config_name="primary",

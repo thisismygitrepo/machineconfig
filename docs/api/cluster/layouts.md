@@ -1,14 +1,12 @@
 # Layouts
 
-The layout APIs turn Python intent into terminal structure. They describe tabs, generate commands, split oversized layouts, and hand the result to tmux or other session backends.
-
-This is the API surface behind many "fan out these jobs into tabs" workflows.
+The layout APIs turn Python intent into terminal structure. They define tabs, serialize layouts, build tab commands from callables, and split oversized layouts before handing them to zellij, tmux, or Windows Terminal backends.
 
 ---
 
 ## Layout schema
 
-The foundation is the typed schema in `machineconfig.utils.schemas.layouts.layout_types`.
+The schema lives in `machineconfig.utils.schemas.layouts.layout_types`.
 
 ### Core types
 
@@ -18,27 +16,37 @@ The foundation is the typed schema in `machineconfig.utils.schemas.layouts.layou
 | `LayoutConfig` | `layoutName`, `layoutTabs` |
 | `LayoutsFile` | `version`, `layouts` |
 
-Two utility helpers round out the schema:
+### Helper behavior
 
-- `serialize_layouts_to_file()` writes layout collections to JSON and replaces layouts by name when needed.
-- `substitute_home()` expands `~` and `$HOME` and also rewrites shorthand command prefixes for `fire`, `terminal`, and `seek`.
+- `serialize_layouts_to_file(layouts, version, path)` writes a new layout file with `"$schema": "https://bit.ly/cfglayout"`.
+- If the target file already exists, `serialize_layouts_to_file()` replaces layouts that share the same `layoutName` and appends new ones.
+- `substitute_home(tabs)` expands `~` and `$HOME` and rewrites shorthand command prefixes:
+  - `f ...` -> `~/.config/machineconfig/scripts/wrap_mcfg fire ...`
+  - `t ...` -> `~/.config/machineconfig/scripts/wrap_mcfg terminal ...`
+  - `s ...` -> `~/.config/machineconfig/scripts/wrap_mcfg seek ...`
 
-!!! note
-    Current layout configs use `layoutTabs`, not the older `tabs` key. If you are migrating old examples, that is the first field to update.
+The current schema key is `layoutTabs`. There is no alternate `tabs` field in the typed definitions.
 
 ---
 
 ## Building layouts from Python functions
 
-`machineconfig.cluster.sessions_managers.utils.maker` is the bridge between Python callables and layout tabs.
+`machineconfig.cluster.sessions_managers.utils.maker` converts Python callables into `TabConfig` entries.
 
-### Key helpers
+### Main helpers
 
 | Helper | Purpose |
 | --- | --- |
-| `get_fire_tab_using_uv()` | Build a tab that runs a generated Python script through `uv` |
-| `get_fire_tab_using_fire()` | Build a tab that launches a callable through the `fire` command path |
-| `make_layout_from_functions()` | Convert a list of functions plus extra tab configs into a full `LayoutConfig` |
+| `get_fire_tab_using_uv()` | Generates Python source from a callable, writes a temporary script, and returns the tab config plus the generated file path |
+| `get_fire_tab_using_fire()` | Builds a `wrap_mcfg fire ...` command for an importable callable |
+| `make_layout_from_functions()` | Builds a `LayoutConfig` from functions plus any extra tabs you want to append |
+
+`make_layout_from_functions()` accepts both launch styles through `method`:
+
+- `"script"` to execute generated Python through `uv`
+- `"fire"` to use the `wrap_mcfg fire` entrypoint
+
+Its `flags` parameter is passed through to the selected launch mode as either `uv_run_flags` or `fire_flags`.
 
 ### Example
 
@@ -64,56 +72,112 @@ layout = make_layout_from_functions(
     method="script",
     uv_with=["machineconfig"],
     uv_project_dir=None,
+    flags="",
     start_dir="~/code/my-project",
 )
 
-run_tmux_layout(layout, on_conflict="rename")
+run_tmux_layout(layout_config=layout, on_conflict="rename")
 ```
+
+If `functions_weights` is `None`, each function is treated as weight `1`.
 
 ---
 
 ## Controlling layout size
 
-Large job sets often need to be split before they become usable in a terminal multiplexer. `machineconfig.cluster.sessions_managers.utils.load_balancer` provides that control.
+`machineconfig.cluster.sessions_managers.utils.load_balancer` provides two controls.
 
-### Main entrypoints
+### `limit_tab_num()`
 
-| Helper | Purpose |
-| --- | --- |
-| `limit_tab_num()` | Restrict a layout by number of tabs or by total weight |
-| `limit_tab_weight()` | Split a single heavy tab into multiple tabs through a provided command splitter |
+```python
+limit_tab_num(
+    layout_configs=layouts,
+    max_thresh=8,
+    threshold_type="number",
+    breaking_method="moreLayouts",
+)
+```
 
-`limit_tab_num()` supports two threshold modes:
+Supported `threshold_type` values:
 
 - `"number"` for raw tab count
 - `"weight"` for summed `tabWeight`
 
-and two breaking strategies:
+Supported `breaking_method` values:
 
-- `"moreLayouts"` to create additional layouts
-- `"combineTabs"` to merge work differently inside fewer layouts
+- `"moreLayouts"`
+- `"combineTabs"`
+
+### `limit_tab_weight()`
+
+`limit_tab_weight(layout_configs, max_weight, command_splitter)` rewrites overweight tabs by calling your `command_splitter(command, to=max_weight)` function and replacing the original tab with `..._part1`, `..._part2`, and so on.
+
+### Convenience launcher
+
+`load_balancer.run(layouts, on_conflict)` is a thin helper that:
+
+1. creates a `ZellijLocalManager`
+2. starts all sessions
+3. runs the monitoring routine
+4. kills all managed sessions when monitoring finishes
 
 ---
 
-## tmux orchestration
+## Backend-specific layout generators
 
-The tmux-specific APIs live in:
+The same `LayoutConfig` can be handed to multiple backends:
 
-- `machineconfig.cluster.sessions_managers.tmux.tmux_local`
-- `machineconfig.cluster.sessions_managers.tmux.tmux_local_manager`
+- `run_zellij_layout(layout_config, on_conflict)`
+- `run_tmux_layout(layout_config, on_conflict)`
+- `run_wt_layout(layout_config, exit_mode)`
 
-These modules handle:
+Their generator classes are:
 
-- generating a runnable tmux shell script from a `LayoutConfig`
-- starting one layout or many layouts
-- inspecting session status
-- printing a monitoring summary
+- `ZellijLayoutGenerator`
+- `TmuxLayoutGenerator`
+- `WTLayoutGenerator`
 
-If you want backend-neutral session behavior such as conflict policies and manager differences, see [Sessions](sessions.md).
+Those classes are responsible for rendering backend-specific layout artifacts:
+
+- zellij KDL files
+- tmux shell scripts
+- Windows Terminal PowerShell scripts
 
 ---
 
 ## API reference
+
+## Layout schema
+
+::: machineconfig.utils.schemas.layouts.layout_types
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Layout builders
+
+::: machineconfig.cluster.sessions_managers.utils.maker
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Layout load balancer
+
+::: machineconfig.cluster.sessions_managers.utils.load_balancer
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
+
+## Zellij layout helpers
+
+::: machineconfig.cluster.sessions_managers.zellij.zellij_local
+    options:
+      show_root_heading: true
+      show_source: false
+      members_order: source
 
 ## tmux layout helpers
 
@@ -123,9 +187,9 @@ If you want backend-neutral session behavior such as conflict policies and manag
       show_source: false
       members_order: source
 
-## tmux layout manager
+## Windows Terminal layout helpers
 
-::: machineconfig.cluster.sessions_managers.tmux.tmux_local_manager
+::: machineconfig.cluster.sessions_managers.windows_terminal.wt_local
     options:
       show_root_heading: true
       show_source: false

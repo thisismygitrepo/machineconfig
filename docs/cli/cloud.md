@@ -1,6 +1,6 @@
 # cloud
 
-`cloud` is the direct entrypoint for cloud sync, copy, mount, and SSH file transfer workflows.
+`cloud` is the direct entrypoint for Machineconfig's cloud copy, sync, mount, and SSH-transfer helpers.
 
 ---
 
@@ -13,36 +13,46 @@ cloud [OPTIONS] COMMAND [ARGS]...
 Current top-level commands:
 
 | Command | Purpose |
-|---------|---------|
+| --- | --- |
 | `sync` | Synchronize files or folders between local and cloud storage |
 | `copy` | Upload or download files and folders |
-| `mount` | Mount configured cloud storage locally |
-| `ftpx` | Transfer files through SSH |
+| `mount` | Mount a configured cloud target locally |
+| `ftpx` | Transfer files through SSH using `machine:path` endpoints |
+
+The command also defines hidden one-letter aliases for the same actions: `s`, `c`, `m`, and `f`.
 
 ---
 
-## sync
+## Defaults
 
-Synchronize files or folders between a source and target path.
+When a command does not override them, cloud defaults come from `machineconfig.utils.ve.read_default_cloud_config()`:
+
+- remote root: `myhome`
+- `encrypt`, `zip`, `share`, `overwrite`, `os_specific`, `rel2home`: `False`
+- `key` and `pwd`: unset
+
+---
+
+## `sync`
 
 ```bash
 cloud sync [OPTIONS] SOURCE TARGET
 ```
 
-Key options from current help:
+Current options from live help:
 
-| Option | Description |
-|--------|-------------|
+| Option | Meaning |
+| --- | --- |
 | `--config`, `-c` | Path to `.ve.yaml` |
-| `--transfers`, `-t` | Number of transfer threads |
+| `--transfers`, `-t` | Number of sync threads |
 | `--root`, `-R` | Remote root |
 | `--key`, `-k` | Encryption key |
 | `--pwd`, `-P` | Encryption password |
-| `--encrypt`, `-e` | Decrypt after receiving |
-| `--zip`, `-z` | Unzip after receiving |
+| `--encrypt`, `-e` | Current help text: decrypt after receiving |
+| `--zip`, `-z` | Current help text: unzip after receiving |
 | `--bisync`, `-b` | Bidirectional sync |
-| `--delete`, `-D` | Delete files in remote that are not in local |
-| `--verbose`, `-v` | Show verbose sync details |
+| `--delete`, `-D` | Delete remote files not present locally |
+| `--verbose`, `-v` | Show more sync details |
 
 Example:
 
@@ -52,26 +62,24 @@ cloud sync ~/documents remote:documents --bisync
 
 ---
 
-## copy
-
-Upload or download files and folders between local and cloud paths.
+## `copy`
 
 ```bash
 cloud copy [OPTIONS] SOURCE TARGET
 ```
 
-Key options from current help:
+Current options from live help:
 
-| Option | Description |
-|--------|-------------|
-| `--overwrite`, `-o` | Overwrite existing file |
-| `--share`, `-s` | Share file or directory |
-| `--relative2home`, `-r` | Treat paths as relative to `myhome` |
+| Option | Meaning |
+| --- | --- |
+| `--overwrite`, `-o` | Overwrite an existing destination file |
+| `--share`, `-s` | Share a file or directory |
+| `--relative2home`, `-r` | Treat remote paths as relative to `myhome` |
 | `--root`, `-R` | Remote root |
 | `--key`, `-k` | Encryption key |
 | `--password`, `-p` | Encryption password |
 | `--encrypt`, `-e` | Encrypt before sending |
-| `--zip`, `-z` | Unzip after receiving |
+| `--zip`, `-z` | Current help text: unzip after receiving |
 | `--os-specific`, `-O` | Choose a path specific to the current OS |
 | `--config`, `-c` | Path to `.ve.yaml` |
 
@@ -83,39 +91,42 @@ cloud copy ./report.pdf remote:reports/report.pdf
 
 ---
 
-## mount
-
-Mount a configured cloud storage target locally.
+## `mount`
 
 ```bash
 cloud mount [OPTIONS]
 ```
 
-Key options from current help:
+Current options:
 
-| Option | Description |
-|--------|-------------|
-| `--cloud`, `-c` | Cloud to mount |
+| Option | Meaning |
+| --- | --- |
+| `--cloud`, `-c` | Cloud name to mount |
 | `--destination`, `-d` | Mount destination |
 | `--network`, `-n` | Network mount target |
-| `--backend`, `-b` | Terminal backend on Linux or macOS |
-| `--interactive`, `-i` | Choose the cloud interactively |
+| `--backend`, `-b` | Linux/macOS terminal backend: `zellij`, `tmux`, or `auto` |
+| `--interactive`, `-i` | Choose the cloud interactively from config |
+
+Current defaults:
+
+- backend: `tmux`
+- interactive selection: enabled
 
 ---
 
-## ftpx
-
-Transfer files through SSH.
+## `ftpx`
 
 ```bash
 cloud ftpx [OPTIONS] SOURCE TARGET
 ```
 
-Key options from current help:
+`SOURCE` and `TARGET` use `machine:path` notation.
 
-| Option | Description |
-|--------|-------------|
-| `--recursive`, `-r` | Send recursively |
+Current options:
+
+| Option | Meaning |
+| --- | --- |
+| `--recursive`, `-r` | Transfer recursively |
 | `--zipFirst`, `-z` | Zip before sending |
 | `--cloud`, `-c` | Transfer through the cloud |
 | `--overwrite-existing`, `-o` | Overwrite existing remote files when sending local to remote |
@@ -129,8 +140,6 @@ cloud ftpx localmachine:/tmp/archive remotehost:/tmp/archive --recursive
 ---
 
 ## Getting help
-
-Use live help to inspect the exact options available in your installed version:
 
 ```bash
 cloud --help

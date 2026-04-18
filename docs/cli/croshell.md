@@ -1,6 +1,6 @@
 # croshell
 
-`croshell` launches a file or project context inside an interactive backend such as IPython, Python, Marimo, Jupyter, VS Code, or VisiData.
+`croshell` builds a temporary `uv run` launch context, then opens it in an interactive backend such as IPython, Python, Marimo, Jupyter, VS Code, or VisiData.
 
 ---
 
@@ -10,56 +10,85 @@
 croshell [OPTIONS] [PATH]
 ```
 
----
-
 ## Arguments
 
 | Argument | Description |
-|----------|-------------|
-| `PATH` | Optional file or directory to open before launching the backend |
+| --- | --- |
+| `PATH` | Optional file or directory to inspect before launching the backend |
 
 ---
 
 ## Options
 
 | Option | Short | Description |
-|--------|-------|-------------|
-| `--project` | `-p` | Use a specific `uv` project directory |
-| `--uv-with` | `-w` | Add extra packages to the launched `uv` environment |
-| `--backend` | `-b` | Choose the backend: `ipython` (default), `python`, `marimo`, `jupyter`, `vscode`, or `visidata` |
-| `--profile` | `-r` | IPython profile name when using the IPython backend |
-| `--self` | `-s` | Use the local `~/code/machineconfig` checkout as the project |
-| `--frozen` | `-f` | Freeze the environment so `uv` does not change installed packages |
+| --- | --- | --- |
+| `--project` | `-p` | Reuse a specific `uv` project directory |
+| `--uv-with` | `-w` | Add extra packages to the launch environment |
+| `--backend` | `-b` | Backend: `ipython`, `python`, `marimo`, `jupyter`, `vscode`, or `visidata` |
+| `--profile` | `-r` | IPython profile name |
+| `--self` | `-s` | Point the project at `~/code/machineconfig` when that checkout exists |
+| `--frozen` | `-f` | Add `--frozen` to the `uv run` invocation |
+
+The backend option also accepts short aliases from the current enum mapping:
+
+- `ipython` or `i`
+- `python` or `p`
+- `marimo` or `m`
+- `jupyter` or `j`
+- `vscode` or `c`
+- `visidata` or `v`
 
 ---
 
-## Typical flows
+## Current launch behavior
+
+`croshell` does more than open a shell:
+
+- if `PATH` is a Python file, it stages that file inside a generated temporary script
+- if `PATH` is a non-Python file, it generates a reader script using Machineconfig file readers and prints the parsed content in the chosen backend
+- if `PATH` is omitted, it still creates a temporary script and launches the selected backend in the current context
+
+Project resolution is currently:
+
+1. explicit `--project`, if provided
+2. nearest `.ve.yaml` or `.venv` discovered from the selected file
+3. `~/code/machineconfig`, if that checkout exists and nothing else was selected
+
+---
+
+## Backend-specific notes
+
+- `ipython` is the default backend.
+- `python` runs the generated script with plain Python instead of IPython.
+- `marimo` converts the generated script to `marimo_nb.py` in a temporary directory, then runs `marimo edit --host 0.0.0.0`.
+- `jupyter` emits a temporary `.ipynb` and opens it in JupyterLab.
+- `vscode` initializes a temporary `uv` workspace and opens the generated script in VS Code.
+- `visidata` opens the selected file directly with `vd`; JSON files use plain `visidata`, other files add `pyarrow`.
+
+---
+
+## Examples
 
 ```bash
-# Open the current project in the default IPython backend
+# Launch the default IPython backend
 croshell
 
-# Open a Python file in IPython
+# Open a Python file with IPython
 croshell script.py --backend ipython
 
-# Inspect a data file in VisiData
+# Inspect a data file with VisiData
 croshell data.csv --backend visidata
 
-# Launch the selected file through Marimo
-croshell notebook.py --backend marimo --project .
+# Open a generated notebook in Marimo
+croshell analysis.py --backend marimo --project .
 
-# Reuse the machineconfig checkout as the active project
+# Force the Machineconfig checkout as the uv project
 croshell src/machineconfig/scripts/python/croshell.py --self
 ```
 
 ---
 
-## Notes
-
-- `ipython` is the default backend when you do not pass `--backend`.
-- When `PATH` points to a non-Python file, `croshell` builds a small reader script and launches the selected backend against that generated context.
-- Use `--project` when you want `croshell` to reuse a specific local `uv` project instead of creating an ad-hoc environment.
-- Use live help to confirm the exact backend and option surface in your installed version:
+## Getting help
 
 ```bash
 croshell --help

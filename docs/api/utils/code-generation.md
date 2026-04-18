@@ -1,8 +1,12 @@
 # Code Generation and Command Launching
 
-One of the most distinctive parts of `machineconfig` is its ability to turn Python callables into runnable scripts and shell commands. This is what lets higher-level tools generate session tabs, fire remote jobs, or hand off shell commands to another process without writing all the glue by hand.
+`machineconfig` uses a small set of helper modules to turn Python callables into runnable scripts, wrap them in `uv run`, execute shell snippets, and bootstrap missing CLIs when a workflow depends on them.
 
-The key modules are `machineconfig.utils.meta`, `machineconfig.utils.code`, and the installer guard helper in `machineconfig.utils.installer_utils.installer_cli`.
+The relevant modules are:
+
+- `machineconfig.utils.meta`
+- `machineconfig.utils.code`
+- `machineconfig.utils.installer_utils.installer_cli`
 
 ---
 
@@ -10,100 +14,116 @@ The key modules are `machineconfig.utils.meta`, `machineconfig.utils.code`, and 
 
 | API area | Main helpers |
 | --- | --- |
-| Callable-to-script conversion | `lambda_to_python_script()`, `get_import_module_string()` |
+| Callable-to-script conversion | `get_import_module_string()`, `lambda_to_python_script()` |
 | `uv` command generation | `get_uv_command()`, `get_uv_command_executing_python_file()`, `get_uv_command_executing_python_script()` |
-| Script launching | `get_shell_script_running_lambda_function()`, `run_lambda_function()`, `run_shell_script()`, `run_shell_file()` |
-| Shell handoff | `exit_then_run_shell_script()` and `exit_then_run_shell_file()` |
-| Notebook-style launchers | `run_python_script_in_marimo()` |
+| Callable launchers | `get_shell_script_running_lambda_function()`, `run_lambda_function()`, `run_python_script_in_marimo()` |
+| Shell execution | `run_shell_file()`, `run_shell_script()` |
+| Shell handoff | `exit_then_run_shell_script()`, `exit_then_run_shell_file()` |
 | Tool bootstrapping | `install_if_missing(which, binary_name, verbose)` |
 
 ---
 
-## From callables to scripts
+## From a lambda to runnable Python
 
-`lambda_to_python_script()` inspects a no-argument lambda such as:
+`lambda_to_python_script()` expects a no-argument lambda whose body is a call expression, for example:
 
 ```python
 lambda: build_report(days=7, include_failed=True)
 ```
 
-and emits Python source for the target callable with the actual argument values baked in. That generated source can then be:
+It resolves the target callable from the lambda's globals and closure, evaluates keyword arguments, and emits Python source in one of two shapes:
 
-- written to a temporary file
-- run with `uv`
-- launched inside a session tab
-- handed to a remote-execution pipeline
+- `in_global=False`: a rewritten function definition with updated defaults
+- `in_global=True`: global assignments followed by the function body dedented into script form
 
-This is the bridge between Python objects and shell-oriented orchestration.
+When `import_module=True`, the generated source is prefixed with import bootstrap code from `get_import_module_string()` so the callable can be imported from its source file before execution.
+
+Important current constraints:
+
+- positional arguments are not reconstructed; keyword arguments are the intended path
+- the lambda body must be a call
+- generated source may add `from typing import Optional, Any, Union, Literal` if those annotations appear in the emitted script
 
 ---
 
-## Building execution commands
+## Building `uv run` commands
 
-`machineconfig.utils.code` then handles the shell side:
+`machineconfig.utils.code` turns Python source into shell-ready commands.
 
-- normalize the right `uv` executable path for the current platform
-- build commands for Python files or inline Python scripts
-- generate temporary scripts
-- optionally print the generated code before running it
-- execute shell snippets in a temporary file and clean them up afterward
+### Current behavior
 
-### Example
+- `get_uv_command(platform)` returns the repo's expected `~/.local/bin/uv` path on Unix-like systems and `~/.local/bin/uv.exe` on Windows.
+- `get_uv_command_executing_python_script()` writes the generated script to `~/tmp_results/tmp_scripts/python/<random>.py`.
+- If `prepend_print=True`, the helpers inject preview-print code and ensure `rich` is added to the `uv` dependency list.
+- `get_uv_command_executing_python_file()` chooses `--project "<dir>"` when `uv_project_dir` is set, otherwise it uses `--no-project`.
+
+Example:
 
 ```python
 from machineconfig.utils.code import get_shell_script_running_lambda_function
-from machineconfig.utils.meta import lambda_to_python_script
 
 
 def rebuild_index(*, force: bool) -> None:
     print(force)
 
 
-python_source = lambda_to_python_script(
-    lambda: rebuild_index(force=True),
-    in_global=True,
-    import_module=True,
-)
-
 shell_script, py_file = get_shell_script_running_lambda_function(
     lambda: rebuild_index(force=True),
     uv_with=["machineconfig"],
     uv_project_dir=None,
+    uv_run_flags="",
 )
 
-print(python_source)
-print(shell_script)
 print(py_file)
+print(shell_script)
 ```
 
 ---
 
-## Shell handoff and `OP_PROGRAM_PATH`
+## Running shell scripts
 
-`exit_then_run_shell_script()` has an important integration behavior:
+`run_shell_script()` writes the provided shell text to a temporary file, displays it with Rich when `display_script=True`, executes it with:
 
-- if `OP_PROGRAM_PATH` is set to a writable path, it writes the generated script there and exits
-- otherwise it falls back to direct execution
+- `bash <temp-file>` on Linux and macOS
+- `powershell -ExecutionPolicy Bypass -File "<temp-file>"` on Windows
 
-That pattern is what lets higher-level tools hand a command off to an external shell runner cleanly instead of always running it in-process.
+and then deletes the temporary file.
+
+`run_shell_file()` is the lower-level variant when the script already exists on disk.
+
+`run_python_script_in_marimo()` writes a temporary Python file under `~/tmp_results/tmp_scripts/marimo/<random>/`, converts it with `marimo convert`, then launches `marimo edit`.
+
+---
+
+## `OP_PROGRAM_PATH` handoff
+
+The two `exit_then_run_*` helpers are for workflows that want to hand control to another shell runner.
+
+### `exit_then_run_shell_script()`
+
+- If `OP_PROGRAM_PATH` points to a path that does not exist yet, the helper writes the script there and exits.
+- Otherwise it runs the script immediately in the current process and exits.
+- In `strict=True`, a missing or already-used handoff path causes a manual-run script to be written under `~/tmp_results/tmp_scripts/manual_run/`, then the process exits with an error.
+
+### `exit_then_run_shell_file()`
+
+- If a writable `OP_PROGRAM_PATH` is available, it writes either the PowerShell file path or `source <script_path>` into that handoff file and exits.
+- Otherwise it runs the existing script file directly.
 
 ---
 
 ## Bootstrapping required tools
 
-Some workflows need a CLI binary before they can continue. `install_if_missing()` is the lightweight guard for that:
+`install_if_missing(which, binary_name, verbose)` is the lightweight guard used by several higher-level helpers.
 
-```python
-from machineconfig.utils.installer_utils.installer_cli import install_if_missing
+It:
 
-install_if_missing(
-    which="ipinfo",
-    binary_name=None,
-    verbose=True,
-)
-```
+1. checks whether `binary_name` or `which` is already on `PATH`
+2. returns `True` immediately if it exists
+3. otherwise calls `main_installer_cli()` to install it
+4. returns `True` on success or `False` if installation raises
 
-It checks for the target binary, optionally prints status, and falls back to the installer pipeline if the tool is missing. For the full installer catalog and curated package groups, see [Jobs and installer APIs](../jobs/index.md).
+This is the mechanism used by helpers such as `get_public_ip_address()` and `switch_public_ip_address()` before they shell out to `ipinfo` or `warp-cli`.
 
 ---
 

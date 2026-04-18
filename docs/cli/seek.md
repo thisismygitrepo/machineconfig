@@ -1,6 +1,6 @@
 # seek
 
-`seek` is the direct entrypoint for interactive search across files, text matches, and code symbols.
+`seek` is the interactive search entrypoint for file lists, text matches, file previews, AST symbols, and semantic-style symbol search.
 
 ---
 
@@ -10,87 +10,132 @@
 seek [OPTIONS] [PATH] [SEARCH_TERM]
 ```
 
----
-
 ## Arguments
 
 | Argument | Description |
-|----------|-------------|
+| --- | --- |
 | `PATH` | Directory or file to search. Defaults to the current directory. |
-| `SEARCH_TERM` | Initial query to seed the interactive search UI. |
+| `SEARCH_TERM` | Initial query to seed the search UI. |
 
 ---
 
-## Search modes
+## Mode selection
 
-`seek` exposes several entry modes:
+The current implementation resolves modes in this order:
 
-| Mode | Option | Behavior |
-|------|--------|----------|
-| Text search | default | Interactive ripgrep-based search with preview |
-| File search | `--file`, `-f` | Fuzzy-find files with preview |
-| AST search | `--ast`, `-a` | Inspect parsed symbols from the target directory |
-| Symantic search | `--symantic`, `-s` | Run the symbol-oriented helper workflow |
+1. `--install-req`
+2. `--symantic`
+3. `--ast`
+4. `--file`
+5. default text search
 
-If `PATH` points to a file, `seek` opens a line-oriented preview flow for that file instead of directory search.
-
-When multiple mode flags are passed together, `seek` resolves them in this order: `--symantic`, then `--ast`, then `--file`, then the default text search flow.
+That means `seek path query --file --ast` will still take the AST path, and `--install-req` exits before running a search.
 
 ---
 
 ## Options
 
 | Option | Short | Description |
-|--------|-------|-------------|
-| `--ast` | `-a` | Run abstract syntax tree or tree-sitter symbol search |
-| `--symantic` | `-s` | Run symantic symbol search |
-| `--extension TEXT` | `-E` | Filter by extension such as `.py` or `.js` |
-| `--file` | `-f` | Search for files instead of text matches |
-| `--dotfiles` | `-D` | Include dotfiles in file search results |
-| `--rga` | `-A` | Use `ripgrep-all` instead of `ripgrep` |
-| `--edit` | `-e` | Open the selected match in Helix |
-| `--install-req` | `-i` | Install required search dependencies |
+| --- | --- | --- |
+| `--ast` | `-a` | Run AST or tree-sitter symbol search |
+| `--symantic` | `-s` | Run the semantic-symbol helper workflow |
+| `--extension TEXT` | `-E` | Filter file discovery by extension such as `.py` |
+| `--file` | `-f` | File search mode |
+| `--dotfiles` | `-d` | Toggle the dotfile-inclusive file-search path |
+| `--rga` | `-A` | Swap `rg` for `rga` in text-search mode |
+| `--edit` | `-e` | Open the selected result in Helix |
+| `--install-req` | `-i` | Install expected helper tools and exit |
 
 ---
 
-## Typical flows
+## Current behavior by mode
+
+### Text search
+
+The default mode loads a platform-specific helper script and runs an `fzf` + `rg` preview flow.
+
+- `--rga` rewrites that script to use `ripgrep-all`
+- `SEARCH_TERM` seeds the initial query
+- `PATH` changes the working directory before launching the search
+
+### File search
+
+`--file` runs a file picker based on `fzf`.
+
+- without `--edit`, it previews the file with `bat`
+- with `--edit`, it adds a second line picker and opens the selected line in Helix
+- the current implementation uses `fd --type file` for the default candidate source
+
+### Single-file flow
+
+If `PATH` resolves to a file, `seek` skips directory search and opens a line-oriented preview for that file instead.
+
+When standard input is piped in and `PATH` is a directory, `seek` captures stdin into a temporary file and opens the same single-file flow against that temp file.
+
+### AST search
+
+`--ast` collects repository symbols, shows them with preview, and prints the selected symbol as JSON including:
+
+- type
+- name
+- path
+- file path
+- start line
+- end line
+- docstring
+
+### `--symantic`
+
+`--symantic` runs the semantic helper workflow:
+
+- prompts for a query if `SEARCH_TERM` is empty
+- limits the search set with `--extension` when provided
+- warns and exits when more than 50 files would be searched
+- uses preview selection for the returned results
+
+---
+
+## Dependencies
+
+`seek --install-req` currently installs these helpers:
+
+- `fzf`
+- `tv`
+- `bat`
+- `fd`
+- `rg`
+- `rga`
+
+---
+
+## Examples
 
 ```bash
-# Search the current project for text
+# Default text search in the current directory
 seek
 
-# Start with an initial query
+# Seed the search with an initial query
 seek . "TODO"
 
-# Search for files only
+# File search with preview
 seek src --file
 
-# Search files including dotfiles
-seek src --file --dotfiles
-
-# Search files and jump into Helix
+# File search and open the chosen line in Helix
 seek src --file --edit
 
-# Search code symbols
+# AST symbol search
 seek src --ast
 
-# Use ripgrep-all for non-text files
-seek docs --rga
+# Semantic helper search
+seek src parser --symantic --extension .py
+
+# ripgrep-all text search
+seek docs invoice --rga
 ```
 
 ---
 
-## Notes
-
-- `seek --install-req` installs the helper tools the workflow expects, including `fzf`, `tv`, `bat`, `fd`, `rg`, and `rga`.
-- When standard input is piped into `seek`, it can stage that input into a temporary file and open the same preview flow against the captured content.
-- `seek` is a standalone entrypoint. Use it directly rather than routing through an umbrella dispatcher.
-
----
-
 ## Getting help
-
-Use live help to inspect the exact options in your installed version:
 
 ```bash
 seek --help
